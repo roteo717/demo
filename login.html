@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>設備点検アプリ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --blue: #2F6BFF;
+    --blue-light: #EEF4FF;
+    --blue-mid: #D6E4FF;
+    --red: #E53935;
+    --red-light: #FDECEC;
+    --red-mid: #FBBCBC;
+    --bg: #F5F6F8;
+    --card: #FFFFFF;
+    --border: #E0E0E0;
+    --text: #333333;
+    --text-sub: #888888;
+    --text-small: #AAAAAA;
+    --shadow: 0 2px 10px rgba(0,0,0,0.07);
+    --shadow-card: 0 1px 4px rgba(0,0,0,0.06);
+    --radius: 14px;
+    --radius-sm: 10px;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .phone-wrapper {
+    width: 100%;
+    max-width: 390px;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* ─── SCREENS ─── */
+  .screen {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg);
+    position: absolute;
+    top: 0; left: 0;
+    transition: transform 0.32s cubic-bezier(.4,0,.2,1), opacity 0.28s;
+    will-change: transform;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .screen.hidden          { transform: translateX(100%); opacity: 0; pointer-events: none; }
+  .screen.slide-out-left  { transform: translateX(-30%); opacity: 0; pointer-events: none; }
+  .screen.active          { transform: translateX(0);    opacity: 1; pointer-events: auto; }
+
+  /* ─── STATUS BAR ─── */
+  .status-bar {
+    height: 44px;
+    padding: 14px 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .status-bar .time { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text); }
+
+  /* ─── NAV BAR ─── */
+  .nav-bar {
+    height: 52px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-bar.blue-accent  { border-bottom: 2.5px solid var(--blue); }
+  .nav-bar.red-accent   { border-bottom: 2.5px solid var(--red); }
+  .nav-back {
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .nav-back:active { background: var(--bg); }
+  .nav-back svg { width: 22px; height: 22px; stroke: var(--text); fill: none; }
+  .nav-title {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    font-size: 17px; font-weight: 600; letter-spacing: -0.2px;
+  }
+
+  /* ─── SCREEN 1: ROLE SELECT ─── */
+  #screen-role {
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .role-hero {
+    padding: 32px 24px 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .role-hero-icon {
+    width: 80px; height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 4px;
+  }
+  .role-hero h1 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.4px;
+    color: var(--text);
+  }
+  .role-hero p {
+    font-size: 15px; color: var(--text-sub); font-weight: 400;
+  }
+
+  .role-section-label {
+    font-size: 13px; color: var(--text-sub);
+    align-self: flex-start;
+    padding: 0 24px;
+    margin-bottom: 12px;
+    margin-top: 4px;
+  }
+
+  .role-cards { width: 100%; padding: 0 20px; display: flex; flex-direction: column; gap: 14px; }
+
+  .role-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 16px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    -webkit-user-select: none;
+  }
+  .role-card:active { transform: scale(0.98); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+
+  .role-card.blue { border-color: var(--blue-mid); }
+  .role-card.red  { border-color: var(--red-mid);  }
+
+  .role-icon-wrap {
+    width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .role-icon-wrap.blue { background: var(--blue-light); }
+  .role-icon-wrap.red  { background: var(--red-light);  }
+
+  .role-card-body { flex: 1; }
+  .role-card-title {
+    font-size: 17px; font-weight: 700; letter-spacing: -0.2px; margin-bottom: 3px;
+  }
+  .role-card-title.blue { color: var(--blue); }
+  .role-card-title.red  { color: var(--red);  }
+  .role-card-desc { font-size: 13px; color: var(--text-sub); line-height: 1.5; }
+
+  .role-card-arrow svg {
+    width: 20px; height: 20px; stroke-width: 2.5;
+    flex-shrink: 0;
+  }
+  .role-card-arrow.blue svg { stroke: var(--blue); }
+  .role-card-arrow.red  svg { stroke: var(--red);  }
+
+  .role-footer {
+    margin-top: auto; width: 100%;
+    padding: 28px 24px 36px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .role-footer-last {
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 10px 16px;
+    width: 100%;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .role-footer-last-label { font-size: 11px; color: var(--text-sub); }
+  .role-footer-last-val   { font-size: 12px; color: var(--text); font-weight: 500; }
+  .role-footer-ver { font-size: 11px; color: var(--text-small); margin-top: 6px; }
+
+  /* ─── SCREEN 2: INSPECTOR LOGIN ─── */
+  #screen-inspector { background: var(--card); }
+
+  .inspector-body {
+    padding: 28px 24px 36px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .inspector-icon-wrap {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+  }
+  .inspector-subtitle {
+    font-size: 14px; color: var(--blue); font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .user-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .user-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 8px;
+    font-size: 15px; font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    min-height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-user-select: none;
+  }
+  .user-btn:active { transform: scale(0.97); }
+  .user-btn.selected {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .user-btn.other {
+    color: var(--blue); border-color: var(--blue-mid);
+    display: flex; gap: 4px; align-items: center; justify-content: center;
+  }
+
+  .inspector-notice {
+    width: 100%;
+    background: #EEF4FF;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex; align-items: flex-start; gap: 8px;
+    margin-top: 6px;
+  }
+  .inspector-notice-icon { flex-shrink: 0; margin-top: 1px; }
+  .inspector-notice-text { font-size: 12px; color: var(--text-sub); line-height: 1.6; }
+
+  /* Continue button */
+  .btn-primary-blue {
+    width: 100%;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: opacity 0.15s, transform 0.15s;
+    -webkit-user-select: none;
+  }
+  .btn-primary-blue:active { opacity: 0.85; transform: scale(0.99); }
+  .btn-primary-blue:disabled { background: #B0C4FF; cursor: default; }
+
+  /* ─── SCREEN 3: MANAGER LOGIN ─── */
+  #screen-manager { background: var(--card); }
+
+  .manager-body {
+    padding: 28px 24px 36px;
+    display: flex; flex-direction: column;
+  }
+  .manager-top { display: flex; flex-direction: column; align-items: center; margin-bottom: 28px; }
+  .manager-icon-wrap {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: var(--red-light);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+  }
+  .manager-subtitle {
+    font-size: 14px; color: var(--red); font-weight: 600; text-align: center;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: block;
+    font-size: 13px; font-weight: 600; color: var(--text);
+    margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    background: #FAFAFA;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 16px; color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+    font-family: inherit;
+  }
+  .form-input::placeholder { color: #BBBBBB; }
+  .form-input:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(229,57,53,0.1);
+    background: #fff;
+  }
+
+  .pw-wrap { position: relative; }
+  .pw-toggle {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; padding: 4px;
+    display: flex; align-items: center; color: var(--text-sub);
+  }
+  .pw-toggle svg { width: 20px; height: 20px; }
+
+  .btn-primary-red {
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px; font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: opacity 0.15s, transform 0.15s;
+    -webkit-user-select: none;
+  }
+  .btn-primary-red:active { opacity: 0.85; transform: scale(0.99); }
+
+  .btn-admin-warn {
+    width: 100%;
+    background: var(--red-light);
+    border: 1.5px solid var(--red-mid);
+    color: var(--red);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: opacity 0.15s;
+    -webkit-user-select: none;
+  }
+  .btn-admin-warn:active { opacity: 0.75; }
+  .btn-admin-warn svg { width: 18px; height: 18px; fill: var(--red); }
+
+  /* ─── SAFE AREA PAD ─── */
+  .safe-bottom { height: env(safe-area-inset-bottom, 12px); }
+</style>
+</head>
+<body>
+<div class="phone-wrapper">
+
+  <!-- ===== SCREEN 1: ROLE SELECT ===== -->
+  <div class="screen active" id="screen-role">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="role-hero">
+      <div class="role-hero-icon">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="80" height="80" rx="20" fill="#EEF4FF"/>
+          <!-- Clipboard body -->
+          <rect x="20" y="22" width="34" height="42" rx="4" stroke="#2F6BFF" stroke-width="2.5" fill="none"/>
+          <!-- Clip at top -->
+          <rect x="29" y="16" width="16" height="11" rx="3.5" stroke="#2F6BFF" stroke-width="2.5" fill="none"/>
+          <!-- Check mark -->
+          <polyline points="27,43 33,50 47,35" stroke="#2F6BFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <!-- Bottom lines -->
+          <line x1="27" y1="56" x2="47" y2="56" stroke="#2F6BFF" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1>設備点検アプリ</h1>
+      <p>ログインしてください</p>
+    </div>
+
+    <p class="role-section-label">あなたの役割を選択してください</p>
+
+    <div class="role-cards">
+      <!-- Inspector Card -->
+      <div class="role-card blue" onclick="gotoInspector()">
+        <div class="role-icon-wrap blue">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#2F6BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Dome -->
+            <path d="M5.5 19 C5.5 12 9.8 7 15 7 C20.2 7 24.5 12 24.5 19"/>
+            <!-- Brim -->
+            <line x1="3" y1="19" x2="27" y2="19"/>
+            <!-- Center vent -->
+            <line x1="15" y1="7" x2="15" y2="19"/>
+            <!-- Chin strap -->
+            <line x1="7.5" y1="19" x2="7.5" y2="22"/>
+            <line x1="22.5" y1="19" x2="22.5" y2="22"/>
+            <line x1="7.5" y1="22" x2="22.5" y2="22"/>
+          </svg>
+        </div>
+        <div class="role-card-body">
+          <div class="role-card-title blue">点検者</div>
+          <div class="role-card-desc">設備の点検・記録を<br>行います</div>
+        </div>
+        <div class="role-card-arrow blue">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Manager Card -->
+      <div class="role-card red" onclick="gotoManager()">
+        <div class="role-icon-wrap red">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Head -->
+            <circle cx="15" cy="10" r="5"/>
+            <!-- Shoulders -->
+            <path d="M6 27 C6 21.5 9.8 19 15 19 C20.2 19 24 21.5 24 27"/>
+            <!-- Collar left -->
+            <line x1="13" y1="19" x2="15" y2="22"/>
+            <!-- Collar right -->
+            <line x1="17" y1="19" x2="15" y2="22"/>
+            <!-- Tie knot to tip -->
+            <polyline points="14,22 13.5,26 15,24.5 16.5,26 16,22"/>
+          </svg>
+        </div>
+        <div class="role-card-body">
+          <div class="role-card-title red">責任者</div>
+          <div class="role-card-desc">点検の確認・承認や<br>各種設定を行います</div>
+        </div>
+        <div class="role-card-arrow red">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="role-footer">
+      <div class="role-footer-last">
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <span class="role-footer-last-label">前回のログイン</span>
+          <span style="font-size:13px;color:var(--text);font-weight:500;">点検者：佐藤 太郎</span>
+        </div>
+        <span class="role-footer-last-val">2024/05/20 08:30</span>
+      </div>
+      <div class="role-footer-ver">Ver. 1.0.0</div>
+    </div>
+    <div class="safe-bottom"></div>
+  </div>
+
+
+  <!-- ===== SCREEN 2: INSPECTOR LOGIN ===== -->
+  <div class="screen hidden" id="screen-inspector">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <div class="nav-bar blue-accent">
+      <div class="nav-back" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-title">点検者ログイン</span>
+    </div>
+
+    <div class="inspector-body">
+      <!-- Icon -->
+      <div class="inspector-icon-wrap">
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+          <path d="M4 24 C4 14 10.5 7 19 7 C27.5 7 34 14 34 24" fill="#2F6BFF" stroke="#2F6BFF" stroke-width="2" stroke-linejoin="round"/>
+          <rect x="3" y="22" width="32" height="5" rx="2.5" fill="#2F6BFF"/>
+          <rect x="14" y="4" width="10" height="6" rx="3" fill="#2F6BFF"/>
+          <path d="M13 27 L10 34 L28 34 L25 27" fill="#2F6BFF" opacity="0.55"/>
+        </svg>
+      </div>
+      <p class="inspector-subtitle">点検者を選択してください</p>
+
+      <!-- User grid -->
+      <div class="user-grid">
+        <button class="user-btn selected" onclick="selectUser(this)">佐藤 太郎</button>
+        <button class="user-btn" onclick="selectUser(this)">鈴木 一郎</button>
+        <button class="user-btn" onclick="selectUser(this)">田中 花子</button>
+        <button class="user-btn" onclick="selectUser(this)">山本 健二</button>
+        <button class="user-btn" onclick="selectUser(this)">伊藤 誠</button>
+        <button class="user-btn other" onclick="selectUser(this)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="var(--blue)"><path d="M7 2v10M2 7h10"/></svg>
+          その他
+        </button>
+      </div>
+
+      <!-- Notice -->
+      <div class="inspector-notice">
+        <div class="inspector-notice-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="8.5" stroke="#2F6BFF" stroke-width="1.5"/>
+            <path d="M9 8v5" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="9" cy="5.5" r="1" fill="#2F6BFF"/>
+          </svg>
+        </div>
+        <span class="inspector-notice-text">
+          ご自身の名前がない場合は<br>「その他」から選択してください。
+        </span>
+      </div>
+
+      <button class="btn-primary-blue" onclick="alert('ログイン成功（デモ）')">ログイン</button>
+    </div>
+    <div class="safe-bottom"></div>
+  </div>
+
+
+  <!-- ===== SCREEN 3: MANAGER LOGIN ===== -->
+  <div class="screen hidden" id="screen-manager">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <div class="nav-bar red-accent">
+      <div class="nav-back" onclick="goBack()">
+        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-title">責任者ログイン</span>
+    </div>
+
+    <div class="manager-body">
+      <div class="manager-top">
+        <div class="manager-icon-wrap">
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <circle cx="19" cy="13" r="7" fill="#E53935"/>
+            <path d="M6 34 C6 26 11.5 23 19 23 C26.5 23 32 26 32 34" fill="#E53935"/>
+            <path d="M17 23 L19 30 L21 23" fill="#C62828" opacity="0.8"/>
+          </svg>
+        </div>
+        <p class="manager-subtitle">責任者IDとパスワードを<br>入力してください</p>
+      </div>
+
+      <!-- Form -->
+      <div class="form-group">
+        <label class="form-label">責任者ID</label>
+        <input class="form-input" type="text" placeholder="IDを入力" autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">パスワード</label>
+        <div class="pw-wrap">
+          <input class="form-input" id="pw-input" type="password" placeholder="パスワードを入力" autocomplete="current-password">
+          <button class="pw-toggle" onclick="togglePw()" type="button" tabindex="-1">
+            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-primary-red" onclick="alert('ログイン（デモ）')">ログイン</button>
+
+      <button class="btn-admin-warn" onclick="alert('管理者モード（デモ）')">
+        <svg viewBox="0 0 24 24">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="12" y1="17" x2="12.01" y2="17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        管理者モードに入ります
+      </button>
+    </div>
+    <div class="safe-bottom"></div>
+  </div>
+
+</div>
+
+<script>
+  let currentScreen = 'screen-role';
+
+  function showScreen(id) {
+    const prev = document.getElementById(currentScreen);
+    const next = document.getElementById(id);
+
+    if (id === 'screen-role') {
+      // Going back
+      prev.classList.remove('active');
+      prev.classList.add('hidden');
+      next.classList.remove('slide-out-left', 'hidden');
+      next.classList.add('active');
+    } else {
+      // Going forward
+      prev.classList.remove('active');
+      prev.classList.add('slide-out-left');
+      next.classList.remove('hidden', 'slide-out-left');
+      next.classList.add('active');
+    }
+    currentScreen = id;
+  }
+
+  function gotoInspector() { showScreen('screen-inspector'); }
+  function gotoManager()   { showScreen('screen-manager');   }
+  function goBack()        { showScreen('screen-role');       }
+
+  function selectUser(btn) {
+    document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
+  function togglePw() {
+    const input = document.getElementById('pw-input');
+    const icon  = document.getElementById('eye-icon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+    } else {
+      input.type = 'password';
+      icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    }
+  }
+</script>
+</body>
+</html>
