@@ -6,6 +6,8 @@
 <title>設備点検アプリ</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  *::-webkit-scrollbar { display: none; }
+  * { -ms-overflow-style: none; scrollbar-width: none; }
 
   :root {
     --blue: #2F6BFF;
@@ -14,6 +16,8 @@
     --red: #E53935;
     --red-light: #FDECEC;
     --red-mid: #FBBCBC;
+    --green: #2E7D32;
+    --green-light: #E8F5E9;
     --bg: #F5F6F8;
     --card: #FFFFFF;
     --border: #E0E0E0;
@@ -41,7 +45,7 @@
     max-width: 390px;
     min-height: 100vh;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
     background: var(--bg);
   }
 
@@ -54,24 +58,18 @@
     top: 0; left: 0;
     transition: transform 0.32s cubic-bezier(.4,0,.2,1), opacity 0.28s;
     will-change: transform;
-    overflow-y: auto;
     overflow-x: hidden;
   }
   .screen.hidden          { transform: translateX(100%); opacity: 0; pointer-events: none; }
   .screen.slide-out-left  { transform: translateX(-30%); opacity: 0; pointer-events: none; }
   .screen.active          { transform: translateX(0);    opacity: 1; pointer-events: auto; }
+  /* Active screen becomes relative so wrapper grows and page scrolls naturally */
+  .screen.active.settled  { position: relative; }
 
   /* ─── STATUS BAR ─── */
-  .status-bar {
-    height: 44px;
-    padding: 14px 20px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .status-bar .time { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
-  .status-icons { display: flex; gap: 6px; align-items: center; }
-  .status-icons svg { width: 16px; height: 16px; fill: var(--text); }
+  .status-bar { display: none; }
+  .status-bar .time { display: none; }
+  .status-icons { display: none; }
 
   /* ─── NAV BAR ─── */
   .nav-bar {
@@ -96,6 +94,10 @@
   .nav-title {
     position: absolute; left: 50%; transform: translateX(-50%);
     font-size: 17px; font-weight: 600; letter-spacing: -0.2px;
+  }
+  .nav-right {
+    margin-left: auto;
+    font-size: 13px; color: var(--blue); font-weight: 500; cursor: pointer;
   }
 
   /* ─── SCREEN 1: ROLE SELECT ─── */
@@ -348,6 +350,408 @@
 
   /* ─── SAFE AREA PAD ─── */
   .safe-bottom { height: env(safe-area-inset-bottom, 12px); }
+
+  /* ======================================
+     POST-LOGIN SCREENS
+     ====================================== */
+
+  /* ─── BLUE NAV (post-login) ─── */
+  .nav-bar-blue {
+    height: 52px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--blue);
+  }
+  .nav-bar-blue .nav-title { color: #fff; position: absolute; left: 50%; transform: translateX(-50%); font-size: 17px; font-weight: 600; }
+  .nav-bar-blue .nav-back svg { stroke: #fff; }
+  .nav-bar-blue .nav-right { color: rgba(255,255,255,0.85); }
+  .nav-bar-blue .nav-bell { margin-left: auto; }
+  .nav-bar-blue .nav-bell svg { stroke: #fff; fill: none; width: 22px; height: 22px; }
+
+  /* ─── STATUS BAR WHITE ─── */
+  .status-bar-white { background: var(--blue); }
+  .status-bar-white .time { color: #fff; }
+  .status-bar-white .status-icons svg { fill: #fff; }
+  .status-bar-white .status-icons path,
+  .status-bar-white .status-icons rect { stroke: #fff; }
+
+  /* ─── HOME SCREEN ─── */
+  #screen-home { background: var(--bg); }
+
+  .home-header {
+    background: var(--blue);
+    padding: 16px 20px 24px;
+  }
+  .home-user-row {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .home-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .home-avatar svg { stroke: #fff; fill: none; width: 26px; height: 26px; }
+  .home-user-info { flex: 1; }
+  .home-user-name { font-size: 16px; font-weight: 600; color: #fff; }
+  .home-user-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 1px; }
+  .home-last-sync { font-size: 11px; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 4px; }
+
+  /* Calendar */
+  .calendar-card {
+    background: var(--card);
+    margin: 16px 16px 0;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+  }
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .cal-month { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .cal-nav { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .cal-nav svg { stroke: var(--text); fill: none; width: 16px; height: 16px; }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;
+  }
+  .cal-dow { font-size: 11px; color: var(--text-sub); font-weight: 500; padding: 4px 0; }
+  .cal-dow:first-child { color: #E53935; }
+  .cal-dow:last-child { color: var(--blue); }
+  .cal-day {
+    font-size: 13px; padding: 6px 2px; border-radius: 6px; cursor: pointer;
+    transition: background 0.1s;
+    position: relative;
+    -webkit-user-select: none; user-select: none;
+  }
+  .cal-day:active { background: var(--blue-light); }
+  .cal-day.selected-day {
+    background: var(--blue-mid); color: var(--blue); font-weight: 700;
+    border-radius: 6px;
+  }
+  .cal-day:first-child { color: #E53935; }
+  .cal-day.other-month { color: var(--text-small); cursor: default; }
+  .cal-day.holiday { color: var(--text-small); cursor: default; background: #F8F8F8; }
+  .cal-day.holiday:active { background: #F8F8F8; }
+  .cal-day.today {
+    background: var(--blue); color: #fff; font-weight: 700;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .cal-day.done::after {
+    content: ''; display: block; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--blue); margin: 2px auto 0;
+  }
+  .cal-day.anomaly::after {
+    content: ''; display: block; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--red); margin: 2px auto 0;
+  }
+  .cal-legend { display: flex; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-sub); }
+  .cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Big start button */
+  .start-btn-wrap { padding: 16px; }
+  .start-btn {
+    width: 100%; background: var(--blue); color: #fff;
+    border: none; border-radius: 14px; padding: 18px 20px;
+    font-size: 17px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(47,107,255,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+    -webkit-user-select: none;
+  }
+  .start-btn:active { transform: scale(0.98); box-shadow: 0 2px 8px rgba(47,107,255,0.25); }
+  .start-btn-left { display: flex; align-items: center; gap: 12px; }
+  .start-btn-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .start-btn-icon svg { stroke: #fff; fill: none; width: 22px; height: 22px; }
+  .start-btn-arrow { opacity: 0.8; }
+  .start-btn-arrow svg { stroke: #fff; fill: none; width: 22px; height: 22px; }
+
+  /* Summary */
+  .summary-card {
+    margin: 0 16px 16px;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 16px;
+  }
+  .summary-title { font-size: 13px; color: var(--text-sub); margin-bottom: 12px; font-weight: 500; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .summary-item { text-align: center; }
+  .summary-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px; }
+  .summary-icon svg { width: 18px; height: 18px; }
+  .summary-count { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .summary-label { font-size: 11px; color: var(--text-sub); margin-top: 1px; }
+  .si-gray { background: #F0F0F0; }
+  .si-orange { background: #FFF3E0; }
+  .si-blue { background: var(--blue-light); }
+  .si-red { background: var(--red-light); }
+  .si-gray svg { stroke: var(--text-sub); fill: none; }
+  .si-orange svg { stroke: #F57C00; fill: none; }
+  .si-blue svg { stroke: var(--blue); fill: none; }
+  .si-red svg { stroke: var(--red); fill: none; }
+  .si-orange-text { color: #F57C00; }
+  .si-blue-text { color: var(--blue); }
+  .si-red-text { color: var(--red); }
+
+  /* ─── LINE SELECT ─── */
+  #screen-line { background: var(--bg); }
+  .list-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .radio-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    border: 2px solid transparent;
+    padding: 16px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-user-select: none;
+  }
+  .radio-card.selected { border-color: var(--blue); background: var(--blue-light); }
+  .radio-card:active { transform: scale(0.99); }
+  .radio-circle {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s; background: #fff;
+  }
+  .radio-card.selected .radio-circle { border-color: var(--blue); background: var(--blue); }
+  .radio-inner { width: 12px; height: 12px; display: none; align-items: center; justify-content: center; }
+  .radio-card.selected .radio-inner { display: flex; }
+  .radio-label { font-size: 16px; font-weight: 500; }
+  .radio-card.selected .radio-label { color: var(--blue); font-weight: 600; }
+
+  /* ─── EQUIPMENT SELECT ─── */
+  #screen-equip { background: var(--bg); }
+  .equip-select-count {
+    margin: 12px 16px 4px;
+    font-size: 13px; color: var(--text-sub);
+  }
+  .equip-select-count span { color: var(--blue); font-weight: 700; }
+  .check-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    border: 2px solid transparent;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    -webkit-user-select: none;
+  }
+  .check-card.selected { border-color: var(--blue); background: var(--blue-light); }
+  .check-card:active { transform: scale(0.99); }
+  .check-box {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s; background: #fff;
+  }
+  .check-card.selected .check-box { border-color: var(--blue); background: var(--blue); }
+  .check-box svg { display: none; }
+  .check-card.selected .check-box svg { display: block; }
+  .check-label { font-size: 15px; font-weight: 500; }
+  .check-card.selected .check-label { color: var(--blue); font-weight: 600; }
+  .check-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .check-icon svg { stroke: var(--text-sub); fill: none; width: 18px; height: 18px; }
+  .check-card.selected .check-icon { background: rgba(47,107,255,0.12); }
+  .check-card.selected .check-icon svg { stroke: var(--blue); }
+
+  /* ─── BOTTOM ACTION BAR ─── */
+  .bottom-action {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 390px;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 12px 16px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    z-index: 100;
+  }
+  .btn-bottom-main {
+    width: 100%; background: var(--blue); color: #fff;
+    border: none; border-radius: 12px; padding: 16px;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    -webkit-user-select: none;
+  }
+  .btn-bottom-main:active { opacity: 0.85; transform: scale(0.99); }
+  .btn-bottom-main:disabled { background: #C0CFFF; cursor: default; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-bottom-sub {
+    flex: 1; background: var(--bg); color: var(--text);
+    border: 1.5px solid var(--border); border-radius: 12px; padding: 14px;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    transition: opacity 0.15s;
+    -webkit-user-select: none;
+  }
+  .btn-bottom-sub:active { opacity: 0.7; }
+  .pb-safe { height: 80px; }
+
+  /* ─── INSPECTION INPUT ─── */
+  #screen-inspect { background: var(--bg); }
+
+  .inspect-top-actions {
+    padding: 12px 16px 8px;
+    display: flex; gap: 8px;
+  }
+  .bulk-btn {
+    flex: 1; border: 1.5px solid var(--blue); color: var(--blue);
+    background: var(--card); border-radius: 10px;
+    padding: 10px 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    transition: background 0.15s;
+    -webkit-user-select: none;
+  }
+  .bulk-btn:active { background: var(--blue-light); }
+  .bulk-btn svg { stroke: var(--blue); fill: none; width: 14px; height: 14px; }
+
+  .selected-equip-chips {
+    padding: 14px 16px 10px;
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .chip {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 10px;
+    font-size: 12px; color: var(--text-sub);
+  }
+
+  .equip-section {
+    margin: 0 16px 12px;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    border: 2px solid transparent;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .equip-section.has-anomaly { border-color: var(--red); }
+
+  .equip-section-header {
+    padding: 12px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .equip-section-left { display: flex; align-items: center; gap: 10px; }
+  .equip-icon-sm { width: 32px; height: 32px; border-radius: 7px; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .equip-icon-sm svg { stroke: var(--text-sub); fill: none; width: 17px; height: 17px; }
+  .equip-name { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+  .equip-status-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+  }
+  .badge-anomaly { background: var(--red-light); color: var(--red); }
+  .badge-ok { background: var(--green-light); color: var(--green); }
+  .badge-pending { background: #F5F5F5; color: var(--text-sub); }
+
+  .all-ok-btn {
+    background: var(--blue-light); color: var(--blue);
+    border: 1px solid var(--blue-mid); border-radius: 8px;
+    padding: 6px 10px; font-size: 12px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    transition: background 0.15s;
+    -webkit-user-select: none;
+  }
+  .all-ok-btn:active { background: var(--blue-mid); }
+
+  .check-row {
+    padding: 0 14px;
+    display: flex; align-items: center;
+    min-height: 48px;
+    border-bottom: 1px solid #F3F3F3;
+  }
+  .check-row:last-child { border-bottom: none; }
+  .check-row-name { flex: 1; font-size: 14px; color: var(--text); }
+  .tri-btns { display: flex; gap: 6px; }
+  .tri-btn {
+    width: 40px; height: 36px; border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-size: 18px; font-weight: 500; color: var(--text-sub);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.13s;
+    -webkit-user-select: none;
+    flex-shrink: 0;
+  }
+  .tri-btn:active { transform: scale(0.93); }
+  .tri-btn.ok-selected  { background: var(--blue-light); border-color: var(--blue); color: var(--blue); font-weight: 700; }
+  .tri-btn.ng-selected  { background: var(--red-light);  border-color: var(--red);  color: var(--red);  font-weight: 700; }
+  .tri-btn.na-selected  { background: #F0F0F0; border-color: #BBBBBB; color: #777; font-weight: 600; }
+  .tri-btn.note-btn { font-size: 13px; color: var(--text-sub); }
+
+  /* ─── CONFIRM SCREEN ─── */
+  #screen-confirm { background: var(--bg); }
+  .confirm-section {
+    margin: 12px 16px 0;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  .confirm-section-header {
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .confirm-equip-name { font-size: 14px; font-weight: 600; }
+  .confirm-row {
+    padding: 11px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid #F5F5F5;
+    font-size: 14px;
+  }
+  .confirm-row:last-child { border-bottom: none; }
+  .confirm-row-name { color: var(--text); }
+  .result-ok { color: var(--blue); font-weight: 600; font-size: 16px; }
+  .result-ng { color: var(--red); font-weight: 700; font-size: 16px; }
+  .result-na { color: var(--text-small); font-weight: 500; font-size: 15px; }
+  .confirm-anomaly-row { background: var(--red-light); }
+  .confirm-anomaly-row .confirm-row-name { color: var(--red); font-weight: 500; }
+  .confirm-summary-bar {
+    margin: 12px 16px;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    box-shadow: var(--shadow-card);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .confirm-summary-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--red-light); display: flex; align-items: center; justify-content: center; }
+  .confirm-summary-icon svg { stroke: var(--red); fill: none; width: 18px; height: 18px; }
+  .confirm-summary-text { font-size: 13px; }
+  .confirm-summary-text strong { color: var(--red); }
+
+  /* ─── COMPLETE SCREEN ─── */
+  #screen-complete {
+    background: var(--blue);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 100vh;
+  }
+  .complete-icon { width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+  .complete-icon svg { stroke: #fff; fill: none; width: 52px; height: 52px; }
+  .complete-title { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .complete-sub { font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 40px; text-align: center; line-height: 1.6; }
+  .complete-meta {
+    background: rgba(255,255,255,0.15); border-radius: 12px; padding: 14px 24px;
+    margin-bottom: 40px; text-align: center;
+  }
+  .complete-meta-label { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
+  .complete-meta-val { font-size: 15px; color: #fff; font-weight: 600; }
+  .btn-complete-home {
+    width: 240px; background: #fff; color: var(--blue);
+    border: none; border-radius: 12px; padding: 16px;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    -webkit-user-select: none;
+    transition: opacity 0.15s;
+  }
+  .btn-complete-home:active { opacity: 0.85; }
 </style>
 </head>
 <body>
@@ -355,48 +759,34 @@
 
   <!-- ===== SCREEN 1: ROLE SELECT ===== -->
   <div class="screen active" id="screen-role">
-    <!-- Status bar -->
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-
-    <!-- Hero -->
     <div class="role-hero">
       <div class="role-hero-icon">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
           <rect width="80" height="80" rx="20" fill="#EEF4FF"/>
-          <!-- Clipboard body -->
           <rect x="20" y="22" width="34" height="42" rx="4" stroke="#2F6BFF" stroke-width="2.5" fill="none"/>
-          <!-- Clip at top -->
           <rect x="29" y="16" width="16" height="11" rx="3.5" stroke="#2F6BFF" stroke-width="2.5" fill="none"/>
-          <!-- Check mark -->
           <polyline points="27,43 33,50 47,35" stroke="#2F6BFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <!-- Bottom lines -->
           <line x1="27" y1="56" x2="47" y2="56" stroke="#2F6BFF" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </div>
       <h1>設備点検アプリ</h1>
       <p>ログインしてください</p>
     </div>
-
     <p class="role-section-label">あなたの役割を選択してください</p>
-
     <div class="role-cards">
-      <!-- Inspector Card -->
       <div class="role-card blue" onclick="gotoInspector()">
         <div class="role-icon-wrap blue">
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#2F6BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Dome -->
             <path d="M5.5 19 C5.5 12 9.8 7 15 7 C20.2 7 24.5 12 24.5 19"/>
-            <!-- Brim -->
             <line x1="3" y1="19" x2="27" y2="19"/>
-            <!-- Center vent -->
             <line x1="15" y1="7" x2="15" y2="19"/>
-            <!-- Chin strap -->
             <line x1="7.5" y1="19" x2="7.5" y2="22"/>
             <line x1="22.5" y1="19" x2="22.5" y2="22"/>
             <line x1="7.5" y1="22" x2="22.5" y2="22"/>
@@ -407,41 +797,28 @@
           <div class="role-card-desc">設備の点検・記録を<br>行います</div>
         </div>
         <div class="role-card-arrow blue">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/></svg>
         </div>
       </div>
-
-      <!-- Manager Card -->
       <div class="role-card red" onclick="gotoManager()">
         <div class="role-icon-wrap red">
           <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <!-- Head -->
             <circle cx="15" cy="10" r="5"/>
-            <!-- Shoulders -->
             <path d="M6 27 C6 21.5 9.8 19 15 19 C20.2 19 24 21.5 24 27"/>
-            <!-- Collar left -->
             <line x1="13" y1="19" x2="15" y2="22"/>
-            <!-- Collar right -->
             <line x1="17" y1="19" x2="15" y2="22"/>
-            <!-- Tie knot to tip -->
             <polyline points="14,22 13.5,26 15,24.5 16.5,26 16,22"/>
           </svg>
         </div>
         <div class="role-card-body">
-          <div class="role-card-title red">責任者</div>
+          <div class="role-card-title red">管理者</div>
           <div class="role-card-desc">点検の確認・承認や<br>各種設定を行います</div>
         </div>
         <div class="role-card-arrow red">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/></svg>
         </div>
       </div>
     </div>
-
-    <!-- Footer -->
     <div class="role-footer">
       <div class="role-footer-last">
         <div style="display:flex;flex-direction:column;gap:2px;">
@@ -458,7 +835,6 @@
 
   <!-- ===== SCREEN 2: INSPECTOR LOGIN ===== -->
   <div class="screen hidden" id="screen-inspector">
-    <!-- Status bar -->
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
@@ -466,28 +842,22 @@
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-
-    <!-- Nav -->
     <div class="nav-bar blue-accent">
       <div class="nav-back" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検者ログイン</span>
     </div>
-
     <div class="inspector-body">
-      <!-- Icon -->
       <div class="inspector-icon-wrap">
         <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
-          <path d="M4 24 C4 14 10.5 7 19 7 C27.5 7 34 14 34 24" fill="#2F6BFF" stroke="#2F6BFF" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M4 24 C4 14 10.5 7 19 7 C27.5 7 34 14 34 24" fill="#2F6BFF"/>
           <rect x="3" y="22" width="32" height="5" rx="2.5" fill="#2F6BFF"/>
           <rect x="14" y="4" width="10" height="6" rx="3" fill="#2F6BFF"/>
           <path d="M13 27 L10 34 L28 34 L25 27" fill="#2F6BFF" opacity="0.55"/>
         </svg>
       </div>
       <p class="inspector-subtitle">点検者を選択してください</p>
-
-      <!-- User grid -->
       <div class="user-grid">
         <button class="user-btn selected" onclick="selectUser(this)">佐藤 太郎</button>
         <button class="user-btn" onclick="selectUser(this)">鈴木 一郎</button>
@@ -499,8 +869,6 @@
           その他
         </button>
       </div>
-
-      <!-- Notice -->
       <div class="inspector-notice">
         <div class="inspector-notice-icon">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -509,12 +877,9 @@
             <circle cx="9" cy="5.5" r="1" fill="#2F6BFF"/>
           </svg>
         </div>
-        <span class="inspector-notice-text">
-          ご自身の名前がない場合は<br>「その他」から選択してください。
-        </span>
+        <span class="inspector-notice-text">ご自身の名前がない場合は<br>「その他」から選択してください。</span>
       </div>
-
-      <button class="btn-primary-blue" onclick="alert('ログイン成功（デモ）')">ログイン</button>
+      <button class="btn-primary-blue" onclick="doLogin()">ログイン</button>
     </div>
     <div class="safe-bottom"></div>
   </div>
@@ -522,7 +887,6 @@
 
   <!-- ===== SCREEN 3: MANAGER LOGIN ===== -->
   <div class="screen hidden" id="screen-manager">
-    <!-- Status bar -->
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
@@ -530,15 +894,12 @@
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-
-    <!-- Nav -->
     <div class="nav-bar red-accent">
       <div class="nav-back" onclick="goBack()">
         <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <span class="nav-title">責任者ログイン</span>
+      <span class="nav-title">管理者ログイン</span>
     </div>
-
     <div class="manager-body">
       <div class="manager-top">
         <div class="manager-icon-wrap">
@@ -548,15 +909,12 @@
             <path d="M17 23 L19 30 L21 23" fill="#C62828" opacity="0.8"/>
           </svg>
         </div>
-        <p class="manager-subtitle">責任者IDとパスワードを<br>入力してください</p>
+        <p class="manager-subtitle">管理者IDとパスワードを<br>入力してください</p>
       </div>
-
-      <!-- Form -->
       <div class="form-group">
-        <label class="form-label">責任者ID</label>
-        <input class="form-input" type="text" placeholder="IDを入力" autocomplete="username">
+        <label class="form-label">管理者ID</label>
+        <input class="form-input" id="admin-id-input" type="text" placeholder="IDを入力" autocomplete="username">
       </div>
-
       <div class="form-group">
         <label class="form-label">パスワード</label>
         <div class="pw-wrap">
@@ -569,9 +927,7 @@
           </button>
         </div>
       </div>
-
-      <button class="btn-primary-red" onclick="alert('ログイン（デモ）')">ログイン</button>
-
+      <button class="btn-primary-red" onclick="doLogin()">ログイン</button>
       <button class="btn-admin-warn" onclick="alert('管理者モード（デモ）')">
         <svg viewBox="0 0 24 24">
           <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -584,38 +940,337 @@
     <div class="safe-bottom"></div>
   </div>
 
+
+  <!-- ===== SCREEN 4: HOME ===== -->
+  <div class="screen hidden" id="screen-home">
+    <!-- Status bar (blue) -->
+    <div class="status-bar status-bar-white">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M22 11V13" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+    <!-- Blue header -->
+    <div class="home-header">
+      <div class="home-user-row">
+        <div class="home-avatar">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/></svg>
+        </div>
+        <div class="home-user-info">
+          <div class="home-user-name">佐藤 太郎 さん</div>
+
+        </div>
+        <button onclick="logout()" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;">ログアウト</button>
+
+      </div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="calendar-card">
+      <div class="cal-header">
+        <div class="cal-nav" onclick="changeMonth(-1)"><svg viewBox="0 0 16 16" stroke-width="2"><path d="M10 4l-4 4 4 4"/></svg></div>
+        <div class="cal-month" id="cal-month-label">2024年5月</div>
+        <div class="cal-nav" onclick="changeMonth(1)"><svg viewBox="0 0 16 16" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg></div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#ccc"></div>未実施</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--blue)"></div>完了</div>
+        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--red)"></div>異常あり</div>
+      </div>
+    </div>
+
+    <!-- Start button -->
+    <div class="start-btn-wrap">
+      <button class="start-btn" onclick="showScreen('screen-line')">
+        <div class="start-btn-left">
+          <div class="start-btn-icon">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="2" width="6" height="4" rx="1"/>
+              <path d="M5 6h14l-1 13H6L5 6z"/>
+              <polyline points="10,11 12,13 16,9"/>
+            </svg>
+          </div>
+          <span>本日の点検を開始する</span>
+        </div>
+        <div class="start-btn-arrow">
+          <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+      </button>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-card">
+      <div class="summary-title">点検サマリー（2024年5月）</div>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-icon si-gray">
+            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          </div>
+          <div class="summary-count" id="sum-pending">16</div>
+          <div class="summary-label">未実施</div>
+        </div>
+
+        <div class="summary-item">
+          <div class="summary-icon si-blue">
+            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke="var(--blue)"/><polyline points="8,12 11,15 16,9" stroke="var(--blue)"/></svg>
+          </div>
+          <div class="summary-count si-blue-text" id="sum-done">12</div>
+          <div class="summary-label">完了</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-icon si-red">
+            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke="var(--red)"/><path d="M12 8v4" stroke="var(--red)"/><path d="M12 16h.01" stroke="var(--red)"/></svg>
+          </div>
+          <div class="summary-count si-red-text" id="sum-anomaly">2</div>
+          <div class="summary-label">異常あり</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="safe-bottom"></div>
+  </div>
+
+
+  <!-- ===== SCREEN 5: LINE SELECT ===== -->
+  <div class="screen hidden" id="screen-line">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar blue-accent">
+      <div class="nav-back" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-title">ライン選択</span>
+    </div>
+
+    <div id="line-select-label" style="padding:16px 16px 8px;font-size:13px;color:var(--text-sub);">点検するラインを選択してください</div>
+    <div class="list-body">
+      <div class="radio-card selected" onclick="selectLine(this)">
+        <div class="radio-circle"><div class="radio-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="radio-label">ラインA</div>
+      </div>
+      <div class="radio-card" onclick="selectLine(this)">
+        <div class="radio-circle"><div class="radio-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="radio-label">ラインB</div>
+      </div>
+      <div class="radio-card" onclick="selectLine(this)">
+        <div class="radio-circle"><div class="radio-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="radio-label">ラインC</div>
+      </div>
+      <div class="radio-card" onclick="selectLine(this)">
+        <div class="radio-circle"><div class="radio-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="radio-label">ラインD</div>
+      </div>
+    </div>
+    <div class="pb-safe"></div>
+    <div class="bottom-action">
+      <button class="btn-bottom-main" onclick="showScreen('screen-equip')">次へ</button>
+    </div>
+  </div>
+
+
+  <!-- ===== SCREEN 6: EQUIP SELECT ===== -->
+  <div class="screen hidden" id="screen-equip">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar blue-accent">
+      <div class="nav-back" onclick="showScreen('screen-line')">
+        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-title">設備選択</span>
+    </div>
+
+    <div style="padding:16px 16px 4px;font-size:13px;color:var(--text-sub);">点検する設備を選択してください（複数選択可）</div>
+    <div class="equip-select-count"><span id="equip-count">6</span>件選択中</div>
+    <div class="list-body" id="equip-list">
+      <!-- Rendered by JS -->
+    </div>
+    <div class="pb-safe"></div>
+    <div class="bottom-action">
+      <button class="btn-bottom-main" id="start-inspect-btn" onclick="startInspection()">この設備で点検開始</button>
+    </div>
+  </div>
+
+
+  <!-- ===== SCREEN 7: INSPECTION INPUT ===== -->
+  <div class="screen hidden" id="screen-inspect">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar blue-accent">
+      <div class="nav-back" onclick="showScreen('screen-equip')">
+        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-title">点検入力</span>
+      <div class="nav-right" onclick="saveTemp()">一時保存</div>
+    </div>
+
+    <!-- Selected chips -->
+    <div class="selected-equip-chips" id="inspect-chips"></div>
+
+    <!-- Bulk actions -->
+    <div class="inspect-top-actions">
+      <button class="bulk-btn" onclick="bulkSetAllOthersOk()">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
+        他をすべて正常にする
+      </button>
+      <button class="bulk-btn" onclick="bulkSetUnenteredOk()">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
+        未入力をすべて正常にする
+      </button>
+    </div>
+
+    <!-- Equipment sections -->
+    <div id="inspect-sections"></div>
+
+    <div class="pb-safe"></div>
+    <div class="bottom-action">
+      <div class="btn-row">
+        <button class="btn-bottom-sub" onclick="showScreen('screen-equip')">未入力を確認</button>
+        <button class="btn-bottom-main" style="flex:2;" onclick="goToConfirm()">点検結果の確認へ</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== SCREEN 8: CONFIRM ===== -->
+  <div class="screen hidden" id="screen-confirm">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar blue-accent">
+      <div class="nav-back" onclick="showScreen('screen-inspect')">
+        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-title">点検結果の確認</span>
+    </div>
+
+    <!-- Selected chips -->
+    <div class="selected-equip-chips" id="confirm-chips"></div>
+
+    <div id="confirm-content"></div>
+
+    <div class="pb-safe"></div>
+    <div class="bottom-action">
+      <div class="btn-row">
+        <button class="btn-bottom-sub" onclick="showScreen('screen-inspect')">修正する</button>
+        <button class="btn-bottom-main" style="flex:2;" onclick="saveAndComplete()">点検を完了する</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== SCREEN 9: COMPLETE ===== -->
+  <div class="screen hidden" id="screen-complete">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;background:var(--blue);">
+      <div class="complete-icon">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
+      </div>
+      <div class="complete-title">点検が完了しました</div>
+      <div class="complete-sub">お疲れさまでした。<br>入力内容を送信しました。</div>
+      <div class="complete-meta">
+        <div class="complete-meta-label">完了日時</div>
+        <div class="complete-meta-val">2024年5月20日　09:41</div>
+      </div>
+      <button class="btn-complete-home" onclick="goHome()">ホームに戻る</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
+  /* ─── DATA ─── */
+  const EQUIP_DATA = [
+    { id:'A-101', name:'空調機', items:['異音・振動の有無','油漏れの有無','フィルターの状態','圧力の確認'] },
+    { id:'A-102', name:'ポンプ', items:['水漏れの有無','異音・振動の有無','運転状態の確認'] },
+    { id:'A-103', name:'送風機', items:['異音・振動の有無','ベルトの状態','回転方向の確認'] },
+    { id:'A-104', name:'冷却塔', items:['水漏れの有無','ファンの状態','水位の確認'] },
+    { id:'A-105', name:'コンプレッサー', items:['異音・振動の有無','油漏れの有無','圧力の確認'] },
+    { id:'A-106', name:'ボイラー', items:['水漏れの有無','圧力の確認','安全弁の確認'] },
+    { id:'A-107', name:'受電設備', items:['異音・振動の有無','外観の異常','警報の確認'] },
+  ];
+
+  // state[equipId][itemIndex] = 'ok' | 'ng' | 'na' | null
+  let state = {};
+  let selectedEquips = EQUIP_DATA.slice(0, 6).map(e => e.id); // default first 6
+
+  /* ─── SCREEN NAVIGATION ─── */
   let currentScreen = 'screen-role';
 
   function showScreen(id) {
     const prev = document.getElementById(currentScreen);
     const next = document.getElementById(id);
 
-    if (id === 'screen-role') {
-      // Going back
-      prev.classList.remove('active');
-      prev.classList.add('hidden');
-      next.classList.remove('slide-out-left', 'hidden');
-      next.classList.add('active');
-    } else {
-      // Going forward
-      prev.classList.remove('active');
-      prev.classList.add('slide-out-left');
-      next.classList.remove('hidden', 'slide-out-left');
-      next.classList.add('active');
-    }
+    const isBack =
+      (id === 'screen-role') ||
+      (id === 'screen-home') ||
+      (id === 'screen-inspect' && currentScreen === 'screen-confirm') ||
+      (id === 'screen-equip' && currentScreen === 'screen-inspect') ||
+      (id === 'screen-line' && currentScreen === 'screen-equip');
+
+    // Un-settle prev so it's absolute again for animation
+    prev.classList.remove('settled');
+    prev.classList.remove('active');
+    prev.classList.add(isBack ? 'hidden' : 'slide-out-left');
+
+    next.style.position = 'absolute';
+    next.classList.remove('hidden', 'slide-out-left', 'settled');
+    next.classList.add('active');
+    window.scrollTo(0, 0);
     currentScreen = id;
+
+    // After transition, make active screen relative so page can scroll
+    clearTimeout(window._settleTimer);
+    window._settleTimer = setTimeout(() => {
+      next.style.position = '';
+      next.classList.add('settled');
+      window.scrollTo(0, 0);
+    }, 350);
   }
 
+  /* ─── LOGIN SCREENS ─── */
   function gotoInspector() { showScreen('screen-inspector'); }
-  function gotoManager()   { showScreen('screen-manager');   }
-  function goBack()        { showScreen('screen-role');       }
+  function gotoManager()   { showScreen('screen-manager'); }
+  function goBack()        { showScreen('screen-role'); }
 
   function selectUser(btn) {
     document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+  }
+
+  function doLogin() {
+    const idInput = document.getElementById('admin-id-input');
+    const pwInput = document.getElementById('pw-input');
+    if (!idInput || !pwInput) return;
+    if (idInput.value !== '1234' || pwInput.value !== '1234') {
+      alert('管理者IDまたはパスワードが違います');
+      return;
+    }
+    const selectedBtn = document.querySelector('.user-btn.selected');
+    const userName = selectedBtn ? selectedBtn.textContent.trim() : '佐藤 太郎';
+    localStorage.setItem('loggedInUser', userName);
+    document.querySelector('.home-user-name').textContent = userName + ' さん';
+    buildCalendar();
+    showScreen('screen-home');
   }
 
   function togglePw() {
@@ -629,6 +1284,530 @@
       icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
     }
   }
+
+  /* ─── CALENDAR ─── */
+  let calYear = 2024, calMonth = 4; // 0-indexed (4=May)
+  let selectedCalDay = 20;
+
+  const CAL_DONE = {
+    '2024-3': [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26],
+    '2024-4': [1,2,3,4,7,8,9,10,11,14,15,16,17,18],
+    '2024-5': [1,2,3,5,6,9,10],
+  };
+  const CAL_ANOMALY = {
+    '2024-3': [12,22],
+    '2024-4': [10,15],
+    '2024-5': [3],
+  };
+  const PUBLIC_HOLIDAYS = {
+    '2024-3': [20], // 春分の日
+    '2024-4': [3,4,5,6], // 憲法記念日・みどりの日・こどもの日・振替
+    '2024-5': [],
+  };
+
+  function getWeekends(year, month) {
+    const days = new Date(year, month + 1, 0).getDate();
+    const weekends = [];
+    for (let d = 1; d <= days; d++) {
+      const dow = new Date(year, month, d).getDay();
+      if (dow === 0 || dow === 6) weekends.push(d);
+    }
+    return weekends;
+  }
+
+  function changeMonth(dir) {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    if (calMonth < 0)  { calMonth = 11; calYear--; }
+    selectedCalDay = null;
+    buildCalendar();
+  }
+
+  function buildCalendar() {
+    const grid = document.getElementById('cal-grid');
+    const key = `${calYear}-${calMonth}`;
+    const totalDays = new Date(calYear, calMonth + 1, 0).getDate();
+    const firstDow  = new Date(calYear, calMonth, 1).getDay();
+    const prevMonthDays = new Date(calYear, calMonth, 0).getDate();
+    const now = new Date();
+    const isCurrentMonth = now.getFullYear() === calYear && now.getMonth() === calMonth;
+    const todayDay = isCurrentMonth ? now.getDate() : -1;
+
+    const done    = CAL_DONE[key]    || [];
+    const anomaly = CAL_ANOMALY[key] || [];
+    const pubHols = PUBLIC_HOLIDAYS[key] || [];
+    const weekends = getWeekends(calYear, calMonth);
+    const holidays = [...new Set([...weekends, ...pubHols])];
+
+    const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    const dows = ['日','月','火','水','木','金','土'];
+    grid.innerHTML = '';
+    dows.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'cal-dow'; el.textContent = d; grid.appendChild(el);
+    });
+
+    for (let i = firstDow - 1; i >= 0; i--) {
+      const el = document.createElement('div');
+      el.className = 'cal-day other-month';
+      el.textContent = prevMonthDays - i;
+      grid.appendChild(el);
+    }
+
+    for (let d = 1; d <= totalDays; d++) {
+      const el = document.createElement('div');
+      el.dataset.day = d;
+      const isHoliday = holidays.includes(d);
+
+      if (d === todayDay) {
+        el.className = 'cal-day today'; el.textContent = d;
+        el.onclick = () => selectCalDay(el, d);
+      } else {
+        el.className = 'cal-day'; el.textContent = d;
+        if (isHoliday) {
+          el.classList.add('holiday');
+        } else if (anomaly.includes(d)) {
+          el.classList.add('anomaly');
+        } else if (done.includes(d)) {
+          el.classList.add('done');
+        }
+        if (!isHoliday) el.onclick = () => selectCalDay(el, d);
+      }
+      if (d === selectedCalDay) el.classList.add('selected-day');
+      grid.appendChild(el);
+    }
+
+    document.getElementById('cal-month-label').textContent = `${calYear}年${monthNames[calMonth]}`;
+
+    const doneCount    = done.filter(d => !anomaly.includes(d) && !holidays.includes(d)).length;
+    const anomalyCount = anomaly.filter(d => !holidays.includes(d)).length;
+    const workDays     = totalDays - holidays.length;
+    const pendingCount = Math.max(0, workDays - doneCount - anomalyCount);
+    document.getElementById('sum-pending').textContent = pendingCount;
+    document.getElementById('sum-done').textContent    = doneCount;
+    document.getElementById('sum-anomaly').textContent = anomalyCount;
+    document.querySelector('.summary-title').textContent = `点検サマリー（${calYear}年${monthNames[calMonth]}）`;
+  }
+
+  function selectCalDay(el, d) {
+    document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected-day'));
+    el.classList.add('selected-day');
+    selectedCalDay = d;
+    const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.2s;white-space:nowrap;';
+    toast.textContent = `${calYear}年${monthNames[calMonth]}${d}日の点検`;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => { toast.style.opacity = '1'; });
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => { toast.remove(); showScreen('screen-line'); }, 200);
+    }, 700);
+  }
+
+  /* ─── LINE SELECT ─── */
+  function selectLine(card) {
+    card.classList.toggle('selected');
+    const count = document.querySelectorAll('#screen-line .radio-card.selected').length;
+    const btn = document.querySelector('#screen-line .btn-bottom-main');
+    btn.disabled = count === 0;
+    btn.textContent = count > 0 ? `次へ（${count}ライン選択中）` : '次へ';
+    const label = document.getElementById('line-select-label');
+    if (label) label.textContent = count > 0 ? `${count}件選択中` : '点検するラインを選択してください';
+  }
+
+  /* ─── EQUIP SELECT ─── */
+  function buildEquipList() {
+    const list = document.getElementById('equip-list');
+    list.innerHTML = '';
+    EQUIP_DATA.forEach(eq => {
+      const isSelected = selectedEquips.includes(eq.id);
+      const card = document.createElement('div');
+      card.className = 'check-card' + (isSelected ? ' selected' : '');
+      card.dataset.id = eq.id;
+      card.innerHTML = `
+        <div class="check-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <div class="check-label">${eq.id}　${eq.name}</div>
+        <div class="check-box" style="margin-left:auto;">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      `;
+      card.onclick = () => toggleEquip(card, eq.id);
+      list.appendChild(card);
+    });
+    updateEquipCount();
+  }
+
+  function toggleEquip(card, id) {
+    card.classList.toggle('selected');
+    if (selectedEquips.includes(id)) {
+      selectedEquips = selectedEquips.filter(e => e !== id);
+    } else {
+      selectedEquips.push(id);
+    }
+    updateEquipCount();
+    const btn = document.getElementById('start-inspect-btn');
+    btn.disabled = selectedEquips.length === 0;
+  }
+
+  function updateEquipCount() {
+    document.getElementById('equip-count').textContent = selectedEquips.length;
+  }
+
+  /* ─── INSPECTION INPUT ─── */
+  function startInspection() {
+    if (selectedEquips.length === 0) return;
+    // Init state
+    state = {};
+    EQUIP_DATA.forEach(eq => {
+      if (selectedEquips.includes(eq.id)) {
+        state[eq.id] = new Array(eq.items.length).fill(null);
+      }
+    });
+    buildInspectChips();
+    buildInspectSections();
+    showScreen('screen-inspect');
+  }
+
+  function buildInspectChips() {
+    const chips = document.getElementById('inspect-chips');
+    chips.innerHTML = '';
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.textContent = `${eq.id} ${eq.name}`;
+      chips.appendChild(chip);
+    });
+  }
+
+  function buildInspectSections() {
+    const container = document.getElementById('inspect-sections');
+    container.innerHTML = '';
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      container.appendChild(buildSection(eq));
+    });
+  }
+
+  function buildSection(eq) {
+    const section = document.createElement('div');
+    section.className = 'equip-section';
+    section.id = `section-${eq.id}`;
+    section.innerHTML = `
+      <div class="equip-section-header">
+        <div class="equip-section-left">
+          <div class="equip-icon-sm">
+            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div>
+            <div class="equip-name">${eq.id}　${eq.name}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="equip-status-badge badge-pending" id="badge-${eq.id}">未入力</span>
+          <button class="all-ok-btn" onclick="setAllOk('${eq.id}')">この設備をすべて正常にする</button>
+        </div>
+      </div>
+    `;
+    eq.items.forEach((item, i) => {
+      const row = document.createElement('div');
+      row.className = 'check-row';
+      row.innerHTML = `
+        <span class="check-row-name">${item}</span>
+        <div class="tri-btns">
+          <button class="tri-btn" onclick="setVal('${eq.id}',${i},'ok',this)">○</button>
+          <button class="tri-btn" onclick="setVal('${eq.id}',${i},'ng',this)">✕</button>
+          <button class="tri-btn" onclick="setVal('${eq.id}',${i},'na',this)">ー</button>
+        </div>
+      `;
+      section.appendChild(row);
+    });
+    return section;
+  }
+
+  function setVal(equipId, itemIdx, val, btn) {
+    // Clear sibling buttons
+    const triGroup = btn.parentElement;
+    triGroup.querySelectorAll('.tri-btn').forEach(b => {
+      b.classList.remove('ok-selected','ng-selected','na-selected');
+    });
+    if (val === 'ok') btn.classList.add('ok-selected');
+    if (val === 'ng') btn.classList.add('ng-selected');
+    if (val === 'na') btn.classList.add('na-selected');
+
+    state[equipId][itemIdx] = val;
+    updateSectionStatus(equipId);
+  }
+
+  function updateSectionStatus(equipId) {
+    const eq = EQUIP_DATA.find(e => e.id === equipId);
+    const vals = state[equipId];
+    const section = document.getElementById(`section-${equipId}`);
+    const badge = document.getElementById(`badge-${equipId}`);
+
+    const hasNg = vals.some(v => v === 'ng');
+    const allFilled = vals.every(v => v !== null);
+    const anyFilled = vals.some(v => v !== null);
+
+    section.classList.remove('has-anomaly');
+    badge.classList.remove('badge-anomaly','badge-ok','badge-pending');
+
+    if (hasNg) {
+      section.classList.add('has-anomaly');
+      badge.classList.add('badge-anomaly');
+      badge.textContent = '異常あり';
+    } else if (allFilled) {
+      badge.classList.add('badge-ok');
+      badge.textContent = '正常';
+    } else {
+      badge.classList.add('badge-pending');
+      badge.textContent = anyFilled ? '入力中' : '未入力';
+    }
+  }
+
+  function setAllOk(equipId) {
+    const eq = EQUIP_DATA.find(e => e.id === equipId);
+    state[equipId] = new Array(eq.items.length).fill('ok');
+    // Re-render section
+    const old = document.getElementById(`section-${equipId}`);
+    const newSec = buildSection(eq);
+    // Apply ok-selected state
+    const rows = newSec.querySelectorAll('.check-row');
+    rows.forEach((row, i) => {
+      row.querySelectorAll('.tri-btn')[0].classList.add('ok-selected');
+    });
+    old.replaceWith(newSec);
+    updateSectionStatus(equipId);
+  }
+
+  function bulkSetAllOthersOk() {
+    // Sets all items that are NOT 'ng' to 'ok'
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      state[id] = state[id].map(v => v === 'ng' ? 'ng' : 'ok');
+    });
+    buildInspectSections();
+    // Re-apply existing state visually
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      const section = document.getElementById(`section-${id}`);
+      const rows = section.querySelectorAll('.check-row');
+      rows.forEach((row, i) => {
+        const btns = row.querySelectorAll('.tri-btn');
+        btns.forEach(b => b.classList.remove('ok-selected','ng-selected','na-selected'));
+        const v = state[id][i];
+        if (v === 'ok') btns[0].classList.add('ok-selected');
+        if (v === 'ng') btns[1].classList.add('ng-selected');
+        if (v === 'na') btns[2].classList.add('na-selected');
+      });
+      updateSectionStatus(id);
+    });
+  }
+
+  function bulkSetUnenteredOk() {
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      state[id] = state[id].map(v => v === null ? 'ok' : v);
+    });
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      const section = document.getElementById(`section-${id}`);
+      const rows = section.querySelectorAll('.check-row');
+      rows.forEach((row, i) => {
+        const btns = row.querySelectorAll('.tri-btn');
+        if (state[id][i] === 'ok' && !btns[0].classList.contains('ok-selected')) {
+          btns.forEach(b => b.classList.remove('ok-selected','ng-selected','na-selected'));
+          btns[0].classList.add('ok-selected');
+        }
+      });
+      updateSectionStatus(id);
+    });
+  }
+
+  function saveTemp() {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.2s;';
+    toast.textContent = '一時保存しました';
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => { toast.style.opacity = '1'; });
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 200); }, 1500);
+  }
+
+  /* ─── CONFIRM ─── */
+  function goToConfirm() {
+    buildConfirmChips();
+    buildConfirmContent();
+    showScreen('screen-confirm');
+  }
+
+  function buildConfirmChips() {
+    const chips = document.getElementById('confirm-chips');
+    chips.innerHTML = '';
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.textContent = `${eq.id} ${eq.name}`;
+      chips.appendChild(chip);
+    });
+  }
+
+  function buildConfirmContent() {
+    const content = document.getElementById('confirm-content');
+    content.innerHTML = '';
+
+    let totalNg = 0;
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      const vals = state[id];
+      const ngCount = vals.filter(v => v === 'ng').length;
+      totalNg += ngCount;
+
+      const sec = document.createElement('div');
+      sec.className = 'confirm-section';
+
+      let headerBg = ngCount > 0 ? 'background:var(--red-light);' : 'background:var(--bg);';
+      sec.innerHTML = `
+        <div class="confirm-section-header" style="${headerBg}">
+          <div class="equip-icon-sm">
+            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="confirm-equip-name" style="${ngCount > 0 ? 'color:var(--red);' : ''}">${eq.id}　${eq.name}</div>
+          <span class="equip-status-badge ${ngCount > 0 ? 'badge-anomaly' : 'badge-ok'}" style="margin-left:auto;">${ngCount > 0 ? '⚠ 異常あり' : '✓ 正常'}</span>
+        </div>
+      `;
+
+      eq.items.forEach((item, i) => {
+        const v = vals[i];
+        const row = document.createElement('div');
+        row.className = 'confirm-row' + (v === 'ng' ? ' confirm-anomaly-row' : '');
+        let resultHtml = '';
+        if (v === 'ok') resultHtml = '<span class="result-ok">○</span>';
+        else if (v === 'ng') resultHtml = '<span class="result-ng">✕</span>';
+        else if (v === 'na') resultHtml = '<span class="result-na">ー</span>';
+        else resultHtml = '<span class="result-na" style="color:#ccc;">―</span>';
+        row.innerHTML = `<span class="confirm-row-name">${item}</span>${resultHtml}`;
+        sec.appendChild(row);
+      });
+
+      content.appendChild(sec);
+    });
+
+    // Summary bar
+    if (totalNg > 0) {
+      const bar = document.createElement('div');
+      bar.className = 'confirm-summary-bar';
+      bar.innerHTML = `
+        <div class="confirm-summary-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+        </div>
+        <div class="confirm-summary-text">異常項目が <strong>${totalNg}件</strong> あります。内容を確認してください。</div>
+      `;
+      content.insertBefore(bar, content.firstChild);
+    }
+
+    const spacer = document.createElement('div');
+    spacer.className = 'pb-safe';
+    content.appendChild(spacer);
+  }
+
+  /* ─── SAVE & COMPLETE ─── */
+  function saveAndComplete() {
+    // Build record for this inspection
+    const now = new Date();
+    const hasAnomaly = selectedEquips.some(id => state[id] && state[id].some(v => v === 'ng'));
+    const record = {
+      year: calYear,
+      month: calMonth,
+      day: selectedCalDay || now.getDate(),
+      anomaly: hasAnomaly,
+      equips: selectedEquips,
+      state: JSON.parse(JSON.stringify(state)),
+      completedAt: now.toISOString(),
+    };
+
+    // Save to localStorage
+    const key = 'inspections';
+    let all = [];
+    try { all = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+    // Remove existing record for same day if any
+    all = all.filter(r => !(r.year === record.year && r.month === record.month && r.day === record.day));
+    all.push(record);
+    localStorage.setItem(key, JSON.stringify(all));
+
+    // Update in-memory calendar data
+    const mkey = `${record.year}-${record.month}`;
+    if (!CAL_DONE[mkey]) CAL_DONE[mkey] = [];
+    if (!CAL_ANOMALY[mkey]) CAL_ANOMALY[mkey] = [];
+    // Remove day from both lists first
+    CAL_DONE[mkey] = CAL_DONE[mkey].filter(d => d !== record.day);
+    CAL_ANOMALY[mkey] = CAL_ANOMALY[mkey].filter(d => d !== record.day);
+    // Add to appropriate list
+    if (hasAnomaly) CAL_ANOMALY[mkey].push(record.day);
+    else CAL_DONE[mkey].push(record.day);
+
+    showScreen('screen-complete');
+  }
+
+  /* ─── LOAD SAVED INSPECTIONS INTO CALENDAR DATA ─── */
+  function loadSavedInspections() {
+    let all = [];
+    try { all = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
+    all.forEach(r => {
+      const mkey = `${r.year}-${r.month}`;
+      if (!CAL_DONE[mkey]) CAL_DONE[mkey] = [];
+      if (!CAL_ANOMALY[mkey]) CAL_ANOMALY[mkey] = [];
+      CAL_DONE[mkey] = CAL_DONE[mkey].filter(d => d !== r.day);
+      CAL_ANOMALY[mkey] = CAL_ANOMALY[mkey].filter(d => d !== r.day);
+      if (r.anomaly) CAL_ANOMALY[mkey].push(r.day);
+      else CAL_DONE[mkey].push(r.day);
+    });
+  }
+
+  /* ─── GO HOME ─── */
+  function goHome() {
+    state = {};
+    selectedEquips = EQUIP_DATA.slice(0, 6).map(e => e.id);
+    buildCalendar(); // Refresh calendar with latest data
+    showScreen('screen-home');
+  }
+
+  function logout() {
+    localStorage.removeItem('loggedInUser');
+    showScreen('screen-role');
+  }
+
+  /* ─── INIT ─── */
+  (function init() {
+    loadSavedInspections(); // Load persisted inspection results first
+    buildEquipList();
+    const savedUser = localStorage.getItem('loggedInUser');
+    if (savedUser) {
+      document.querySelector('.home-user-name').textContent = savedUser + ' さん';
+      document.querySelectorAll('.user-btn').forEach(b => {
+        b.classList.remove('selected');
+        if (b.textContent.trim() === savedUser) b.classList.add('selected');
+      });
+      buildCalendar();
+      const role = document.getElementById('screen-role');
+      const home = document.getElementById('screen-home');
+      role.classList.remove('active');
+      role.classList.add('hidden');
+      home.classList.remove('hidden', 'slide-out-left');
+      home.classList.add('active');
+      setTimeout(() => home.classList.add('settled'), 350);
+      currentScreen = 'screen-home';
+    }
+  })();
 </script>
 </body>
 </html>
