@@ -786,7 +786,7 @@
     font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit;
   }
   .adm-tabs-bar {
-    display: grid; grid-template-columns: repeat(4, 1fr);
+    display: grid; grid-template-columns: repeat(3, 1fr);
     background: #fff; border-bottom: 2px solid var(--border);
     position: sticky; top: 50px; z-index: 9;
   }
@@ -797,6 +797,19 @@
     -webkit-user-select: none;
   }
   .adm-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 700; }
+  .adm-subtabs-bar {
+    display: none; grid-template-columns: repeat(4, 1fr);
+    background: #F0F2F5; border-bottom: 1px solid var(--border);
+    position: sticky; top: 94px; z-index: 8;
+  }
+  .adm-subtabs-bar.visible { display: grid; }
+  .adm-subtab {
+    padding: 10px 2px; font-size: 11px; font-weight: 500; color: var(--text-sub);
+    background: none; border: none; border-bottom: 2px solid transparent;
+    cursor: pointer; transition: all 0.15s; font-family: inherit; margin-bottom: -1px;
+    -webkit-user-select: none;
+  }
+  .adm-subtab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 700; background: #fff; }
   .adm-panel { padding: 16px; }
   .adm-section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .adm-section-title { font-size: 15px; font-weight: 700; color: var(--text); }
@@ -1121,6 +1134,297 @@
   }
   .inspect-date-banner svg { stroke: var(--blue); fill: none; width: 15px; height: 15px; flex-shrink: 0; }
 </style>
+
+<!-- ===== DASHBOARD & APPROVAL: STYLES ===== -->
+<style>
+  /* ── Full-page overlay screens (same pattern as #screen-admin) ── */
+  #screen-dashboard,
+  #screen-approval {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: var(--bg);
+    z-index: 450;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .da-wrap { max-width: 540px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
+
+  /* ── Header bar ── */
+  .da-hdr {
+    background: var(--blue);
+    padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+    gap: 10px;
+  }
+  .da-hdr-title {
+    font-size: 16px; font-weight: 700; color: #fff;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .da-hdr-title svg { width: 20px; height: 20px; stroke: #fff; fill: none; flex-shrink: 0; }
+  .da-hdr-actions { display: flex; gap: 8px; align-items: center; }
+  .da-tab-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; border-radius: 8px;
+    padding: 6px 12px; font-size: 12px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; font-family: inherit;
+    transition: background 0.15s;
+  }
+  .da-tab-btn:active { background: rgba(255,255,255,0.28); }
+  .da-tab-btn.current { background: rgba(255,255,255,0.30); border-color: rgba(255,255,255,0.55); }
+  .da-close-btn {
+    background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+    color: #fff; border-radius: 8px; padding: 6px 12px;
+    font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit;
+  }
+
+  .da-body { padding: 16px; }
+
+  /* ── Summary Cards ── */
+  .da-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .da-summary-card {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    padding: 16px 14px 14px;
+    display: flex; flex-direction: column; gap: 4px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .da-summary-card:active { transform: scale(0.97); }
+  .da-summary-card.anomaly { border-color: var(--red); background: var(--red-light); }
+  .da-summary-card-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 6px;
+  }
+  .da-summary-card-icon svg { width: 18px; height: 18px; }
+  .da-summary-card-icon.gray   { background: #F0F0F0; }
+  .da-summary-card-icon.gray svg   { stroke: var(--text-sub); fill: none; }
+  .da-summary-card-icon.orange { background: #FFF3E0; }
+  .da-summary-card-icon.orange svg { stroke: #F57C00; fill: none; }
+  .da-summary-card-icon.blue   { background: var(--blue-light); }
+  .da-summary-card-icon.blue svg   { stroke: var(--blue); fill: none; }
+  .da-summary-card-icon.red    { background: var(--red-light); }
+  .da-summary-card-icon.red svg    { stroke: var(--red); fill: none; }
+  .da-summary-card-count {
+    font-size: 28px; font-weight: 800; letter-spacing: -1px; line-height: 1;
+  }
+  .da-summary-card-count.gray   { color: var(--text-sub); }
+  .da-summary-card-count.orange { color: #F57C00; }
+  .da-summary-card-count.blue   { color: var(--blue); }
+  .da-summary-card-count.red    { color: var(--red); }
+  .da-summary-card-label {
+    font-size: 12px; color: var(--text-sub); font-weight: 500;
+  }
+  .da-summary-card.anomaly .da-summary-card-label { color: #c0392b; }
+
+  /* ── Section title ── */
+  .da-section-title {
+    font-size: 14px; font-weight: 700; color: var(--text);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .da-section-title svg { width: 15px; height: 15px; stroke: var(--blue); fill: none; }
+
+  /* ── Line Progress ── */
+  .da-lines-card {
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .da-line-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #F5F5F5;
+  }
+  .da-line-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .da-line-name { font-size: 13px; font-weight: 600; color: var(--text); width: 56px; flex-shrink: 0; }
+  .da-line-bar-wrap { flex: 1; height: 10px; background: #F0F0F0; border-radius: 99px; overflow: hidden; }
+  .da-line-bar-fill {
+    height: 100%; border-radius: 99px; background: var(--blue);
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+  }
+  .da-line-bar-fill.complete { background: #2E7D32; }
+  .da-line-bar-fill.warning  { background: #F57C00; }
+  .da-line-pct { font-size: 12px; font-weight: 700; color: var(--text-sub); width: 34px; text-align: right; flex-shrink: 0; }
+
+  /* ── Anomaly Cards ── */
+  .da-anomaly-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .da-anomaly-card {
+    background: var(--card);
+    border: 2px solid var(--red);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(229,57,53,0.12);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .da-anomaly-card:active { transform: scale(0.98); box-shadow: 0 1px 4px rgba(229,57,53,0.1); }
+  .da-anomaly-icon {
+    width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+    background: var(--red-light);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .da-anomaly-icon svg { width: 20px; height: 20px; stroke: var(--red); fill: none; }
+  .da-anomaly-body { flex: 1; min-width: 0; }
+  .da-anomaly-id { font-size: 11px; color: var(--red); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .da-anomaly-name { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .da-anomaly-detail {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--red); font-weight: 500;
+  }
+  .da-anomaly-badge {
+    background: var(--red); color: #fff;
+    border-radius: 6px; padding: 2px 8px;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  .da-anomaly-arrow { margin-left: auto; padding-top: 10px; }
+  .da-anomaly-arrow svg { width: 18px; height: 18px; stroke: var(--red); fill: none; }
+
+  /* ── Empty state ── */
+  .da-empty {
+    text-align: center; padding: 32px 20px;
+    background: var(--card); border-radius: 12px; box-shadow: var(--shadow-card);
+  }
+  .da-empty svg { width: 48px; height: 48px; stroke: #C8D6FF; fill: none; margin-bottom: 12px; }
+  .da-empty-text { font-size: 14px; color: var(--text-sub); }
+
+  /* ── Refresh date ── */
+  .da-refresh-note {
+    text-align: center; font-size: 11px; color: var(--text-small);
+    padding: 8px 0 4px;
+  }
+
+  /* ============================================
+     APPROVAL SCREEN
+     ============================================ */
+  .apr-body { padding: 16px; }
+
+  .apr-pending-count {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-mid);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px; color: var(--blue); font-weight: 600;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .apr-pending-count svg { stroke: var(--blue); fill: none; width: 16px; height: 16px; flex-shrink: 0; }
+  .apr-count-num { font-size: 18px; font-weight: 800; margin-right: 2px; }
+
+  .apr-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .apr-card {
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+  }
+  .apr-card.anomaly-card { border-color: var(--red-mid); }
+  .apr-card.approved-card { border-color: #A5D6A7; opacity: 0.7; }
+  .apr-card.returned-card { border-color: #FFCC80; opacity: 0.8; }
+
+  .apr-card-header {
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .apr-equip-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--blue-light); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .apr-equip-icon svg { width: 22px; height: 22px; stroke: var(--blue); fill: none; }
+  .apr-equip-icon.red-icon { background: var(--red-light); }
+  .apr-equip-icon.red-icon svg { stroke: var(--red); }
+
+  .apr-card-info { flex: 1; min-width: 0; }
+  .apr-equip-id { font-size: 11px; color: var(--text-sub); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .apr-equip-name { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .apr-meta { display: flex; flex-direction: column; gap: 3px; }
+  .apr-meta-row { font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 5px; }
+  .apr-meta-row svg { width: 13px; height: 13px; stroke: var(--text-sub); fill: none; flex-shrink: 0; }
+
+  .apr-anomaly-banner {
+    margin: 12px 16px 0;
+    background: var(--red-light);
+    border: 1px solid var(--red-mid);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; color: var(--red);
+  }
+  .apr-anomaly-banner svg { stroke: var(--red); fill: none; width: 16px; height: 16px; flex-shrink: 0; }
+
+  .apr-status-badge {
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .apr-status-badge.pending  { background: #FFF8E1; color: #F57C00; border: 1px solid #FFD180; }
+  .apr-status-badge.approved { background: var(--green-light); color: var(--green); }
+  .apr-status-badge.returned { background: #FFF3E0; color: #E65100; }
+
+  .apr-card-actions {
+    padding: 12px 16px;
+    display: flex; gap: 10px;
+  }
+  .apr-btn {
+    flex: 1; padding: 13px 8px;
+    border-radius: 12px; font-size: 14px; font-weight: 700;
+    cursor: pointer; border: none; font-family: inherit;
+    min-height: 44px;
+    transition: opacity 0.15s, transform 0.12s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .apr-btn:active { opacity: 0.82; transform: scale(0.98); }
+  .apr-btn.approve { background: var(--blue); color: #fff; }
+  .apr-btn.return  { background: var(--red-light); color: var(--red); border: 1.5px solid var(--red-mid); }
+  .apr-btn svg { width: 16px; height: 16px; }
+  .apr-btn.approve svg { stroke: #fff; fill: none; }
+  .apr-btn.return  svg { stroke: var(--red); fill: none; }
+
+  .apr-card-done-row {
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600;
+  }
+  .apr-card-done-row svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .apr-card-done-row.approved { color: var(--green); }
+  .apr-card-done-row.approved svg { stroke: var(--green); fill: none; }
+  .apr-card-done-row.returned { color: #E65100; }
+  .apr-card-done-row.returned svg { stroke: #E65100; fill: none; }
+
+  .apr-empty {
+    text-align: center; padding: 40px 20px;
+  }
+  .apr-empty svg { width: 56px; height: 56px; stroke: #C8D6FF; fill: none; margin-bottom: 14px; }
+  .apr-empty-text { font-size: 15px; color: var(--text-sub); font-weight: 500; }
+
+  /* ── Toast (shared) ── */
+  .da-toast {
+    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+    background: #1a1a2e; color: #fff; padding: 10px 22px;
+    border-radius: 22px; font-size: 13px; z-index: 9999;
+    opacity: 0; transition: opacity 0.2s; white-space: nowrap;
+    pointer-events: none; font-weight: 500;
+  }
+</style>
 </head>
 <body>
 <div class="phone-wrapper">
@@ -1351,8 +1655,8 @@
     </div>
 
     <!-- Start button -->
-    <div class="start-btn-wrap">
-      <button class="start-btn" onclick="showScreen('screen-line')">
+    <div class="start-btn-wrap" id="today-start-btn">
+      <button class="start-btn" onclick="startTodayInspection()">
         <div class="start-btn-left">
           <div class="start-btn-icon">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1573,7 +1877,89 @@
 
 </div>
 
-<!-- ===== ADMIN SCREEN ===== -->
+<!-- ===== DASHBOARD SCREEN ===== -->
+<div id="screen-dashboard">
+  <div class="da-wrap">
+    <div class="da-hdr">
+      <div class="da-hdr-title">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        ダッシュボード
+      </div>
+      <div class="da-hdr-actions">
+        <button class="da-tab-btn current" onclick="openDashboard()">ダッシュボード</button>
+        <button class="da-tab-btn" onclick="openApproval()">承認</button>
+        <button class="da-close-btn" onclick="closeDashboard()">閉じる</button>
+      </div>
+    </div>
+
+    <div class="da-body">
+      <!-- Summary Cards -->
+      <div class="da-summary-grid" id="dash-summary-grid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Line Progress -->
+      <div class="da-section-title">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        ライン別進捗
+      </div>
+      <div class="da-lines-card" id="dash-lines-card">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Anomaly List -->
+      <div class="da-section-title">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        異常一覧
+      </div>
+      <div class="da-anomaly-list" id="dash-anomaly-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="da-refresh-note" id="dash-refresh-note">最終更新：取得中...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APPROVAL SCREEN ===== -->
+<div id="screen-approval">
+  <div class="da-wrap">
+    <div class="da-hdr">
+      <div class="da-hdr-title">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        承認画面
+      </div>
+      <div class="da-hdr-actions">
+        <button class="da-tab-btn" onclick="openDashboard()">ダッシュボード</button>
+        <button class="da-tab-btn current" onclick="openApproval()">承認</button>
+        <button class="da-close-btn" onclick="closeApproval()">閉じる</button>
+      </div>
+    </div>
+
+    <div class="apr-body">
+      <div class="apr-pending-count" id="apr-pending-banner">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        承認待ちが <span class="apr-count-num" id="apr-pending-num">0</span> 件あります
+      </div>
+
+      <div class="apr-list" id="apr-card-list">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+</div>
 <div id="screen-admin">
   <div class="adm-wrap">
     <div class="adm-hdr">
@@ -1586,10 +1972,16 @@
       <button class="adm-logout-btn" onclick="adminLogout()">ログアウト</button>
     </div>
     <div class="adm-tabs-bar">
-      <button class="adm-tab active" id="atab-lines" onclick="showAdmTab('lines')">ライン管理</button>
-      <button class="adm-tab" id="atab-equips" onclick="showAdmTab('equips')">設備管理</button>
-      <button class="adm-tab" id="atab-items" onclick="showAdmTab('items')">点検項目</button>
-      <button class="adm-tab" id="atab-assign" onclick="showAdmTab('assign')">割当設定</button>
+      <button class="adm-tab active" id="atab-dashboard" onclick="showAdmTab('dashboard')">ダッシュボード</button>
+      <button class="adm-tab" id="atab-approval" onclick="showAdmTab('approval')">承認</button>
+      <button class="adm-tab" id="atab-settings" onclick="showAdmTab('settings')">設定</button>
+    </div>
+    <!-- 設定サブタブ -->
+    <div class="adm-subtabs-bar" id="adm-subtabs-bar">
+      <button class="adm-subtab active" id="asubtab-lines" onclick="showAdmSubTab('lines')">ライン管理</button>
+      <button class="adm-subtab" id="asubtab-equips" onclick="showAdmSubTab('equips')">設備管理</button>
+      <button class="adm-subtab" id="asubtab-items" onclick="showAdmSubTab('items')">点検項目</button>
+      <button class="adm-subtab" id="asubtab-assign" onclick="showAdmSubTab('assign')">割当設定</button>
     </div>
     <!-- ライン管理 -->
     <div id="adm-panel-lines" class="adm-panel">
@@ -1647,6 +2039,42 @@
         <button class="adm-assign-save-btn" id="adm-assign-save-btn" onclick="admSaveAssign()">保存する</button>
       </div>
     </div>
+
+    <!-- ダッシュボード パネル (管理画面内) -->
+    <!-- ダッシュボード パネル -->
+    <div id="adm-panel-dashboard" class="adm-panel" style="display:none;">
+
+      <!-- サマリー -->
+      <div class="adm-section-hdr">
+        <span class="adm-section-title">サマリー（本日の状況）</span>
+      </div>
+      <div class="adm-list-card" id="adm-dash-summary-list"></div>
+
+      <!-- ライン進捗 -->
+      <div class="adm-section-hdr" style="margin-top:20px;">
+        <span class="adm-section-title">ライン別 進捗状況</span>
+      </div>
+      <div class="adm-list-card" id="adm-dash-lines-list"></div>
+
+      <!-- 異常一覧 -->
+      <div class="adm-section-hdr" style="margin-top:20px;">
+        <span class="adm-section-title">異常一覧（未対応）</span>
+      </div>
+      <div id="adm-dash-anomaly-list"></div>
+
+    </div>
+
+    <!-- 承認 パネル -->
+    <div id="adm-panel-approval" class="adm-panel" style="display:none;">
+
+      <div class="adm-section-hdr">
+        <span class="adm-section-title">承認待ち一覧</span>
+        <span id="adm-apr-pending-badge" style="font-size:12px;font-weight:600;color:var(--blue);"></span>
+      </div>
+      <div id="adm-apr-card-list"></div>
+
+    </div>
+
   </div>
   <!-- Modal -->
   <div class="adm-modal-overlay" id="adm-modal-overlay" onclick="admOverlayClick(event)">
@@ -1722,26 +2150,18 @@
   }
 
   function get10DayDatesForMonth(year, month) {
+    // 毎月10日・20日・30日（30日がない月は月末）を基準日とし、
+    // 休日なら前の平日に移動した実効日をセットで返す
     const result = new Set();
-    const base = SCHEDULE.tenDay.base;
-    // Calculate all 10-day dates that land in this month (nominal or effective)
-    // Range: from base to well past end of month
-    const lastDay = new Date(year, month + 1, 0);
-    let d = new Date(base);
-    // Fast-forward to near the target month
-    const monthStart = new Date(year, month, 1);
-    while (d < monthStart) d.setDate(d.getDate() + 10);
-    // Step back one cycle to catch any that might roll into this month
-    d.setDate(d.getDate() - 10);
-    // Now scan forward
-    for (let iter = 0; iter < 20; iter++) {
-      if (d > lastDay) break;
-      const eff = _effectiveDate(d);
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    [10, 20, 30].forEach(function(nomDay) {
+      const actual = Math.min(nomDay, lastDay);
+      const nom = new Date(year, month, actual);
+      const eff = _effectiveDate(nom);
       if (eff.getFullYear() === year && eff.getMonth() === month) {
         result.add(eff.getDate());
       }
-      d.setDate(d.getDate() + 10);
-    }
+    });
     return result;
   }
 
@@ -1981,6 +2401,16 @@
   /* ─── LINE SELECT ─── */
   let selectedLineIds = [];
 
+  function startTodayInspection() {
+    // 本日の日付をセットしてからラインリストを構築して遷移
+    const now = new Date();
+    calYear  = now.getFullYear();
+    calMonth = now.getMonth();
+    selectedCalDay = now.getDate();
+    buildLineList();
+    showScreen('screen-line');
+  }
+
   function buildLineList() {
     const list = document.getElementById('line-list');
     if (!list) return;
@@ -2156,7 +2586,7 @@
           <div class="equip-header-info">
             <div class="equip-id-label">${eq.id}</div>
             <div class="equip-name-only">${eq.name}</div>
-            <span class="equip-status-badge badge-pending" id="badge-${eq.id}">未入力</span>
+            <span class="equip-status-badge badge-pending" id="badge-${eq.id}" style="display:none">未入力</span>
           </div>
         </div>
       </div>
@@ -2632,7 +3062,7 @@ function openAdminScreen() {
   admLoad();
   document.getElementById('screen-admin').style.display = 'block';
   document.body.style.overflow = 'hidden';
-  showAdmTab('lines');
+  showAdmTab('dashboard');
 }
 
 function adminLogout() {
@@ -2647,16 +3077,36 @@ function adminLogout() {
 
 /* ─ tabs ─ */
 function showAdmTab(tab) {
-  ['lines','equips','items','assign'].forEach(function(t) {
-    var p = document.getElementById('adm-panel-'+t);
+  // main tabs: dashboard, approval, settings
+  ['dashboard','approval','settings'].forEach(function(t) {
     var b = document.getElementById('atab-'+t);
-    if (p) p.style.display = (t===tab) ? 'block' : 'none';
     if (b) b.classList.toggle('active', t===tab);
   });
-  if (tab==='lines')  renderLines();
-  if (tab==='equips') renderEquipsInit();
-  if (tab==='items')  renderItems();
-  if (tab==='assign') renderAssignInit();
+  // hide all panels
+  ['lines','equips','items','assign','dashboard','approval'].forEach(function(t) {
+    var p = document.getElementById('adm-panel-'+t);
+    if (p) p.style.display = 'none';
+  });
+  // show/hide subtab bar
+  var subBar = document.getElementById('adm-subtabs-bar');
+  if (subBar) subBar.classList.toggle('visible', tab==='settings');
+
+  if (tab==='dashboard') { renderAdmDashboard(); document.getElementById('adm-panel-dashboard').style.display='block'; }
+  if (tab==='approval')  { renderAdmApproval();  document.getElementById('adm-panel-approval').style.display='block'; }
+  if (tab==='settings')  { showAdmSubTab('lines'); }
+}
+
+function showAdmSubTab(sub) {
+  ['lines','equips','items','assign'].forEach(function(t) {
+    var p = document.getElementById('adm-panel-'+t);
+    var b = document.getElementById('asubtab-'+t);
+    if (p) p.style.display = (t===sub) ? 'block' : 'none';
+    if (b) b.classList.toggle('active', t===sub);
+  });
+  if (sub==='lines')  renderLines();
+  if (sub==='equips') renderEquipsInit();
+  if (sub==='items')  renderItems();
+  if (sub==='assign') renderAssignInit();
 }
 
 /* ─ HTML escape ─ */
@@ -3141,6 +3591,446 @@ function admToast(msg) {
 
 /* ─ init ─ */
 (function(){ admLoad(); })();
+</script>
+
+<!-- ===== DASHBOARD & APPROVAL: SCRIPTS ===== -->
+<script>
+/* ──────────────────────────────────────────
+   DASHBOARD & APPROVAL – DATA & STATE
+   ────────────────────────────────────────── */
+
+// Demo data for dashboard
+var DASH_DATA = {
+  summary: { notStarted: 8, inProgress: 5, done: 22, anomaly: 3 },
+  lines: [
+    { id: 'A', name: 'ラインA', done: 8, total: 10 },
+    { id: 'B', name: 'ラインB', done: 5, total: 10 },
+    { id: 'C', name: 'ラインC', done: 9, total: 10 },
+    { id: 'D', name: 'ラインD', done: 10, total: 10 },
+  ],
+  anomalies: [
+    { equipId: 'A-101', equipName: '空調機', detail: '油漏れ', time: '08:42' },
+    { equipId: 'A-102', equipName: 'ポンプ', detail: '異音', time: '09:15' },
+    { equipId: 'C-204', equipName: 'コンプレッサー', detail: '過熱', time: '09:58' },
+  ]
+};
+
+// Demo data for approval
+var APR_DATA = [
+  { id: 'apr1', equipId: 'A-101', equipName: '空調機', inspector: '佐藤 太郎', date: '2024/05/20 08:42', anomaly: '油漏れ', status: 'pending' },
+  { id: 'apr2', equipId: 'A-102', equipName: 'ポンプ', inspector: '鈴木 一郎', date: '2024/05/20 09:15', anomaly: '異音', status: 'pending' },
+  { id: 'apr3', equipId: 'B-201', equipName: '送水ポンプ', inspector: '田中 花子', date: '2024/05/19 10:30', anomaly: null, status: 'pending' },
+  { id: 'apr4', equipId: 'C-204', equipName: 'コンプレッサー', inspector: '山本 健二', date: '2024/05/19 14:05', anomaly: '過熱', status: 'pending' },
+  { id: 'apr5', equipId: 'D-301', equipName: '換気ファン', inspector: '伊藤 誠', date: '2024/05/18 11:20', anomaly: null, status: 'pending' },
+];
+
+/* ──────────────────────────────────────────
+   OPEN / CLOSE HELPERS
+   ────────────────────────────────────────── */
+function openDashboard() {
+  document.getElementById('screen-approval').style.display = 'none';
+  var el = document.getElementById('screen-dashboard');
+  el.style.display = 'block';
+  renderDashboard();
+}
+function closeDashboard() {
+  document.getElementById('screen-dashboard').style.display = 'none';
+}
+function openApproval() {
+  document.getElementById('screen-dashboard').style.display = 'none';
+  var el = document.getElementById('screen-approval');
+  el.style.display = 'block';
+  renderApproval();
+}
+function closeApproval() {
+  document.getElementById('screen-approval').style.display = 'none';
+}
+
+/* ──────────────────────────────────────────
+   DASHBOARD RENDER
+   ────────────────────────────────────────── */
+function renderDashboard() {
+  renderDashSummary();
+  renderDashLines();
+  renderDashAnomalies();
+  var now = new Date();
+  var hh = now.getHours().toString().padStart(2,'0');
+  var mm = now.getMinutes().toString().padStart(2,'0');
+  var note = document.getElementById('dash-refresh-note');
+  if (note) note.textContent = '最終更新：' + hh + ':' + mm;
+}
+
+function renderDashSummary() {
+  var s = DASH_DATA.summary;
+  var grid = document.getElementById('dash-summary-grid');
+  if (!grid) return;
+  var cards = [
+    {
+      colorClass: 'gray', label: '未実施', count: s.notStarted,
+      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+      extra: ''
+    },
+    {
+      colorClass: 'orange', label: '実施中', count: s.inProgress,
+      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>',
+      extra: ''
+    },
+    {
+      colorClass: 'blue', label: '完了', count: s.done,
+      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+      extra: ''
+    },
+    {
+      colorClass: 'red', label: '異常', count: s.anomaly,
+      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      extra: 'anomaly'
+    }
+  ];
+  grid.innerHTML = cards.map(function(c) {
+    return '<div class="da-summary-card' + (c.extra ? ' ' + c.extra : '') + '" onclick="daToast(\'' + c.label + ': ' + c.count + '件\')">' +
+      '<div class="da-summary-card-icon ' + c.colorClass + '">' + c.icon + '</div>' +
+      '<div class="da-summary-card-count ' + c.colorClass + '">' + c.count + '</div>' +
+      '<div class="da-summary-card-label">' + c.label + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderDashLines() {
+  var card = document.getElementById('dash-lines-card');
+  if (!card) return;
+  card.innerHTML = DASH_DATA.lines.map(function(ln) {
+    var pct = Math.round(ln.done / ln.total * 100);
+    var fillClass = pct === 100 ? 'complete' : (pct < 40 ? 'warning' : '');
+    return '<div class="da-line-row">' +
+      '<div class="da-line-name">' + ln.name + '</div>' +
+      '<div class="da-line-bar-wrap"><div class="da-line-bar-fill ' + fillClass + '" style="width:' + pct + '%"></div></div>' +
+      '<div class="da-line-pct">' + pct + '%</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderDashAnomalies() {
+  var list = document.getElementById('dash-anomaly-list');
+  if (!list) return;
+  var anomalies = DASH_DATA.anomalies;
+  if (!anomalies.length) {
+    list.innerHTML = '<div class="da-empty">' +
+      '<svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>' +
+      '<div class="da-empty-text">現在、異常はありません</div>' +
+    '</div>';
+    return;
+  }
+  list.innerHTML = anomalies.map(function(a) {
+    return '<div class="da-anomaly-card" onclick="daToast(\'' + a.equipId + ' ' + a.equipName + ': ' + a.detail + '\')">' +
+      '<div class="da-anomaly-icon">' +
+        '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+      '</div>' +
+      '<div class="da-anomaly-body">' +
+        '<div class="da-anomaly-id">' + a.equipId + '</div>' +
+        '<div class="da-anomaly-name">' + a.equipName + '</div>' +
+        '<div class="da-anomaly-detail">' +
+          '<span class="da-anomaly-badge">NG</span>' +
+          a.detail +
+        '</div>' +
+      '</div>' +
+      '<div class="da-anomaly-arrow"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' +
+    '</div>';
+  }).join('');
+}
+
+/* ──────────────────────────────────────────
+   APPROVAL RENDER
+   ────────────────────────────────────────── */
+function renderApproval() {
+  var pendingCount = APR_DATA.filter(function(d){ return d.status === 'pending'; }).length;
+  var numEl = document.getElementById('apr-pending-num');
+  if (numEl) numEl.textContent = pendingCount;
+
+  var list = document.getElementById('apr-card-list');
+  if (!list) return;
+
+  if (!APR_DATA.length) {
+    list.innerHTML = '<div class="apr-empty">' +
+      '<svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>' +
+      '<div class="apr-empty-text">承認待ちの点検はありません</div>' +
+    '</div>';
+    return;
+  }
+
+  list.innerHTML = APR_DATA.map(function(item) {
+    var hasAnomaly = !!item.anomaly;
+    var cardClass = 'apr-card' +
+      (hasAnomaly ? ' anomaly-card' : '') +
+      (item.status === 'approved' ? ' approved-card' : '') +
+      (item.status === 'returned' ? ' returned-card' : '');
+
+    var statusBadge = item.status === 'pending'
+      ? '<span class="apr-status-badge pending">承認待ち</span>'
+      : item.status === 'approved'
+        ? '<span class="apr-status-badge approved">承認済み</span>'
+        : '<span class="apr-status-badge returned">差し戻し</span>';
+
+    var iconClass = hasAnomaly ? 'apr-equip-icon red-icon' : 'apr-equip-icon';
+    var iconSvg = '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="15" x2="13" y2="15"/>' +
+    '</svg>';
+
+    var anomalyBanner = hasAnomaly
+      ? '<div class="apr-anomaly-banner"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>異常あり：' + item.anomaly + '</div>'
+      : '';
+
+    var actionArea;
+    if (item.status === 'pending') {
+      actionArea = '<div class="apr-card-actions">' +
+        '<button class="apr-btn return" onclick="aprReturn(\'' + item.id + '\')">' +
+          '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>' +
+          '差し戻し' +
+        '</button>' +
+        '<button class="apr-btn approve" onclick="aprApprove(\'' + item.id + '\')">' +
+          '<svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+          '承認する' +
+        '</button>' +
+      '</div>';
+    } else if (item.status === 'approved') {
+      actionArea = '<div class="apr-card-done-row approved">' +
+        '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
+        '承認済み' +
+      '</div>';
+    } else {
+      actionArea = '<div class="apr-card-done-row returned">' +
+        '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>' +
+        '差し戻し済み' +
+      '</div>';
+    }
+
+    return '<div class="' + cardClass + '" id="apr-card-' + item.id + '">' +
+      '<div class="apr-card-header">' +
+        '<div class="' + iconClass + '">' + iconSvg + '</div>' +
+        '<div class="apr-card-info">' +
+          '<div class="apr-equip-id">' + item.equipId + '</div>' +
+          '<div class="apr-equip-name">' + item.equipName + '</div>' +
+          '<div class="apr-meta">' +
+            '<div class="apr-meta-row"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>点検者：' + item.inspector + '</div>' +
+            '<div class="apr-meta-row"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + item.date + '</div>' +
+          '</div>' +
+        '</div>' +
+        statusBadge +
+      '</div>' +
+      anomalyBanner +
+      actionArea +
+    '</div>';
+  }).join('');
+}
+
+function aprApprove(id) {
+  var item = APR_DATA.find(function(d){ return d.id === id; });
+  if (!item || item.status !== 'pending') return;
+  item.status = 'approved';
+  renderApproval();
+  daToast('✓ 承認しました：' + item.equipName);
+}
+
+function aprReturn(id) {
+  var item = APR_DATA.find(function(d){ return d.id === id; });
+  if (!item || item.status !== 'pending') return;
+  item.status = 'returned';
+  renderApproval();
+  daToast('差し戻しました：' + item.equipName);
+}
+
+/* ──────────────────────────────────────────
+   TOAST
+   ────────────────────────────────────────── */
+/* ──────────────────────────────────────────
+   EMBEDDED ADMIN PANEL RENDERS
+   ────────────────────────────────────────── */
+
+/* ── progress bar style (inline, minimal) ── */
+var ADM_PROGRESS_CSS_INJECTED = false;
+function injectAdmProgressCss() {
+  if (ADM_PROGRESS_CSS_INJECTED) return;
+  ADM_PROGRESS_CSS_INJECTED = true;
+  var s = document.createElement('style');
+  s.textContent =
+    '.adm-prog-wrap{flex:1;height:8px;background:#F0F0F0;border-radius:99px;overflow:hidden;margin:0 10px;}' +
+    '.adm-prog-fill{height:100%;border-radius:99px;background:var(--blue);transition:width .5s cubic-bezier(.4,0,.2,1);}' +
+    '.adm-prog-fill.full{background:var(--green);}' +
+    '.adm-prog-fill.low{background:#F57C00;}' +
+    '.adm-list-row.anomaly-row{border-left:3px solid var(--red);}' +
+    '.adm-summary-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}' +
+    '.adm-btn-approve{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--blue-mid);background:var(--blue-light);display:flex;align-items:center;justify-content:center;cursor:pointer;}' +
+    '.adm-btn-approve svg{stroke:var(--blue);fill:none;}' +
+    '.adm-btn-approve:active,.adm-btn-del:active,.adm-btn-edit:active{opacity:.7;}' +
+    '.adm-status-chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;flex-shrink:0;}' +
+    '.adm-chip-done{background:var(--green-light);color:var(--green);}' +
+    '.adm-chip-back{background:#FFF3E0;color:#E65100;}' +
+    '.adm-chip-pend{background:var(--blue-light);color:var(--blue);}' +
+    '.adm-anomaly-tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--red-light);color:var(--red);border:1px solid var(--red-mid);flex-shrink:0;}';
+  document.head.appendChild(s);
+}
+
+function renderAdmDashboard() {
+  injectAdmProgressCss();
+
+  /* — Summary — */
+  var s = DASH_DATA.summary;
+  var sumEl = document.getElementById('adm-dash-summary-list');
+  if (sumEl) {
+    var rows = [
+      { dot: '#AAAAAA', label: '未実施', count: s.notStarted + '件', pct: '15%' },
+      { dot: '#F57C00', label: '実施中',  count: s.inProgress + '件', pct: '5%' },
+      { dot: '#2F6BFF', label: '完了',    count: s.done + '件',       pct: '60%' },
+      { dot: '#E53935', label: '異常',    count: s.anomaly + '件',    pct: '10%', isRed: true },
+    ];
+    sumEl.innerHTML = rows.map(function(r) {
+      return '<div class="adm-list-row"' + (r.isRed ? ' style="background:var(--red-light);"' : '') + '>' +
+        '<div class="adm-summary-dot" style="background:' + r.dot + '"></div>' +
+        '<div style="flex:1"><div class="adm-list-name"' + (r.isRed ? ' style="color:var(--red)"' : '') + '>' + r.label + '</div></div>' +
+        '<div style="font-size:15px;font-weight:700;' + (r.isRed ? 'color:var(--red);' : 'color:var(--text);') + 'margin-right:6px;">' + r.count + '</div>' +
+        '<div style="font-size:12px;color:var(--text-sub);width:30px;text-align:right;">' + r.pct + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* — Line Progress — */
+  var linesEl = document.getElementById('adm-dash-lines-list');
+  if (linesEl) {
+    linesEl.innerHTML = DASH_DATA.lines.map(function(ln) {
+      var pct = Math.round(ln.done / ln.total * 100);
+      var fillCls = pct === 100 ? 'full' : pct < 40 ? 'low' : '';
+      return '<div class="adm-list-row">' +
+        '<div style="flex:1"><div class="adm-list-name">' + ln.name + '</div>' +
+        '<div class="adm-list-sub">' + ln.done + ' / ' + ln.total + ' 件完了</div></div>' +
+        '<div class="adm-prog-wrap"><div class="adm-prog-fill ' + fillCls + '" style="width:' + pct + '%"></div></div>' +
+        '<div style="font-size:13px;font-weight:700;color:var(--blue);width:34px;text-align:right;">' + pct + '%</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* — Anomaly List — */
+  var anEl = document.getElementById('adm-dash-anomaly-list');
+  if (anEl) {
+    if (!DASH_DATA.anomalies.length) {
+      anEl.innerHTML = '<div class="adm-list-card"><div class="adm-list-row"><span class="adm-list-sub">現在、異常はありません</span></div></div>';
+    } else {
+      anEl.innerHTML = '<div class="adm-list-card" style="border-left:3px solid var(--red);">' +
+        DASH_DATA.anomalies.map(function(a) {
+          return '<div class="adm-list-row">' +
+            '<div style="flex:1">' +
+              '<div class="adm-list-name">' + a.equipId + '　' + a.equipName + '</div>' +
+              '<div class="adm-list-sub">発見時刻：' + a.time + '</div>' +
+            '</div>' +
+            '<span class="adm-anomaly-tag">' + a.detail + '</span>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+    }
+  }
+}
+
+function renderAdmApproval() {
+  injectAdmProgressCss();
+
+  var pendingCount = APR_DATA.filter(function(d){ return d.status === 'pending'; }).length;
+  var badge = document.getElementById('adm-apr-pending-badge');
+  if (badge) badge.textContent = '承認待ち ' + pendingCount + ' 件';
+
+  var list = document.getElementById('adm-apr-card-list');
+  if (!list) return;
+
+  if (!APR_DATA.length) {
+    list.innerHTML = '<div class="adm-list-card"><div class="adm-list-row"><span class="adm-list-sub">承認待ちの点検はありません</span></div></div>';
+    return;
+  }
+
+  // Group all into one card
+  list.innerHTML = '<div class="adm-list-card">' +
+    APR_DATA.map(function(item) {
+      var anomalyTag = item.anomaly
+        ? '<span class="adm-anomaly-tag" style="margin-right:6px;">' + item.anomaly + '</span>'
+        : '';
+      var statusChip = item.status === 'approved'
+        ? '<span class="adm-status-chip adm-chip-done">承認済み</span>'
+        : item.status === 'returned'
+          ? '<span class="adm-status-chip adm-chip-back">差し戻し</span>'
+          : '';
+
+      var actionBtns = item.status === 'pending'
+        ? '<div class="adm-row-actions">' +
+            '<button class="adm-btn-approve" onclick="admAprApprove(\'' + item.id + '\')" title="承認">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+            '</button>' +
+            '<button class="adm-btn-del" onclick="admAprReturn(\'' + item.id + '\')" title="差し戻し">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>' +
+            '</button>' +
+          '</div>'
+        : '<div class="adm-row-actions">' + statusChip + '</div>';
+
+      return '<div class="adm-list-row" id="adm-apr-row-' + item.id + '"' +
+        (item.anomaly && item.status === 'pending' ? ' style="background:var(--red-light);"' : '') + '>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="adm-list-name">' + item.equipId + '　' + item.equipName + '</div>' +
+          '<div class="adm-list-sub" style="margin-top:2px;">点検者：' + item.inspector + '　' + item.date + '</div>' +
+          (item.anomaly ? '<div style="margin-top:5px;">' + anomalyTag + '</div>' : '') +
+        '</div>' +
+        actionBtns +
+      '</div>';
+    }).join('') +
+  '</div>';
+}
+
+function admAprApprove(id) {
+  var item = APR_DATA.find(function(d){ return d.id === id; });
+  if (!item || item.status !== 'pending') return;
+  item.status = 'approved';
+  renderAdmApproval();
+  admToast('✓ 承認しました：' + item.equipName);
+}
+function admAprReturn(id) {
+  var item = APR_DATA.find(function(d){ return d.id === id; });
+  if (!item || item.status !== 'pending') return;
+  item.status = 'returned';
+  renderAdmApproval();
+  admToast('差し戻しました：' + item.equipName);
+}
+
+function daToast(msg) {
+  var t = document.createElement('div');
+  t.className = 'da-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){ t.style.opacity = '1'; });
+  setTimeout(function(){
+    t.style.opacity = '0';
+    setTimeout(function(){ t.remove(); }, 200);
+  }, 1800);
+}
+
+/* ──────────────────────────────────────────
+   INJECT DASHBOARD BUTTON INTO HOME SCREEN
+   ────────────────────────────────────────── */
+(function injectDashboardButton() {
+  window.addEventListener('DOMContentLoaded', function() {
+    var homeHeader = document.querySelector('#screen-home .home-header');
+    if (!homeHeader) return;
+    if (document.getElementById('dash-open-btn')) return;
+
+    var btn = document.createElement('div');
+    btn.id = 'dash-open-btn';
+    btn.style.cssText = 'margin: 12px 16px 0; display: flex; gap: 8px;';
+    btn.innerHTML =
+      '<button onclick="openDashboard()" style="flex:1;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#fff;border-radius:10px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>' +
+        'ダッシュボード' +
+      '</button>' +
+      '<button onclick="openApproval()" style="flex:1;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:#fff;border-radius:10px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+        '承認' +
+      '</button>';
+
+    homeHeader.appendChild(btn);
+  });
+})();
 </script>
 </body>
 </html>
