@@ -923,6 +923,22 @@
     padding: 2px 8px; margin-left: 6px; vertical-align: middle;
   }
   .adm-assign-item-name { flex: 1; font-size: 14px; color: var(--text); }
+  .adm-assign-type-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 0 6px;
+    margin-top: 4px;
+    border-bottom: 1.5px solid var(--border);
+    font-size: 12px; font-weight: 700; color: var(--text-sub);
+    letter-spacing: 0.3px;
+  }
+  .adm-assign-type-header:first-child { margin-top: 0; }
+  .adm-assign-type-badge {
+    display: inline-block; border-radius: 20px;
+    padding: 2px 9px; font-size: 11px; font-weight: 700; white-space: nowrap;
+  }
+  .adm-assign-type-badge.daily   { background: #E8F5E9; color: #2E7D32; }
+  .adm-assign-type-badge.days10  { background: var(--blue-light); color: var(--blue); }
+  .adm-assign-type-badge.monthly { background: #FFF3E0; color: #E65100; }
   .adm-common-toggle {
     font-size: 11px; padding: 3px 9px; border-radius: 20px;
     border: 1.5px solid var(--border); background: #fff; color: var(--text-sub);
@@ -940,6 +956,170 @@
     background: var(--blue-light); border: 1px solid var(--blue-mid);
     border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--blue); margin-bottom: 16px; line-height: 1.7;
   }
+
+  /* ─── INSPECTION TYPE TABS ─── */
+  .insp-type-divider {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 0 6px;
+    margin-top: 4px;
+    border-bottom: 1.5px solid var(--border);
+    font-size: 12px; font-weight: 700; color: var(--text-sub);
+  }
+  .insp-type-divider:first-child { margin-top: 0; padding-top: 4px; }
+  .insp-type-badge {
+    display: inline-block; border-radius: 20px;
+    padding: 2px 9px; font-size: 11px; font-weight: 700; white-space: nowrap;
+  }
+  .insp-type-badge.days10  { background: var(--blue-light); color: var(--blue); }
+  .insp-type-badge.monthly { background: #FFF3E0; color: #E65100; }
+  .insp-type-badge.daily   { background: #E8F5E9; color: #2E7D32; }
+
+  /* ─── IMPROVED EQUIP HEADER ─── */
+  .equip-header-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .equip-header-info { flex: 1; min-width: 0; }
+  .equip-name {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+  }
+  .equip-id-label {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 500;
+    margin-bottom: 2px;
+    letter-spacing: 0.2px;
+  }
+  .equip-name-only {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .equip-icon-lg {
+    width: 50px; height: 50px; border-radius: 13px;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .equip-icon-lg svg { stroke: var(--blue); fill: none; width: 26px; height: 26px; }
+
+  /* ─── INSPECTION TYPE LABEL CHIP ─── */
+  .insp-type-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border: 1px solid var(--blue-mid);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 6px 16px 2px;
+    width: fit-content;
+  }
+  .insp-type-chip svg { stroke: var(--blue); fill: none; width: 12px; height: 12px; }
+
+  /* ─── UNENTERED DIALOG ─── */
+  .dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.42);
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s;
+  }
+  .dialog-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .dialog-sheet {
+    background: var(--card);
+    border-radius: 22px 22px 0 0;
+    padding: 30px 24px max(34px, env(safe-area-inset-bottom, 34px));
+    width: 100%;
+    max-width: 390px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  }
+  .dialog-overlay.open .dialog-sheet {
+    transform: translateY(0);
+  }
+  .dialog-drag-handle {
+    width: 36px; height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    margin: 0 auto 20px;
+  }
+  .dialog-icon {
+    width: 56px; height: 56px;
+    background: #FFF8E1;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .dialog-icon svg { stroke: #F9A825; fill: none; width: 28px; height: 28px; }
+  .dialog-title {
+    font-size: 19px; font-weight: 800; text-align: center;
+    margin-bottom: 8px; letter-spacing: -0.3px;
+  }
+  .dialog-body {
+    font-size: 14px; color: var(--text-sub); text-align: center;
+    line-height: 1.65; margin-bottom: 24px;
+  }
+  .dialog-count-highlight {
+    font-size: 28px; font-weight: 800; color: #F57C00;
+    display: block; margin-bottom: 2px; letter-spacing: -1px;
+  }
+  .dialog-btn-row {
+    display: flex; gap: 10px;
+  }
+  .dialog-btn-cancel {
+    flex: 1; padding: 15px;
+    border: 1.5px solid var(--border);
+    background: var(--bg); color: var(--text);
+    border-radius: 13px;
+    font-size: 15px; font-weight: 500;
+    cursor: pointer; font-family: inherit;
+    -webkit-user-select: none;
+    transition: opacity 0.15s;
+  }
+  .dialog-btn-cancel:active { opacity: 0.7; }
+  .dialog-btn-proceed {
+    flex: 2; padding: 15px;
+    background: var(--blue);
+    color: #fff; border: none;
+    border-radius: 13px;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    -webkit-user-select: none;
+    transition: opacity 0.15s;
+  }
+  .dialog-btn-proceed:active { opacity: 0.85; }
+
+  /* ─── INSPECT DATE BANNER ─── */
+  .inspect-date-banner {
+    margin: 8px 16px 0;
+    padding: 10px 14px;
+    background: var(--blue-light);
+    border: 1px solid var(--blue-mid);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--blue);
+    font-weight: 500;
+  }
+  .inspect-date-banner svg { stroke: var(--blue); fill: none; width: 15px; height: 15px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -1163,9 +1343,10 @@
       </div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-legend">
-        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#ccc"></div>未実施</div>
         <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--blue)"></div>完了</div>
         <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--red)"></div>異常あり</div>
+        <div class="cal-legend-item"><div style="display:flex;gap:2px;align-items:center;"><span style="width:5px;height:5px;border-radius:50%;background:var(--blue);opacity:0.6;display:inline-block;"></span></div>10日点検</div>
+        <div class="cal-legend-item"><div style="display:flex;gap:2px;align-items:center;"><span style="width:5px;height:5px;border-radius:50%;background:#F57C00;opacity:0.6;display:inline-block;"></span></div>月次点検</div>
       </div>
     </div>
 
@@ -1238,27 +1419,12 @@
     </div>
 
     <div id="line-select-label" style="padding:16px 16px 8px;font-size:13px;color:var(--text-sub);">点検するラインを選択してください</div>
-    <div class="list-body">
-      <div class="radio-card selected" onclick="selectLine(this)">
-        <div class="radio-circle"><div class="radio-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
-        <div class="radio-label">ラインA</div>
-      </div>
-      <div class="radio-card" onclick="selectLine(this)">
-        <div class="radio-circle"><div class="radio-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
-        <div class="radio-label">ラインB</div>
-      </div>
-      <div class="radio-card" onclick="selectLine(this)">
-        <div class="radio-circle"><div class="radio-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
-        <div class="radio-label">ラインC</div>
-      </div>
-      <div class="radio-card" onclick="selectLine(this)">
-        <div class="radio-circle"><div class="radio-inner"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
-        <div class="radio-label">ラインD</div>
-      </div>
+    <div class="list-body" id="line-list">
+      <!-- Rendered by buildLineList() -->
     </div>
     <div class="flex-spacer"></div>
     <div class="bottom-action">
-      <button class="btn-bottom-main" onclick="showScreen('screen-equip')">次へ</button>
+      <button class="btn-bottom-main" id="line-next-btn" disabled onclick="goToEquipScreen()">次へ</button>
     </div>
   </div>
 
@@ -1305,11 +1471,16 @@
         <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検入力</span>
-      <div class="nav-right" onclick="saveTemp()">一時保存</div>
     </div>
 
     <!-- Selected chips -->
     <div class="selected-equip-chips" id="inspect-chips"></div>
+
+    <!-- Date & type banner -->
+    <div class="inspect-date-banner" id="inspect-date-banner">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span id="inspect-date-label">本日の点検</span>
+    </div>
 
     <!-- Bulk actions -->
     <div class="inspect-top-actions">
@@ -1324,10 +1495,7 @@
 
     <div class="flex-spacer"></div>
     <div class="bottom-action">
-      <div class="btn-row">
-        <button class="btn-bottom-sub" onclick="showScreen('screen-equip')">未入力を確認</button>
-        <button class="btn-bottom-main" style="flex:2;" onclick="goToConfirm()">点検結果の確認へ</button>
-      </div>
+      <button class="btn-bottom-main" onclick="goToConfirm()">点検の確認・完了へ</button>
     </div>
   </div>
 
@@ -1376,6 +1544,30 @@
         <div class="complete-meta-val">2024年5月20日　09:41</div>
       </div>
       <button class="btn-complete-home" onclick="goHome()">ホームに戻る</button>
+    </div>
+  </div>
+
+  <!-- ===== UNENTERED DIALOG ===== -->
+  <div class="dialog-overlay" id="unentered-dialog">
+    <div class="dialog-sheet">
+      <div class="dialog-drag-handle"></div>
+      <div class="dialog-icon">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <div class="dialog-title">未入力項目があります</div>
+      <div class="dialog-body">
+        <span class="dialog-count-highlight" id="unentered-count">0</span>
+        件の未入力項目があります。<br>
+        このまま確認画面に進みますか？
+      </div>
+      <div class="dialog-btn-row">
+        <button class="dialog-btn-cancel" onclick="hideUnenteredDialog()">戻る</button>
+        <button class="dialog-btn-proceed" onclick="proceedToConfirm()">そのまま進む</button>
+      </div>
     </div>
   </div>
 
@@ -1465,17 +1657,113 @@
 <script>
   /* ─── DATA ─── */
   const EQUIP_DATA = [
-    { id:'A-101', name:'空調機', items:['異音・振動の有無','油漏れの有無','フィルターの状態','圧力の確認'] },
-    { id:'A-102', name:'ポンプ', items:['水漏れの有無','異音・振動の有無','運転状態の確認'] },
-    { id:'A-103', name:'送風機', items:['異音・振動の有無','ベルトの状態','回転方向の確認'] },
-    { id:'A-104', name:'冷却塔', items:['水漏れの有無','ファンの状態','水位の確認'] },
-    { id:'A-105', name:'コンプレッサー', items:['異音・振動の有無','油漏れの有無','圧力の確認'] },
-    { id:'A-106', name:'ボイラー', items:['水漏れの有無','圧力の確認','安全弁の確認'] },
-    { id:'A-107', name:'受電設備', items:['異音・振動の有無','外観の異常','警報の確認'] },
+    {
+      id:'A-101', name:'空調機',
+      items10:['異音・振動の有無','油漏れの有無','フィルターの状態','圧力の確認'],
+      itemsMonthly:['フィルター清掃・交換','冷媒圧力の測定','ベルト張力の確認','電気系統の点検','ドレンパンの清掃']
+    },
+    {
+      id:'A-102', name:'ポンプ',
+      items10:['水漏れの有無','異音・振動の有無','運転状態の確認'],
+      itemsMonthly:['グランドパッキンの確認','軸受温度の測定','インペラ摩耗確認','配管接続部の点検']
+    },
+    {
+      id:'A-103', name:'送風機',
+      items10:['異音・振動の有無','ベルトの状態','回転方向の確認'],
+      itemsMonthly:['ベルト交換・調整確認','軸受給油','羽根車の点検','電動機の絶縁測定']
+    },
+    {
+      id:'A-104', name:'冷却塔',
+      items10:['水漏れの有無','ファンの状態','水位の確認'],
+      itemsMonthly:['充填材の清掃','散水ノズルの確認','電動機の点検','水質管理の確認']
+    },
+    {
+      id:'A-105', name:'コンプレッサー',
+      items10:['異音・振動の有無','油漏れの有無','圧力の確認'],
+      itemsMonthly:['油量・油質の確認','エアフィルターの清掃','安全弁の動作確認','ドライヤーの点検']
+    },
+    {
+      id:'A-106', name:'ボイラー',
+      items10:['水漏れの有無','圧力の確認','安全弁の確認'],
+      itemsMonthly:['水処理薬品の補充','燃焼状態の詳細確認','給水装置の点検','排気系統の確認']
+    },
+    {
+      id:'A-107', name:'受電設備',
+      items10:['異音・振動の有無','外観の異常','警報の確認'],
+      itemsMonthly:['絶縁抵抗測定','各部締め付け確認','保護継電器の確認','清掃・除塵']
+    },
   ];
 
-  // state[equipId][itemIndex] = 'ok' | 'ng' | 'na' | null
+  /* ─── SCHEDULE SETTINGS ─── */
+  const SCHEDULE = {
+    tenDay: { base: new Date(2024, 0, 1) }, // base: Jan 1, 2024
+    monthly: { day: 20 }                    // 20th of each month
+  };
+
+  const INSP_LABELS = { '10days': '10日毎点検', 'monthly': '1ヶ月点検' };
+
+  /* ─── SCHEDULE LOGIC ─── */
+  function _isWeekendOrHoliday(date) {
+    const dow = date.getDay();
+    if (dow === 0 || dow === 6) return true;
+    const key = `${date.getFullYear()}-${date.getMonth()}`;
+    const ph = PUBLIC_HOLIDAYS[key] || [];
+    return ph.includes(date.getDate());
+  }
+
+  function _prevBizDay(date) {
+    let d = new Date(date);
+    do { d.setDate(d.getDate() - 1); } while (_isWeekendOrHoliday(d));
+    return d;
+  }
+
+  function _effectiveDate(nom) {
+    return _isWeekendOrHoliday(nom) ? _prevBizDay(nom) : new Date(nom);
+  }
+
+  function get10DayDatesForMonth(year, month) {
+    const result = new Set();
+    const base = SCHEDULE.tenDay.base;
+    // Calculate all 10-day dates that land in this month (nominal or effective)
+    // Range: from base to well past end of month
+    const lastDay = new Date(year, month + 1, 0);
+    let d = new Date(base);
+    // Fast-forward to near the target month
+    const monthStart = new Date(year, month, 1);
+    while (d < monthStart) d.setDate(d.getDate() + 10);
+    // Step back one cycle to catch any that might roll into this month
+    d.setDate(d.getDate() - 10);
+    // Now scan forward
+    for (let iter = 0; iter < 20; iter++) {
+      if (d > lastDay) break;
+      const eff = _effectiveDate(d);
+      if (eff.getFullYear() === year && eff.getMonth() === month) {
+        result.add(eff.getDate());
+      }
+      d.setDate(d.getDate() + 10);
+    }
+    return result;
+  }
+
+  function getMonthlyDateForMonth(year, month) {
+    // 月の最終日から遡り、最初の平日（土日・祝日でない日）を返す
+    let d = new Date(year, month + 1, 0); // 月末日
+    while (_isWeekendOrHoliday(d)) {
+      d.setDate(d.getDate() - 1);
+    }
+    return (d.getFullYear() === year && d.getMonth() === month) ? d.getDate() : null;
+  }
+
+  function getInspTypesForDate(year, month, day) {
+    const days10 = get10DayDatesForMonth(year, month);
+    const dayM   = getMonthlyDateForMonth(year, month);
+    return { is10Day: days10.has(day), isMonthly: dayM === day };
+  }
+
+  // state[equipId] = { '10days': [...], 'monthly': [...] }
   let state = {};
+  let activeTab = {}; // activeTab[equipId] = '10days' | 'monthly'
+  let inspectionTypes = { isDaily: true, is10Day: false, isMonthly: false };
   let selectedEquips = EQUIP_DATA.slice(0, 6).map(e => e.id); // default first 6
 
   /* ─── SCREEN NAVIGATION ─── */
@@ -1628,6 +1916,12 @@
       el.dataset.day = d;
       const isHoliday = holidays.includes(d);
 
+      // Compute schedule markers for this date
+      const days10  = get10DayDatesForMonth(calYear, calMonth);
+      const dayM    = getMonthlyDateForMonth(calYear, calMonth);
+      const is10    = days10.has(d);
+      const isMon   = dayM === d;
+
       if (d === todayDay) {
         el.className = 'cal-day today'; el.textContent = d;
         el.onclick = () => selectCalDay(el, d);
@@ -1642,6 +1936,16 @@
         }
         if (!isHoliday) el.onclick = () => selectCalDay(el, d);
       }
+
+      // Add schedule indicator dot(s) under date
+      if (!isHoliday && (is10 || isMon)) {
+        const dot = document.createElement('div');
+        dot.style.cssText = 'display:flex;gap:2px;justify-content:center;margin-top:1px;';
+        if (is10)  { const d10 = document.createElement('span'); d10.style.cssText = 'width:4px;height:4px;border-radius:50%;background:var(--blue);display:inline-block;opacity:0.6;'; dot.appendChild(d10); }
+        if (isMon) { const dm  = document.createElement('span'); dm.style.cssText  = 'width:4px;height:4px;border-radius:50%;background:#F57C00;display:inline-block;opacity:0.6;';  dot.appendChild(dm);  }
+        el.appendChild(dot);
+      }
+
       if (d === selectedCalDay) el.classList.add('selected-day');
       grid.appendChild(el);
     }
@@ -1670,29 +1974,73 @@
     requestAnimationFrame(() => { toast.style.opacity = '1'; });
     setTimeout(() => {
       toast.style.opacity = '0';
-      setTimeout(() => { toast.remove(); showScreen('screen-line'); }, 200);
+      setTimeout(() => { toast.remove(); buildLineList(); showScreen('screen-line'); }, 200);
     }, 700);
   }
 
   /* ─── LINE SELECT ─── */
+  let selectedLineIds = [];
+
+  function buildLineList() {
+    const list = document.getElementById('line-list');
+    if (!list) return;
+    list.innerHTML = '';
+    selectedLineIds = [];
+    ADM.lines.forEach(ln => {
+      const card = document.createElement('div');
+      card.className = 'radio-card';
+      card.dataset.lineId = ln.id;
+      card.innerHTML =
+        '<div class="radio-circle"><div class="radio-inner">' +
+        '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +
+        '<polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg></div></div>' +
+        '<div class="radio-label">' + ln.name + '</div>';
+      card.onclick = () => selectLine(card);
+      list.appendChild(card);
+    });
+    const btn = document.getElementById('line-next-btn');
+    if (btn) { btn.disabled = true; btn.textContent = '次へ'; }
+    const label = document.getElementById('line-select-label');
+    if (label) label.textContent = '点検するラインを選択してください';
+  }
+
   function selectLine(card) {
     card.classList.toggle('selected');
-    const count = document.querySelectorAll('#screen-line .radio-card.selected').length;
-    const btn = document.querySelector('#screen-line .btn-bottom-main');
-    btn.disabled = count === 0;
-    btn.textContent = count > 0 ? `次へ（${count}ライン選択中）` : '次へ';
+    const lineId = card.dataset.lineId;
+    if (card.classList.contains('selected')) {
+      selectedLineIds.push(lineId);
+    } else {
+      selectedLineIds = selectedLineIds.filter(id => id !== lineId);
+    }
+    const count = selectedLineIds.length;
+    const btn = document.getElementById('line-next-btn');
+    if (btn) { btn.disabled = count === 0; btn.textContent = count > 0 ? `次へ（${count}ライン選択中）` : '次へ'; }
     const label = document.getElementById('line-select-label');
     if (label) label.textContent = count > 0 ? `${count}件選択中` : '点検するラインを選択してください';
+  }
+
+  function goToEquipScreen() {
+    buildEquipList();
+    showScreen('screen-equip');
   }
 
   /* ─── EQUIP SELECT ─── */
   function buildEquipList() {
     const list = document.getElementById('equip-list');
     list.innerHTML = '';
-    EQUIP_DATA.forEach(eq => {
-      const isSelected = selectedEquips.includes(eq.id);
+    // Show only equipment belonging to the selected lines
+    const filtered = selectedLineIds.length > 0
+      ? EQUIP_DATA.filter(eq => {
+          const admEq = ADM.equips.find(e => e.id === eq.id);
+          return admEq && selectedLineIds.includes(admEq.lineId);
+        })
+      : EQUIP_DATA;
+    // Pre-select all filtered equipment
+    selectedEquips = filtered.map(e => e.id);
+    filtered.forEach(eq => {
       const card = document.createElement('div');
-      card.className = 'check-card' + (isSelected ? ' selected' : '');
+      card.className = 'check-card selected';
       card.dataset.id = eq.id;
       card.innerHTML = `
         <div class="check-icon">
@@ -1709,6 +2057,8 @@
       list.appendChild(card);
     });
     updateEquipCount();
+    const btn = document.getElementById('start-inspect-btn');
+    if (btn) btn.disabled = selectedEquips.length === 0;
   }
 
   function toggleEquip(card, id) {
@@ -1730,16 +2080,40 @@
   /* ─── INSPECTION INPUT ─── */
   function startInspection() {
     if (selectedEquips.length === 0) return;
-    // Init state
+
+    // Determine which inspection types apply for the selected date
+    inspectionTypes = getInspTypesForDate(calYear, calMonth, selectedCalDay || new Date().getDate());
+    inspectionTypes.isDaily = true; // 毎日点検は常に表示
+
+    // Init state for all selected equipment
     state = {};
+    activeTab = {};
     EQUIP_DATA.forEach(eq => {
       if (selectedEquips.includes(eq.id)) {
-        state[eq.id] = new Array(eq.items.length).fill(null);
+        state[eq.id] = {
+          'daily':   new Array(eq.itemsDaily.length).fill(null),
+          '10days':  new Array(eq.items10.length).fill(null),
+          'monthly': new Array(eq.itemsMonthly.length).fill(null)
+        };
+        activeTab[eq.id] = inspectionTypes.is10Day ? '10days' : 'monthly';
       }
     });
+
     buildInspectChips();
+    buildInspectDateBanner();
     buildInspectSections();
     showScreen('screen-inspect');
+  }
+
+  function buildInspectDateBanner() {
+    const banner = document.getElementById('inspect-date-label');
+    if (!banner) return;
+    const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    const day = selectedCalDay || new Date().getDate();
+    const types = ['毎日点検'];
+    if (inspectionTypes.is10Day)   types.push('10日毎点検');
+    if (inspectionTypes.isMonthly) types.push('1ヶ月点検');
+    banner.textContent = `${calYear}年${monthNames[calMonth]}${day}日　${types.join(' / ')}`;
   }
 
   function buildInspectChips() {
@@ -1767,43 +2141,68 @@
     const section = document.createElement('div');
     section.className = 'equip-section';
     section.id = `section-${eq.id}`;
+
+    // Header (no tabs)
     section.innerHTML = `
       <div class="equip-section-header">
-        <div class="equip-section-left">
-          <div class="equip-icon-sm">
+        <div class="equip-header-main">
+          <div class="equip-icon-lg">
             <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
           </div>
-          <div>
-            <div class="equip-name">${eq.id}　${eq.name}</div>
+          <div class="equip-header-info">
+            <div class="equip-id-label">${eq.id}</div>
+            <div class="equip-name-only">${eq.name}</div>
             <span class="equip-status-badge badge-pending" id="badge-${eq.id}">未入力</span>
           </div>
         </div>
-        <button class="all-ok-btn" onclick="setAllOk('${eq.id}')">
-          <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-          この設備をすべて正常にする
-        </button>
       </div>
     `;
-    eq.items.forEach((item, i) => {
-      const row = document.createElement('div');
-      row.className = 'check-row';
-      row.innerHTML = `
-        <span class="check-row-name">${item}</span>
-        <div class="tri-btns">
-          <button class="tri-btn" onclick="setVal('${eq.id}',${i},'ok',this)">○</button>
-          <button class="tri-btn" onclick="setVal('${eq.id}',${i},'ng',this)">✕</button>
-          <button class="tri-btn" onclick="setVal('${eq.id}',${i},'na',this)">ー</button>
-        </div>
-      `;
-      section.appendChild(row);
+
+    // Build applicable type groups
+    const groups = [];
+    if (inspectionTypes.isDaily && eq.itemsDaily.length)
+      groups.push({ key:'daily',   label:'毎日点検',  badgeClass:'daily',   items: eq.itemsDaily });
+    if (inspectionTypes.is10Day)
+      groups.push({ key:'10days',  label:'10日毎点検', badgeClass:'days10',  items: eq.items10 });
+    if (inspectionTypes.isMonthly)
+      groups.push({ key:'monthly', label:'1ヶ月点検',  badgeClass:'monthly', items: eq.itemsMonthly });
+
+    groups.forEach(group => {
+      // Type divider label
+      const divider = document.createElement('div');
+      divider.className = 'insp-type-divider';
+      divider.innerHTML = `<span class="insp-type-badge ${group.badgeClass}">${group.label}</span>`;
+      section.appendChild(divider);
+
+      const vals = state[eq.id][group.key];
+      group.items.forEach((item, i) => {
+        const v = vals[i];
+        const row = document.createElement('div');
+        row.className = 'check-row';
+        row.innerHTML = `
+          <span class="check-row-name">${item}</span>
+          <div class="tri-btns">
+            <button class="tri-btn${v==='ok'?' ok-selected':''}" onclick="setVal('${eq.id}',${i},'ok',this,'${group.key}')">○</button>
+            <button class="tri-btn${v==='ng'?' ng-selected':''}" onclick="setVal('${eq.id}',${i},'ng',this,'${group.key}')">✕</button>
+            <button class="tri-btn${v==='na'?' na-selected':''}" onclick="setVal('${eq.id}',${i},'na',this,'${group.key}')">ー</button>
+          </div>
+        `;
+        section.appendChild(row);
+      });
     });
+
     return section;
   }
 
-  function setVal(equipId, itemIdx, val, btn) {
-    // Clear sibling buttons
+  function switchTab(equipId, tabType) {
+    // タブ廃止のため不使用（互換性維持）
+  }
+
+  function setVal(equipId, itemIdx, val, btn, tabType) {
     const triGroup = btn.parentElement;
     triGroup.querySelectorAll('.tri-btn').forEach(b => {
       b.classList.remove('ok-selected','ng-selected','na-selected');
@@ -1812,19 +2211,24 @@
     if (val === 'ng') btn.classList.add('ng-selected');
     if (val === 'na') btn.classList.add('na-selected');
 
-    state[equipId][itemIdx] = val;
+    const tab = tabType || activeTab[equipId] || '10days';
+    state[equipId][tab][itemIdx] = val;
     updateSectionStatus(equipId);
   }
 
   function updateSectionStatus(equipId) {
-    const eq = EQUIP_DATA.find(e => e.id === equipId);
-    const vals = state[equipId];
     const section = document.getElementById(`section-${equipId}`);
-    const badge = document.getElementById(`badge-${equipId}`);
+    const badge   = document.getElementById(`badge-${equipId}`);
 
-    const hasNg = vals.some(v => v === 'ng');
-    const allFilled = vals.every(v => v !== null);
-    const anyFilled = vals.some(v => v !== null);
+    // Aggregate across all active inspection types
+    let allVals = [];
+    allVals = allVals.concat(state[equipId]['daily']);
+    if (inspectionTypes.is10Day)   allVals = allVals.concat(state[equipId]['10days']);
+    if (inspectionTypes.isMonthly) allVals = allVals.concat(state[equipId]['monthly']);
+
+    const hasNg    = allVals.some(v => v === 'ng');
+    const allFill  = allVals.every(v => v !== null);
+    const anyFill  = allVals.some(v => v !== null);
 
     section.classList.remove('has-anomaly');
     badge.classList.remove('badge-anomaly','badge-ok','badge-pending');
@@ -1833,72 +2237,22 @@
       section.classList.add('has-anomaly');
       badge.classList.add('badge-anomaly');
       badge.textContent = '異常あり';
-    } else if (allFilled) {
+    } else if (allFill) {
       badge.classList.add('badge-ok');
       badge.textContent = '正常';
     } else {
       badge.classList.add('badge-pending');
-      badge.textContent = anyFilled ? '入力中' : '未入力';
+      badge.textContent = anyFill ? '入力中' : '未入力';
     }
-  }
-
-  function setAllOk(equipId) {
-    const eq = EQUIP_DATA.find(e => e.id === equipId);
-    state[equipId] = new Array(eq.items.length).fill('ok');
-    // Re-render section
-    const old = document.getElementById(`section-${equipId}`);
-    const newSec = buildSection(eq);
-    // Apply ok-selected state
-    const rows = newSec.querySelectorAll('.check-row');
-    rows.forEach((row, i) => {
-      row.querySelectorAll('.tri-btn')[0].classList.add('ok-selected');
-    });
-    old.replaceWith(newSec);
-    updateSectionStatus(equipId);
-  }
-
-  function bulkSetAllOthersOk() {
-    // Sets all items that are NOT 'ng' to 'ok'
-    selectedEquips.forEach(id => {
-      const eq = EQUIP_DATA.find(e => e.id === id);
-      state[id] = state[id].map(v => v === 'ng' ? 'ng' : 'ok');
-    });
-    buildInspectSections();
-    // Re-apply existing state visually
-    selectedEquips.forEach(id => {
-      const eq = EQUIP_DATA.find(e => e.id === id);
-      const section = document.getElementById(`section-${id}`);
-      const rows = section.querySelectorAll('.check-row');
-      rows.forEach((row, i) => {
-        const btns = row.querySelectorAll('.tri-btn');
-        btns.forEach(b => b.classList.remove('ok-selected','ng-selected','na-selected'));
-        const v = state[id][i];
-        if (v === 'ok') btns[0].classList.add('ok-selected');
-        if (v === 'ng') btns[1].classList.add('ng-selected');
-        if (v === 'na') btns[2].classList.add('na-selected');
-      });
-      updateSectionStatus(id);
-    });
   }
 
   function bulkSetUnenteredOk() {
     selectedEquips.forEach(id => {
-      const eq = EQUIP_DATA.find(e => e.id === id);
-      state[id] = state[id].map(v => v === null ? 'ok' : v);
+      state[id]['daily']   = state[id]['daily'].map(v => v === null ? 'ok' : v);
+      if (inspectionTypes.is10Day)   state[id]['10days']  = state[id]['10days'].map(v => v === null ? 'ok' : v);
+      if (inspectionTypes.isMonthly) state[id]['monthly'] = state[id]['monthly'].map(v => v === null ? 'ok' : v);
     });
-    selectedEquips.forEach(id => {
-      const eq = EQUIP_DATA.find(e => e.id === id);
-      const section = document.getElementById(`section-${id}`);
-      const rows = section.querySelectorAll('.check-row');
-      rows.forEach((row, i) => {
-        const btns = row.querySelectorAll('.tri-btn');
-        if (state[id][i] === 'ok' && !btns[0].classList.contains('ok-selected')) {
-          btns.forEach(b => b.classList.remove('ok-selected','ng-selected','na-selected'));
-          btns[0].classList.add('ok-selected');
-        }
-      });
-      updateSectionStatus(id);
-    });
+    buildInspectSections(); // re-render to show changes
   }
 
   function saveTemp() {
@@ -1912,6 +2266,27 @@
 
   /* ─── CONFIRM ─── */
   function goToConfirm() {
+    // Count unentered items across all active inspection types
+    let unenteredCount = 0;
+    selectedEquips.forEach(id => {
+      unenteredCount += state[id]['daily'].filter(v => v === null).length;
+      if (inspectionTypes.is10Day)   unenteredCount += state[id]['10days'].filter(v => v === null).length;
+      if (inspectionTypes.isMonthly) unenteredCount += state[id]['monthly'].filter(v => v === null).length;
+    });
+    if (unenteredCount > 0) {
+      document.getElementById('unentered-count').textContent = unenteredCount;
+      document.getElementById('unentered-dialog').classList.add('open');
+    } else {
+      proceedToConfirm();
+    }
+  }
+
+  function hideUnenteredDialog() {
+    document.getElementById('unentered-dialog').classList.remove('open');
+  }
+
+  function proceedToConfirm() {
+    hideUnenteredDialog();
     buildConfirmChips();
     buildConfirmContent();
     showScreen('screen-confirm');
@@ -1934,45 +2309,62 @@
     content.innerHTML = '';
 
     let totalNg = 0;
+
     selectedEquips.forEach(id => {
-      const eq = EQUIP_DATA.find(e => e.id === id);
-      const vals = state[id];
-      const ngCount = vals.filter(v => v === 'ng').length;
-      totalNg += ngCount;
+      const eq   = EQUIP_DATA.find(e => e.id === id);
+      const types = [];
+      if (eq.itemsDaily.length)        types.push({ key:'daily',   label:'毎日点検',   items: eq.itemsDaily });
+      if (inspectionTypes.is10Day)     types.push({ key:'10days',  label:'10日毎点検', items: eq.items10 });
+      if (inspectionTypes.isMonthly)   types.push({ key:'monthly', label:'1ヶ月点検',  items: eq.itemsMonthly });
 
-      const sec = document.createElement('div');
-      sec.className = 'confirm-section';
+      types.forEach(({ key, label, items }) => {
+        const vals    = state[id][key];
+        const ngCount = vals.filter(v => v === 'ng').length;
+        totalNg += ngCount;
 
-      let headerBg = ngCount > 0 ? 'background:var(--red-light);' : 'background:var(--bg);';
-      sec.innerHTML = `
-        <div class="confirm-section-header" style="${headerBg}">
-          <div class="equip-icon-sm">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
+        const sec = document.createElement('div');
+        sec.className = 'confirm-section';
+
+        const headerBg = ngCount > 0 ? 'background:var(--red-light);' : 'background:var(--bg);';
+        const typeLabel = types.length > 1
+          ? `<span style="font-size:11px;color:var(--text-sub);margin-left:6px;font-weight:500;">[${label}]</span>`
+          : '';
+        sec.innerHTML = `
+          <div class="confirm-section-header" style="${headerBg}">
+            <div class="equip-icon-sm">
+              <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+            </div>
+            <div class="confirm-equip-name" style="${ngCount > 0 ? 'color:var(--red);' : ''}">
+              ${eq.id}　${eq.name}${typeLabel}
+            </div>
+            <span class="equip-status-badge ${ngCount > 0 ? 'badge-anomaly' : 'badge-ok'}" style="margin-left:auto;">
+              ${ngCount > 0 ? '⚠ 異常あり' : '✓ 正常'}
+            </span>
           </div>
-          <div class="confirm-equip-name" style="${ngCount > 0 ? 'color:var(--red);' : ''}">${eq.id}　${eq.name}</div>
-          <span class="equip-status-badge ${ngCount > 0 ? 'badge-anomaly' : 'badge-ok'}" style="margin-left:auto;">${ngCount > 0 ? '⚠ 異常あり' : '✓ 正常'}</span>
-        </div>
-      `;
+        `;
 
-      eq.items.forEach((item, i) => {
-        const v = vals[i];
-        const row = document.createElement('div');
-        row.className = 'confirm-row' + (v === 'ng' ? ' confirm-anomaly-row' : '');
-        let resultHtml = '';
-        if (v === 'ok') resultHtml = '<span class="result-ok">○</span>';
-        else if (v === 'ng') resultHtml = '<span class="result-ng">✕</span>';
-        else if (v === 'na') resultHtml = '<span class="result-na">ー</span>';
-        else resultHtml = '<span class="result-na" style="color:#ccc;">―</span>';
-        row.innerHTML = `<span class="confirm-row-name">${item}</span>${resultHtml}`;
-        sec.appendChild(row);
+        items.forEach((item, i) => {
+          const v = vals[i];
+          const row = document.createElement('div');
+          row.className = 'confirm-row' + (v === 'ng' ? ' confirm-anomaly-row' : '');
+          let resultHtml = '';
+          if (v === 'ok')      resultHtml = '<span class="result-ok">○</span>';
+          else if (v === 'ng') resultHtml = '<span class="result-ng">✕</span>';
+          else if (v === 'na') resultHtml = '<span class="result-na">ー</span>';
+          else                 resultHtml = '<span class="result-na" style="color:#ccc;">―</span>';
+          row.innerHTML = `<span class="confirm-row-name">${item}</span>${resultHtml}`;
+          sec.appendChild(row);
+        });
+
+        content.appendChild(sec);
       });
-
-      content.appendChild(sec);
     });
 
-    // Summary bar
+    // Summary bar for anomalies
     if (totalNg > 0) {
       const bar = document.createElement('div');
       bar.className = 'confirm-summary-bar';
@@ -1992,15 +2384,20 @@
 
   /* ─── SAVE & COMPLETE ─── */
   function saveAndComplete() {
-    // Build record for this inspection
     const now = new Date();
-    const hasAnomaly = selectedEquips.some(id => state[id] && state[id].some(v => v === 'ng'));
+    // Check anomaly across all active inspection types
+    const hasAnomaly = selectedEquips.some(id => {
+      const s = state[id];
+      return s['daily'].some(v => v === 'ng') ||
+             (inspectionTypes.is10Day   && s['10days'].some(v => v === 'ng')) ||
+             (inspectionTypes.isMonthly && s['monthly'].some(v => v === 'ng'));
+    });
     const record = {
-      year: calYear,
-      month: calMonth,
+      year: calYear, month: calMonth,
       day: selectedCalDay || now.getDate(),
       anomaly: hasAnomaly,
       equips: selectedEquips,
+      inspectionTypes: { ...inspectionTypes },
       state: JSON.parse(JSON.stringify(state)),
       completedAt: now.toISOString(),
     };
@@ -2093,11 +2490,23 @@ var ADM = {
     {id:'A-107',name:'受電設備',lineId:'L3'}
   ],
   items: [
-    {id:'I1',name:'異音・振動の有無'},{id:'I2',name:'油漏れの有無'},{id:'I3',name:'水漏れの有無'},
-    {id:'I4',name:'フィルターの状態'},{id:'I5',name:'圧力の確認'},{id:'I6',name:'運転状態の確認'},
-    {id:'I7',name:'外観の異常'},{id:'I8',name:'ベルトの状態'},{id:'I9',name:'回転方向の確認'},
-    {id:'I10',name:'ファンの状態'},{id:'I11',name:'水位の確認'},
-    {id:'I12',name:'安全弁の確認'},{id:'I13',name:'警報の確認'}
+    {id:'I1',name:'異音・振動の有無',type:'10days'},{id:'I2',name:'油漏れの有無',type:'10days'},{id:'I3',name:'水漏れの有無',type:'10days'},
+    {id:'I4',name:'フィルターの状態',type:'10days'},{id:'I5',name:'圧力の確認',type:'10days'},{id:'I6',name:'運転状態の確認',type:'10days'},
+    {id:'I7',name:'外観の異常',type:'10days'},{id:'I8',name:'ベルトの状態',type:'10days'},{id:'I9',name:'回転方向の確認',type:'10days'},
+    {id:'I10',name:'ファンの状態',type:'10days'},{id:'I11',name:'水位の確認',type:'10days'},
+    {id:'I12',name:'安全弁の確認',type:'10days'},{id:'I13',name:'警報の確認',type:'10days'},
+    {id:'I14',name:'潤滑油量確認・補充',type:'daily'},
+    {id:'I15',name:'キリコ堆積確認・清掃',type:'daily'},
+    {id:'I16',name:'油漏れ・エア漏れ確認',type:'daily'},
+    {id:'I17',name:'制御盤扉閉確認',type:'daily'},
+    {id:'I18',name:'制御盤フィルター清掃',type:'10days'},
+    {id:'I19',name:'制御盤ファン・フィン清掃',type:'10days'},
+    {id:'I20',name:'ラジエター・ファン清掃',type:'10days'},
+    {id:'I21',name:'作動油量確認',type:'10days'},
+    {id:'I22',name:'クーラーフィルタ清掃',type:'10days'},
+    {id:'I23',name:'制御盤フィルタ交換',type:'monthly'},
+    {id:'I24',name:'バッテリー・オイル交換確認',type:'monthly'},
+    {id:'I25',name:'外観汚れ・破損確認',type:'monthly'}
   ],
   assigns: {
     'A-101':[{itemId:'I1',common:true},{itemId:'I2',common:false},{itemId:'I4',common:true},{itemId:'I5',common:false}],
@@ -2113,11 +2522,70 @@ var ADM = {
 var admCurrent = {equipIds: [], modalType: null, modalMode: null, modalId: null};
 
 /* ─ persistence ─ */
+
+// デフォルト項目定義（マイグレーション用）
+var ADM_DEFAULT_ITEMS = [
+  {id:'I1',name:'異音・振動の有無',type:'10days'},{id:'I2',name:'油漏れの有無',type:'10days'},{id:'I3',name:'水漏れの有無',type:'10days'},
+  {id:'I4',name:'フィルターの状態',type:'10days'},{id:'I5',name:'圧力の確認',type:'10days'},{id:'I6',name:'運転状態の確認',type:'10days'},
+  {id:'I7',name:'外観の異常',type:'10days'},{id:'I8',name:'ベルトの状態',type:'10days'},{id:'I9',name:'回転方向の確認',type:'10days'},
+  {id:'I10',name:'ファンの状態',type:'10days'},{id:'I11',name:'水位の確認',type:'10days'},
+  {id:'I12',name:'安全弁の確認',type:'10days'},{id:'I13',name:'警報の確認',type:'10days'},
+  {id:'I14',name:'潤滑油量確認・補充',type:'daily'},
+  {id:'I15',name:'キリコ堆積確認・清掃',type:'daily'},
+  {id:'I16',name:'油漏れ・エア漏れ確認',type:'daily'},
+  {id:'I17',name:'制御盤扉閉確認',type:'daily'},
+  {id:'I18',name:'制御盤フィルター清掃',type:'10days'},
+  {id:'I19',name:'制御盤ファン・フィン清掃',type:'10days'},
+  {id:'I20',name:'ラジエター・ファン清掃',type:'10days'},
+  {id:'I21',name:'作動油量確認',type:'10days'},
+  {id:'I22',name:'クーラーフィルタ清掃',type:'10days'},
+  {id:'I23',name:'制御盤フィルタ交換',type:'monthly'},
+  {id:'I24',name:'バッテリー・オイル交換確認',type:'monthly'},
+  {id:'I25',name:'外観汚れ・破損確認',type:'monthly'}
+];
+
+// バージョンを上げると admSeenItems がリセットされ新規デフォルト項目が再評価される
+var ADM_SEEN_VERSION = 'v5';
+
+function admMigrate() {
+  // 1. typeフィールドが未設定の既存項目にデフォルト値を付与
+  ADM.items.forEach(function(item) {
+    if (!item.type) {
+      var def = ADM_DEFAULT_ITEMS.find(function(d){ return d.id === item.id; });
+      item.type = def ? def.type : '10days';
+    }
+  });
+  // 2. デフォルト項目の名称が変わっていたら既存データも更新（略称化対応）
+  ADM.items.forEach(function(item) {
+    var def = ADM_DEFAULT_ITEMS.find(function(d){ return d.id === item.id; });
+    if (def && item.name !== def.name) { item.name = def.name; }
+  });
+  // 3. バージョン付きseenキーで管理（バージョンが変われば新規項目を再評価）
+  var seenKey = 'admSeenItems_' + ADM_SEEN_VERSION;
+  var seen = [];
+  try { seen = JSON.parse(localStorage.getItem(seenKey) || '[]'); } catch(e) {}
+  // 現在存在する項目IDをseenに記録
+  ADM.items.forEach(function(item) {
+    if (seen.indexOf(item.id) < 0) seen.push(item.id);
+  });
+  // デフォルト項目のうちseenにないものだけ追加（削除済みIDはseenに残るので除外）
+  ADM_DEFAULT_ITEMS.forEach(function(def) {
+    if (seen.indexOf(def.id) < 0) {
+      ADM.items.push({id: def.id, name: def.name, type: def.type});
+      seen.push(def.id);
+    }
+  });
+  localStorage.setItem(seenKey, JSON.stringify(seen));
+}
+
 function admLoad() {
   try {
     var d = JSON.parse(localStorage.getItem('admData') || 'null');
     if (d && d.lines && d.equips && d.items && d.assigns) { ADM = d; }
   } catch(e) {}
+  admMigrate();
+  // マイグレーション結果をLocalStorageに書き戻す
+  localStorage.setItem('admData', JSON.stringify(ADM));
   admSync();
 }
 
@@ -2130,12 +2598,30 @@ function admSync() {
   EQUIP_DATA.length = 0;
   ADM.equips.forEach(function(eq) {
     var assigns = ADM.assigns[eq.id] || [];
-    var items = [];
+    var items10 = [];
+    var itemsMonthly = [];
+    var itemsDaily = [];
     assigns.forEach(function(a) {
       var item = ADM.items.find(function(i){ return i.id === a.itemId; });
-      if (item) items.push(item.name);
+      if (item) {
+        var itype = item.type || '10days';
+        if (itype === 'monthly') {
+          itemsMonthly.push(item.name);
+        } else if (itype === 'daily') {
+          itemsDaily.push(item.name);
+        } else {
+          items10.push(item.name);
+        }
+      }
     });
-    EQUIP_DATA.push({id: eq.id, name: eq.name, items: items.length ? items : ['点検項目なし']});
+    var fallback = ['点検項目なし'];
+    EQUIP_DATA.push({
+      id: eq.id,
+      name: eq.name,
+      itemsDaily:   itemsDaily.length   ? itemsDaily   : [],
+      items10:      items10.length      ? items10      : (itemsMonthly.length ? itemsMonthly : fallback),
+      itemsMonthly: itemsMonthly.length ? itemsMonthly : (items10.length      ? items10      : fallback)
+    });
   });
   if (typeof buildEquipList === 'function') buildEquipList();
   selectedEquips = EQUIP_DATA.slice(0,6).map(function(e){ return e.id; });
@@ -2246,9 +2732,16 @@ function renderItems() {
   if (!ADM.items.length) { el.innerHTML = '<div class="adm-empty">点検項目がありません</div>'; return; }
   el.innerHTML = '';
   ADM.items.forEach(function(item) {
+    var itype = item.type || '10days';
+    var typeLabel      = itype === 'monthly' ? '月次' : itype === 'daily' ? '毎日' : '10日';
+    var typeBadgeColor = itype === 'monthly' ? '#F57C00' : itype === 'daily' ? '#2E7D32' : 'var(--blue)';
+    var typeBadgeBg    = itype === 'monthly' ? '#FFF3E0'  : itype === 'daily' ? '#E8F5E9'  : 'var(--blue-light)';
     var row = document.createElement('div');
     row.className = 'adm-list-row';
-    row.innerHTML = '<div class="adm-list-name" style="flex:1">'+esc(item.name)+'</div>' +
+    row.innerHTML = '<div style="flex:1;display:flex;align-items:center;gap:8px;">' +
+        '<span class="adm-list-name">'+esc(item.name)+'</span>' +
+        '<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:'+typeBadgeBg+';color:'+typeBadgeColor+';flex-shrink:0;">'+typeLabel+'</span>' +
+      '</div>' +
       '<div class="adm-row-actions">' +
         '<button class="adm-btn-edit" data-t="item" data-m="edit" data-id="'+esc(item.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
         '<button class="adm-btn-del"  data-t="item" data-id="'+esc(item.id)+'" onclick="btnDel(this)">'+SVG_DEL+'</button>' +
@@ -2261,12 +2754,49 @@ function renderItems() {
 function btnModal(btn) {
   admOpenModal(btn.dataset.t, btn.dataset.m, btn.dataset.id);
 }
-function btnDel(btn) {
-  var type = btn.dataset.t;
-  var id   = btn.dataset.id;
+/* ─ inline confirm (replaces blocked window.confirm in iframe) ─ */
+var _pendingDelete = null;
+
+function admConfirm(type, id) {
+  // Show inline confirm bar; actual deletion triggered by user tapping confirm
+  var labels = {line:'ライン（関連設備も削除）', equip:'設備', item:'点検項目'};
+  var bar = document.createElement('div');
+  bar.id = 'adm-del-bar';
+  bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;color:#fff;' +
+    'display:flex;align-items:center;justify-content:space-between;padding:14px 16px;z-index:9999;' +
+    'font-size:13px;gap:12px;';
+  bar.innerHTML =
+    '<span>「' + labels[type] + '」を削除しますか？</span>' +
+    '<div style="display:flex;gap:8px;flex-shrink:0;">' +
+      '<button onclick="admCancelDel()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;">キャンセル</button>' +
+      '<button onclick="admExecDel()" style="background:#E53935;border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">削除する</button>' +
+    '</div>';
+  document.body.appendChild(bar);
+  _pendingDelete = {type: type, id: id};
+  return false; // always return false; deletion handled by admExecDel
+}
+
+function admCancelDel() {
+  _pendingDelete = null;
+  var bar = document.getElementById('adm-del-bar');
+  if (bar) bar.remove();
+}
+
+function admExecDel() {
+  var bar = document.getElementById('adm-del-bar');
+  if (bar) bar.remove();
+  if (!_pendingDelete) return;
+  var type = _pendingDelete.type, id = _pendingDelete.id;
+  _pendingDelete = null;
   if (type==='line')  admDeleteLine(id);
   if (type==='equip') admDeleteEquip(id);
   if (type==='item')  admDeleteItem(id);
+}
+
+function btnDel(btn) {
+  var type = btn.dataset.t;
+  var id   = btn.dataset.id;
+  admConfirm(type, id);
 }
 function btnAssignEquip(btn) {
   var equipId = btn.dataset.id;
@@ -2289,23 +2819,26 @@ function btnCommon(btn) {
 
 /* ─ delete handlers ─ */
 function admDeleteLine(id) {
-  if (!confirm('このラインを削除しますか？関連設備も削除されます。')) return;
   ADM.equips = ADM.equips.filter(function(e){ return e.lineId!==id; });
   ADM.lines  = ADM.lines.filter(function(l){ return l.id!==id; });
   admSave(); renderLines(); admToast('ラインを削除しました');
 }
 function admDeleteEquip(id) {
-  if (!confirm('この設備を削除しますか？')) return;
   ADM.equips = ADM.equips.filter(function(e){ return e.id!==id; });
   delete ADM.assigns[id];
   admSave(); admRenderEquips(); admToast('設備を削除しました');
 }
 function admDeleteItem(id) {
-  if (!confirm('この点検項目を削除しますか？')) return;
   ADM.items = ADM.items.filter(function(i){ return i.id!==id; });
   Object.keys(ADM.assigns).forEach(function(eqId) {
     ADM.assigns[eqId] = ADM.assigns[eqId].filter(function(a){ return a.itemId!==id; });
   });
+  // 削除したIDをseenリストに記録 → 再ログイン時にマイグレーションで復活しないようにする
+  var seenKey = 'admSeenItems_' + ADM_SEEN_VERSION;
+  var seen = [];
+  try { seen = JSON.parse(localStorage.getItem(seenKey) || '[]'); } catch(e) {}
+  if (seen.indexOf(id) < 0) seen.push(id);
+  localStorage.setItem(seenKey, JSON.stringify(seen));
   admSave(); renderItems(); admToast('点検項目を削除しました');
 }
 
@@ -2375,41 +2908,54 @@ function admRefreshAssignItems() {
     return;
   }
   listEl.innerHTML = '';
-  ADM.items.forEach(function(item) {
-    var countHave = ids.filter(function(eid) {
-      var assigns = ADM.assigns[eid] || [];
-      return assigns.some(function(a){ return a.itemId===item.id; });
-    }).length;
-    var allHave  = countHave === ids.length;
-    var someHave = countHave > 0 && countHave < ids.length;
-    var commonCount = ids.filter(function(eid) {
-      var assigns = ADM.assigns[eid] || [];
-      var a = assigns.find(function(a){ return a.itemId===item.id; });
-      return a && a.common;
-    }).length;
-    var isCommon = allHave && commonCount === ids.length;
+  var typeGroups = [
+    {type:'daily',   label:'毎日点検',  badgeClass:'daily'},
+    {type:'10days',  label:'10日毎点検', badgeClass:'days10'},
+    {type:'monthly', label:'月次点検',  badgeClass:'monthly'}
+  ];
+  typeGroups.forEach(function(group) {
+    var groupItems = ADM.items.filter(function(i){ return (i.type||'10days') === group.type; });
+    if (!groupItems.length) return;
+    // Section header
+    var hdr = document.createElement('div');
+    hdr.className = 'adm-assign-type-header';
+    hdr.innerHTML = '<span class="adm-assign-type-badge '+group.badgeClass+'">'+group.label+'</span>';
+    listEl.appendChild(hdr);
+    groupItems.forEach(function(item) {
+      var countHave = ids.filter(function(eid) {
+        var assigns = ADM.assigns[eid] || [];
+        return assigns.some(function(a){ return a.itemId===item.id; });
+      }).length;
+      var allHave  = countHave === ids.length;
+      var someHave = countHave > 0 && countHave < ids.length;
+      var commonCount = ids.filter(function(eid) {
+        var assigns = ADM.assigns[eid] || [];
+        var a = assigns.find(function(a){ return a.itemId===item.id; });
+        return a && a.common;
+      }).length;
+      var isCommon = allHave && commonCount === ids.length;
 
-    var row = document.createElement('div');
-    row.className = 'adm-assign-item-row';
-    var cb = document.createElement('div');
-    cb.className = 'adm-cb' + (allHave?' checked':(someHave?' partial':''));
-    cb.id = 'acb-'+item.id; cb.dataset.id = item.id;
-    cb.onclick = function(){ btnCb(cb); };
-    var nameSpan = document.createElement('span');
-    nameSpan.className = 'adm-assign-item-name';
-    nameSpan.textContent = item.name;
-    // Show partial hint
-    if (someHave && ids.length > 1) {
-      nameSpan.innerHTML = esc(item.name)+' <span style="font-size:11px;color:var(--text-sub);">('+countHave+'/'+ids.length+'台)</span>';
-    }
-    var tog = document.createElement('button');
-    tog.className = 'adm-common-toggle' + (isCommon?' on':'');
-    tog.id = 'atog-'+item.id; tog.dataset.id = item.id;
-    tog.textContent = '共通';
-    tog.style.visibility = (allHave || someHave) ? 'visible' : 'hidden';
-    tog.onclick = function(){ btnCommon(tog); };
-    row.appendChild(cb); row.appendChild(nameSpan); row.appendChild(tog);
-    listEl.appendChild(row);
+      var row = document.createElement('div');
+      row.className = 'adm-assign-item-row';
+      var cb = document.createElement('div');
+      cb.className = 'adm-cb' + (allHave?' checked':(someHave?' partial':''));
+      cb.id = 'acb-'+item.id; cb.dataset.id = item.id;
+      cb.onclick = function(){ btnCb(cb); };
+      var nameSpan = document.createElement('span');
+      nameSpan.className = 'adm-assign-item-name';
+      nameSpan.textContent = item.name;
+      if (someHave && ids.length > 1) {
+        nameSpan.innerHTML = esc(item.name)+' <span style="font-size:11px;color:var(--text-sub);">('+countHave+'/'+ids.length+'台)</span>';
+      }
+      var tog = document.createElement('button');
+      tog.className = 'adm-common-toggle' + (isCommon?' on':'');
+      tog.id = 'atog-'+item.id; tog.dataset.id = item.id;
+      tog.textContent = '共通';
+      tog.style.visibility = (allHave || someHave) ? 'visible' : 'hidden';
+      tog.onclick = function(){ btnCommon(tog); };
+      row.appendChild(cb); row.appendChild(nameSpan); row.appendChild(tog);
+      listEl.appendChild(row);
+    });
   });
 }
 
@@ -2506,9 +3052,16 @@ function admOpenModal(type, mode, id) {
       '</div>';
   } else if (type==='item') {
     var itm = (mode==='edit') ? ADM.items.find(function(i){ return i.id===id; }) : null;
+    var itmType = itm ? (itm.type || '10days') : '10days';
     html = '<div class="adm-modal-title">'+(mode==='add'?'点検項目を追加':'点検項目を編集')+'</div>' +
       '<label class="adm-modal-label">項目名</label>' +
       '<input class="adm-modal-input" id="admIn-name" type="text" placeholder="例：温度の確認" value="'+(itm?esc(itm.name):'')+'">'+
+      '<label class="adm-modal-label">点検種別</label>' +
+      '<select class="adm-modal-select" id="admIn-itemType">' +
+        '<option value="daily"'+(itmType==='daily'?' selected':'')+'>毎日点検</option>' +
+        '<option value="10days"'+(itmType==='10days'?' selected':'')+'>10日点検</option>' +
+        '<option value="monthly"'+(itmType==='monthly'?' selected':'')+'>月次点検</option>' +
+      '</select>'+
       '<div class="adm-modal-btn-row">' +
         '<button class="adm-modal-cancel" onclick="admCloseModal()">キャンセル</button>' +
         '<button class="adm-modal-save" onclick="admModalSave()">保存する</button>' +
@@ -2563,11 +3116,13 @@ function admModalSave() {
     admToast(mode==='add'?'設備を追加しました':'設備を更新しました');
 
   } else if (type==='item') {
+    var typeEl = document.getElementById('admIn-itemType');
+    var itemType = typeEl ? typeEl.value : '10days';
     if (mode==='add') {
-      ADM.items.push({id:'I'+Date.now(), name:name});
+      ADM.items.push({id:'I'+Date.now(), name:name, type:itemType});
     } else {
       var foundItm = ADM.items.find(function(i){ return i.id===id; });
-      if (foundItm) foundItm.name = name;
+      if (foundItm) { foundItm.name = name; foundItm.type = itemType; }
     }
     admSave(); admCloseModal(); renderItems();
     admToast(mode==='add'?'点検項目を追加しました':'点検項目を更新しました');
