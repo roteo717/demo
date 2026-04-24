@@ -567,13 +567,11 @@
 
   /* ─── BOTTOM ACTION BAR ─── */
   .bottom-action {
-    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 100%; max-width: 390px;
+    width: 100%;
     background: var(--card);
     border-top: 1px solid var(--border);
     padding: 12px 16px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-    z-index: 100;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
   .btn-bottom-main {
     width: 100%; background: var(--blue); color: #fff;
@@ -593,7 +591,8 @@
     -webkit-user-select: none;
   }
   .btn-bottom-sub:active { opacity: 0.7; }
-  .pb-safe { height: 80px; }
+  .flex-spacer { flex: 1; min-height: 20px; }
+  .screen-flex { display: flex; flex-direction: column; }
 
   /* ─── INSPECTION INPUT ─── */
   #screen-inspect { background: var(--bg); }
@@ -625,10 +624,10 @@
   }
 
   .equip-section {
-    margin: 0 16px 12px;
+    margin: 0 16px 14px;
     background: var(--card);
     border-radius: var(--radius);
-    box-shadow: var(--shadow-card);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.09);
     border: 2px solid transparent;
     overflow: hidden;
     transition: border-color 0.2s;
@@ -636,30 +635,38 @@
   .equip-section.has-anomaly { border-color: var(--red); }
 
   .equip-section-header {
-    padding: 12px 14px;
-    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 16px 14px;
+    display: flex; flex-direction: column; gap: 12px;
     border-bottom: 1px solid var(--border);
   }
-  .equip-section-left { display: flex; align-items: center; gap: 10px; }
-  .equip-icon-sm { width: 32px; height: 32px; border-radius: 7px; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .equip-icon-sm svg { stroke: var(--text-sub); fill: none; width: 17px; height: 17px; }
-  .equip-name { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; }
+  .equip-section-left { display: flex; align-items: center; gap: 12px; }
+  .equip-icon-sm {
+    width: 44px; height: 44px; border-radius: 11px;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .equip-icon-sm svg { stroke: var(--blue); fill: none; width: 22px; height: 22px; }
+  .equip-name { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.25; }
   .equip-status-badge {
-    font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
+    display: inline-block; margin-top: 5px;
   }
   .badge-anomaly { background: var(--red-light); color: var(--red); }
   .badge-ok { background: var(--green-light); color: var(--green); }
-  .badge-pending { background: #F5F5F5; color: var(--text-sub); }
+  .badge-pending { background: #EEEEEE; color: var(--text-sub); border: 1px solid #E0E0E0; }
 
   .all-ok-btn {
-    background: var(--blue-light); color: var(--blue);
-    border: 1px solid var(--blue-mid); border-radius: 8px;
-    padding: 6px 10px; font-size: 12px; font-weight: 600;
-    cursor: pointer; white-space: nowrap;
-    transition: background 0.15s;
+    width: 100%;
+    background: var(--card); color: var(--blue);
+    border: 1.5px solid var(--blue-mid); border-radius: 11px;
+    padding: 10px 16px; font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: background 0.15s, border-color 0.15s;
     -webkit-user-select: none;
   }
-  .all-ok-btn:active { background: var(--blue-mid); }
+  .all-ok-btn:active { background: var(--blue-light); border-color: var(--blue); }
+  .all-ok-btn svg { stroke: var(--blue); fill: none; width: 14px; height: 14px; flex-shrink: 0; }
 
   .check-row {
     padding: 0 14px;
@@ -752,6 +759,187 @@
     transition: opacity 0.15s;
   }
   .btn-complete-home:active { opacity: 0.85; }
+
+  /* ─── ADMIN SCREEN ─── */
+  #screen-admin {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #F0F2F5;
+    z-index: 500;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .adm-wrap { max-width: 540px; margin: 0 auto; min-height: 100vh; padding-bottom: 60px; }
+  .adm-hdr {
+    background: var(--blue);
+    padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .adm-hdr-title { font-size: 16px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+  .adm-hdr-title svg { width:20px; height:20px; stroke:#fff; fill:none; flex-shrink:0; }
+  .adm-logout-btn {
+    background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+    color: #fff; border-radius: 8px; padding: 6px 12px;
+    font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit;
+  }
+  .adm-tabs-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    background: #fff; border-bottom: 2px solid var(--border);
+    position: sticky; top: 50px; z-index: 9;
+  }
+  .adm-tab {
+    padding: 12px 4px; font-size: 12px; font-weight: 500; color: var(--text-sub);
+    background: none; border: none; border-bottom: 2.5px solid transparent;
+    cursor: pointer; transition: all 0.15s; font-family: inherit; margin-bottom: -2px;
+    -webkit-user-select: none;
+  }
+  .adm-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 700; }
+  .adm-panel { padding: 16px; }
+  .adm-section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .adm-section-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .adm-add-btn {
+    background: var(--blue); color: #fff; border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; font-family: inherit; white-space: nowrap;
+  }
+  .adm-add-btn:active { opacity: 0.85; }
+  .adm-list-card { background: #fff; border-radius: 12px; box-shadow: var(--shadow-card); overflow: hidden; margin-bottom: 8px; }
+  .adm-list-row {
+    display: flex; align-items: center; padding: 13px 16px;
+    border-bottom: 1px solid #F5F5F5; gap: 10px;
+  }
+  .adm-list-row:last-child { border-bottom: none; }
+  .adm-list-name { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
+  .adm-list-sub { font-size: 12px; color: var(--text-sub); }
+  .adm-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .adm-btn-edit {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: #fff;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .adm-btn-edit svg { stroke: var(--text-sub); fill: none; }
+  .adm-btn-del {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1.5px solid var(--red-mid); background: var(--red-light);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .adm-btn-del svg { stroke: var(--red); fill: none; }
+  /* Filter */
+  .adm-filter-wrap { margin-bottom: 16px; background: #fff; border-radius: 12px; box-shadow: var(--shadow-card); padding: 14px 16px; }
+  .adm-filter-label { font-size: 12px; color: var(--text-sub); margin-bottom: 6px; font-weight: 500; }
+  .adm-select {
+    width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 11px 40px 11px 16px; font-size: 15px; color: var(--text);
+    outline: none; font-family: inherit; -webkit-appearance: none; appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; box-sizing: border-box;
+  }
+  /* Modal */
+  .adm-modal-overlay {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh; background: rgba(0,0,0,0.45);
+    z-index: 600; align-items: flex-end; justify-content: center;
+  }
+  .adm-modal-overlay.open { display: flex; }
+  .adm-modal {
+    background: #fff; border-radius: 20px 20px 0 0;
+    padding: 24px 20px 40px; width: 100%; max-width: 540px; max-height: 85vh; overflow-y: auto;
+  }
+  .adm-modal-title { font-size: 17px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+  .adm-modal-label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px; color: var(--text); }
+  .adm-modal-input {
+    width: 100%; background: #FAFAFA; border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 13px 16px; font-size: 16px; color: var(--text);
+    outline: none; font-family: inherit; -webkit-appearance: none; margin-bottom: 16px; box-sizing: border-box;
+  }
+  .adm-modal-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(47,107,255,0.1); background: #fff; }
+  .adm-modal-select {
+    width: 100%; background: #FAFAFA; border: 1.5px solid var(--border); border-radius: 10px;
+    padding: 13px 40px 13px 16px; font-size: 16px; color: var(--text); outline: none;
+    font-family: inherit; -webkit-appearance: none; appearance: none; margin-bottom: 16px; box-sizing: border-box;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+  .adm-modal-btn-row { display: flex; gap: 10px; margin-top: 8px; }
+  .adm-modal-cancel {
+    flex: 1; padding: 14px; border-radius: 12px; border: 1.5px solid var(--border);
+    background: var(--bg); font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit;
+  }
+  .adm-modal-save {
+    flex: 2; padding: 14px; border-radius: 12px; border: none;
+    background: var(--blue); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .adm-modal-save:active { opacity: 0.85; }
+  /* Assign tab */
+  .adm-assign-equip-btn {
+    width: 100%; background: #fff; border: 2px solid transparent; border-radius: 12px;
+    padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; margin-bottom: 8px; box-shadow: var(--shadow-card);
+    font-size: 15px; font-weight: 500; color: var(--text); font-family: inherit; text-align: left;
+  }
+  .adm-assign-equip-btn.active { border-color: var(--blue); color: var(--blue); background: var(--blue-light); font-weight: 600; }
+  .adm-assign-equip-btn svg { stroke: var(--text-sub); fill: none; }
+  .adm-assign-equip-btn.active svg { stroke: var(--blue); }
+  .adm-assign-section-label { font-size: 13px; font-weight: 600; color: var(--text); margin: 4px 0 10px; }
+  .adm-assign-items-card { background: #fff; border-radius: 12px; box-shadow: var(--shadow-card); padding: 4px 16px; margin-bottom: 16px; }
+  .adm-assign-item-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid #F5F5F5;
+  }
+  .adm-assign-item-row:last-child { border-bottom: none; }
+  .adm-cb {
+    width: 22px; height: 22px; border-radius: 6px;
+    border: 2px solid var(--border); background: #fff;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer;
+    transition: all 0.1s;
+  }
+  .adm-cb.checked { border-color: var(--blue); background: var(--blue); }
+  .adm-cb.checked::after {
+    content: ''; width: 11px; height: 7px;
+    border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translateY(-1px); display: block;
+  }
+  .adm-cb.partial { border-color: var(--blue); background: var(--blue-light); }
+  .adm-cb.partial::after {
+    content: ''; width: 10px; height: 2px;
+    background: var(--blue); display: block; border-radius: 2px;
+  }
+  .adm-assign-equip-hint {
+    font-size: 12px; color: var(--text-sub); margin-bottom: 10px;
+    padding: 7px 12px; background: var(--blue-light);
+    border-radius: 8px; border: 1px solid var(--blue-mid);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .adm-assign-equip-count {
+    font-size: 12px; color: var(--blue); font-weight: 600;
+    margin-bottom: 10px; padding: 4px 0;
+  }
+  .adm-assign-multi-badge {
+    display: inline-block; background: var(--blue); color: #fff;
+    font-size: 11px; font-weight: 700; border-radius: 20px;
+    padding: 2px 8px; margin-left: 6px; vertical-align: middle;
+  }
+  .adm-assign-item-name { flex: 1; font-size: 14px; color: var(--text); }
+  .adm-common-toggle {
+    font-size: 11px; padding: 3px 9px; border-radius: 20px;
+    border: 1.5px solid var(--border); background: #fff; color: var(--text-sub);
+    cursor: pointer; white-space: nowrap; font-family: inherit; font-weight: 500;
+  }
+  .adm-common-toggle.on { border-color: var(--blue); background: var(--blue-light); color: var(--blue); font-weight: 700; }
+  .adm-assign-save-btn {
+    width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 12px;
+    padding: 16px; font-size: 16px; font-weight: 600; cursor: pointer;
+    font-family: inherit; margin-top: 4px;
+  }
+  .adm-assign-save-btn:active { opacity: 0.85; }
+  .adm-empty { text-align: center; padding: 40px 20px; color: var(--text-sub); font-size: 14px; line-height: 1.8; }
+  .adm-info-box {
+    background: var(--blue-light); border: 1px solid var(--blue-mid);
+    border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--blue); margin-bottom: 16px; line-height: 1.7;
+  }
 </style>
 </head>
 <body>
@@ -1034,7 +1222,7 @@
 
 
   <!-- ===== SCREEN 5: LINE SELECT ===== -->
-  <div class="screen hidden" id="screen-line">
+  <div class="screen hidden screen-flex" id="screen-line">
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
@@ -1068,7 +1256,7 @@
         <div class="radio-label">ラインD</div>
       </div>
     </div>
-    <div class="pb-safe"></div>
+    <div class="flex-spacer"></div>
     <div class="bottom-action">
       <button class="btn-bottom-main" onclick="showScreen('screen-equip')">次へ</button>
     </div>
@@ -1076,7 +1264,7 @@
 
 
   <!-- ===== SCREEN 6: EQUIP SELECT ===== -->
-  <div class="screen hidden" id="screen-equip">
+  <div class="screen hidden screen-flex" id="screen-equip">
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
@@ -1096,7 +1284,7 @@
     <div class="list-body" id="equip-list">
       <!-- Rendered by JS -->
     </div>
-    <div class="pb-safe"></div>
+    <div class="flex-spacer"></div>
     <div class="bottom-action">
       <button class="btn-bottom-main" id="start-inspect-btn" onclick="startInspection()">この設備で点検開始</button>
     </div>
@@ -1104,7 +1292,7 @@
 
 
   <!-- ===== SCREEN 7: INSPECTION INPUT ===== -->
-  <div class="screen hidden" id="screen-inspect">
+  <div class="screen hidden screen-flex" id="screen-inspect">
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
@@ -1125,10 +1313,6 @@
 
     <!-- Bulk actions -->
     <div class="inspect-top-actions">
-      <button class="bulk-btn" onclick="bulkSetAllOthersOk()">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
-        他をすべて正常にする
-      </button>
       <button class="bulk-btn" onclick="bulkSetUnenteredOk()">
         <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
         未入力をすべて正常にする
@@ -1138,7 +1322,7 @@
     <!-- Equipment sections -->
     <div id="inspect-sections"></div>
 
-    <div class="pb-safe"></div>
+    <div class="flex-spacer"></div>
     <div class="bottom-action">
       <div class="btn-row">
         <button class="btn-bottom-sub" onclick="showScreen('screen-equip')">未入力を確認</button>
@@ -1149,7 +1333,7 @@
 
 
   <!-- ===== SCREEN 8: CONFIRM ===== -->
-  <div class="screen hidden" id="screen-confirm">
+  <div class="screen hidden screen-flex" id="screen-confirm">
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
@@ -1169,7 +1353,7 @@
 
     <div id="confirm-content"></div>
 
-    <div class="pb-safe"></div>
+    <div class="flex-spacer"></div>
     <div class="bottom-action">
       <div class="btn-row">
         <button class="btn-bottom-sub" onclick="showScreen('screen-inspect')">修正する</button>
@@ -1195,6 +1379,87 @@
     </div>
   </div>
 
+</div>
+
+<!-- ===== ADMIN SCREEN ===== -->
+<div id="screen-admin">
+  <div class="adm-wrap">
+    <div class="adm-hdr">
+      <div class="adm-hdr-title">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14M12 2v2m0 16v2M2 12h2m16 0h2"/>
+        </svg>
+        設備点検 管理画面
+      </div>
+      <button class="adm-logout-btn" onclick="adminLogout()">ログアウト</button>
+    </div>
+    <div class="adm-tabs-bar">
+      <button class="adm-tab active" id="atab-lines" onclick="showAdmTab('lines')">ライン管理</button>
+      <button class="adm-tab" id="atab-equips" onclick="showAdmTab('equips')">設備管理</button>
+      <button class="adm-tab" id="atab-items" onclick="showAdmTab('items')">点検項目</button>
+      <button class="adm-tab" id="atab-assign" onclick="showAdmTab('assign')">割当設定</button>
+    </div>
+    <!-- ライン管理 -->
+    <div id="adm-panel-lines" class="adm-panel">
+      <div class="adm-section-hdr">
+        <span class="adm-section-title">ライン一覧</span>
+        <button class="adm-add-btn" onclick="admOpenModal('line','add','')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          ラインを追加
+        </button>
+      </div>
+      <div id="adm-lines-list" class="adm-list-card"></div>
+    </div>
+    <!-- 設備管理 -->
+    <div id="adm-panel-equips" class="adm-panel" style="display:none">
+      <div class="adm-filter-wrap">
+        <div class="adm-filter-label">ラインを選択</div>
+        <select class="adm-select" id="adm-equip-line-filter" onchange="admRenderEquips()">
+          <option value="">すべてのライン</option>
+        </select>
+      </div>
+      <div class="adm-section-hdr">
+        <span class="adm-section-title">設備一覧</span>
+        <button class="adm-add-btn" onclick="admOpenModal('equip','add','')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          設備を追加
+        </button>
+      </div>
+      <div id="adm-equips-list" class="adm-list-card"></div>
+    </div>
+    <!-- 点検項目管理 -->
+    <div id="adm-panel-items" class="adm-panel" style="display:none">
+      <div class="adm-section-hdr">
+        <span class="adm-section-title">点検項目一覧</span>
+        <button class="adm-add-btn" onclick="admOpenModal('item','add','')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          項目を追加
+        </button>
+      </div>
+      <div id="adm-items-list" class="adm-list-card"></div>
+    </div>
+    <!-- 割当設定 -->
+    <div id="adm-panel-assign" class="adm-panel" style="display:none">
+      <div class="adm-info-box">💡 設備を選択して点検項目を割り当てます。「共通」にした項目は点検者の共通項目として表示されます。</div>
+      <div class="adm-filter-wrap">
+        <div class="adm-filter-label">① ラインを選択</div>
+        <select class="adm-select" id="adm-assign-line-sel" onchange="admRenderAssignEquips()">
+          <option value="">ラインを選択してください</option>
+        </select>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;">② 設備を選択</div>
+      <div id="adm-assign-equip-list"></div>
+      <div id="adm-assign-items-panel" style="display:none;margin-top:8px;">
+        <div class="adm-assign-section-label" id="adm-assign-equip-label"></div>
+        <div class="adm-assign-items-card" id="adm-assign-items-list"></div>
+        <button class="adm-assign-save-btn" id="adm-assign-save-btn" onclick="admSaveAssign()">保存する</button>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="adm-modal-overlay" id="adm-modal-overlay" onclick="admOverlayClick(event)">
+    <div class="adm-modal" id="adm-modal-body"></div>
+  </div>
 </div>
 
 <script>
@@ -1258,19 +1523,23 @@
   }
 
   function doLogin() {
-    const idInput = document.getElementById('admin-id-input');
-    const pwInput = document.getElementById('pw-input');
-    if (!idInput || !pwInput) return;
-    if (idInput.value !== '1234' || pwInput.value !== '1234') {
-      alert('管理者IDまたはパスワードが違います');
-      return;
+    if (currentScreen === 'screen-inspector') {
+      const selectedBtn = document.querySelector('#screen-inspector .user-btn.selected');
+      const userName = selectedBtn ? selectedBtn.textContent.trim().replace('\n','').trim() : '佐藤 太郎';
+      localStorage.setItem('loggedInUser', userName === 'その他' ? '点検者' : userName);
+      document.querySelector('.home-user-name').textContent = (userName === 'その他' ? '点検者' : userName) + ' さん';
+      buildCalendar();
+      showScreen('screen-home');
+    } else {
+      const idInput = document.getElementById('admin-id-input');
+      const pwInput = document.getElementById('pw-input');
+      if (!idInput || !pwInput) return;
+      if (idInput.value !== '1234' || pwInput.value !== '1234') {
+        alert('管理者IDまたはパスワードが違います\nデモ: ID=1234 / PW=1234');
+        return;
+      }
+      openAdminScreen();
     }
-    const selectedBtn = document.querySelector('.user-btn.selected');
-    const userName = selectedBtn ? selectedBtn.textContent.trim() : '佐藤 太郎';
-    localStorage.setItem('loggedInUser', userName);
-    document.querySelector('.home-user-name').textContent = userName + ' さん';
-    buildCalendar();
-    showScreen('screen-home');
   }
 
   function togglePw() {
@@ -1508,12 +1777,13 @@
           </div>
           <div>
             <div class="equip-name">${eq.id}　${eq.name}</div>
+            <span class="equip-status-badge badge-pending" id="badge-${eq.id}">未入力</span>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="equip-status-badge badge-pending" id="badge-${eq.id}">未入力</span>
-          <button class="all-ok-btn" onclick="setAllOk('${eq.id}')">この設備をすべて正常にする</button>
-        </div>
+        <button class="all-ok-btn" onclick="setAllOk('${eq.id}')">
+          <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          この設備をすべて正常にする
+        </button>
       </div>
     `;
     eq.items.forEach((item, i) => {
@@ -1716,7 +1986,7 @@
     }
 
     const spacer = document.createElement('div');
-    spacer.className = 'pb-safe';
+    spacer.className = 'flex-spacer';
     content.appendChild(spacer);
   }
 
@@ -1808,6 +2078,514 @@
       currentScreen = 'screen-home';
     }
   })();
+</script>
+
+<script>
+/* ═══ ADMIN DATA ═══ */
+var ADM = {
+  lines: [
+    {id:'L1',name:'ラインA'},{id:'L2',name:'ラインB'},{id:'L3',name:'ラインC'}
+  ],
+  equips: [
+    {id:'A-101',name:'空調機',lineId:'L1'},{id:'A-102',name:'ポンプ',lineId:'L1'},
+    {id:'A-103',name:'送風機',lineId:'L1'},{id:'A-104',name:'冷却塔',lineId:'L1'},
+    {id:'A-105',name:'コンプレッサー',lineId:'L2'},{id:'A-106',name:'ボイラー',lineId:'L2'},
+    {id:'A-107',name:'受電設備',lineId:'L3'}
+  ],
+  items: [
+    {id:'I1',name:'異音・振動の有無'},{id:'I2',name:'油漏れの有無'},{id:'I3',name:'水漏れの有無'},
+    {id:'I4',name:'フィルターの状態'},{id:'I5',name:'圧力の確認'},{id:'I6',name:'運転状態の確認'},
+    {id:'I7',name:'外観の異常'},{id:'I8',name:'ベルトの状態'},{id:'I9',name:'回転方向の確認'},
+    {id:'I10',name:'ファンの状態'},{id:'I11',name:'水位の確認'},
+    {id:'I12',name:'安全弁の確認'},{id:'I13',name:'警報の確認'}
+  ],
+  assigns: {
+    'A-101':[{itemId:'I1',common:true},{itemId:'I2',common:false},{itemId:'I4',common:true},{itemId:'I5',common:false}],
+    'A-102':[{itemId:'I3',common:false},{itemId:'I1',common:false},{itemId:'I6',common:false}],
+    'A-103':[{itemId:'I1',common:false},{itemId:'I8',common:false},{itemId:'I9',common:false}],
+    'A-104':[{itemId:'I3',common:false},{itemId:'I10',common:false},{itemId:'I11',common:false}],
+    'A-105':[{itemId:'I1',common:false},{itemId:'I2',common:false},{itemId:'I5',common:false}],
+    'A-106':[{itemId:'I3',common:false},{itemId:'I5',common:false},{itemId:'I12',common:false}],
+    'A-107':[{itemId:'I1',common:false},{itemId:'I7',common:false},{itemId:'I13',common:false}]
+  }
+};
+
+var admCurrent = {equipIds: [], modalType: null, modalMode: null, modalId: null};
+
+/* ─ persistence ─ */
+function admLoad() {
+  try {
+    var d = JSON.parse(localStorage.getItem('admData') || 'null');
+    if (d && d.lines && d.equips && d.items && d.assigns) { ADM = d; }
+  } catch(e) {}
+  admSync();
+}
+
+function admSave() {
+  localStorage.setItem('admData', JSON.stringify(ADM));
+  admSync();
+}
+
+function admSync() {
+  EQUIP_DATA.length = 0;
+  ADM.equips.forEach(function(eq) {
+    var assigns = ADM.assigns[eq.id] || [];
+    var items = [];
+    assigns.forEach(function(a) {
+      var item = ADM.items.find(function(i){ return i.id === a.itemId; });
+      if (item) items.push(item.name);
+    });
+    EQUIP_DATA.push({id: eq.id, name: eq.name, items: items.length ? items : ['点検項目なし']});
+  });
+  if (typeof buildEquipList === 'function') buildEquipList();
+  selectedEquips = EQUIP_DATA.slice(0,6).map(function(e){ return e.id; });
+}
+
+/* ─ open/close admin ─ */
+function openAdminScreen() {
+  admLoad();
+  document.getElementById('screen-admin').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  showAdmTab('lines');
+}
+
+function adminLogout() {
+  document.getElementById('screen-admin').style.display = 'none';
+  document.body.style.overflow = '';
+  var idEl = document.getElementById('admin-id-input');
+  var pwEl = document.getElementById('pw-input');
+  if (idEl) idEl.value = '';
+  if (pwEl) pwEl.value = '';
+  showScreen('screen-role');
+}
+
+/* ─ tabs ─ */
+function showAdmTab(tab) {
+  ['lines','equips','items','assign'].forEach(function(t) {
+    var p = document.getElementById('adm-panel-'+t);
+    var b = document.getElementById('atab-'+t);
+    if (p) p.style.display = (t===tab) ? 'block' : 'none';
+    if (b) b.classList.toggle('active', t===tab);
+  });
+  if (tab==='lines')  renderLines();
+  if (tab==='equips') renderEquipsInit();
+  if (tab==='items')  renderItems();
+  if (tab==='assign') renderAssignInit();
+}
+
+/* ─ HTML escape ─ */
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ─ icon SVG strings ─ */
+var SVG_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+var SVG_DEL  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>';
+var SVG_CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
+
+/* ─ LINES ─ */
+function renderLines() {
+  var el = document.getElementById('adm-lines-list');
+  if (!el) return;
+  if (!ADM.lines.length) { el.innerHTML = '<div class="adm-empty">ラインがありません</div>'; return; }
+  el.innerHTML = '';
+  ADM.lines.forEach(function(ln) {
+    var cnt = ADM.equips.filter(function(e){ return e.lineId===ln.id; }).length;
+    var row = document.createElement('div');
+    row.className = 'adm-list-row';
+    row.innerHTML = '<div style="flex:1"><div class="adm-list-name">'+esc(ln.name)+'</div><div class="adm-list-sub">設備 '+cnt+'台</div></div>' +
+      '<div class="adm-row-actions">' +
+        '<button class="adm-btn-edit" data-t="line" data-m="edit" data-id="'+esc(ln.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
+        '<button class="adm-btn-del"  data-t="line" data-id="'+esc(ln.id)+'" onclick="btnDel(this)">'+SVG_DEL+'</button>' +
+      '</div>';
+    el.appendChild(row);
+  });
+}
+
+/* ─ EQUIPS ─ */
+function renderEquipsInit() {
+  var sel = document.getElementById('adm-equip-line-filter');
+  if (!sel) return;
+  var cur = sel.value;
+  sel.innerHTML = '<option value="">すべてのライン</option>';
+  ADM.lines.forEach(function(ln) {
+    var opt = document.createElement('option');
+    opt.value = ln.id; opt.textContent = ln.name;
+    if (ln.id===cur) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  admRenderEquips();
+}
+
+function admRenderEquips() {
+  var sel = document.getElementById('adm-equip-line-filter');
+  var lineId = sel ? sel.value : '';
+  var el = document.getElementById('adm-equips-list');
+  if (!el) return;
+  var list = lineId ? ADM.equips.filter(function(e){ return e.lineId===lineId; }) : ADM.equips;
+  if (!list.length) { el.innerHTML = '<div class="adm-empty">設備がありません</div>'; return; }
+  el.innerHTML = '';
+  list.forEach(function(eq) {
+    var ln = ADM.lines.find(function(l){ return l.id===eq.lineId; });
+    var assigns = ADM.assigns[eq.id] || [];
+    var row = document.createElement('div');
+    row.className = 'adm-list-row';
+    row.innerHTML = '<div style="flex:1"><div class="adm-list-name">'+esc(eq.id)+'　'+esc(eq.name)+'</div><div class="adm-list-sub">'+(ln?esc(ln.name):'-')+'　点検項目 '+assigns.length+'件</div></div>' +
+      '<div class="adm-row-actions">' +
+        '<button class="adm-btn-edit" data-t="equip" data-m="edit" data-id="'+esc(eq.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
+        '<button class="adm-btn-del"  data-t="equip" data-id="'+esc(eq.id)+'" onclick="btnDel(this)">'+SVG_DEL+'</button>' +
+      '</div>';
+    el.appendChild(row);
+  });
+}
+
+/* ─ ITEMS ─ */
+function renderItems() {
+  var el = document.getElementById('adm-items-list');
+  if (!el) return;
+  if (!ADM.items.length) { el.innerHTML = '<div class="adm-empty">点検項目がありません</div>'; return; }
+  el.innerHTML = '';
+  ADM.items.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'adm-list-row';
+    row.innerHTML = '<div class="adm-list-name" style="flex:1">'+esc(item.name)+'</div>' +
+      '<div class="adm-row-actions">' +
+        '<button class="adm-btn-edit" data-t="item" data-m="edit" data-id="'+esc(item.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
+        '<button class="adm-btn-del"  data-t="item" data-id="'+esc(item.id)+'" onclick="btnDel(this)">'+SVG_DEL+'</button>' +
+      '</div>';
+    el.appendChild(row);
+  });
+}
+
+/* ─ data-* button handlers (avoids quotes-in-onclick issues) ─ */
+function btnModal(btn) {
+  admOpenModal(btn.dataset.t, btn.dataset.m, btn.dataset.id);
+}
+function btnDel(btn) {
+  var type = btn.dataset.t;
+  var id   = btn.dataset.id;
+  if (type==='line')  admDeleteLine(id);
+  if (type==='equip') admDeleteEquip(id);
+  if (type==='item')  admDeleteItem(id);
+}
+function btnAssignEquip(btn) {
+  var equipId = btn.dataset.id;
+  var idx = admCurrent.equipIds.indexOf(equipId);
+  if (idx >= 0) {
+    admCurrent.equipIds.splice(idx, 1);
+    btn.classList.remove('active');
+  } else {
+    admCurrent.equipIds.push(equipId);
+    btn.classList.add('active');
+  }
+  admRefreshAssignItems();
+}
+function btnCb(btn) {
+  admToggleAssignItem(btn.dataset.id);
+}
+function btnCommon(btn) {
+  admToggleCommon(btn.dataset.id);
+}
+
+/* ─ delete handlers ─ */
+function admDeleteLine(id) {
+  if (!confirm('このラインを削除しますか？関連設備も削除されます。')) return;
+  ADM.equips = ADM.equips.filter(function(e){ return e.lineId!==id; });
+  ADM.lines  = ADM.lines.filter(function(l){ return l.id!==id; });
+  admSave(); renderLines(); admToast('ラインを削除しました');
+}
+function admDeleteEquip(id) {
+  if (!confirm('この設備を削除しますか？')) return;
+  ADM.equips = ADM.equips.filter(function(e){ return e.id!==id; });
+  delete ADM.assigns[id];
+  admSave(); admRenderEquips(); admToast('設備を削除しました');
+}
+function admDeleteItem(id) {
+  if (!confirm('この点検項目を削除しますか？')) return;
+  ADM.items = ADM.items.filter(function(i){ return i.id!==id; });
+  Object.keys(ADM.assigns).forEach(function(eqId) {
+    ADM.assigns[eqId] = ADM.assigns[eqId].filter(function(a){ return a.itemId!==id; });
+  });
+  admSave(); renderItems(); admToast('点検項目を削除しました');
+}
+
+/* ─ ASSIGN ─ */
+function renderAssignInit() {
+  var sel = document.getElementById('adm-assign-line-sel');
+  if (!sel) return;
+  var cur = sel.value;
+  sel.innerHTML = '<option value="">ラインを選択してください</option>';
+  ADM.lines.forEach(function(ln) {
+    var opt = document.createElement('option');
+    opt.value = ln.id; opt.textContent = ln.name;
+    if (ln.id===cur) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  admRenderAssignEquips();
+}
+
+function admRenderAssignEquips() {
+  var sel = document.getElementById('adm-assign-line-sel');
+  var lineId = sel ? sel.value : '';
+  var panel = document.getElementById('adm-assign-equip-list');
+  var itemsPanel = document.getElementById('adm-assign-items-panel');
+  if (!panel) return;
+  admCurrent.equipIds = [];
+  if (itemsPanel) itemsPanel.style.display = 'none';
+  if (!lineId) { panel.innerHTML = '<div class="adm-empty">ラインを選択してください</div>'; return; }
+  var equips = ADM.equips.filter(function(e){ return e.lineId===lineId; });
+  if (!equips.length) { panel.innerHTML = '<div class="adm-empty">この​ラインに設備がありません</div>'; return; }
+  panel.innerHTML = '<div class="adm-assign-equip-hint">💡 複数タップで複数選択できます</div>';
+  equips.forEach(function(eq) {
+    var assigns = ADM.assigns[eq.id] || [];
+    var btn = document.createElement('button');
+    btn.className = 'adm-assign-equip-btn';
+    btn.id = 'aeq-'+eq.id;
+    btn.dataset.id = eq.id;
+    btn.onclick = function(){ btnAssignEquip(btn); };
+    btn.innerHTML = '<span>'+esc(eq.id)+'　'+esc(eq.name)+' <span style="font-size:12px;opacity:0.65;">('+assigns.length+'件)</span></span>'+SVG_CHEV;
+    panel.appendChild(btn);
+  });
+}
+
+function admRefreshAssignItems() {
+  var ids = admCurrent.equipIds;
+  var itemsPanel = document.getElementById('adm-assign-items-panel');
+  var label = document.getElementById('adm-assign-equip-label');
+  var listEl = document.getElementById('adm-assign-items-list');
+  var saveBtn = document.getElementById('adm-assign-save-btn');
+
+  if (!ids.length) {
+    if (itemsPanel) itemsPanel.style.display = 'none';
+    return;
+  }
+  if (itemsPanel) itemsPanel.style.display = 'block';
+
+  if (ids.length === 1) {
+    var eq = ADM.equips.find(function(e){ return e.id===ids[0]; });
+    if (label) label.textContent = '③ '+eq.id+' '+eq.name+' の点検項目';
+  } else {
+    if (label) label.innerHTML = '③ 選択した <span class="adm-assign-multi-badge">'+ids.length+'台</span> の設備に一括設定';
+  }
+  if (saveBtn) saveBtn.textContent = ids.length > 1 ? ids.length+'台の設備に保存する' : '保存する';
+
+  if (!listEl) return;
+  if (!ADM.items.length) {
+    listEl.innerHTML = '<div class="adm-empty">点検項目がありません。「点検項目」タブで先に追加してください。</div>';
+    return;
+  }
+  listEl.innerHTML = '';
+  ADM.items.forEach(function(item) {
+    var countHave = ids.filter(function(eid) {
+      var assigns = ADM.assigns[eid] || [];
+      return assigns.some(function(a){ return a.itemId===item.id; });
+    }).length;
+    var allHave  = countHave === ids.length;
+    var someHave = countHave > 0 && countHave < ids.length;
+    var commonCount = ids.filter(function(eid) {
+      var assigns = ADM.assigns[eid] || [];
+      var a = assigns.find(function(a){ return a.itemId===item.id; });
+      return a && a.common;
+    }).length;
+    var isCommon = allHave && commonCount === ids.length;
+
+    var row = document.createElement('div');
+    row.className = 'adm-assign-item-row';
+    var cb = document.createElement('div');
+    cb.className = 'adm-cb' + (allHave?' checked':(someHave?' partial':''));
+    cb.id = 'acb-'+item.id; cb.dataset.id = item.id;
+    cb.onclick = function(){ btnCb(cb); };
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'adm-assign-item-name';
+    nameSpan.textContent = item.name;
+    // Show partial hint
+    if (someHave && ids.length > 1) {
+      nameSpan.innerHTML = esc(item.name)+' <span style="font-size:11px;color:var(--text-sub);">('+countHave+'/'+ids.length+'台)</span>';
+    }
+    var tog = document.createElement('button');
+    tog.className = 'adm-common-toggle' + (isCommon?' on':'');
+    tog.id = 'atog-'+item.id; tog.dataset.id = item.id;
+    tog.textContent = '共通';
+    tog.style.visibility = (allHave || someHave) ? 'visible' : 'hidden';
+    tog.onclick = function(){ btnCommon(tog); };
+    row.appendChild(cb); row.appendChild(nameSpan); row.appendChild(tog);
+    listEl.appendChild(row);
+  });
+}
+
+function admToggleAssignItem(itemId) {
+  var ids = admCurrent.equipIds;
+  if (!ids.length) return;
+  var allHave = ids.every(function(eid) {
+    var assigns = ADM.assigns[eid] || [];
+    return assigns.some(function(a){ return a.itemId===itemId; });
+  });
+  ids.forEach(function(eid) {
+    if (!ADM.assigns[eid]) ADM.assigns[eid] = [];
+    var assigns = ADM.assigns[eid];
+    var idx = assigns.findIndex(function(a){ return a.itemId===itemId; });
+    if (allHave) {
+      if (idx >= 0) assigns.splice(idx, 1);
+    } else {
+      if (idx < 0) assigns.push({itemId:itemId, common:false});
+    }
+  });
+  admRefreshAssignItems();
+}
+
+function admToggleCommon(itemId) {
+  var ids = admCurrent.equipIds;
+  if (!ids.length) return;
+  var haveItem = ids.filter(function(eid) {
+    var assigns = ADM.assigns[eid] || [];
+    return assigns.some(function(a){ return a.itemId===itemId; });
+  });
+  if (!haveItem.length) return;
+  var allCommon = haveItem.every(function(eid) {
+    var assigns = ADM.assigns[eid] || [];
+    var a = assigns.find(function(a){ return a.itemId===itemId; });
+    return a && a.common;
+  });
+  haveItem.forEach(function(eid) {
+    var assigns = ADM.assigns[eid] || [];
+    var assign = assigns.find(function(a){ return a.itemId===itemId; });
+    if (assign) assign.common = !allCommon;
+  });
+  admRefreshAssignItems();
+}
+
+function admSaveAssign() {
+  admSave();
+  var count = admCurrent.equipIds.length;
+  admToast(count > 1 ? count+'台の設備の割当を保存しました ✓' : '割当を保存しました ✓');
+  var savedIds = admCurrent.equipIds.slice();
+  admRenderAssignEquips();
+  if (savedIds.length) {
+    setTimeout(function() {
+      savedIds.forEach(function(id) {
+        var btn = document.getElementById('aeq-'+id);
+        if (btn) btn.classList.add('active');
+      });
+      admCurrent.equipIds = savedIds;
+      admRefreshAssignItems();
+    }, 60);
+  }
+}
+
+/* ─ MODAL ─ */
+function admOpenModal(type, mode, id) {
+  admCurrent.modalType = type; admCurrent.modalMode = mode; admCurrent.modalId = id;
+  var overlay = document.getElementById('adm-modal-overlay');
+  var body    = document.getElementById('adm-modal-body');
+  if (!overlay || !body) return;
+  var html = '';
+  if (type==='line') {
+    var ln = (mode==='edit') ? ADM.lines.find(function(l){ return l.id===id; }) : null;
+    html = '<div class="adm-modal-title">'+(mode==='add'?'ラインを追加':'ラインを編集')+'</div>' +
+      '<label class="adm-modal-label">ライン名</label>' +
+      '<input class="adm-modal-input" id="admIn-name" type="text" placeholder="例：ラインD" value="'+(ln?esc(ln.name):'')+'">' +
+      '<div class="adm-modal-btn-row">' +
+        '<button class="adm-modal-cancel" onclick="admCloseModal()">キャンセル</button>' +
+        '<button class="adm-modal-save" onclick="admModalSave()">保存する</button>' +
+      '</div>';
+  } else if (type==='equip') {
+    var eq = (mode==='edit') ? ADM.equips.find(function(e){ return e.id===id; }) : null;
+    var lineOpts = ADM.lines.map(function(l){
+      return '<option value="'+esc(l.id)+'"'+(eq&&eq.lineId===l.id?' selected':'')+'>'+esc(l.name)+'</option>';
+    }).join('');
+    html = '<div class="adm-modal-title">'+(mode==='add'?'設備を追加':'設備を編集')+'</div>' +
+      '<label class="adm-modal-label">設備番号（例：A-108）</label>' +
+      '<input class="adm-modal-input" id="admIn-eqid" type="text" placeholder="A-108" value="'+(eq?esc(eq.id):'')+ '"'+(mode==='edit'?' readonly style="opacity:0.6"':'')+'>'+
+      '<label class="adm-modal-label">設備名</label>' +
+      '<input class="adm-modal-input" id="admIn-name" type="text" placeholder="例：送水ポンプ" value="'+(eq?esc(eq.name):'')+'">'+
+      '<label class="adm-modal-label">所属ライン</label>' +
+      '<select class="adm-modal-select" id="admIn-line"><option value="">選択してください</option>'+lineOpts+'</select>'+
+      '<div class="adm-modal-btn-row">' +
+        '<button class="adm-modal-cancel" onclick="admCloseModal()">キャンセル</button>' +
+        '<button class="adm-modal-save" onclick="admModalSave()">保存する</button>' +
+      '</div>';
+  } else if (type==='item') {
+    var itm = (mode==='edit') ? ADM.items.find(function(i){ return i.id===id; }) : null;
+    html = '<div class="adm-modal-title">'+(mode==='add'?'点検項目を追加':'点検項目を編集')+'</div>' +
+      '<label class="adm-modal-label">項目名</label>' +
+      '<input class="adm-modal-input" id="admIn-name" type="text" placeholder="例：温度の確認" value="'+(itm?esc(itm.name):'')+'">'+
+      '<div class="adm-modal-btn-row">' +
+        '<button class="adm-modal-cancel" onclick="admCloseModal()">キャンセル</button>' +
+        '<button class="adm-modal-save" onclick="admModalSave()">保存する</button>' +
+      '</div>';
+  }
+  body.innerHTML = html;
+  overlay.classList.add('open');
+  setTimeout(function(){ var i=document.getElementById('admIn-name'); if(i)i.focus(); },120);
+}
+
+function admOverlayClick(e) {
+  if (e.target === e.currentTarget) admCloseModal();
+}
+
+function admCloseModal() {
+  var overlay = document.getElementById('adm-modal-overlay');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function admModalSave() {
+  var type = admCurrent.modalType;
+  var mode = admCurrent.modalMode;
+  var id   = admCurrent.modalId;
+  var nameEl = document.getElementById('admIn-name');
+  var name = nameEl ? nameEl.value.trim() : '';
+  if (!name) { alert('名前を入力してください'); return; }
+
+  if (type==='line') {
+    if (mode==='add') {
+      ADM.lines.push({id:'L'+Date.now(), name:name});
+    } else {
+      var found = ADM.lines.find(function(l){ return l.id===id; });
+      if (found) found.name = name;
+    }
+    admSave(); admCloseModal(); renderLines();
+    admToast(mode==='add'?'ラインを追加しました':'ラインを更新しました');
+
+  } else if (type==='equip') {
+    var eqIdEl = document.getElementById('admIn-eqid');
+    var lineEl = document.getElementById('admIn-line');
+    var eqId = eqIdEl ? eqIdEl.value.trim() : '';
+    var lineId = lineEl ? lineEl.value : '';
+    if (!eqId||!lineId) { alert('すべての項目を入力してください'); return; }
+    if (mode==='add') {
+      if (ADM.equips.find(function(e){ return e.id===eqId; })) { alert('この設備番号はすでに存在します'); return; }
+      ADM.equips.push({id:eqId, name:name, lineId:lineId});
+    } else {
+      var foundEq = ADM.equips.find(function(e){ return e.id===id; });
+      if (foundEq) { foundEq.name=name; foundEq.lineId=lineId; }
+    }
+    admSave(); admCloseModal(); admRenderEquips();
+    admToast(mode==='add'?'設備を追加しました':'設備を更新しました');
+
+  } else if (type==='item') {
+    if (mode==='add') {
+      ADM.items.push({id:'I'+Date.now(), name:name});
+    } else {
+      var foundItm = ADM.items.find(function(i){ return i.id===id; });
+      if (foundItm) foundItm.name = name;
+    }
+    admSave(); admCloseModal(); renderItems();
+    admToast(mode==='add'?'点検項目を追加しました':'点検項目を更新しました');
+  }
+}
+
+/* ─ toast ─ */
+function admToast(msg) {
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:10px 22px;border-radius:22px;font-size:13px;z-index:9999;opacity:0;transition:opacity 0.2s;white-space:nowrap;pointer-events:none;font-weight:500;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){ t.style.opacity='1'; });
+  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },200); },1800);
+}
+
+/* ─ init ─ */
+(function(){ admLoad(); })();
 </script>
 </body>
 </html>
