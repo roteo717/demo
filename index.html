@@ -236,6 +236,7 @@
   .user-btn.other {
     color: var(--blue); border-color: var(--blue-mid);
     display: flex; gap: 4px; align-items: center; justify-content: center;
+    grid-column: 1 / -1;
   }
   /* 管理者ボタン：選択中は赤系 */
   .mgr-btn.selected {
@@ -988,13 +989,14 @@
   /* Modal */
   .adm-modal-overlay {
     display: none; position: fixed; top: 0; left: 0;
-    width: 100vw; height: 100vh; background: rgba(0,0,0,0.45);
+    width: 100vw; height: 100vh; height: 100dvh; background: rgba(0,0,0,0.45);
     z-index: 600; align-items: flex-end; justify-content: center;
   }
   .adm-modal-overlay.open { display: flex; }
   .adm-modal {
     background: #fff; border-radius: 20px 20px 0 0;
-    padding: 24px 20px 40px; width: 100%; max-width: 540px; max-height: 85vh; overflow-y: auto;
+    padding: 24px 20px max(24px, env(safe-area-inset-bottom, 24px)); width: 100%; max-width: 540px;
+    max-height: 70vh; max-height: 70dvh; overflow-y: auto;
   }
   .adm-modal-title { font-size: 17px; font-weight: 700; margin-bottom: 20px; text-align: center; }
   .adm-modal-label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px; color: var(--text); }
@@ -4592,9 +4594,34 @@ function renderAdmApproval() {
     return;
   }
 
-  // Group all into one card
-  list.innerHTML = '<div class="adm-list-card">' +
-    APR_DATA.map(function(item) {
+  // Group by line prefix (first char of equipId)
+  var lineMap = {};
+  APR_DATA.forEach(function(item) {
+    var prefix = item.equipId.charAt(0);
+    if (!lineMap[prefix]) lineMap[prefix] = [];
+    lineMap[prefix].push(item);
+  });
+
+  // Build line name lookup from DASH_DATA
+  var lineNames = {};
+  (DASH_DATA.lines || []).forEach(function(ln) { lineNames[ln.id] = ln.name; });
+
+  var html = '';
+  Object.keys(lineMap).sort().forEach(function(prefix) {
+    var items = lineMap[prefix];
+    var lineName = lineNames[prefix] || ('ライン' + prefix);
+    var pendingInLine = items.filter(function(i){ return i.status === 'pending'; }).length;
+    var anomalyInLine = items.some(function(i){ return i.anomaly && i.status === 'pending'; });
+
+    html += '<div class="adm-section-hdr" style="margin-top:16px;margin-bottom:8px;">' +
+      '<span class="adm-section-title" style="display:flex;align-items:center;gap:8px;">' +
+        '<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:' + (anomalyInLine ? 'var(--red-light)' : 'var(--blue-light)') + ';font-size:13px;font-weight:800;color:' + (anomalyInLine ? 'var(--red)' : 'var(--blue)') + ';">' + prefix + '</span>' +
+        lineName +
+      '</span>' +
+      (pendingInLine > 0 ? '<span style="font-size:12px;font-weight:600;color:var(--text-sub);">' + pendingInLine + '件</span>' : '') +
+    '</div>' +
+    '<div class="adm-list-card">' +
+    items.map(function(item) {
       var anomalyTag = item.anomaly
         ? '<span class="adm-anomaly-tag" style="margin-right:6px;">' + item.anomaly + '</span>'
         : '';
@@ -4622,7 +4649,10 @@ function renderAdmApproval() {
         actionBtns +
       '</div>';
     }).join('') +
-  '</div>';
+    '</div>';
+  });
+
+  list.innerHTML = html;
 }
 
 function admAprApprove(id) {
