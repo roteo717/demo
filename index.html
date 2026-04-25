@@ -893,8 +893,8 @@
   }
   .adm-settings-menu.visible { display: block; }
   .adm-settings-menu-title {
-    font-size: 13px; font-weight: 600; color: var(--text-sub);
-    letter-spacing: 0.4px; margin-bottom: 14px; padding-left: 2px;
+    font-size: 13px; font-weight: 400; color: var(--text-sub);
+    margin-bottom: 14px; padding-left: 0; line-height: 1.5;
   }
   .adm-settings-grid {
     display: grid;
@@ -1574,39 +1574,143 @@
 <style>
   /* ── 承認一覧 タイトル行 ── */
   .apr2-title-row {
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 12px; flex-wrap: wrap;
+    margin-bottom: 14px;
   }
   .apr2-title {
-    font-size: 17px; font-weight: 800; color: var(--text);
-    display: flex; align-items: center; gap: 7px; letter-spacing: -0.3px;
-    flex-shrink: 0;
+    font-size: 22px; font-weight: 800; color: var(--text);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.4px;
+    margin-bottom: 6px;
   }
-  .apr2-title svg { stroke: var(--blue); fill: none; width: 20px; height: 20px; flex-shrink: 0; }
+  .apr2-title svg { stroke: var(--blue); fill: none; width: 24px; height: 24px; flex-shrink: 0; }
+  .apr2-subtitle {
+    font-size: 13px; color: var(--text-sub); margin-bottom: 14px; line-height: 1.5;
+  }
 
-  /* ── フィルタータブ ── */
-  .apr2-filter-tabs {
-    display: flex; gap: 5px; align-items: center; flex-wrap: nowrap;
+  /* ── カード型フィルタータブ ── */
+  .apr2-filter-cards {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    margin-bottom: 10px;
   }
-  .apr2-tab {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  .apr2-card-tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; padding: 14px 8px 12px;
+    border-radius: 14px; font-size: 13px; font-weight: 600;
     cursor: pointer; border: 1.5px solid var(--border);
     background: #fff; color: var(--text-sub);
-    transition: all 0.15s; white-space: nowrap;
-    font-family: inherit;
+    transition: all 0.15s;
+    font-family: inherit; min-height: 86px;
+    -webkit-user-select: none;
   }
-  .apr2-tab:active { opacity: 0.75; }
-  .apr2-tab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .apr2-tab.active .apr2-tab-badge { background: rgba(255,255,255,0.28); color: #fff; }
-  .apr2-tab-badge {
-    display: inline-block;
+  .apr2-card-tab:active { transform: scale(0.97); }
+  .apr2-card-tab svg { width: 22px; height: 22px; stroke: var(--text-sub); fill: none; transition: stroke 0.15s; }
+  .apr2-card-tab.active {
+    background: var(--blue-light); border-color: var(--blue); color: var(--blue);
+    box-shadow: 0 2px 10px rgba(47,107,255,0.12);
+  }
+  .apr2-card-tab.active svg { stroke: var(--blue); }
+  .apr2-card-label { font-size: 13px; font-weight: 600; }
+  .apr2-card-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 26px; height: 26px; padding: 0 7px;
+    border-radius: 20px; font-size: 13px; font-weight: 700;
     background: var(--bg); color: var(--text-sub);
-    font-size: 11px; font-weight: 700;
-    padding: 1px 6px; border-radius: 20px; min-width: 18px; text-align: center;
   }
-  .apr2-tab-badge.pending-badge { background: #FF6B35; color: #fff; }
-  .apr2-tab.active .apr2-tab-badge.pending-badge { background: rgba(255,255,255,0.35); color: #fff; }
+  .apr2-card-badge.all-badge { background: var(--blue); color: #fff; }
+  .apr2-card-tab:not(.active) .apr2-card-badge.all-badge { background: #E8EDFF; color: var(--blue); }
+  .apr2-card-badge.pending-badge { background: #FF6B35; color: #fff; }
+  .apr2-card-tab:not(.active) .apr2-card-badge.pending-badge { background: #FFE8DF; color: #FF6B35; }
+  .apr2-card-badge.approved-badge { background: #E8E8E8; color: #888; }
+  .apr2-card-tab.active .apr2-card-badge.approved-badge { background: var(--blue-mid); color: var(--blue); }
+
+  /* ── ライン絞り込みボタン（フル幅） ── */
+  .apr2-line-filter-wrap {
+    position: relative;
+    display: block;
+    width: 100%;
+  }
+  .apr2-line-filter-btn {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%;
+    padding: 13px 16px; border-radius: 14px; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: 1.5px solid var(--border);
+    background: #fff; color: var(--text-sub);
+    transition: all 0.15s;
+    font-family: inherit;
+    -webkit-user-select: none;
+  }
+  .apr2-line-filter-btn:active { opacity: 0.75; }
+  .apr2-line-filter-btn.has-filter {
+    background: var(--blue-light); border-color: var(--blue); color: var(--blue);
+  }
+  .apr2-line-filter-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; flex-shrink: 0; }
+  .apr2-filter-chevron { margin-left: auto !important; width: 16px !important; height: 16px !important; }
+  .apr2-line-filter-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--blue); color: #fff;
+    font-size: 11px; font-weight: 700;
+    min-width: 20px; height: 20px; padding: 0 6px;
+    border-radius: 20px; margin-left: 2px;
+  }
+
+  /* ── ライン絞り込みポップアップ ── */
+  .apr2-line-popup {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 300;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.14);
+    border: 1px solid var(--border);
+    width: 100%;
+    padding: 14px 14px 0;
+    overflow: hidden;
+  }
+  .apr2-line-popup.open { display: block; }
+  .apr2-line-popup-title {
+    font-size: 12px; font-weight: 700; color: var(--text-sub);
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .apr2-line-popup-selall {
+    font-size: 12px; color: var(--blue); font-weight: 600; cursor: pointer;
+  }
+  .apr2-line-popup-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+  }
+  .apr2-line-popup-row:active { opacity: 0.7; }
+  .apr2-line-chk {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.15s; background: #fff;
+  }
+  .apr2-line-chk.checked { border-color: var(--blue); background: var(--blue); }
+  .apr2-line-chk svg { width: 12px; height: 12px; stroke: #fff; fill: none; display: none; }
+  .apr2-line-chk.checked svg { display: block; }
+  .apr2-line-popup-name { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+  .apr2-line-popup-pending {
+    font-size: 11px; font-weight: 700;
+  }
+  .apr2-line-popup-pending.has-pending { color: var(--red); }
+  .apr2-line-popup-pending.no-pending  { color: var(--text-sub); }
+  .apr2-line-popup-footer {
+    padding: 10px 0;
+    display: flex; justify-content: center;
+  }
+  .apr2-line-popup-apply {
+    width: 100%; padding: 11px;
+    background: var(--blue); color: #fff;
+    border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    font-family: inherit; transition: opacity 0.15s;
+  }
+  .apr2-line-popup-apply:active { opacity: 0.82; }
 
   /* ── 絞り込みセレクト ── */
   .apr2-date-select {
@@ -2385,7 +2489,7 @@
   <div class="adm-wrap">
     <!-- 設定メニュー カードグリッド -->
     <div class="adm-settings-menu" id="adm-settings-menu">
-      <div class="adm-settings-menu-title">設定メニュー</div>
+      <div class="adm-settings-menu-title">各項目を選択して設定を変更できます。</div>
       <div class="adm-settings-grid">
 
         <div class="adm-settings-card" onclick="showAdmSubTab('lines')">
@@ -2610,25 +2714,42 @@
 
       <!-- タイトル + フィルター -->
       <div class="apr2-title-row">
-        <div class="apr2-title">
-          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-          承認一覧
+        <p class="apr2-subtitle">ステータスで絞り込んで、承認アイテムを確認できます。</p>
+        <div class="apr2-filter-cards">
+          <button class="apr2-card-tab active" id="apr2-tab-all" onclick="setApr2Filter('all')">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span class="apr2-card-label">すべて</span>
+            <span class="apr2-card-badge all-badge" id="apr2-count-all">0</span>
+          </button>
+          <button class="apr2-card-tab" id="apr2-tab-pending" onclick="setApr2Filter('pending')">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="apr2-card-label">未承認</span>
+            <span class="apr2-card-badge pending-badge" id="apr2-count-pending">0</span>
+          </button>
+          <button class="apr2-card-tab" id="apr2-tab-approved" onclick="setApr2Filter('approved')">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span class="apr2-card-label">承認済み</span>
+            <span class="apr2-card-badge approved-badge" id="apr2-count-approved">0</span>
+          </button>
         </div>
-        <div class="apr2-filter-tabs">
-          <button class="apr2-tab active" id="apr2-tab-all" onclick="setApr2Filter('all')">
-            すべて <span class="apr2-tab-badge" id="apr2-count-all">0</span>
+        <!-- ライン絞り込み -->
+        <div class="apr2-line-filter-wrap" id="apr2-line-filter-wrap">
+          <button class="apr2-line-filter-btn" id="apr2-line-filter-btn" onclick="apr2ToggleLinePopup(event)">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            ライン絞り込み
+            <svg class="apr2-filter-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
           </button>
-          <button class="apr2-tab" id="apr2-tab-pending" onclick="setApr2Filter('pending')">
-            未承認 <span class="apr2-tab-badge pending-badge" id="apr2-count-pending">0</span>
-          </button>
-          <button class="apr2-tab" id="apr2-tab-approved" onclick="setApr2Filter('approved')">
-            承認済み <span class="apr2-tab-badge" id="apr2-count-approved">0</span>
-          </button>
+          <div class="apr2-line-popup" id="apr2-line-popup">
+            <div class="apr2-line-popup-title">
+              <span>ライン絞り込み</span>
+              <span class="apr2-line-popup-selall" onclick="apr2SelectAllLines()">すべて選択</span>
+            </div>
+            <div id="apr2-line-popup-rows"></div>
+            <div class="apr2-line-popup-footer">
+              <button class="apr2-line-popup-apply" onclick="apr2ApplyLineFilter()">適用する</button>
+            </div>
+          </div>
         </div>
-        <select class="apr2-date-select" id="apr2-date-select" onchange="setApr2DateFilter(this.value)">
-          <option value="today">今日のみ</option>
-          <option value="all">全期間</option>
-        </select>
       </div>
 
       <!-- カラムヘッダー -->
@@ -4974,12 +5095,13 @@ function renderAdmDashboard() {
    ══════════════════════════════════════════ */
 
 /* ── 状態変数 ── */
-var apr2Filter     = 'all';   // 'all' | 'pending' | 'approved'
-var apr2DateFilter = 'today'; // 'today' | 'all'
-var apr2Page       = 1;
-var apr2PerPage    = 10;
-var apr2LineState  = {};      // lineKey → true(展開) / false(折りたたみ)
-var apr2EquipState = {};      // equipId → true / false
+var apr2Filter      = 'all';   // 'all' | 'pending' | 'approved'
+var apr2DateFilter  = 'all'; // 'today' | 'all'
+var apr2Page        = 1;
+var apr2PerPage     = 10;
+var apr2LineState   = {};      // lineKey → true(展開) / false(折りたたみ)
+var apr2EquipState  = {};      // equipId → true / false
+var apr2LineFilter  = [];      // [] = すべて、または選択中のlineId配列
 
 /* ── ダミーデータ（実データがない場合に使用） ── */
 var APR2_DUMMY = (function() {
@@ -5085,6 +5207,7 @@ function apr2ApplyFilters(items) {
     if (apr2Filter === 'pending'  && item.status !== 'pending')  return false;
     if (apr2Filter === 'approved' && item.status !== 'approved') return false;
     if (apr2DateFilter === 'today' && item.datetime.indexOf(todayStr) < 0) return false;
+    if (apr2LineFilter.length > 0 && apr2LineFilter.indexOf(item.lineId) < 0) return false;
     return true;
   });
 }
@@ -5341,6 +5464,138 @@ function apr2ToggleEquip(equipId) {
   apr2EquipState[equipId] = !(apr2EquipState[equipId] !== false);
   if (hdr)  hdr.classList.toggle('collapsed',  !apr2EquipState[equipId]);
   if (body) body.classList.toggle('collapsed', !apr2EquipState[equipId]);
+}
+
+/* ── ライン絞り込みポップアップ ── */
+var apr2PopupLines   = [];   // ポップアップで扱うライン一覧（開いた時にスナップショット）
+var apr2CheckedLines = {};   // lineId → true/false（ポップアップ内の一時チェック状態）
+
+function apr2GetAllLines() {
+  var allItems = apr2GetData();
+  var lineMap = {};
+  var lineOrder = [];
+  allItems.forEach(function(item) {
+    if (!lineMap[item.lineId]) {
+      lineMap[item.lineId] = { lineId: item.lineId, lineName: item.lineName, pending: 0 };
+      lineOrder.push(item.lineId);
+    }
+    if (item.status === 'pending') lineMap[item.lineId].pending++;
+  });
+  return lineOrder.map(function(k){ return lineMap[k]; });
+}
+
+function apr2ToggleLinePopup(e) {
+  e.stopPropagation();
+  var popup = document.getElementById('apr2-line-popup');
+  if (!popup) return;
+  var isOpen = popup.classList.contains('open');
+  if (!isOpen) {
+    // ラインリストをスナップショット
+    apr2PopupLines = apr2GetAllLines();
+    // チェック状態を初期化：フィルターなし=全選択、あり=選択中のみ
+    apr2CheckedLines = {};
+    apr2PopupLines.forEach(function(ln) {
+      apr2CheckedLines[ln.lineId] = (apr2LineFilter.length === 0)
+        ? true
+        : (apr2LineFilter.indexOf(ln.lineId) >= 0);
+    });
+    apr2RenderLinePopupRows();
+    popup.classList.add('open');
+    setTimeout(function() {
+      document.addEventListener('click', apr2CloseLinePopupOnOutside);
+    }, 10);
+  } else {
+    apr2CloseLinePopup();
+  }
+}
+
+function apr2CloseLinePopupOnOutside(e) {
+  var wrap = document.getElementById('apr2-line-filter-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    apr2CloseLinePopup();
+  }
+}
+
+function apr2CloseLinePopup() {
+  var popup = document.getElementById('apr2-line-popup');
+  if (popup) popup.classList.remove('open');
+  document.removeEventListener('click', apr2CloseLinePopupOnOutside);
+}
+
+function apr2RenderLinePopupRows() {
+  var rows = document.getElementById('apr2-line-popup-rows');
+  if (!rows) return;
+  rows.innerHTML = apr2PopupLines.map(function(ln) {
+    var isChk = !!apr2CheckedLines[ln.lineId];
+    var pendingLabel = ln.pending > 0
+      ? '<span class="apr2-line-popup-pending has-pending">未承認 ' + ln.pending + '件</span>'
+      : '<span class="apr2-line-popup-pending no-pending">未承認 0件</span>';
+    return '<div class="apr2-line-popup-row" onclick="apr2ToggleLineCheck(\'' + ln.lineId + '\')">' +
+      '<div class="apr2-line-chk' + (isChk ? ' checked' : '') + '">' +
+        '<svg viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+      '</div>' +
+      '<span class="apr2-line-popup-name">' + ln.lineName + '</span>' +
+      pendingLabel +
+    '</div>';
+  }).join('');
+}
+
+function apr2ToggleLineCheck(lineId) {
+  apr2CheckedLines[lineId] = !apr2CheckedLines[lineId];
+  // チェックが全部外れた場合は全選択に戻す
+  var anyChecked = apr2PopupLines.some(function(ln){ return apr2CheckedLines[ln.lineId]; });
+  if (!anyChecked) {
+    apr2PopupLines.forEach(function(ln){ apr2CheckedLines[ln.lineId] = true; });
+  }
+  // チェックボックスの見た目だけ更新（innerHTML全再描画を避ける）
+  apr2PopupLines.forEach(function(ln) {
+    var row = document.querySelector('.apr2-line-popup-row[onclick*="\'' + ln.lineId + '\'"]');
+    var chk = row ? row.querySelector('.apr2-line-chk') : null;
+    if (chk) {
+      chk.classList.toggle('checked', !!apr2CheckedLines[ln.lineId]);
+    }
+  });
+}
+
+function apr2SelectAllLines() {
+  apr2PopupLines.forEach(function(ln){ apr2CheckedLines[ln.lineId] = true; });
+  apr2RenderLinePopupRows();
+}
+
+function apr2ApplyLineFilter() {
+  // 全選択なら空配列（=フィルターなし）、一部選択なら選択中のIDリスト
+  var allSelected = apr2PopupLines.every(function(ln){ return apr2CheckedLines[ln.lineId]; });
+  if (allSelected) {
+    apr2LineFilter = [];
+  } else {
+    apr2LineFilter = apr2PopupLines
+      .filter(function(ln){ return apr2CheckedLines[ln.lineId]; })
+      .map(function(ln){ return ln.lineId; });
+  }
+  apr2Page = 1;
+  apr2CloseLinePopup();
+  apr2UpdateLineFilterBtn();
+  renderAdmApproval();
+}
+
+function apr2UpdateLineFilterBtn() {
+  var btn = document.getElementById('apr2-line-filter-btn');
+  if (!btn) return;
+  if (apr2LineFilter.length > 0) {
+    btn.classList.add('has-filter');
+    // バッジを表示
+    var badge = btn.querySelector('.apr2-line-filter-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'apr2-line-filter-badge';
+      btn.appendChild(badge);
+    }
+    badge.textContent = apr2LineFilter.length;
+  } else {
+    btn.classList.remove('has-filter');
+    var badge = btn.querySelector('.apr2-line-filter-badge');
+    if (badge) badge.remove();
+  }
 }
 
 /* ── フィルター変更 ── */
