@@ -34,7 +34,7 @@
     background: var(--bg);
     font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
     color: var(--text);
-    min-height: 100vh;
+    min-height: 100vh; height: 100dvh; min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -43,7 +43,7 @@
   .phone-wrapper {
     width: 100%;
     max-width: 390px;
-    min-height: 100vh;
+    min-height: 100vh; height: 100dvh; min-height: 100dvh;
     position: relative;
     overflow-x: hidden;
     background: var(--bg);
@@ -52,7 +52,7 @@
   /* ─── SCREENS ─── */
   .screen {
     width: 100%;
-    min-height: 100vh;
+    min-height: 100vh; height: 100dvh; min-height: 100dvh;
     background: var(--bg);
     position: absolute;
     top: 0; left: 0;
@@ -768,7 +768,7 @@
   #screen-complete {
     background: var(--blue);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 100vh;
+    min-height: 100vh; height: 100dvh; min-height: 100dvh;
   }
   .complete-icon { width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
   .complete-icon svg { stroke: #fff; fill: none; width: 52px; height: 52px; }
@@ -798,7 +798,7 @@
     transform: translateX(-50%);
     width: 100%;
     max-width: 390px;
-    height: 100vh;
+    height: 100vh; height: 100dvh;
     background: #F0F2F5;
     z-index: 500;
     flex-direction: column;
@@ -989,7 +989,7 @@
   /* Modal */
   .adm-modal-overlay {
     display: none; position: fixed; top: 0; left: 0;
-    width: 100vw; height: 100vh; height: 100dvh; background: rgba(0,0,0,0.45);
+    width: 100vw; height: 100vh; height: 100dvh; height: 100dvh; background: rgba(0,0,0,0.45);
     z-index: 600; align-items: flex-end; justify-content: center;
   }
   .adm-modal-overlay.open { display: flex; }
@@ -1284,13 +1284,13 @@
     transform: translateX(-50%);
     width: 100%;
     max-width: 390px;
-    height: 100vh;
+    height: 100vh; height: 100dvh;
     background: var(--bg);
     z-index: 450;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
-  .da-wrap { max-width: 390px; margin: 0 auto; min-height: 100vh; padding-bottom: 80px; }
+  .da-wrap { max-width: 390px; margin: 0 auto; min-height: 100vh; height: 100dvh; min-height: 100dvh; padding-bottom: 80px; }
 
   /* ── Header bar ── */
   .da-hdr {
@@ -1965,7 +1965,7 @@
 
   <!-- ===== SCREEN 9: COMPLETE ===== -->
   <div class="screen hidden" id="screen-complete">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;background:var(--blue);">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:40px 24px max(40px,env(safe-area-inset-bottom,40px));background:var(--blue);box-sizing:border-box;">
       <div class="complete-icon">
         <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
       </div>
@@ -2295,13 +2295,13 @@
           <div style="width:14px;height:14px;border-radius:4px;background:#F8F8F8;border:1px solid #E0E0E0;"></div>通常
         </div>
         <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
-          <div style="width:14px;height:14px;border-radius:4px;background:#FDECEC;border:1px solid #FBBCBC;"></div>休日
+          <div style="width:14px;height:14px;border-radius:4px;background:#FFF5F5;border:1px solid #FFE0E0;"></div>休日
         </div>
         <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
           <div style="width:14px;height:14px;border-radius:4px;background:#E8F5E9;border:1px solid #A5D6A7;"></div>特別出勤
         </div>
         <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
-          <div style="width:14px;height:14px;border-radius:50%;background:var(--blue);"></div>今日
+          <div style="width:14px;height:14px;border-radius:4px;background:transparent;box-shadow:0 0 0 2px var(--blue);font-weight:700;"></div>今日
         </div>
       </div>
       <div style="font-size:11px;color:var(--text-sub);margin-bottom:12px;background:#FFF8E1;padding:8px 10px;border-radius:8px;border-left:3px solid #F59E0B;">
@@ -3248,6 +3248,7 @@
       inspectionTypes: { ...inspectionTypes },
       state: JSON.parse(JSON.stringify(state)),
       completedAt: now.toISOString(),
+      inspector: localStorage.getItem('loggedInUser') || '不明',
     };
 
     // Save to localStorage
@@ -3589,7 +3590,7 @@ function showAdmTab(tab) {
 
 function showAdmSettingsMenu() {
   // すべてのパネルを隠す
-  ['lines','equips','items','assign','users'].forEach(function(t) {
+  ['lines','equips','items','assign','users','holidays','dashboard','approval'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = 'none';
   });
@@ -4251,29 +4252,121 @@ function admToast(msg) {
    ────────────────────────────────────────── */
 
 // Demo data for dashboard
-var DASH_DATA = {
-  summary: { notStarted: 8, inProgress: 5, done: 22, anomaly: 3 },
-  lines: [
-    { id: 'A', name: 'ラインA', done: 17, total: 22 },
-    { id: 'B', name: 'ラインB', done: 11, total: 22 },
-    { id: 'C', name: 'ラインC', done: 20, total: 22 },
-    { id: 'D', name: 'ラインD', done: 22, total: 22 },
-  ],
-  anomalies: [
-    { equipId: 'A-101', equipName: '空調機', detail: '油漏れ', time: '08:42' },
-    { equipId: 'A-102', equipName: 'ポンプ', detail: '異音', time: '09:15' },
-    { equipId: 'C-204', equipName: 'コンプレッサー', detail: '過熱', time: '09:58' },
-  ]
-};
+/* ═══════════════════════════════════════════
+   LIVE DATA — read from localStorage
+   ═══════════════════════════════════════════ */
+function loadInspections() {
+  try { return JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) { return []; }
+}
 
-// Demo data for approval
-var APR_DATA = [
-  { id: 'apr1', equipId: 'A-101', equipName: '空調機', inspector: '佐藤 太郎', date: '2024/05/20 08:42', anomaly: '油漏れ', status: 'pending' },
-  { id: 'apr2', equipId: 'A-102', equipName: 'ポンプ', inspector: '鈴木 一郎', date: '2024/05/20 09:15', anomaly: '異音', status: 'pending' },
-  { id: 'apr3', equipId: 'B-201', equipName: '送水ポンプ', inspector: '田中 花子', date: '2024/05/19 10:30', anomaly: null, status: 'pending' },
-  { id: 'apr4', equipId: 'C-204', equipName: 'コンプレッサー', inspector: '山本 健二', date: '2024/05/19 14:05', anomaly: '過熱', status: 'pending' },
-  { id: 'apr5', equipId: 'D-301', equipName: '換気ファン', inspector: '伊藤 誠', date: '2024/05/18 11:20', anomaly: null, status: 'pending' },
-];
+function computeLiveDashData() {
+  var now = new Date();
+  var todayY = now.getFullYear(), todayM = now.getMonth()+1, todayD = now.getDate();
+  var inspections = loadInspections();
+
+  var todayRecs = inspections.filter(function(r) {
+    return r.year === todayY && r.month === todayM && r.day === todayD;
+  });
+
+  var allEquips = ADM.equips || [];
+  var totalEquips = allEquips.length;
+  var doneEquipSet = {}, anomalyEquipSet = {}, anomalyList = [];
+
+  todayRecs.forEach(function(r) {
+    (r.equips || []).forEach(function(eid) {
+      doneEquipSet[eid] = true;
+      var s = r.state && r.state[eid];
+      var hasNg = s && ['daily','10days','monthly'].some(function(t) {
+        return s[t] && s[t].some(function(v){ return v === 'ng'; });
+      });
+      if (hasNg && !anomalyEquipSet[eid]) {
+        anomalyEquipSet[eid] = true;
+        var eq = allEquips.find(function(e){ return e.id === eid; }) || {};
+        anomalyList.push({
+          equipId: eid,
+          equipName: eq.name || eid,
+          detail: '要確認',
+          time: r.completedAt ? new Date(r.completedAt).toTimeString().slice(0,5) : '--:--'
+        });
+      }
+    });
+  });
+
+  var doneCount = Object.keys(doneEquipSet).length;
+  var anomalyCount = Object.keys(anomalyEquipSet).length;
+  var notStartedCount = Math.max(0, totalEquips - doneCount);
+
+  // Monthly line progress
+  var thisMonthRecs = inspections.filter(function(r) {
+    return r.year === todayY && r.month === todayM;
+  });
+  var daysElapsed = todayD;
+
+  var lineProgress = (ADM.lines || []).map(function(ln) {
+    var lineEquipIds = allEquips
+      .filter(function(e){ return e.lineId === ln.id; })
+      .map(function(e){ return e.id; });
+    var doneDays = {};
+    thisMonthRecs.forEach(function(r) {
+      var hit = (r.equips || []).some(function(eid){ return lineEquipIds.indexOf(eid) >= 0; });
+      if (hit) doneDays[r.day] = true;
+    });
+    return { id: ln.id, name: ln.name, done: Object.keys(doneDays).length, total: daysElapsed };
+  });
+
+  return {
+    summary: { notStarted: notStartedCount, done: doneCount, anomaly: anomalyCount },
+    lines: lineProgress,
+    anomalies: anomalyList
+  };
+}
+
+/* ─── Approval status persistence ─── */
+function loadAprStatuses() {
+  try { return JSON.parse(localStorage.getItem('approvalStatuses') || '{}'); } catch(e) { return {}; }
+}
+function saveAprStatusToStorage(id, status) {
+  var data = loadAprStatuses();
+  data[id] = status;
+  localStorage.setItem('approvalStatuses', JSON.stringify(data));
+}
+
+function computeLiveAprData() {
+  var inspections = loadInspections();
+  var statuses = loadAprStatuses();
+  var allEquips = ADM.equips || [];
+  var result = [];
+
+  inspections.forEach(function(r) {
+    if (!r.anomaly) return;
+    var dateStr = r.year + '/' + String(r.month).padStart(2,'0') + '/' + String(r.day).padStart(2,'0');
+    var timeStr = r.completedAt ? new Date(r.completedAt).toTimeString().slice(0,5) : '--:--';
+    var inspectorName = r.inspector || '不明';
+
+    (r.equips || []).forEach(function(eid) {
+      var s = r.state && r.state[eid];
+      if (!s) return;
+      var hasNg = ['daily','10days','monthly'].some(function(t) {
+        return s[t] && s[t].some(function(v){ return v === 'ng'; });
+      });
+      if (!hasNg) return;
+      var eq = allEquips.find(function(e){ return e.id === eid; }) || {};
+      var id = 'apr-' + r.year + '-' + r.month + '-' + r.day + '-' + eid;
+      result.push({
+        id: id,
+        equipId: eid,
+        equipName: eq.name || eid,
+        inspector: inspectorName,
+        date: dateStr + ' ' + timeStr,
+        anomaly: '要確認',
+        status: statuses[id] || 'pending'
+      });
+    });
+  });
+
+  result.sort(function(a, b){ return b.date > a.date ? 1 : -1; });
+  return result;
+}
 
 /* ──────────────────────────────────────────
    OPEN / CLOSE HELPERS
@@ -4312,7 +4405,7 @@ function renderDashboard() {
 }
 
 function renderDashSummary() {
-  var s = DASH_DATA.summary;
+  var s = computeLiveDashData().summary;
   var grid = document.getElementById('dash-summary-grid');
   if (!grid) return;
   var cards = [
@@ -4348,7 +4441,7 @@ function renderDashLines() {
   var now = new Date();
   var monthTitleEl = document.getElementById('dash-lines-month-label');
   if (monthTitleEl) monthTitleEl.textContent = now.getFullYear() + '年' + (now.getMonth() + 1) + '月';
-  card.innerHTML = DASH_DATA.lines.map(function(ln) {
+  card.innerHTML = computeLiveDashData().lines.map(function(ln) {
     var pct = Math.round(ln.done / ln.total * 100);
     var fillClass = pct === 100 ? 'complete' : (pct < 40 ? 'warning' : '');
     return '<div class="da-line-row da-line-row-monthly">' +
@@ -4365,7 +4458,7 @@ function renderDashLines() {
 function renderDashAnomalies() {
   var list = document.getElementById('dash-anomaly-list');
   if (!list) return;
-  var anomalies = DASH_DATA.anomalies;
+  var anomalies = computeLiveDashData().anomalies;
   if (!anomalies.length) {
     list.innerHTML = '<div class="da-empty">' +
       '<svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>' +
@@ -4395,6 +4488,7 @@ function renderDashAnomalies() {
    APPROVAL RENDER
    ────────────────────────────────────────── */
 function renderApproval() {
+  var APR_DATA = computeLiveAprData();
   var pendingCount = APR_DATA.filter(function(d){ return d.status === 'pending'; }).length;
   var numEl = document.getElementById('apr-pending-num');
   if (numEl) numEl.textContent = pendingCount;
@@ -4472,19 +4566,15 @@ function renderApproval() {
 }
 
 function aprApprove(id) {
-  var item = APR_DATA.find(function(d){ return d.id === id; });
-  if (!item || item.status !== 'pending') return;
-  item.status = 'approved';
+  saveAprStatusToStorage(id, 'approved');
   renderApproval();
-  daToast('✓ 承認しました：' + item.equipName);
+  daToast('✓ 承認しました');
 }
 
 function aprReturn(id) {
-  var item = APR_DATA.find(function(d){ return d.id === id; });
-  if (!item || item.status !== 'pending') return;
-  item.status = 'returned';
+  saveAprStatusToStorage(id, 'returned');
   renderApproval();
-  daToast('差し戻しました：' + item.equipName);
+  daToast('差し戻しました');
 }
 
 /* ──────────────────────────────────────────
@@ -4522,7 +4612,8 @@ function renderAdmDashboard() {
   injectAdmProgressCss();
 
   /* — Summary — */
-  var s = DASH_DATA.summary;
+  var liveData = computeLiveDashData();
+  var s = liveData.summary;
   var sumEl = document.getElementById('adm-dash-summary-list');
   if (sumEl) {
     var rows = [
@@ -4536,7 +4627,7 @@ function renderAdmDashboard() {
         '<div class="adm-summary-dot" style="background:' + r.dot + '"></div>' +
         '<div style="flex:1"><div class="adm-list-name"' + (r.isRed ? ' style="color:var(--red)"' : '') + '>' + r.label + '</div></div>' +
         '<div style="font-size:15px;font-weight:700;' + (r.isRed ? 'color:var(--red);' : 'color:var(--text);') + 'margin-right:6px;">' + r.count + '</div>' +
-        '<div style="font-size:12px;color:var(--text-sub);width:30px;text-align:right;">' + r.pct + '</div>' +
+
       '</div>';
     }).join('');
   }
@@ -4546,7 +4637,7 @@ function renderAdmDashboard() {
   if (linesEl) {
     var now = new Date();
     var monthStr = now.getFullYear() + '年' + (now.getMonth() + 1) + '月';
-    linesEl.innerHTML = DASH_DATA.lines.map(function(ln) {
+    linesEl.innerHTML = liveData.lines.map(function(ln) {
       var pct = Math.round(ln.done / ln.total * 100);
       var fillCls = pct === 100 ? 'full' : pct < 40 ? 'low' : '';
       return '<div class="adm-list-row">' +
@@ -4561,11 +4652,11 @@ function renderAdmDashboard() {
   /* — Anomaly List — */
   var anEl = document.getElementById('adm-dash-anomaly-list');
   if (anEl) {
-    if (!DASH_DATA.anomalies.length) {
+    if (!liveData.anomalies.length) {
       anEl.innerHTML = '<div class="adm-list-card"><div class="adm-list-row"><span class="adm-list-sub">現在、異常はありません</span></div></div>';
     } else {
       anEl.innerHTML = '<div class="adm-list-card" style="border-left:3px solid var(--red);">' +
-        DASH_DATA.anomalies.map(function(a) {
+        liveData.anomalies.map(function(a) {
           return '<div class="adm-list-row">' +
             '<div style="flex:1">' +
               '<div class="adm-list-name">' + a.equipId + '　' + a.equipName + '</div>' +
@@ -4582,6 +4673,7 @@ function renderAdmDashboard() {
 function renderAdmApproval() {
   injectAdmProgressCss();
 
+  var APR_DATA = computeLiveAprData();
   var pendingCount = APR_DATA.filter(function(d){ return d.status === 'pending'; }).length;
   var badge = document.getElementById('adm-apr-pending-badge');
   if (badge) badge.textContent = '承認待ち ' + pendingCount + ' 件';
@@ -4602,9 +4694,9 @@ function renderAdmApproval() {
     lineMap[prefix].push(item);
   });
 
-  // Build line name lookup from DASH_DATA
+  // Build line name lookup from ADM.lines
   var lineNames = {};
-  (DASH_DATA.lines || []).forEach(function(ln) { lineNames[ln.id] = ln.name; });
+  (ADM.lines || []).forEach(function(ln) { lineNames[ln.id] = ln.name; });
 
   var html = '';
   Object.keys(lineMap).sort().forEach(function(prefix) {
@@ -4656,18 +4748,14 @@ function renderAdmApproval() {
 }
 
 function admAprApprove(id) {
-  var item = APR_DATA.find(function(d){ return d.id === id; });
-  if (!item || item.status !== 'pending') return;
-  item.status = 'approved';
+  saveAprStatusToStorage(id, 'approved');
   renderAdmApproval();
-  admToast('✓ 承認しました：' + item.equipName);
+  admToast('✓ 承認しました');
 }
 function admAprReturn(id) {
-  var item = APR_DATA.find(function(d){ return d.id === id; });
-  if (!item || item.status !== 'pending') return;
-  item.status = 'returned';
+  saveAprStatusToStorage(id, 'returned');
   renderAdmApproval();
-  admToast('差し戻しました：' + item.equipName);
+  admToast('差し戻しました');
 }
 
 function daToast(msg) {
