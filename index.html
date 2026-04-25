@@ -811,25 +811,68 @@
   .adm-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 700; }
   /* タブアイコン：選択中色 */
   .adm-tab.active svg { stroke: var(--blue); }
-  .adm-subtabs-bar {
-    display: none; grid-template-columns: repeat(5, 1fr);
-    background: #F0F2F5; border-bottom: 1px solid var(--border);
-    position: sticky; top: 94px; z-index: 8;
+  .adm-subtabs-bar { display: none; } /* 旧タブバー非表示 */
+
+  /* ── 設定メニュー カードグリッド ── */
+  .adm-settings-menu {
+    display: none;
+    padding: 20px 16px 32px;
   }
-  .adm-subtabs-bar.visible { display: grid; }
-  .adm-subtab {
-    padding: 10px 2px; font-size: 11px; font-weight: 500; color: var(--text-sub);
-    background: none; border: none; border-bottom: 2px solid transparent;
-    cursor: pointer; transition: all 0.15s; font-family: inherit; margin-bottom: -1px;
+  .adm-settings-menu.visible { display: block; }
+  .adm-settings-menu-title {
+    font-size: 13px; font-weight: 600; color: var(--text-sub);
+    letter-spacing: 0.4px; margin-bottom: 14px; padding-left: 2px;
+  }
+  .adm-settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .adm-settings-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    border: 1.5px solid var(--border);
+    padding: 20px 14px 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    cursor: pointer;
+    transition: transform 0.13s, box-shadow 0.13s, border-color 0.13s;
     -webkit-user-select: none;
-    /* アイコン+テキスト横並び */
-    display: flex; align-items: center; justify-content: center; gap: 4px;
   }
-  /* サブタブアイコン：通常色 */
-  .adm-subtab svg { width: 14px; height: 14px; stroke: #666; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; transition: stroke 0.15s; }
-  .adm-subtab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 700; background: #fff; }
-  /* サブタブアイコン：選択中色 */
-  .adm-subtab.active svg { stroke: var(--blue); }
+  .adm-settings-card:active { transform: scale(0.97); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .adm-settings-card-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .adm-settings-card-icon svg { width: 26px; height: 26px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .adm-settings-card-label {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    text-align: center; line-height: 1.4;
+  }
+  .adm-settings-card-sub {
+    font-size: 11px; color: var(--text-sub); margin-top: -6px; text-align: center;
+  }
+
+  /* ── パネルナビ（戻るヘッダー）── */
+  .adm-panel-nav {
+    display: none;
+    align-items: center; gap: 10px;
+    padding: 12px 16px 0;
+    margin-bottom: 4px;
+  }
+  .adm-panel-nav.visible { display: flex; }
+  .adm-panel-back {
+    width: 34px; height: 34px; border-radius: 10px;
+    border: 1.5px solid var(--border); background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .adm-panel-back svg { stroke: var(--text); fill: none; width: 18px; height: 18px; }
+  .adm-panel-back:active { background: var(--bg); }
+  .adm-panel-nav-title {
+    font-size: 15px; font-weight: 700; color: var(--text);
+  }
   .adm-panel { padding: 16px; }
   .adm-section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
   .adm-section-title { font-size: 15px; font-weight: 700; color: var(--text); }
@@ -1980,33 +2023,60 @@
         設定
       </button>
     </div>
-    <!-- 設定サブタブ -->
-    <div class="adm-subtabs-bar" id="adm-subtabs-bar">
-      <!-- ライン管理: boxアイコン -->
-      <button class="adm-subtab active" id="asubtab-lines" onclick="showAdmSubTab('lines')">
-        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        ライン管理
+    <!-- 設定メニュー カードグリッド -->
+    <div class="adm-settings-menu" id="adm-settings-menu">
+      <div class="adm-settings-menu-title">設定メニュー</div>
+      <div class="adm-settings-grid">
+
+        <div class="adm-settings-card" onclick="showAdmSubTab('lines')">
+          <div class="adm-settings-card-icon" style="background:#EEF4FF;">
+            <svg viewBox="0 0 24 24" stroke="var(--blue)"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <div class="adm-settings-card-label">ライン管理</div>
+          <div class="adm-settings-card-sub">ラインの追加・編集</div>
+        </div>
+
+        <div class="adm-settings-card" onclick="showAdmSubTab('equips')">
+          <div class="adm-settings-card-icon" style="background:#F3EEFF;">
+            <svg viewBox="0 0 24 24" stroke="#7C3AED"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          </div>
+          <div class="adm-settings-card-label">設備管理</div>
+          <div class="adm-settings-card-sub">設備の追加・編集</div>
+        </div>
+
+        <div class="adm-settings-card" onclick="showAdmSubTab('items')">
+          <div class="adm-settings-card-icon" style="background:#E8F5E9;">
+            <svg viewBox="0 0 24 24" stroke="#2E7D32"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><polyline points="9 8 11 10 15 6"/></svg>
+          </div>
+          <div class="adm-settings-card-label">点検項目</div>
+          <div class="adm-settings-card-sub">項目の追加・編集</div>
+        </div>
+
+        <div class="adm-settings-card" onclick="showAdmSubTab('assign')">
+          <div class="adm-settings-card-icon" style="background:#FFF3E0;">
+            <svg viewBox="0 0 24 24" stroke="#E65100"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div class="adm-settings-card-label">割当設定</div>
+          <div class="adm-settings-card-sub">項目の割り当て</div>
+        </div>
+
+        <div class="adm-settings-card" onclick="showAdmSubTab('users')">
+          <div class="adm-settings-card-icon" style="background:#FDECEC;">
+            <svg viewBox="0 0 24 24" stroke="var(--red)"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+          </div>
+          <div class="adm-settings-card-label">ユーザー管理</div>
+          <div class="adm-settings-card-sub">点検者・担当者</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- パネルナビ（戻るヘッダー）-->
+    <div class="adm-panel-nav" id="adm-panel-nav">
+      <button class="adm-panel-back" onclick="showAdmSettingsMenu()">
+        <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <!-- 設備管理: gearアイコン -->
-      <button class="adm-subtab" id="asubtab-equips" onclick="showAdmSubTab('equips')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        設備管理
-      </button>
-      <!-- 点検項目: checklistアイコン -->
-      <button class="adm-subtab" id="asubtab-items" onclick="showAdmSubTab('items')">
-        <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><polyline points="9 8 11 10 15 6"/></svg>
-        点検項目
-      </button>
-      <!-- 割当設定: linkアイコン -->
-      <button class="adm-subtab" id="asubtab-assign" onclick="showAdmSubTab('assign')">
-        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-        割当設定
-      </button>
-      <!-- ユーザー管理: usersアイコン -->
-      <button class="adm-subtab" id="asubtab-users" onclick="showAdmSubTab('users')">
-        <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
-        ユーザー管理
-      </button>
+      <span class="adm-panel-nav-title" id="adm-panel-nav-title">設定</span>
     </div>
     <!-- ライン管理 -->
     <div id="adm-panel-lines" class="adm-panel">
@@ -3198,22 +3268,50 @@ function showAdmTab(tab) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = 'none';
   });
-  // show/hide subtab bar
-  var subBar = document.getElementById('adm-subtabs-bar');
-  if (subBar) subBar.classList.toggle('visible', tab==='settings');
+  // hide panel nav and settings menu
+  var nav = document.getElementById('adm-panel-nav');
+  if (nav) nav.classList.remove('visible');
+  var menu = document.getElementById('adm-settings-menu');
 
-  if (tab==='dashboard') { renderAdmDashboard(); document.getElementById('adm-panel-dashboard').style.display='block'; }
-  if (tab==='approval')  { renderAdmApproval();  document.getElementById('adm-panel-approval').style.display='block'; }
-  if (tab==='settings')  { showAdmSubTab('lines'); }
+  if (tab==='dashboard') { renderAdmDashboard(); document.getElementById('adm-panel-dashboard').style.display='block'; if (menu) menu.classList.remove('visible'); }
+  if (tab==='approval')  { renderAdmApproval();  document.getElementById('adm-panel-approval').style.display='block'; if (menu) menu.classList.remove('visible'); }
+  if (tab==='settings')  { showAdmSettingsMenu(); }
 }
 
-function showAdmSubTab(sub) {
+function showAdmSettingsMenu() {
+  // すべてのパネルを隠す
   ['lines','equips','items','assign','users'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
-    var b = document.getElementById('asubtab-'+t);
-    if (p) p.style.display = (t===sub) ? 'block' : 'none';
-    if (b) b.classList.toggle('active', t===sub);
+    if (p) p.style.display = 'none';
   });
+  // パネルナビを隠す
+  var nav = document.getElementById('adm-panel-nav');
+  if (nav) nav.classList.remove('visible');
+  // メニューを表示
+  var menu = document.getElementById('adm-settings-menu');
+  if (menu) menu.classList.add('visible');
+}
+
+var ADM_PANEL_LABELS = {
+  lines: 'ライン管理', equips: '設備管理',
+  items: '点検項目', assign: '割当設定', users: 'ユーザー管理'
+};
+
+function showAdmSubTab(sub) {
+  // メニューを隠す
+  var menu = document.getElementById('adm-settings-menu');
+  if (menu) menu.classList.remove('visible');
+  // すべてのパネルを隠してから対象だけ表示
+  ['lines','equips','items','assign','users'].forEach(function(t) {
+    var p = document.getElementById('adm-panel-'+t);
+    if (p) p.style.display = (t===sub) ? 'block' : 'none';
+  });
+  // パネルナビ（戻るボタン）を表示
+  var nav = document.getElementById('adm-panel-nav');
+  var navTitle = document.getElementById('adm-panel-nav-title');
+  if (nav) nav.classList.add('visible');
+  if (navTitle) navTitle.textContent = ADM_PANEL_LABELS[sub] || '設定';
+
   if (sub==='lines')  renderLines();
   if (sub==='equips') renderEquipsInit();
   if (sub==='items')  renderItems();
