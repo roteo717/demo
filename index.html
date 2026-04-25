@@ -2411,7 +2411,11 @@
 
       if (d === todayDay) {
         el.className = 'cal-day today'; el.textContent = d;
-        el.onclick = () => selectCalDay(el, d);
+        if (isHoliday) {
+          el.classList.add('holiday');
+        } else {
+          el.onclick = () => selectCalDay(el, d);
+        }
       } else {
         el.className = 'cal-day'; el.textContent = d;
         if (isHoliday) {
@@ -2446,6 +2450,13 @@
     document.getElementById('sum-done').textContent    = doneCount;
     document.getElementById('sum-anomaly').textContent = anomalyCount;
     document.querySelector('.summary-title').textContent = `点検サマリー（${calYear}年${monthNames[calMonth]}）`;
+
+    // 今日が休日なら「本日の点検を開始する」ボタンを非表示にする
+    const startBtnWrap = document.getElementById('today-start-btn');
+    if (startBtnWrap && isCurrentMonth) {
+      const todayIsHoliday = holidays.includes(_today.getDate());
+      startBtnWrap.style.display = todayIsHoliday ? 'none' : '';
+    }
   }
 
   function selectCalDay(el, d) {
@@ -2468,8 +2479,8 @@
   let selectedLineIds = [];
 
   function startTodayInspection() {
-    // 本日の日付をセットしてからラインリストを構築して遷移
     const now = new Date();
+    if (_isWeekendOrHoliday(now)) return; // 休日は点検不可
     calYear  = now.getFullYear();
     calMonth = now.getMonth();
     selectedCalDay = now.getDate();
