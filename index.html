@@ -237,6 +237,14 @@
     color: var(--blue); border-color: var(--blue-mid);
     display: flex; gap: 4px; align-items: center; justify-content: center;
   }
+  /* 管理者ボタン：選択中は赤系 */
+  .mgr-btn.selected {
+    border-color: var(--red);
+    background: var(--red-light);
+    color: var(--red);
+    font-weight: 600;
+  }
+  .mgr-btn.other { color: var(--red); border-color: var(--red-mid); }
 
   .inspector-notice {
     width: 100%;
@@ -804,7 +812,7 @@
   /* タブアイコン：選択中色 */
   .adm-tab.active svg { stroke: var(--blue); }
   .adm-subtabs-bar {
-    display: none; grid-template-columns: repeat(4, 1fr);
+    display: none; grid-template-columns: repeat(5, 1fr);
     background: #F0F2F5; border-bottom: 1px solid var(--border);
     position: sticky; top: 94px; z-index: 8;
   }
@@ -1503,16 +1511,6 @@
         </div>
       </div>
     </div>
-    <div class="role-footer">
-      <div class="role-footer-last">
-        <div style="display:flex;flex-direction:column;gap:2px;">
-          <span class="role-footer-last-label">前回のログイン</span>
-          <span style="font-size:13px;color:var(--text);font-weight:500;" id="last-login-user">--</span>
-        </div>
-        <span class="role-footer-last-val" id="last-login-date">--</span>
-      </div>
-      <div class="role-footer-ver">Ver. 1.0.0</div>
-    </div>
     <div class="safe-bottom"></div>
   </div>
 
@@ -1542,16 +1540,8 @@
         </svg>
       </div>
       <p class="inspector-subtitle">点検者を選択してください</p>
-      <div class="user-grid">
-        <button class="user-btn selected" onclick="selectUser(this)">佐藤 太郎</button>
-        <button class="user-btn" onclick="selectUser(this)">鈴木 一郎</button>
-        <button class="user-btn" onclick="selectUser(this)">田中 花子</button>
-        <button class="user-btn" onclick="selectUser(this)">山本 健二</button>
-        <button class="user-btn" onclick="selectUser(this)">伊藤 誠</button>
-        <button class="user-btn other" onclick="selectUser(this)">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="var(--blue)"><path d="M7 2v10M2 7h10"/></svg>
-          その他
-        </button>
+      <div class="user-grid" id="inspector-user-grid">
+        <!-- Rendered dynamically -->
       </div>
       <div class="inspector-notice">
         <div class="inspector-notice-icon">
@@ -1584,42 +1574,30 @@
       </div>
       <span class="nav-title">管理者ログイン</span>
     </div>
-    <div class="manager-body">
-      <div class="manager-top">
-        <div class="manager-icon-wrap">
-          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
-            <circle cx="19" cy="13" r="7" fill="#E53935"/>
-            <path d="M6 34 C6 26 11.5 23 19 23 C26.5 23 32 26 32 34" fill="#E53935"/>
-            <path d="M17 23 L19 30 L21 23" fill="#C62828" opacity="0.8"/>
+    <div class="inspector-body">
+      <div class="manager-icon-wrap">
+        <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+          <circle cx="19" cy="13" r="7" fill="#E53935"/>
+          <path d="M6 34 C6 26 11.5 23 19 23 C26.5 23 32 26 32 34" fill="#E53935"/>
+          <path d="M17 23 L19 30 L21 23" fill="#C62828" opacity="0.8"/>
+        </svg>
+      </div>
+      <!-- 管理者名選択 -->
+      <p class="manager-subtitle">管理者を選択してください</p>
+      <div class="user-grid" id="manager-user-grid">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="inspector-notice" style="border-left:3px solid var(--red-mid);background:var(--red-light);">
+        <div class="inspector-notice-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="8.5" stroke="#E53935" stroke-width="1.5"/>
+            <path d="M9 8v5" stroke="#E53935" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="9" cy="5.5" r="1" fill="#E53935"/>
           </svg>
         </div>
-        <p class="manager-subtitle">管理者IDとパスワードを<br>入力してください</p>
+        <span class="inspector-notice-text" style="color:var(--red);">ご自身の名前がない場合は<br>「その他」から選択してください。</span>
       </div>
-      <div class="form-group">
-        <label class="form-label">管理者ID</label>
-        <input class="form-input" id="admin-id-input" type="text" placeholder="IDを入力" autocomplete="username">
-      </div>
-      <div class="form-group">
-        <label class="form-label">パスワード</label>
-        <div class="pw-wrap">
-          <input class="form-input" id="pw-input" type="password" placeholder="パスワードを入力" autocomplete="current-password">
-          <button class="pw-toggle" onclick="togglePw()" type="button" tabindex="-1">
-            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-      <button class="btn-primary-red" onclick="doLogin()">ログイン</button>
-      <button class="btn-admin-warn" onclick="alert('管理者モード（デモ）')">
-        <svg viewBox="0 0 24 24">
-          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="17" x2="12.01" y2="17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        管理者モードに入ります
-      </button>
+      <button class="btn-primary-red" style="margin-top:24px;" onclick="doLogin()">ログイン</button>
     </div>
     <div class="safe-bottom"></div>
   </div>
@@ -1980,7 +1958,10 @@
         </svg>
         設備点検 管理画面
       </div>
-      <button class="adm-logout-btn" onclick="adminLogout()">ログアウト</button>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="adm-hdr-name" style="font-size:12px;color:rgba(255,255,255,0.85);font-weight:500;"></span>
+        <button class="adm-logout-btn" onclick="adminLogout()">ログアウト</button>
+      </div>
     </div>
     <div class="adm-tabs-bar">
       <!-- ダッシュボードタブ: bar-chartアイコン -->
@@ -2020,6 +2001,11 @@
       <button class="adm-subtab" id="asubtab-assign" onclick="showAdmSubTab('assign')">
         <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
         割当設定
+      </button>
+      <!-- ユーザー管理: usersアイコン -->
+      <button class="adm-subtab" id="asubtab-users" onclick="showAdmSubTab('users')">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+        ユーザー管理
       </button>
     </div>
     <!-- ライン管理 -->
@@ -2079,8 +2065,29 @@
       </div>
     </div>
 
-    <!-- ダッシュボード パネル (管理画面内) -->
-    <!-- ダッシュボード パネル -->
+    <!-- ユーザー管理 パネル -->
+    <div id="adm-panel-users" class="adm-panel" style="display:none">
+      <!-- 点検者 -->
+      <div class="adm-section-hdr">
+        <span class="adm-section-title">点検者一覧</span>
+        <button class="adm-add-btn" onclick="admOpenUserModal('inspector')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          点検者を追加
+        </button>
+      </div>
+      <div id="adm-inspectors-list" class="adm-list-card"></div>
+      <!-- 担当者（管理者） -->
+      <div class="adm-section-hdr" style="margin-top:20px;">
+        <span class="adm-section-title">担当者（管理者）一覧</span>
+        <button class="adm-add-btn" onclick="admOpenUserModal('manager')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          担当者を追加
+        </button>
+      </div>
+      <div id="adm-managers-list" class="adm-list-card"></div>
+    </div>
+
+    <!-- ダッシュボード パネル (管理画面内) -->    <!-- ダッシュボード パネル -->
     <div id="adm-panel-dashboard" class="adm-panel" style="display:none;">
 
       <!-- サマリー -->
@@ -2279,6 +2286,11 @@
   }
   window.addEventListener('DOMContentLoaded', updateLastLoginDisplay);
 
+  function selectAdminUser(btn) {
+    document.querySelectorAll('#screen-manager .mgr-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+
   function doLogin() {
     if (currentScreen === 'screen-inspector') {
       const selectedBtn = document.querySelector('#screen-inspector .user-btn.selected');
@@ -2296,14 +2308,11 @@
       buildCalendar();
       showScreen('screen-home');
     } else {
-      const idInput = document.getElementById('admin-id-input');
-      const pwInput = document.getElementById('pw-input');
-      if (!idInput || !pwInput) return;
-      if (idInput.value !== '1234' || pwInput.value !== '1234') {
-        alert('管理者IDまたはパスワードが違います\nデモ: ID=1234 / PW=1234');
-        return;
-      }
-      openAdminScreen();
+      // 管理者：名前選択でログイン
+      const selectedBtn = document.querySelector('#screen-manager .mgr-btn.selected');
+      const adminName = selectedBtn ? selectedBtn.textContent.trim().replace('\n','').trim() : '管理者';
+      const displayName = adminName === 'その他' ? '管理者' : adminName;
+      openAdminScreen(displayName);
     }
   }
 
@@ -2944,6 +2953,13 @@
   (function init() {
     loadSavedInspections(); // Load persisted inspection results first
     buildEquipList();
+    // ログイン画面のユーザーを初期描画（LocalStorageから）
+    try {
+      var saved = JSON.parse(localStorage.getItem('admData') || 'null');
+      if (saved && saved.inspectors) ADM.inspectors = saved.inspectors;
+      if (saved && saved.managers)   ADM.managers   = saved.managers;
+    } catch(e) {}
+    setTimeout(function() { if (typeof renderLoginUsers === 'function') renderLoginUsers(); }, 0);
     const savedUser = localStorage.getItem('loggedInUser');
     if (savedUser) {
       document.querySelector('.home-user-name').textContent = savedUser + ' さん';
@@ -2969,6 +2985,20 @@
 var ADM = {
   lines: [
     {id:'L1',name:'ラインA'},{id:'L2',name:'ラインB'},{id:'L3',name:'ラインC'}
+  ],
+  inspectors: [
+    {id:'U1',name:'佐藤 太郎'},
+    {id:'U2',name:'鈴木 一郎'},
+    {id:'U3',name:'田中 花子'},
+    {id:'U4',name:'山本 健二'},
+    {id:'U5',name:'伊藤 誠'}
+  ],
+  managers: [
+    {id:'M1',name:'山田 部長'},
+    {id:'M2',name:'田中 主任'},
+    {id:'M3',name:'鈴木 課長'},
+    {id:'M4',name:'伊藤 係長'},
+    {id:'M5',name:'中村 リーダー'}
   ],
   equips: [
     {id:'A-101',name:'空調機',lineId:'L1'},{id:'A-102',name:'ポンプ',lineId:'L1'},
@@ -3069,9 +3099,19 @@ function admLoad() {
     if (d && d.lines && d.equips && d.items && d.assigns) { ADM = d; }
   } catch(e) {}
   admMigrate();
+  // inspectors/managers がなければデフォルトを補完
+  if (!ADM.inspectors) ADM.inspectors = [
+    {id:'U1',name:'佐藤 太郎'},{id:'U2',name:'鈴木 一郎'},
+    {id:'U3',name:'田中 花子'},{id:'U4',name:'山本 健二'},{id:'U5',name:'伊藤 誠'}
+  ];
+  if (!ADM.managers) ADM.managers = [
+    {id:'M1',name:'山田 部長'},{id:'M2',name:'田中 主任'},
+    {id:'M3',name:'鈴木 課長'},{id:'M4',name:'伊藤 係長'},{id:'M5',name:'中村 リーダー'}
+  ];
   // マイグレーション結果をLocalStorageに書き戻す
   localStorage.setItem('admData', JSON.stringify(ADM));
   admSync();
+  renderLoginUsers();
 }
 
 function admSave() {
@@ -3113,8 +3153,11 @@ function admSync() {
 }
 
 /* ─ open/close admin ─ */
-function openAdminScreen() {
+function openAdminScreen(adminName) {
   admLoad();
+  // 管理者名をヘッダーに反映
+  var nameEl = document.getElementById('adm-hdr-name');
+  if (nameEl && adminName) nameEl.textContent = adminName + ' さん';
   document.getElementById('screen-admin').style.display = 'block';
   document.body.style.overflow = 'hidden';
   showAdmTab('dashboard');
@@ -3123,10 +3166,12 @@ function openAdminScreen() {
 function adminLogout() {
   document.getElementById('screen-admin').style.display = 'none';
   document.body.style.overflow = '';
-  var idEl = document.getElementById('admin-id-input');
-  var pwEl = document.getElementById('pw-input');
-  if (idEl) idEl.value = '';
-  if (pwEl) pwEl.value = '';
+  // 管理者名リセット
+  var nameEl = document.getElementById('adm-hdr-name');
+  if (nameEl) nameEl.textContent = '';
+  // ログイン画面の選択状態をリセット
+  var mgrBtns = document.querySelectorAll('#manager-user-grid .mgr-btn');
+  mgrBtns.forEach(function(b, i) { b.classList.toggle('selected', i === 0); });
   showScreen('screen-role');
 }
 
@@ -3138,7 +3183,7 @@ function showAdmTab(tab) {
     if (b) b.classList.toggle('active', t===tab);
   });
   // hide all panels
-  ['lines','equips','items','assign','dashboard','approval'].forEach(function(t) {
+  ['lines','equips','items','assign','users','dashboard','approval'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = 'none';
   });
@@ -3152,7 +3197,7 @@ function showAdmTab(tab) {
 }
 
 function showAdmSubTab(sub) {
-  ['lines','equips','items','assign'].forEach(function(t) {
+  ['lines','equips','items','assign','users'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     var b = document.getElementById('asubtab-'+t);
     if (p) p.style.display = (t===sub) ? 'block' : 'none';
@@ -3162,11 +3207,145 @@ function showAdmSubTab(sub) {
   if (sub==='equips') renderEquipsInit();
   if (sub==='items')  renderItems();
   if (sub==='assign') renderAssignInit();
+  if (sub==='users')  admRenderUsers();
 }
 
 /* ─ HTML escape ─ */
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ═══ USER MANAGEMENT ═══ */
+
+/* ログイン画面のボタンを動的に生成 */
+function renderLoginUsers() {
+  // 点検者ログイン画面
+  var inspGrid = document.getElementById('inspector-user-grid');
+  if (inspGrid) {
+    var inspList = (ADM.inspectors && ADM.inspectors.length)
+      ? ADM.inspectors
+      : [{id:'_other',name:'その他'}];
+    inspGrid.innerHTML = '';
+    var firstBtn = null;
+    inspList.forEach(function(u, i) {
+      var btn = document.createElement('button');
+      btn.className = 'user-btn' + (i===0?' selected':'');
+      btn.textContent = u.name;
+      btn.setAttribute('onclick','selectUser(this)');
+      if (i===0) firstBtn = btn;
+      inspGrid.appendChild(btn);
+    });
+    // その他ボタン
+    var otherBtn = document.createElement('button');
+    otherBtn.className = 'user-btn other';
+    otherBtn.setAttribute('onclick','selectUser(this)');
+    otherBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="var(--blue)"><path d="M7 2v10M2 7h10"/></svg> その他';
+    inspGrid.appendChild(otherBtn);
+  }
+
+  // 管理者ログイン画面
+  var mgrGrid = document.getElementById('manager-user-grid');
+  if (mgrGrid) {
+    var mgrList = (ADM.managers && ADM.managers.length)
+      ? ADM.managers
+      : [{id:'_other',name:'その他'}];
+    mgrGrid.innerHTML = '';
+    mgrList.forEach(function(u, i) {
+      var btn = document.createElement('button');
+      btn.className = 'user-btn mgr-btn' + (i===0?' selected':'');
+      btn.textContent = u.name;
+      btn.setAttribute('onclick','selectAdminUser(this)');
+      mgrGrid.appendChild(btn);
+    });
+    // その他ボタン
+    var otherMgr = document.createElement('button');
+    otherMgr.className = 'user-btn other mgr-btn';
+    otherMgr.setAttribute('onclick','selectAdminUser(this)');
+    otherMgr.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="var(--red)"><path d="M7 2v10M2 7h10"/></svg> その他';
+    mgrGrid.appendChild(otherMgr);
+  }
+}
+
+/* ユーザー管理パネルのレンダリング */
+function admRenderUsers() {
+  _renderUserList('inspector');
+  _renderUserList('manager');
+}
+
+function _renderUserList(type) {
+  var elId = type==='inspector' ? 'adm-inspectors-list' : 'adm-managers-list';
+  var el = document.getElementById(elId);
+  if (!el) return;
+  var arr = type==='inspector' ? ADM.inspectors : ADM.managers;
+  if (!arr || !arr.length) {
+    el.innerHTML = '<div class="adm-list-row"><span class="adm-list-sub">登録されていません</span></div>';
+    return;
+  }
+  el.innerHTML = '';
+  arr.forEach(function(u) {
+    var row = document.createElement('div');
+    row.className = 'adm-list-row';
+    row.innerHTML =
+      '<div style="flex:1">' +
+        '<div class="adm-list-name">' + esc(u.name) + '</div>' +
+        '<div class="adm-list-sub">ID: ' + esc(u.id) + '</div>' +
+      '</div>' +
+      '<div class="adm-row-actions">' +
+        '<button class="adm-btn-del" onclick="admDeleteUser(\'' + type + '\',\'' + esc(u.id) + '\')">' + SVG_DEL + '</button>' +
+      '</div>';
+    el.appendChild(row);
+  });
+}
+
+function admOpenUserModal(type) {
+  var label = type==='inspector' ? '点検者' : '担当者（管理者）';
+  var color = type==='inspector' ? 'var(--blue)' : 'var(--red)';
+  var overlay = document.getElementById('adm-modal-overlay');
+  var body    = document.getElementById('adm-modal-body');
+  body.innerHTML =
+    '<div class="adm-modal-title">新しい' + label + 'を追加</div>' +
+    '<label class="adm-modal-label">名前</label>' +
+    '<input class="adm-modal-input" id="user-modal-name" placeholder="例：山田 太郎" />' +
+    '<div class="adm-modal-btn-row">' +
+      '<button class="adm-modal-cancel" onclick="admCloseModal()">キャンセル</button>' +
+      '<button class="adm-modal-save" style="background:' + color + ';" onclick="admSaveUser(\'' + type + '\')">追加する</button>' +
+    '</div>';
+  overlay.classList.add('open');
+  setTimeout(function(){ var i=document.getElementById('user-modal-name'); if(i)i.focus(); }, 100);
+}
+
+function admSaveUser(type) {
+  var nameEl = document.getElementById('user-modal-name');
+  var name = nameEl ? nameEl.value.trim() : '';
+  if (!name) { nameEl.style.borderColor='var(--red)'; return; }
+
+  var arr = type==='inspector' ? ADM.inspectors : ADM.managers;
+  var prefix = type==='inspector' ? 'U' : 'M';
+  // ID生成
+  var maxNum = 0;
+  arr.forEach(function(u) {
+    var n = parseInt(u.id.replace(prefix,''),10);
+    if (!isNaN(n) && n>maxNum) maxNum=n;
+  });
+  arr.push({ id: prefix+(maxNum+1), name: name });
+  admSave();
+  admCloseModal();
+  admRenderUsers();
+  renderLoginUsers();
+  admToast('✓ ' + name + ' を追加しました');
+}
+
+function admDeleteUser(type, id) {
+  var arr = type==='inspector' ? ADM.inspectors : ADM.managers;
+  var idx = arr.findIndex(function(u){ return u.id===id; });
+  if (idx<0) return;
+  var name = arr[idx].name;
+  if (!confirm(name + ' を削除しますか？')) return;
+  arr.splice(idx,1);
+  admSave();
+  admRenderUsers();
+  renderLoginUsers();
+  admToast(name + ' を削除しました');
 }
 
 /* ─ icon SVG strings ─ */
