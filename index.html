@@ -3035,6 +3035,9 @@ var ADM_DEFAULT_ITEMS = [
 var ADM_SEEN_VERSION = 'v5';
 
 function admMigrate() {
+  // 0. deletedItemIds フィールドがなければ初期化
+  if (!ADM.deletedItemIds) ADM.deletedItemIds = [];
+
   // 1. typeフィールドが未設定の既存項目にデフォルト値を付与
   ADM.items.forEach(function(item) {
     if (!item.type) {
@@ -3047,22 +3050,17 @@ function admMigrate() {
     var def = ADM_DEFAULT_ITEMS.find(function(d){ return d.id === item.id; });
     if (def && item.name !== def.name) { item.name = def.name; }
   });
-  // 3. バージョン付きseenキーで管理（バージョンが変われば新規項目を再評価）
-  var seenKey = 'admSeenItems_' + ADM_SEEN_VERSION;
-  var seen = [];
-  try { seen = JSON.parse(localStorage.getItem(seenKey) || '[]'); } catch(e) {}
-  // 現在存在する項目IDをseenに記録
-  ADM.items.forEach(function(item) {
-    if (seen.indexOf(item.id) < 0) seen.push(item.id);
-  });
-  // デフォルト項目のうちseenにないものだけ追加（削除済みIDはseenに残るので除外）
+  // 3. デフォルト項目のうち、未追加かつ削除済みでないものだけ追加
+  //    （deletedItemIds に入っているものは絶対に復活させない）
   ADM_DEFAULT_ITEMS.forEach(function(def) {
-    if (seen.indexOf(def.id) < 0) {
+    // 削除済みIDはスキップ
+    if (ADM.deletedItemIds.indexOf(def.id) >= 0) return;
+    // 既に存在するならスキップ
+    var exists = ADM.items.find(function(i){ return i.id === def.id; });
+    if (!exists) {
       ADM.items.push({id: def.id, name: def.name, type: def.type});
-      seen.push(def.id);
     }
   });
-  localStorage.setItem(seenKey, JSON.stringify(seen));
 }
 
 function admLoad() {
@@ -3340,12 +3338,9 @@ function admDeleteItem(id) {
   Object.keys(ADM.assigns).forEach(function(eqId) {
     ADM.assigns[eqId] = ADM.assigns[eqId].filter(function(a){ return a.itemId!==id; });
   });
-  // 削除したIDをseenリストに記録 → 再ログイン時にマイグレーションで復活しないようにする
-  var seenKey = 'admSeenItems_' + ADM_SEEN_VERSION;
-  var seen = [];
-  try { seen = JSON.parse(localStorage.getItem(seenKey) || '[]'); } catch(e) {}
-  if (seen.indexOf(id) < 0) seen.push(id);
-  localStorage.setItem(seenKey, JSON.stringify(seen));
+  // 削除済みIDをADMデータ本体に記録（admSaveで一緒に保存されるため消えない）
+  if (!ADM.deletedItemIds) ADM.deletedItemIds = [];
+  if (ADM.deletedItemIds.indexOf(id) < 0) ADM.deletedItemIds.push(id);
   admSave(); renderItems(); admToast('点検項目を削除しました');
 }
 
