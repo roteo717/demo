@@ -991,7 +991,7 @@
   }
   .adm-list-row:last-child { border-bottom: none; }
   .adm-list-name { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
-  .adm-list-sub { font-size: 12px; color: var(--text-sub); }
+  .adm-list-sub { font-size: 12px; color: var(--text-sub); white-space: nowrap; }
   .adm-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .adm-btn-edit {
     width: 32px; height: 32px; border-radius: 8px;
@@ -2697,14 +2697,8 @@
     <!-- ダッシュボード パネル (管理画面内) -->    <!-- ダッシュボード パネル -->
     <div id="adm-panel-dashboard" class="adm-panel" style="display:none;">
 
-      <!-- サマリー -->
-      <div class="adm-section-hdr">
-        <span class="adm-section-title">サマリー（本日の状況）</span>
-      </div>
-      <div class="adm-list-card" id="adm-dash-summary-list"></div>
-
       <!-- ライン進捗 -->
-      <div class="adm-section-hdr" style="margin-top:20px;">
+      <div class="adm-section-hdr">
         <span class="adm-section-title">ライン別 進捗状況（今月）</span>
       </div>
       <div class="adm-list-card" id="adm-dash-lines-list"></div>
