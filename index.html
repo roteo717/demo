@@ -768,7 +768,7 @@
   /* ─── COMPLETE SCREEN ─── */
   #screen-complete {
     background: #fff;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
     min-height: 100vh; height: 100dvh; min-height: 100dvh;
   }
   .complete-icon { width: 100px; height: 100px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
@@ -2344,7 +2344,7 @@
 
   <!-- ===== SCREEN 9: COMPLETE ===== -->
   <div class="screen hidden" id="screen-complete">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:40px 24px max(40px,env(safe-area-inset-bottom,40px));background:#fff;box-sizing:border-box;">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:100dvh;padding:32px 24px;background:#fff;box-sizing:border-box;">
       <div class="complete-icon">
         <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
       </div>
