@@ -1310,115 +1310,222 @@
     scrollbar-color: #B0BEC5 #F5F6F8;
     -ms-overflow-style: auto;
   }
-  #ms-table-wrap::-webkit-scrollbar {
-    display: block;
-    height: 8px;
+  #ms-table-wrap::-webkit-scrollbar { display: block; height: 8px; }
+  #ms-table-wrap::-webkit-scrollbar-track { background: #F5F6F8; border-radius: 4px; }
+  #ms-table-wrap::-webkit-scrollbar-thumb { background: #B0BEC5; border-radius: 4px; }
+  #ms-table-wrap::-webkit-scrollbar-thumb:hover { background: #90A4AE; }
+
+  /* ── PDF-style document wrapper ── */
+  .ms-doc {
+    background: #fff;
+    border: 1.5px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    min-width: 680px;
+    width: max-content;
+    font-family: -apple-system,'Hiragino Sans','Noto Sans JP',sans-serif;
   }
-  #ms-table-wrap::-webkit-scrollbar-track {
-    background: #F5F6F8;
-    border-radius: 4px;
+  /* Title bar */
+  .ms-doc-titlebar {
+    display: flex; align-items: stretch;
+    border-bottom: 1.5px solid #333;
+    background: #fff;
   }
-  #ms-table-wrap::-webkit-scrollbar-thumb {
-    background: #B0BEC5;
-    border-radius: 4px;
+  .ms-doc-title-main {
+    flex: 1;
+    font-size: 17px; font-weight: 900;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    display: flex; align-items: center;
+    border-right: 1px solid #333;
   }
-  #ms-table-wrap::-webkit-scrollbar-thumb:hover {
-    background: #90A4AE;
+  .ms-doc-title-meta {
+    display: flex; flex-direction: column;
+    font-size: 10px; color: #333;
+    border-right: 1px solid #333;
+    padding: 4px 8px;
+    justify-content: center; gap: 2px;
+    min-width: 80px;
   }
+  .ms-doc-title-box {
+    display: flex; flex-direction: column;
+    font-size: 10px; color: #333;
+    padding: 2px 8px;
+    justify-content: center; gap: 2px;
+    min-width: 52px; text-align: center;
+  }
+  .ms-doc-title-box + .ms-doc-title-box { border-left: 1px solid #333; }
+  .ms-doc-title-box-label { font-weight: 700; font-size: 11px; border-bottom: 1px solid #ccc; padding-bottom: 1px; margin-bottom: 2px; }
+
+  /* Equipment info row */
+  .ms-doc-equiprow {
+    display: flex; align-items: center;
+    border-bottom: 1.5px solid #333;
+    font-size: 11px; font-weight: 600;
+    background: #FAFAFA;
+  }
+  .ms-doc-equiprow > span {
+    padding: 5px 10px;
+    border-right: 1px solid #333;
+    white-space: nowrap;
+  }
+  .ms-doc-equiprow > span:last-child { border-right: none; flex: 1; }
+
+  /* ── Shared table styles ── */
   .ms-table {
     border-collapse: collapse;
     font-size: 11px;
-    min-width: 700px;
-    width: max-content;
+    width: 100%;
     background: #fff;
-    margin: 0;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
   }
   .ms-table th, .ms-table td {
-    border: 1px solid #D8D8D8;
+    border: 1px solid #888;
     padding: 0;
     text-align: center;
     white-space: nowrap;
     vertical-align: middle;
   }
-  /* Section label column (rotated) */
+  .ms-table thead th { background: #ECEFF1; font-weight: 700; }
+
+  /* Section label (vertical) */
   .ms-section-label {
     writing-mode: vertical-rl;
-    text-orientation: mixed;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 8px 4px;
-    background: #EEF4FF;
-    color: var(--blue);
-    width: 20px;
-    min-width: 20px;
+    text-orientation: upright;
+    font-size: 10px; font-weight: 800;
+    padding: 6px 3px;
+    width: 18px; min-width: 18px;
+    position: sticky; left: 0; z-index: 2;
+    letter-spacing: 1px;
   }
-  .ms-section-label.daily  { background: #EEF4FF; color: var(--blue); }
-  .ms-section-label.tenday { background: #E8F5E9; color: var(--green); }
-  .ms-section-label.monthly-lbl { background: #FFF3E0; color: #E65100; }
+  .ms-section-label.daily   { background: #E3F2FD; color: #1565C0; }
+  .ms-section-label.tenday  { background: #E8F5E9; color: #1B5E20; }
+  .ms-section-label.monthly-lbl { background: #FFF3E0; color: #BF360C; }
 
-  .ms-th-main {
-    background: #2C3E50;
-    color: #fff;
-    font-weight: 700;
-    font-size: 11px;
-    padding: 5px 6px;
-  }
-  .ms-th-sub {
-    background: #37474F;
-    color: #CFD8DC;
+  /* NO column */
+  .ms-no-col { width: 20px; min-width: 20px; font-weight: 700; font-size: 10px; padding: 3px 2px; }
+
+  /* Item name column */
+  .ms-item-name {
+    text-align: left !important;
+    padding: 5px 8px;
     font-size: 10px;
-    font-weight: 500;
-    padding: 3px 4px;
+    min-width: 110px; max-width: 160px;
+    white-space: normal; word-break: break-all;
+    line-height: 1.3;
+    position: sticky; left: 18px; z-index: 2; background: #fff;
   }
+
+  /* Day header */
   .ms-th-day {
-    background: #F5F6F8;
-    color: var(--text);
-    font-size: 10px;
-    font-weight: 600;
-    min-width: 22px;
-    padding: 3px 2px;
+    background: #ECEFF1; color: #333;
+    font-size: 9px; font-weight: 700;
+    min-width: 20px; width: 20px; padding: 2px 1px;
   }
-  .ms-th-day.holiday { background: #FEE8E8; color: #E53935; }
-  .ms-th-day.today   { background: #D6E4FF; color: var(--blue); box-shadow: inset 0 0 0 2px var(--blue); }
+  .ms-th-day.holiday { background: #FFEBEE; color: #C62828; }
+  .ms-th-day.today   { background: #BBDEFB; color: #0D47A1; box-shadow: inset 0 0 0 2px #1565C0; }
 
-  .ms-item-no   { width: 22px; min-width: 22px; font-weight: 700; color: var(--text-sub); padding: 4px; }
-  .ms-item-name { text-align: left; padding: 4px 6px; font-size: 11px; min-width: 90px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
-
+  /* Day cell */
   .ms-cell {
-    min-width: 22px;
-    width: 22px;
-    height: 28px;
-    padding: 2px;
+    min-width: 20px; width: 20px;
+    height: 28px; padding: 2px 1px;
   }
-  .ms-cell.holiday  { background: repeating-linear-gradient(45deg,#FEE8E8,#FEE8E8 3px,#FFD0D0 3px,#FFD0D0 6px); }
-  .ms-cell.today    { background: #EEF4FF; }
+  .ms-cell.holiday { background: repeating-linear-gradient(45deg,#FFEBEE,#FFEBEE 3px,#FFCDD2 3px,#FFCDD2 6px); }
+  .ms-cell.today   { background: #E3F2FD; }
 
-  .ms-val-ok  { color: var(--blue);  font-size: 13px; font-weight: 700; }
-  .ms-val-ng  { color: var(--red);   font-size: 13px; font-weight: 700; }
-  .ms-val-na  { color: #AAAAAA;      font-size: 12px; }
-  .ms-val-blank { color: #DDDDDD; font-size: 10px; }
+  /* Result symbols */
+  .ms-val-ok    { color: #1565C0; font-size: 13px; font-weight: 700; }
+  .ms-val-ng    { color: #B71C1C; font-size: 13px; font-weight: 700; }
+  .ms-val-fix   { color: #E65100; font-size: 11px; font-weight: 700; }
+  .ms-val-na    { color: #999;    font-size: 11px; }
+  .ms-val-blank { color: #DDD;    font-size: 9px; }
 
-  /* 10-day period columns */
-  .ms-period-hdr { background: #E8F5E9; color: #2E7D32; font-weight: 700; padding: 4px 6px; font-size: 10px; }
-  .ms-period-sub { background: #F1F8E9; color: #558B2F; padding: 3px 4px; font-size: 10px; }
-  .ms-period-cell { min-width: 50px; padding: 4px 5px; font-size: 11px; }
-  .ms-period-cell.inspector { color: var(--blue); font-size: 10px; }
-  .ms-period-cell.confirm   { font-size: 10px; color: var(--text-sub); }
+  /* Inspector sign row */
+  .ms-inspector-label { font-size: 10px; font-weight: 700; background: #F5F5F5; padding: 3px 6px; text-align: left !important; }
+  .ms-inspector-cell  { height: 18px; font-size: 9px; color: #1565C0; padding: 1px; background: #FAFAFA; }
+  .ms-inspector-cell.holiday { background: repeating-linear-gradient(45deg,#FFEBEE,#FFEBEE 3px,#FFCDD2 3px,#FFCDD2 6px); }
 
-  /* monthly section */
-  .ms-monthly-hdr { background: #FFF3E0; color: #E65100; font-weight: 700; padding: 4px 6px; font-size: 10px; }
-  .ms-monthly-sub { background: #FFF8F0; color: #BF360C; padding: 3px 4px; font-size: 10px; }
-  .ms-monthly-cell { min-width: 52px; padding: 4px 5px; font-size: 11px; }
-  .ms-monthly-cell.notes { min-width: 100px; text-align: left; color: var(--text-sub); font-size: 10px; }
+  /* Note row between daily and 10-day */
+  .ms-note-row td { font-size: 9px; color: #555; text-align: left !important; padding: 3px 8px; background: #FAFAFA; border-top: 1.5px solid #333; border-bottom: 1.5px solid #333; }
+
+  /* 10-day period headers */
+  .ms-period-hdr { background: #C8E6C9; color: #1B5E20; font-weight: 700; padding: 3px 5px; font-size: 10px; }
+  .ms-period-sub { background: #DCEDC8; color: #33691E; padding: 2px 3px; font-size: 9px; font-weight: 600; min-width: 44px; }
+  .ms-period-cell { min-width: 44px; padding: 5px 3px; font-size: 11px; }
+  .ms-period-confirm { min-width: 44px; padding: 5px 3px; font-size: 9px; color: #555; }
+
+  /* Monthly (一ヶ月一回) headers */
+  .ms-monthly-hdr { background: #FFE0B2; color: #BF360C; font-weight: 700; padding: 3px 5px; font-size: 10px; }
+  .ms-monthly-cell { min-width: 52px; padding: 5px 3px; font-size: 11px; }
+  .ms-monthly-confirm { min-width: 52px; padding: 5px 3px; font-size: 9px; color: #555; }
+
+  /* Section divider */
+  .ms-section-divider td, .ms-section-divider th { border-top: 2px solid #444 !important; }
+
+  /* Legend/notes block */
+  .ms-legend-block {
+    border-top: 1.5px solid #333;
+    display: flex; align-items: stretch;
+    font-size: 10px;
+  }
+  .ms-legend-symbols {
+    flex: 1; padding: 6px 10px;
+    display: flex; align-items: center; gap: 16px;
+    font-weight: 700; font-size: 11px;
+    border-right: 1px solid #ccc;
+  }
+  .ms-legend-notes {
+    flex: 2; padding: 4px 8px;
+    font-size: 9px; color: #444;
+    line-height: 1.6;
+  }
+
+  /* Recovery records table */
+  .ms-recovery-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 10px;
+    border-top: 1.5px solid #333;
+  }
+  .ms-recovery-table th, .ms-recovery-table td {
+    border: 1px solid #888;
+    padding: 3px 6px;
+    white-space: nowrap;
+  }
+  .ms-recovery-table th { background: #ECEFF1; font-weight: 700; text-align: center; }
+  .ms-recovery-table .ms-rec-sect {
+    writing-mode: vertical-rl; text-orientation: upright;
+    font-weight: 800; font-size: 9px;
+    width: 16px; text-align: center;
+    background: #F5F5F5;
+  }
+
+  /* Approval cells in monthly sheet */
+  .ms-apr-cell {
+    min-width: 52px; padding: 4px 3px;
+    font-size: 9px; font-weight: 700;
+    text-align: center; cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    -webkit-user-select: none; user-select: none;
+    white-space: nowrap;
+  }
+  .ms-apr-cell:active { opacity: 0.75; transform: scale(0.97); }
+  .ms-apr-approved { background: #E8F5E9; color: #1B5E20; }
+  .ms-apr-returned { background: #FFF3E0; color: #BF360C; }
+  .ms-apr-pending  { background: #EEF4FF; color: #1565C0; }
+  .ms-apr-ok  { color: #2E7D32; font-size: 11px; margin-right: 2px; }
+  .ms-apr-ng  { color: #BF360C; font-size: 11px; margin-right: 2px; }
+  .ms-apr-btn {
+    display: inline-block;
+    background: #2F6BFF; color: #fff;
+    border-radius: 4px; padding: 2px 5px;
+    font-size: 9px; font-weight: 700;
+    cursor: pointer;
+  }
 
   /* Row hover */
   .ms-table tbody tr:hover td:not(.ms-section-label) { background: rgba(47,107,255,0.04); }
-
-  /* Category divider */
-  .ms-cat-divider td { border-top: 2px solid #B0BEC5 !important; }
+  .ms-cat-divider td { border-top: 2px solid #777 !important; }
 </style>
 <!-- ===== DASHBOARD & APPROVAL: STYLES ===== -->
 <style>
@@ -2927,27 +3034,7 @@
         ← 横にスクロールできます →
       </div>
 
-      <!-- 凡例 -->
-      <div id="ms-legend" style="display:none;padding:10px 14px 0;display:flex;gap:14px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
-          <div style="width:14px;height:14px;border-radius:50%;background:#2F6BFF;"></div>○ 正常
-        </div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
-          <div style="width:14px;height:14px;border-radius:50%;background:#E53935;"></div>✕ 異常
-        </div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
-          <div style="width:14px;height:14px;border-radius:50%;background:#BBBBBB;"></div>／ 対象外
-        </div>
-        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
-          <div style="width:14px;height:14px;border-radius:3px;background:#FDECEC;border:1px solid #FBBCBC;"></div>休日
-        </div>
-      </div>
 
-      <!-- 備考 -->
-      <div style="padding:10px 14px 0;font-size:11px;color:var(--text-sub);line-height:1.7;background:#FFF8E1;margin:10px 14px 0;border-radius:8px;border-left:3px solid #F59E0B;">
-        💡 点検項目がない場合は ／ を記入する　｜　毎月（定期）点検は月末に行う<br>
-        ✓ 10日毎に上司確認、最終M課責任者確認後保管　｜　異常時は復旧後、改善内容欄に具体的に記入
-      </div>
 
     </div>
 
@@ -4971,10 +5058,49 @@ function computeLiveDashData() {
 function loadAprStatuses() {
   try { return JSON.parse(localStorage.getItem('approvalStatuses') || '{}'); } catch(e) { return {}; }
 }
+function loadAprDetails() {
+  try { return JSON.parse(localStorage.getItem('approvalDetails') || '{}'); } catch(e) { return {}; }
+}
 function saveAprStatusToStorage(id, status) {
   var data = loadAprStatuses();
   data[id] = status;
   localStorage.setItem('approvalStatuses', JSON.stringify(data));
+  // 承認者名・日時も保存
+  var details = loadAprDetails();
+  if (status === 'approved' || status === 'returned') {
+    var nameEl = document.getElementById('adm-hdr-name');
+    var approverName = nameEl ? nameEl.textContent.replace(' さん','').trim() : '管理者';
+    var now = new Date();
+    var pad = function(n){ return String(n).padStart(2,'0'); };
+    details[id] = {
+      name: approverName,
+      at: now.getFullYear() + '/' + pad(now.getMonth()+1) + '/' + pad(now.getDate())
+          + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()),
+      status: status
+    };
+  } else {
+    delete details[id];
+  }
+  localStorage.setItem('approvalDetails', JSON.stringify(details));
+}
+/* 月次点検表から直接承認 */
+function msApprove(aprId) {
+  saveAprStatusToStorage(aprId, 'approved');
+  renderMonthlySheet();
+  if (typeof renderApproval === 'function') renderApproval();
+  admToast('✓ 承認しました');
+}
+function msReturn(aprId) {
+  saveAprStatusToStorage(aprId, 'returned');
+  renderMonthlySheet();
+  if (typeof renderApproval === 'function') renderApproval();
+  admToast('差し戻しました');
+}
+function msResetApproval(aprId) {
+  saveAprStatusToStorage(aprId, 'pending');
+  renderMonthlySheet();
+  if (typeof renderApproval === 'function') renderApproval();
+  admToast('承認を取り消しました');
 }
 
 function computeLiveAprData() {
@@ -5891,20 +6017,18 @@ function renderMonthlySheet() {
   var monthSel = document.getElementById('ms-month-sel');
   var wrap     = document.getElementById('ms-table-wrap');
   var noEquip  = document.getElementById('ms-no-equip');
-  var legend   = document.getElementById('ms-legend');
+
   if (!equipSel || !monthSel || !wrap) return;
 
   var equipId = equipSel.value;
   if (!equipId) {
     wrap.innerHTML = '';
     if (noEquip) noEquip.style.display = 'block';
-    if (legend)  legend.style.display  = 'none';
     var hint2 = document.getElementById('ms-scroll-hint');
     if (hint2) hint2.style.display = 'none';
     return;
   }
   if (noEquip) noEquip.style.display = 'none';
-  if (legend)  legend.style.display  = '';
 
   var monthVal = monthSel.value || (function(){
     var n = new Date();
@@ -5927,26 +6051,16 @@ function renderMonthlySheet() {
   var tenDayItems  = getItemsByType('10days');
   var monthlyItems = getItemsByType('monthly');
 
-  // Days in month
   var daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Holiday check
-  function isDayHoliday(d) {
-    var dt = new Date(year, month, d);
-    return isHoliday(dt);
-  }
+  function isDayHoliday(d) { return isHoliday(new Date(year, month, d)); }
   var today = new Date();
-  function isToday(d) {
-    return today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
-  }
+  function isToday(d) { return today.getFullYear()===year && today.getMonth()===month && today.getDate()===d; }
 
-  // Load inspection data for this equip/month
   var inspections = loadInspections();
   var monthRecs = inspections.filter(function(r) {
     return r.year === year && r.month === month && (r.equips || []).indexOf(equipId) >= 0;
   });
-
-  // Build lookup: day -> state[equipId]
   function getStateForDay(d) {
     var rec = monthRecs.find(function(r){ return r.day === d; });
     return rec && rec.state ? (rec.state[equipId] || {}) : {};
@@ -5956,117 +6070,147 @@ function renderMonthlySheet() {
     return rec ? (rec.inspector || '') : '';
   }
 
-  // 10-day periods: nominal 10, 20, end-of-month(or 30)
-  var periods10 = get10DayDatesForMonth(year, month); // Set of effective dates
   var periodDates = [10, 20, 30].map(function(nom) {
     var last = new Date(year, month+1, 0).getDate();
     var actual = Math.min(nom, last);
-    // find effective date
     var eff = _effectiveDate(new Date(year, month, actual));
     return {
-      label: nom === 30 ? '月末' : nom + '日',
+      label: nom === 30 ? '月末\n（最終日）' : nom + '日',
       nominal: nom,
-      eff: (eff.getFullYear() === year && eff.getMonth() === month) ? eff.getDate() : null
+      eff: (eff.getFullYear()===year && eff.getMonth()===month) ? eff.getDate() : null
     };
   });
 
-  // Monthly effective date
   var monthlyDay = getMonthlyDateForMonth(year, month);
 
-  // Helper: render result symbol
+  // ── 承認データ読み込み ──
+  var aprStatuses = loadAprStatuses();
+  var aprDetails  = loadAprDetails();
+
+  // 承認セルHTMLを生成するヘルパー
+  function aprCellHtml(aprId, style) {
+    var st  = aprStatuses[aprId] || 'pending';
+    var det = aprDetails[aprId];
+    if (st === 'approved') {
+      var label = det ? det.name.slice(0,4) : '承認';
+      return '<td class="ms-apr-cell ms-apr-approved" ' + (style||'') +
+        ' onclick="msResetApproval(\'' + aprId + '\')" title="クリックで取り消し（' + (det ? det.at : '') + '）">' +
+        '<span class="ms-apr-ok">✓</span>' + label + '</td>';
+    } else if (st === 'returned') {
+      return '<td class="ms-apr-cell ms-apr-returned" ' + (style||'') +
+        ' onclick="msApprove(\'' + aprId + '\')" title="クリックで再承認">' +
+        '<span class="ms-apr-ng">✗</span>差戻</td>';
+    } else {
+      return '<td class="ms-apr-cell ms-apr-pending" ' + (style||'') +
+        ' onclick="msApprove(\'' + aprId + '\')" title="クリックで承認">' +
+        '<span class="ms-apr-btn">承認</span></td>';
+    }
+  }
+
   function sym(val) {
-    if (val === 'ok') return '<span class="ms-val-ok">○</span>';
-    if (val === 'ng') return '<span class="ms-val-ng">✕</span>';
-    if (val === 'na') return '<span class="ms-val-na">／</span>';
+    if (val === 'ok')  return '<span class="ms-val-ok">○</span>';
+    if (val === 'ng')  return '<span class="ms-val-ng">✕</span>';
+    if (val === 'fix') return '<span class="ms-val-fix">⊗</span>';
+    if (val === 'na')  return '<span class="ms-val-na">／</span>';
     return '<span class="ms-val-blank">—</span>';
   }
 
-  // ── Build HTML ──
-  var html = '';
-  html += '<table class="ms-table">';
+  var monthNames = ['1','2','3','4','5','6','7','8','9','10','11','12'];
 
-  // ════ SECTION 1: 日常点検 ════
+  // ═══════════════════════════════════════
+  // Build PDF-matching document
+  // ═══════════════════════════════════════
+  var html = '<div class="ms-doc">';
+
+  // ── Title bar ──
+  html += '<div class="ms-doc-titlebar">';
+  html += '<div class="ms-doc-title-main">日常・定期点検表　　（' + year + '年　' + monthNames[month] + '月度）</div>';
+  html += '<div class="ms-doc-title-meta"><div>作成日</div><div style="font-weight:700;">2016/11/5</div></div>';
+  html += '<div class="ms-doc-title-box"><div class="ms-doc-title-box-label">承認</div><div style="height:20px;"></div></div>';
+  html += '<div class="ms-doc-title-box"><div class="ms-doc-title-box-label">作成</div><div style="height:20px;"></div></div>';
+  html += '</div>';
+
+  // ── Equipment info row ──
+  html += '<div class="ms-doc-equiprow">';
+  html += '<span>設備No.　<b>' + esc(eq.id) + '</b></span>';
+  html += '<span>設備名：<b>' + esc(eq.name) + '</b></span>';
+  html += '<span style="flex:1;">型式：' + esc(eq.model || '') + '</span>';
+  html += '<span>管理担当部門：<b>' + esc(eq.dept || 'M課') + '</b></span>';
+  html += '</div>';
+
+  // ═══════════════════════════════
+  // SECTION 1: 日常点検
+  // ═══════════════════════════════
   if (dailyItems.length > 0) {
-    // Header row: day numbers
-    html += '<thead>';
-    html += '<tr>';
-    html += '<th class="ms-th-main" colspan="3" style="text-align:left;padding:5px 8px;">設備：' + esc(eq.id) + '　' + esc(eq.name) + '</th>';
+    html += '<table class="ms-table">';
+    // Column header row
+    html += '<thead><tr>';
+    html += '<th style="width:18px;"></th>';   // section label placeholder
+    html += '<th class="ms-no-col" style="background:#ECEFF1;">NO</th>';
+    html += '<th style="background:#ECEFF1;text-align:left;padding:3px 8px;position:sticky;left:18px;z-index:3;min-width:120px;">点　検　項　目</th>';
     for (var d = 1; d <= daysInMonth; d++) {
       var hol = isDayHoliday(d);
-      html += '<th class="ms-th-day' + (hol ? ' holiday' : '') + (isToday(d) ? ' today' : '') + '">' + d + '</th>';
+      html += '<th class="ms-th-day' + (hol?' holiday':'') + (isToday(d)?' today':'') + '">' + d + '</th>';
     }
-    html += '<th class="ms-th-day" style="min-width:50px;">点検者</th>';
-    html += '</tr>';
-    html += '</thead>';
+    html += '</tr></thead>';
     html += '<tbody>';
-    // Section label spanning all daily rows
+
+    // Daily rows
     var dailyCount = dailyItems.length;
-    html += '<tr class="ms-cat-divider">';
-    html += '<td class="ms-section-label daily" rowspan="' + dailyCount + '">日常点検</td>';
-    // First item row
-    var item0 = dailyItems[0];
-    html += '<td class="ms-item-no">1</td>';
-    html += '<td class="ms-item-name">' + esc(item0.name) + '</td>';
-    for (var d = 1; d <= daysInMonth; d++) {
-      var hol = isDayHoliday(d);
-      var st = getStateForDay(d);
-      var vals = st['daily'] || [];
-      var itemIdx = assigns.filter(function(a){
-        var it = (ADM.items||[]).find(function(i){ return i.id===a.itemId; });
-        return it && (it.type||'10days')==='daily';
-      }).findIndex(function(a){ return a.itemId === item0.id; });
-      var val = vals[itemIdx] || '';
-      html += '<td class="ms-cell' + (hol ? ' holiday' : '') + (isToday(d) ? ' today' : '') + '">' + sym(val) + '</td>';
-    }
-    html += '<td class="ms-cell" style="font-size:10px;color:var(--blue);">' + (getStateForDay(1)['daily'] ? getInspectorForDay(1).slice(0,4) : '') + '</td>';
-    html += '</tr>';
-    for (var i = 1; i < dailyItems.length; i++) {
-      var item = dailyItems[i];
-      html += '<tr>';
-      html += '<td class="ms-item-no">' + (i+1) + '</td>';
+    var dailyAssignsList = assigns.filter(function(a){
+      var it = (ADM.items||[]).find(function(i){ return i.id===a.itemId; });
+      return it && (it.type||'10days')==='daily';
+    });
+
+    dailyItems.forEach(function(item, idx) {
+      html += '<tr' + (idx===0?' class="ms-section-divider"':'') + '>';
+      if (idx === 0) {
+        html += '<td class="ms-section-label daily" rowspan="' + (dailyCount + 1) + '">日常点検</td>';
+      }
+      html += '<td class="ms-no-col">' + (idx+1) + '</td>';
       html += '<td class="ms-item-name">' + esc(item.name) + '</td>';
-      var dailyAssigns = assigns.filter(function(a){
-        var it = (ADM.items||[]).find(function(ii){ return ii.id===a.itemId; });
-        return it && (it.type||'10days')==='daily';
-      });
-      var itemIdx = dailyAssigns.findIndex(function(a){ return a.itemId === item.id; });
+      var iIdx = dailyAssignsList.findIndex(function(a){ return a.itemId === item.id; });
       for (var d = 1; d <= daysInMonth; d++) {
         var hol = isDayHoliday(d);
         var st = getStateForDay(d);
         var vals = st['daily'] || [];
-        var val = vals[itemIdx] || '';
-        html += '<td class="ms-cell' + (hol ? ' holiday' : '') + (isToday(d) ? ' today' : '') + '">' + sym(val) + '</td>';
+        var val = vals[iIdx] || '';
+        html += '<td class="ms-cell' + (hol?' holiday':'') + (isToday(d)?' today':'') + '">' + sym(val) + '</td>';
       }
-      html += '<td class="ms-cell"></td>';
       html += '</tr>';
-    }
-    // Sign row
+    });
+
+    // Inspector sign row
     html += '<tr>';
-    html += '<td colspan="3" style="text-align:right;font-size:10px;color:var(--text-sub);padding:4px 8px;">↑機械使用前　点検者サイン</td>';
+    html += '<td class="ms-inspector-label" colspan="2">点検者</td>';
     for (var d = 1; d <= daysInMonth; d++) {
       var hol = isDayHoliday(d);
-      html += '<td class="ms-cell' + (hol ? ' holiday' : '') + '" style="height:20px;background:' + (hol ? 'repeating-linear-gradient(45deg,#FEE8E8,#FEE8E8 3px,#FFD0D0 3px,#FFD0D0 6px)' : '#FAFAFA') + '"></td>';
+      var insp = getInspectorForDay(d);
+      html += '<td class="ms-inspector-cell' + (hol?' holiday':'') + '">' + esc(insp.slice(0,3)) + '</td>';
     }
-    html += '<td class="ms-cell" style="background:#FAFAFA;"></td>';
     html += '</tr>';
-    html += '</tbody>';
-  } else {
-    // No daily items — still show header
-    html += '<thead><tr>';
-    html += '<th class="ms-th-main" colspan="2" style="text-align:left;padding:5px 8px;">設備：' + esc(eq.id) + '　' + esc(eq.name) + '</th>';
-    html += '</tr></thead><tbody>';
-    html += '<tr><td colspan="2" style="padding:10px;color:var(--text-sub);font-size:12px;text-align:center;">毎日点検項目なし</td></tr>';
-    html += '</tbody>';
+
+    // Note row
+    html += '<tr class="ms-note-row"><td colspan="' + (daysInMonth + 3) + '">↑上記項目は機械使用前に点検を行う。　　↓下記項目10日ごとに１回点検を行う。（最終日）</td></tr>';
+    html += '</tbody></table>';
   }
 
-  // ════ SECTION 2: 10日点検 ════
+  // ═══════════════════════════════
+  // SECTION 2: 10日毎
+  // ═══════════════════════════════
   if (tenDayItems.length > 0) {
+    var tenDayAssigns = assigns.filter(function(a){
+      var it = (ADM.items||[]).find(function(i){ return i.id===a.itemId; });
+      return it && (it.type||'10days')==='10days';
+    });
+
+    html += '<table class="ms-table">';
     html += '<thead>';
     html += '<tr>';
-    html += '<th class="ms-period-hdr" colspan="2" rowspan="2" style="vertical-align:middle;">区分</th>';
-    html += '<th class="ms-period-hdr" colspan="2" rowspan="2" style="vertical-align:middle;">点 検 項 目</th>';
+    html += '<th class="ms-section-label tenday" rowspan="' + (tenDayItems.length + 2) + '" style="position:sticky;left:0;z-index:3;">10日毎</th>';
+    html += '<th class="ms-period-hdr" colspan="2" rowspan="2" style="vertical-align:middle;text-align:left;padding:4px 8px;">点　検　項　目</th>';
     periodDates.forEach(function(pd) {
-      html += '<th class="ms-period-hdr" colspan="3">' + pd.label + '（' + (pd.eff ? pd.eff + '日' : '−') + '）</th>';
+      html += '<th class="ms-period-hdr" colspan="3" style="white-space:pre-line;">' + pd.label + '<br>（' + (pd.eff ? pd.eff + '日' : '−') + '）</th>';
     });
     html += '</tr>';
     html += '<tr>';
@@ -6076,103 +6220,120 @@ function renderMonthlySheet() {
       html += '<th class="ms-period-sub">日常点検<br>確認</th>';
     });
     html += '</tr>';
-    html += '</thead>';
-    html += '<tbody>';
-
-    // Group by category (using a simple separator label)
-    var tenDayAssigns = assigns.filter(function(a){
-      var it = (ADM.items||[]).find(function(i){ return i.id===a.itemId; });
-      return it && (it.type||'10days')==='10days';
-    });
+    html += '</thead><tbody>';
 
     tenDayItems.forEach(function(item, idx) {
-      var rowClass = idx === 0 ? ' class="ms-cat-divider"' : '';
-      html += '<tr' + rowClass + '>';
-      if (idx === 0) {
-        html += '<td class="ms-section-label tenday" rowspan="' + tenDayItems.length + '">10日点検</td>';
-      }
-      html += '<td class="ms-item-no">' + (idx+1) + '</td>';
-      html += '<td class="ms-item-name" colspan="2">' + esc(item.name) + '</td>';
-
+      var globalNo = dailyItems.length + idx + 1;
+      html += '<tr' + (idx===0?' class="ms-section-divider"':'') + '>';
+      html += '<td class="ms-no-col">' + globalNo + '</td>';
+      html += '<td class="ms-item-name" style="position:sticky;left:18px;z-index:2;">' + esc(item.name) + '</td>';
       var iIdx = tenDayAssigns.findIndex(function(a){ return a.itemId === item.id; });
-
       periodDates.forEach(function(pd) {
-        var effDay = pd.eff;
-        var result = '';
-        var inspector = '';
-        if (effDay) {
-          var st = getStateForDay(effDay);
+        var result = '', inspector = '';
+        var aprId10 = 'apr10-' + year + '-' + month + '-' + (pd.eff || 'x') + '-' + equipId;
+        if (pd.eff) {
+          var st = getStateForDay(pd.eff);
           var vals = st['10days'] || [];
           result = vals[iIdx] || '';
-          inspector = getInspectorForDay(effDay);
+          inspector = getInspectorForDay(pd.eff);
         }
+        // 結果：点検項目の○✕
         html += '<td class="ms-period-cell">' + sym(result) + '</td>';
-        html += '<td class="ms-period-cell inspector" style="font-size:10px;">' + esc(inspector.slice(0,4)) + '</td>';
-        html += '<td class="ms-period-cell confirm">—</td>';
+        // 点検者：ADM.inspectors に登録された人のみ表示（管理者名は出さない）
+        var isActualInspector = (ADM.inspectors || []).some(function(u){ return u.name === inspector; });
+        var displayInspector = isActualInspector ? inspector.slice(0, 4) : '';
+        html += '<td class="ms-period-cell" style="font-size:10px;color:#1565C0;">' + esc(displayInspector) + '</td>';
+        // 日常点検確認：承認した管理者の名前
+        html += aprCellHtml(aprId10, 'class="ms-period-confirm"');
       });
       html += '</tr>';
     });
-    html += '</tbody>';
+    html += '</tbody></table>';
   }
 
-  // ════ SECTION 3: 月次点検 ════
+  // ═══════════════════════════════
+  // SECTION 3: 一ヶ月一回
+  // ═══════════════════════════════
   if (monthlyItems.length > 0) {
-    html += '<thead>';
-    html += '<tr>';
-    html += '<th class="ms-monthly-hdr" colspan="2" rowspan="2" style="vertical-align:middle;">区分</th>';
-    html += '<th class="ms-monthly-hdr" colspan="2" rowspan="2" style="vertical-align:middle;">点 検 項 目</th>';
-    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">結　果</th>';
-    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">点検者</th>';
-    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;font-size:9px;">全点検確認<br>M課責任者</th>';
-    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;min-width:100px;">備　考</th>';
-    html += '</tr>';
-    html += '<tr></tr>';
-    html += '</thead>';
-    html += '<tbody>';
-
     var monthlyAssigns = assigns.filter(function(a){
       var it = (ADM.items||[]).find(function(i){ return i.id===a.itemId; });
       return it && it.type === 'monthly';
     });
 
-    monthlyItems.forEach(function(item, idx) {
-      var rowClass = idx === 0 ? ' class="ms-cat-divider"' : '';
-      html += '<tr' + rowClass + '>';
-      if (idx === 0) {
-        html += '<td class="ms-section-label monthly-lbl" rowspan="' + monthlyItems.length + '">月次点検</td>';
-      }
-      html += '<td class="ms-item-no">' + (idx+1) + '</td>';
-      html += '<td class="ms-item-name" colspan="2">' + esc(item.name) + '</td>';
+    html += '<table class="ms-table">';
+    html += '<thead>';
+    html += '<tr>';
+    html += '<th class="ms-section-label monthly-lbl" rowspan="' + (monthlyItems.length + 2) + '" style="position:sticky;left:0;z-index:3;">一ヶ月一回</th>';
+    html += '<th class="ms-monthly-hdr" colspan="2" rowspan="2" style="vertical-align:middle;text-align:left;padding:4px 8px;">点　検　項　目</th>';
+    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">結　果</th>';
+    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">点検者</th>';
+    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;font-size:9px;white-space:normal;padding:4px;">全点検確認<br>M課責任者</th>';
+    html += '</tr>';
+    html += '<tr></tr>';
+    html += '</thead><tbody>';
 
+    monthlyItems.forEach(function(item, idx) {
+      var globalNo = dailyItems.length + tenDayItems.length + idx + 1;
       var iIdx = monthlyAssigns.findIndex(function(a){ return a.itemId === item.id; });
       var result = '', inspector = '';
+      var aprIdM = 'aprM-' + year + '-' + month + '-' + (monthlyDay || 'x') + '-' + equipId;
       if (monthlyDay) {
         var st = getStateForDay(monthlyDay);
         var vals = st['monthly'] || [];
         result = vals[iIdx] || '';
         inspector = getInspectorForDay(monthlyDay);
       }
+      html += '<tr' + (idx===0?' class="ms-section-divider"':'') + '>';
+      html += '<td class="ms-no-col">' + globalNo + '</td>';
+      html += '<td class="ms-item-name" colspan="1" style="position:sticky;left:18px;z-index:2;">' + esc(item.name) + '</td>';
       html += '<td class="ms-monthly-cell">' + sym(result) + '</td>';
-      html += '<td class="ms-monthly-cell" style="font-size:10px;color:var(--blue);">' + esc(inspector.slice(0,4)) + '</td>';
-      html += '<td class="ms-monthly-cell">—</td>';
-      html += '<td class="ms-monthly-cell notes"></td>';
+      html += '<td class="ms-monthly-cell" style="font-size:10px;color:#1565C0;">' + esc(inspector.slice(0,4)) + '</td>';
+      // 全点検確認M課責任者：月次点検全体で1つの承認ID
+      if (idx === 0) {
+        html += aprCellHtml(aprIdM, 'rowspan="' + monthlyItems.length + '" style="vertical-align:middle;"').replace('<td ', '<td ');
+      }
       html += '</tr>';
     });
-
-    // Notes instructions row
-    html += '<tr>';
-    html += '<td colspan="8" style="padding:8px 10px;font-size:10px;color:var(--text-sub);text-align:left;background:#FAFAFA;">';
-    html += '・点検項目がない場合は ／ を記入する　・毎月（定期）点検は月末に行う　・異常時は復旧後、改善内容欄に具体的に記入';
-    html += '</td>';
-    html += '</tr>';
-    html += '</tbody>';
+    html += '</tbody></table>';
   }
 
-  if (tenDayItems.length === 0 && monthlyItems.length === 0 && dailyItems.length === 0) {
-    html += '<tbody><tr><td colspan="2" style="padding:16px;color:var(--text-sub);font-size:13px;text-align:center;">この設備に点検項目が割り当てられていません</td></tr></tbody>';
+  if (dailyItems.length === 0 && tenDayItems.length === 0 && monthlyItems.length === 0) {
+    html += '<div style="padding:20px;color:var(--text-sub);font-size:13px;text-align:center;">この設備に点検項目が割り当てられていません</div>';
   }
 
-  html += '</table>';
+  // ── Legend & Notes ──
+  html += '<div class="ms-legend-block">';
+  html += '<div class="ms-legend-symbols">';
+  html += '<span>正常：<span class="ms-val-ok">○</span></span>';
+  html += '<span>異常：<span class="ms-val-ng">✕</span></span>';
+  html += '<span>修正：<span class="ms-val-fix">⊗</span></span>';
+  html += '</div>';
+  html += '<div class="ms-legend-notes">';
+  html += '・点検項目欄には、点検項目がない場合は ／ を記入する<br>';
+  html += '・異常時は異常内容欄に記入する、復旧後には、改善内容欄に具体的に記入する<br>';
+  html += '・毎月（定期）点検は月末に行う<br>';
+  html += '・10日毎に点検者上司が点検確認を行い、最終M課責任者が確認を行う、資料を保管する';
+  html += '</div>';
+  html += '</div>';
+
+  // ── 復旧改善記録 ──
+  html += '<table class="ms-recovery-table">';
+  html += '<thead><tr>';
+  html += '<th rowspan="2" class="ms-rec-sect">復<br>旧<br>改<br>善<br>記<br>録</th>';
+  html += '<th style="width:60px;">日　付</th>';
+  html += '<th style="min-width:140px;">異　常　内　容</th>';
+  html += '<th style="min-width:140px;">改　善　内　容</th>';
+  html += '<th style="width:36px;">担当者</th>';
+  html += '<th style="width:36px;">承認</th>';
+  html += '</tr></thead>';
+  html += '<tbody>';
+  for (var ri = 0; ri < 3; ri++) {
+    html += '<tr><td style="height:24px;"></td><td></td><td></td><td></td><td></td></tr>';
+  }
+  html += '</tbody></table>';
+
+  html += '</div>'; // .ms-doc
+
   wrap.innerHTML = html;
   var hint = document.getElementById('ms-scroll-hint');
   if (hint) hint.style.display = 'block';
