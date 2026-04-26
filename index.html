@@ -1745,7 +1745,7 @@
   /* ── カラムヘッダー ── */
   .apr2-col-hdr {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 68px 96px 72px;
+    grid-template-columns: minmax(0, 1fr) 68px 72px;
     gap: 6px;
     padding: 6px 23px;
     font-size: 11px; color: var(--text-sub); font-weight: 600;
@@ -1859,45 +1859,51 @@
 
   /* ── 点検行 ── */
   .apr2-insp-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 68px 96px 72px;
-    align-items: center; gap: 6px;
-    padding: 9px 12px;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 8px;
+    padding: 10px 12px;
     border-bottom: 1px solid #F5F5F5;
-    min-height: 44px;
+    min-height: 46px;
   }
   .apr2-insp-row:last-child { border-bottom: none; }
   .apr2-insp-row.is-approved { opacity: 0.55; }
 
-  .apr2-insp-left { display: flex; align-items: center; gap: 7px; min-width: 0; }
+  /* 左グループ：タグ + 点検者名 */
+  .apr2-insp-left {
+    display: flex; align-items: center; gap: 8px;
+    flex: 1; min-width: 0;
+  }
   .apr2-type-tag {
-    display: inline-block; padding: 2px 7px; border-radius: 20px;
+    display: inline-block; padding: 3px 9px; border-radius: 20px;
     font-size: 10px; font-weight: 700; flex-shrink: 0; white-space: nowrap;
   }
   .apr2-type-tag.tenday { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-mid); }
   .apr2-type-tag.monthly { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
   .apr2-insp-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  .apr2-inspector { font-size: 12px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .apr2-datetime { font-size: 11px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .apr2-inspector {
+    font-size: 13px; font-weight: 400; color: #888;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex-shrink: 1; min-width: 0;
+  }
+  .apr2-datetime { font-size: 11px; color: var(--text-sub); white-space: nowrap; }
 
-  .apr2-action { display: flex; align-items: center; justify-content: flex-end; }
+  /* 右グループ：承認ボタン or 承認済み */
+  .apr2-action { display: flex; align-items: center; flex-shrink: 0; }
   .apr2-approve-btn {
     background: var(--blue); color: #fff;
     border: none; border-radius: 8px;
-    padding: 7px 10px; font-size: 12px; font-weight: 700;
+    padding: 8px 14px; font-size: 13px; font-weight: 700;
     cursor: pointer; font-family: inherit; white-space: nowrap;
     transition: opacity 0.13s, transform 0.1s;
     -webkit-user-select: none;
   }
   .apr2-approve-btn:active { opacity: 0.82; transform: scale(0.96); }
   .apr2-check-done {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--green-light);
-    display: flex; align-items: center; justify-content: center;
-    margin-left: auto;
+    display: flex; align-items: center; gap: 5px;
+    color: var(--green); font-size: 12px; font-weight: 600; white-space: nowrap;
   }
-  .apr2-check-done svg { width: 14px; height: 14px; stroke: var(--green); fill: none; }
+  .apr2-check-done svg { width: 18px; height: 18px; stroke: var(--green); fill: none; flex-shrink: 0; }
 
   /* ── ページネーション ── */
   .apr2-pagination-wrap {
@@ -2750,14 +2756,6 @@
           </div>
         </div>
 
-      </div>
-
-      <!-- カラムヘッダー -->
-      <div class="apr2-col-hdr">
-        <span>点検種別</span>
-        <span>点検者</span>
-        <span>点検日時</span>
-        <span style="text-align:right;">承認</span>
       </div>
 
       <!-- 階層リスト -->
@@ -5405,7 +5403,6 @@ function renderAdmApproval() {
 
     html += '<div class="apr2-line" id="apr2-line-' + line.lineId + '">' +
       '<div class="apr2-line-hdr' + hdrCls + '" onclick="apr2ToggleLine(\'' + line.lineId + '\')">' +
-        '<div class="apr2-line-icon">' + apr2LineIcon() + '</div>' +
         '<span class="apr2-line-name">' + esc(line.lineName) + '</span>' +
         (linePending > 0
           ? '<span class="apr2-line-pending">未承認 ' + linePending + '件</span>'
@@ -5426,7 +5423,6 @@ function renderAdmApproval() {
 
       html += '<div class="apr2-equip-card' + (hasPend ? ' has-pending' : '') + '">' +
         '<div class="apr2-equip-hdr' + eHdrCls + '" onclick="apr2ToggleEquip(\'' + equip.equipId + '\')">' +
-          '<div class="apr2-equip-icon">' + apr2EquipIcon(equip.equipId) + '</div>' +
           '<div class="apr2-equip-id-name">' +
             '<div class="apr2-equip-id">' + esc(equip.equipId) + '</div>' +
             '<div class="apr2-equip-name">' + esc(equip.equipName) + '</div>' +
@@ -5445,16 +5441,14 @@ function renderAdmApproval() {
           ? '<span class="apr2-type-tag tenday">10日点検</span>'
           : '<span class="apr2-type-tag monthly">月次点検</span>';
         var action = isApproved
-          ? '<div class="apr2-check-done"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>'
+          ? '<div class="apr2-check-done"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>承認済み</span></div>'
           : '<button class="apr2-approve-btn" onclick="apr2Approve(\'' + insp.id + '\')">承認する</button>';
 
         html += '<div class="apr2-insp-row' + (isApproved ? ' is-approved' : '') + '" id="apr2-row-' + insp.id + '">' +
           '<div class="apr2-insp-left">' +
             tag +
-            '<span class="apr2-insp-name">' + esc(insp.typeName) + '</span>' +
+            '<span class="apr2-inspector">' + esc(insp.inspector) + '</span>' +
           '</div>' +
-          '<span class="apr2-inspector">' + esc(insp.inspector) + '</span>' +
-          '<span class="apr2-datetime">' + esc(insp.datetime.slice(-5)) + '</span>' +
           '<div class="apr2-action">' + action + '</div>' +
         '</div>';
       });
