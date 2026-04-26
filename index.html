@@ -393,18 +393,18 @@
     display: flex; align-items: center; gap: 8px;
   }
   .home-date-day {
-    font-size: 42px; font-weight: 800; color: #fff;
+    font-size: 42px; font-weight: 800; color: var(--text);
     line-height: 1; letter-spacing: -2px;
   }
   .home-date-right {
     display: flex; flex-direction: column; gap: 1px;
   }
   .home-date-month {
-    font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.9);
+    font-size: 15px; font-weight: 700; color: var(--text-sub);
     letter-spacing: 1px; line-height: 1.1;
   }
   .home-date-year {
-    font-size: 12px; font-weight: 400; color: rgba(255,255,255,0.6);
+    font-size: 12px; font-weight: 400; color: var(--text-small);
     letter-spacing: 0.5px;
   }
 
@@ -412,8 +412,9 @@
   #screen-home { background: var(--bg); min-height: 0; height: auto; max-width: 390px; }
 
   .home-header {
-    background: var(--blue);
-    padding: 16px 20px 24px;
+    background: #fff;
+    border-bottom: 1px solid #E8E8E8;
+    padding: 14px 20px 16px;
   }
   .home-user-row {
     display: flex; align-items: center; gap: 12px;
@@ -807,8 +808,9 @@
   }
   .adm-wrap { max-width: 390px; margin: 0 auto; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(60px + env(safe-area-inset-bottom, 12px)); width: 100%; }
   .adm-hdr {
-    background: var(--blue);
-    padding: 16px 20px 24px;
+    background: #fff;
+    border-bottom: 1px solid #E8E8E8;
+    padding: 14px 20px 16px;
     display: flex; align-items: center;
     flex-shrink: 0;
   }
@@ -823,22 +825,22 @@
   /* ── ユーザーチップ ── */
   .adm-user-chip {
     display: flex; align-items: center; gap: 7px;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: var(--bg);
+    border: 1.5px solid var(--border);
     border-radius: 99px;
     padding: 5px 10px 5px 5px;
     cursor: pointer; font-family: inherit;
     transition: background 0.15s;
     -webkit-user-select: none;
   }
-  .adm-user-chip:active { background: rgba(255,255,255,0.25); }
+  .adm-user-chip:active { background: #E8EEF8; }
   .adm-user-chip-avatar {
     width: 28px; height: 28px; border-radius: 50%;
-    background: rgba(255,255,255,0.2);
+    background: var(--blue-light);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   .adm-user-chip-avatar svg { width: 16px; height: 16px; }
-  .adm-user-chip-name { font-size: 12px; font-weight: 600; color: #fff; white-space: nowrap; }
+  .adm-user-chip-name { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; }
   .adm-user-chip-chevron { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.2s; }
   .adm-user-chip.open .adm-user-chip-chevron { transform: rotate(180deg); }
 
@@ -2129,10 +2131,10 @@
         <div style="position:relative;margin-left:auto;">
           <button class="adm-user-chip" id="home-user-chip" onclick="toggleHomeUserMenu(event)">
             <div class="adm-user-chip-avatar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             </div>
             <span class="adm-user-chip-name home-user-name">佐藤 太郎 さん</span>
-            <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+            <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
           </button>
           <div class="adm-user-popover" id="home-user-popover">
             <button class="adm-user-popover-btn" onclick="logout()">
@@ -2479,10 +2481,10 @@
       <div style="position:relative;margin-left:auto;">
         <button class="adm-user-chip" id="adm-user-chip" onclick="toggleAdmUserMenu(event)">
           <div class="adm-user-chip-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           </div>
           <span id="adm-hdr-name" class="adm-user-chip-name"></span>
-          <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="adm-user-popover" id="adm-user-popover">
           <button class="adm-user-popover-btn" onclick="adminLogout()">
@@ -4698,7 +4700,7 @@ function loadInspections() {
 
 function computeLiveDashData() {
   var now = new Date();
-  var todayY = now.getFullYear(), todayM = now.getMonth()+1, todayD = now.getDate();
+  var todayY = now.getFullYear(), todayM = now.getMonth(), todayD = now.getDate();
   var inspections = loadInspections();
 
   var todayRecs = inspections.filter(function(r) {
@@ -4775,7 +4777,7 @@ function computeLiveAprData() {
   var tenDay = [], monthly = [];
 
   inspections.forEach(function(r) {
-    var dateStr = r.year + '/' + String(r.month).padStart(2,'0') + '/' + String(r.day).padStart(2,'0');
+    var dateStr = r.year + '/' + String(r.month+1).padStart(2,'0') + '/' + String(r.day).padStart(2,'0');
     var timeStr = r.completedAt ? new Date(r.completedAt).toTimeString().slice(0,5) : '--:--';
     var inspectorName = r.inspector || '不明';
 
