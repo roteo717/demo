@@ -803,8 +803,9 @@
     z-index: 500;
     flex-direction: column;
     overflow: hidden;
+    position: fixed;
   }
-  .adm-wrap { max-width: 390px; margin: 0 auto; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 60px; width: 100%; }
+  .adm-wrap { max-width: 390px; margin: 0 auto; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(60px + env(safe-area-inset-bottom, 12px)); width: 100%; }
   .adm-hdr {
     background: var(--blue);
     padding: 16px 20px 24px;
@@ -866,25 +867,51 @@
   }
   .adm-user-popover-btn svg { width: 16px; height: 16px; stroke: var(--red); flex-shrink: 0; }
   .adm-user-popover-btn:active { background: var(--red-light); }
-  .adm-tabs-bar {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    background: #fff; border-bottom: 2px solid var(--border);
+  .adm-tabs-bar { display: none; } /* 上部タブ非表示 */
+  .adm-subtabs-bar { display: none; } /* 旧タブバー非表示 */
+
+  /* ── iPhone風 下部タブバー ── */
+  .adm-bottom-tabbar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: calc(60px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: #FFFFFF;
+    border-top: 1px solid #E0E0E0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    z-index: 100;
     flex-shrink: 0;
   }
-  .adm-tab {
-    padding: 12px 4px; font-size: 12px; font-weight: 500; color: var(--text-sub);
-    background: none; border: none; border-bottom: 2.5px solid transparent;
-    cursor: pointer; transition: all 0.15s; font-family: inherit; margin-bottom: -2px;
-    -webkit-user-select: none;
-    /* アイコン+テキスト横並び */
-    display: flex; align-items: center; justify-content: center; gap: 5px;
+  .adm-btab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; background: none; border: none; cursor: pointer;
+    color: #888888; font-size: 10px; font-weight: 500; font-family: inherit;
+    padding: 8px 4px 4px; transition: color 0.15s;
+    -webkit-user-select: none; user-select: none;
   }
-  /* タブアイコン：通常色 */
-  .adm-tab svg { width: 16px; height: 16px; stroke: #666; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; transition: stroke 0.15s; }
-  .adm-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 700; }
-  /* タブアイコン：選択中色 */
-  .adm-tab.active svg { stroke: var(--blue); }
-  .adm-subtabs-bar { display: none; } /* 旧タブバー非表示 */
+  .adm-btab:active { opacity: 0.7; }
+  .adm-btab.active { color: #2F6BFF; }
+  .adm-btab-icon {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .adm-btab-icon svg {
+    width: 24px; height: 24px;
+    stroke: currentColor; fill: none;
+    stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;
+    transition: stroke 0.15s;
+  }
+  .adm-btab-badge {
+    position: absolute; top: -5px; right: -8px;
+    background: #E53935; color: #fff;
+    font-size: 10px; font-weight: 700;
+    min-width: 17px; height: 17px;
+    border-radius: 9px; padding: 0 4px;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
 
   /* ── 設定メニュー カードグリッド ── */
   .adm-settings-menu {
@@ -893,8 +920,8 @@
   }
   .adm-settings-menu.visible { display: block; }
   .adm-settings-menu-title {
-    font-size: 13px; font-weight: 400; color: var(--text-sub);
-    margin-bottom: 14px; padding-left: 0; line-height: 1.5;
+    font-size: 13px; font-weight: 600; color: var(--text-sub);
+    letter-spacing: 0.4px; margin-bottom: 14px; padding-left: 2px;
   }
   .adm-settings-grid {
     display: grid;
@@ -1574,82 +1601,63 @@
 <style>
   /* ── 承認一覧 タイトル行 ── */
   .apr2-title-row {
-    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px; flex-wrap: wrap;
   }
   .apr2-title {
-    font-size: 22px; font-weight: 800; color: var(--text);
-    display: flex; align-items: center; gap: 10px; letter-spacing: -0.4px;
-    margin-bottom: 6px;
+    font-size: 17px; font-weight: 800; color: var(--text);
+    display: flex; align-items: center; gap: 7px; letter-spacing: -0.3px;
+    flex-shrink: 0;
   }
-  .apr2-title svg { stroke: var(--blue); fill: none; width: 24px; height: 24px; flex-shrink: 0; }
-  .apr2-subtitle {
-    font-size: 13px; color: var(--text-sub); margin-bottom: 14px; line-height: 1.5;
-  }
+  .apr2-title svg { stroke: var(--blue); fill: none; width: 20px; height: 20px; flex-shrink: 0; }
 
-  /* ── カード型フィルタータブ ── */
-  .apr2-filter-cards {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-    margin-bottom: 10px;
+  /* ── フィルタータブ ── */
+  .apr2-filter-tabs {
+    display: flex; gap: 5px; align-items: center; flex-wrap: nowrap;
   }
-  .apr2-card-tab {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 6px; padding: 14px 8px 12px;
-    border-radius: 14px; font-size: 13px; font-weight: 600;
+  .apr2-tab {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
     cursor: pointer; border: 1.5px solid var(--border);
     background: #fff; color: var(--text-sub);
-    transition: all 0.15s;
-    font-family: inherit; min-height: 86px;
-    -webkit-user-select: none;
+    transition: all 0.15s; white-space: nowrap;
+    font-family: inherit;
   }
-  .apr2-card-tab:active { transform: scale(0.97); }
-  .apr2-card-tab svg { width: 22px; height: 22px; stroke: var(--text-sub); fill: none; transition: stroke 0.15s; }
-  .apr2-card-tab.active {
-    background: var(--blue-light); border-color: var(--blue); color: var(--blue);
-    box-shadow: 0 2px 10px rgba(47,107,255,0.12);
-  }
-  .apr2-card-tab.active svg { stroke: var(--blue); }
-  .apr2-card-label { font-size: 13px; font-weight: 600; }
-  .apr2-card-badge {
-    display: inline-flex; align-items: center; justify-content: center;
-    min-width: 26px; height: 26px; padding: 0 7px;
-    border-radius: 20px; font-size: 13px; font-weight: 700;
+  .apr2-tab:active { opacity: 0.75; }
+  .apr2-tab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .apr2-tab.active .apr2-tab-badge { background: rgba(255,255,255,0.28); color: #fff; }
+  .apr2-tab-badge {
+    display: inline-block;
     background: var(--bg); color: var(--text-sub);
+    font-size: 11px; font-weight: 700;
+    padding: 1px 6px; border-radius: 20px; min-width: 18px; text-align: center;
   }
-  .apr2-card-badge.all-badge { background: var(--blue); color: #fff; }
-  .apr2-card-tab:not(.active) .apr2-card-badge.all-badge { background: #E8EDFF; color: var(--blue); }
-  .apr2-card-badge.pending-badge { background: #FF6B35; color: #fff; }
-  .apr2-card-tab:not(.active) .apr2-card-badge.pending-badge { background: #FFE8DF; color: #FF6B35; }
-  .apr2-card-badge.approved-badge { background: #E8E8E8; color: #888; }
-  .apr2-card-tab.active .apr2-card-badge.approved-badge { background: var(--blue-mid); color: var(--blue); }
+  .apr2-tab-badge.pending-badge { background: #FF6B35; color: #fff; }
+  .apr2-tab.active .apr2-tab-badge.pending-badge { background: rgba(255,255,255,0.35); color: #fff; }
 
-  /* ── ライン絞り込みボタン（フル幅） ── */
+  /* ── ライン絞り込みボタン ── */
   .apr2-line-filter-wrap {
     position: relative;
-    display: block;
-    width: 100%;
+    display: inline-flex;
   }
   .apr2-line-filter-btn {
-    display: flex; align-items: center; gap: 8px;
-    width: 100%;
-    padding: 13px 16px; border-radius: 14px; font-size: 14px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600;
     cursor: pointer; border: 1.5px solid var(--border);
     background: #fff; color: var(--text-sub);
-    transition: all 0.15s;
+    transition: all 0.15s; white-space: nowrap;
     font-family: inherit;
-    -webkit-user-select: none;
   }
   .apr2-line-filter-btn:active { opacity: 0.75; }
   .apr2-line-filter-btn.has-filter {
     background: var(--blue-light); border-color: var(--blue); color: var(--blue);
   }
-  .apr2-line-filter-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; flex-shrink: 0; }
-  .apr2-filter-chevron { margin-left: auto !important; width: 16px !important; height: 16px !important; }
+  .apr2-line-filter-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; flex-shrink: 0; }
   .apr2-line-filter-badge {
-    display: inline-flex; align-items: center; justify-content: center;
+    display: inline-block;
     background: var(--blue); color: #fff;
-    font-size: 11px; font-weight: 700;
-    min-width: 20px; height: 20px; padding: 0 6px;
-    border-radius: 20px; margin-left: 2px;
+    font-size: 10px; font-weight: 700;
+    padding: 1px 5px; border-radius: 20px; min-width: 16px; text-align: center;
   }
 
   /* ── ライン絞り込みポップアップ ── */
@@ -1663,7 +1671,7 @@
     border-radius: 14px;
     box-shadow: 0 4px 24px rgba(0,0,0,0.14);
     border: 1px solid var(--border);
-    width: 100%;
+    width: 220px;
     padding: 14px 14px 0;
     overflow: hidden;
   }
@@ -1728,9 +1736,9 @@
   /* ── カラムヘッダー ── */
   .apr2-col-hdr {
     display: grid;
-    grid-template-columns: 1fr 72px 100px 72px;
-    gap: 4px;
-    padding: 6px 12px;
+    grid-template-columns: minmax(0, 1fr) 68px 96px 72px;
+    gap: 6px;
+    padding: 6px 23px;
     font-size: 11px; color: var(--text-sub); font-weight: 600;
     background: var(--bg);
     border-radius: 8px;
@@ -1843,7 +1851,7 @@
   /* ── 点検行 ── */
   .apr2-insp-row {
     display: grid;
-    grid-template-columns: 1fr 68px 96px 72px;
+    grid-template-columns: minmax(0, 1fr) 68px 96px 72px;
     align-items: center; gap: 6px;
     padding: 9px 12px;
     border-bottom: 1px solid #F5F5F5;
@@ -2469,27 +2477,10 @@
         </div>
       </div>
     </div>
-    <div class="adm-tabs-bar">
-      <!-- ダッシュボードタブ: bar-chartアイコン -->
-      <button class="adm-tab active" id="atab-dashboard" onclick="showAdmTab('dashboard')">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        ダッシュボード
-      </button>
-      <!-- 承認タブ: check-circleアイコン -->
-      <button class="adm-tab" id="atab-approval" onclick="showAdmTab('approval')">
-        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        承認
-      </button>
-      <!-- 設定タブ: gearアイコン -->
-      <button class="adm-tab" id="atab-settings" onclick="showAdmTab('settings')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        設定
-      </button>
-    </div>
+
   <div class="adm-wrap">
     <!-- 設定メニュー カードグリッド -->
     <div class="adm-settings-menu" id="adm-settings-menu">
-      <div class="adm-settings-menu-title">各項目を選択して設定を変更できます。</div>
       <div class="adm-settings-grid">
 
         <div class="adm-settings-card" onclick="showAdmSubTab('lines')">
@@ -2712,37 +2703,29 @@
     <!-- 承認 パネル (v2: 3階層) -->
     <div id="adm-panel-approval" class="adm-panel" style="display:none;">
 
-      <!-- タイトル + フィルター -->
+      <!-- フィルター -->
       <div class="apr2-title-row">
-        <p class="apr2-subtitle">ステータスで絞り込んで、承認アイテムを確認できます。</p>
-        <div class="apr2-filter-cards">
-          <button class="apr2-card-tab active" id="apr2-tab-all" onclick="setApr2Filter('all')">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            <span class="apr2-card-label">すべて</span>
-            <span class="apr2-card-badge all-badge" id="apr2-count-all">0</span>
+        <div class="apr2-filter-tabs">
+          <button class="apr2-tab active" id="apr2-tab-all" onclick="setApr2Filter('all')">
+            すべて <span class="apr2-tab-badge" id="apr2-count-all">0</span>
           </button>
-          <button class="apr2-card-tab" id="apr2-tab-pending" onclick="setApr2Filter('pending')">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span class="apr2-card-label">未承認</span>
-            <span class="apr2-card-badge pending-badge" id="apr2-count-pending">0</span>
+          <button class="apr2-tab" id="apr2-tab-pending" onclick="setApr2Filter('pending')">
+            未承認 <span class="apr2-tab-badge pending-badge" id="apr2-count-pending">0</span>
           </button>
-          <button class="apr2-card-tab" id="apr2-tab-approved" onclick="setApr2Filter('approved')">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <span class="apr2-card-label">承認済み</span>
-            <span class="apr2-card-badge approved-badge" id="apr2-count-approved">0</span>
+          <button class="apr2-tab" id="apr2-tab-approved" onclick="setApr2Filter('approved')">
+            承認済み <span class="apr2-tab-badge" id="apr2-count-approved">0</span>
           </button>
         </div>
         <!-- ライン絞り込み -->
         <div class="apr2-line-filter-wrap" id="apr2-line-filter-wrap">
           <button class="apr2-line-filter-btn" id="apr2-line-filter-btn" onclick="apr2ToggleLinePopup(event)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
             ライン絞り込み
-            <svg class="apr2-filter-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
           </button>
           <div class="apr2-line-popup" id="apr2-line-popup">
             <div class="apr2-line-popup-title">
               <span>ライン絞り込み</span>
-              <span class="apr2-line-popup-selall" onclick="apr2SelectAllLines()">すべて選択</span>
+              <span class="apr2-line-popup-selall" onclick="apr2SelectAllLines(event)">すべて選択</span>
             </div>
             <div id="apr2-line-popup-rows"></div>
             <div class="apr2-line-popup-footer">
@@ -2750,6 +2733,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
       <!-- カラムヘッダー -->
@@ -2763,8 +2747,6 @@
       <!-- 階層リスト -->
       <div id="apr2-list"></div>
 
-      <!-- ページネーション -->
-      <div class="apr2-pagination-wrap" id="apr2-pagination"></div>
 
       <!-- (legacy: kept for compatibility) -->
       <div id="adm-apr-card-list" style="display:none;"></div>
@@ -2776,6 +2758,38 @@
   <!-- Modal -->
   <div class="adm-modal-overlay" id="adm-modal-overlay" onclick="admOverlayClick(event)">
     <div class="adm-modal" id="adm-modal-body"></div>
+  </div>
+
+  <!-- ── 下部タブバー（iPhone風） ── -->
+  <div class="adm-bottom-tabbar">
+    <button class="adm-btab active" id="abtab-dashboard" onclick="showAdmTab('dashboard')">
+      <div class="adm-btab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <span>ダッシュボード</span>
+    </button>
+    <button class="adm-btab" id="abtab-approval" onclick="showAdmTab('approval')">
+      <div class="adm-btab-icon" style="position:relative;">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span class="adm-btab-badge" id="abtab-badge-approval" style="display:none;">0</span>
+      </div>
+      <span>承認</span>
+    </button>
+    <button class="adm-btab" id="abtab-settings" onclick="showAdmTab('settings')">
+      <div class="adm-btab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+      </div>
+      <span>設定</span>
+    </button>
   </div>
 </div>
 
@@ -3387,7 +3401,8 @@
     container.innerHTML = '';
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
-      container.appendChild(buildSection(eq));
+      const section = buildSection(eq);
+      if (section) container.appendChild(section);
     });
   }
 
@@ -3424,6 +3439,8 @@
       groups.push({ key:'10days',  label:'10日毎点検', badgeClass:'days10',  items: eq.items10 });
     if (inspectionTypes.isMonthly)
       groups.push({ key:'monthly', label:'1ヶ月点検',  badgeClass:'monthly', items: eq.itemsMonthly });
+
+    if (!groups.length) return null;
 
     groups.forEach(group => {
       // Type divider label
@@ -3974,9 +3991,9 @@ function showAdmTab(tab) {
   // スクロールをトップにリセット
   var wrap = document.querySelector('.adm-wrap');
   if (wrap) wrap.scrollTop = 0;
-  // main tabs: dashboard, approval, settings
+  // 下部タブのactive切り替え
   ['dashboard','approval','settings'].forEach(function(t) {
-    var b = document.getElementById('atab-'+t);
+    var b = document.getElementById('abtab-'+t);
     if (b) b.classList.toggle('active', t===tab);
   });
   // hide all panels
@@ -5101,7 +5118,8 @@ var apr2Page        = 1;
 var apr2PerPage     = 10;
 var apr2LineState   = {};      // lineKey → true(展開) / false(折りたたみ)
 var apr2EquipState  = {};      // equipId → true / false
-var apr2LineFilter  = [];      // [] = すべて、または選択中のlineId配列
+var apr2LineFilter  = [];      // [] = すべて, または選択中のlineId配列
+var apr2TempLineFilter = [];   // ポップアップ操作中の一時選択
 
 /* ── ダミーデータ（実データがない場合に使用） ── */
 var APR2_DUMMY = (function() {
@@ -5303,14 +5321,27 @@ function renderAdmApproval() {
   var filtered    = apr2ApplyFilters(allItems);
   var allGrouped  = apr2GroupByLine(allItems);  // フィルター前（未承認バッジに使用）
 
-  // カウント更新
-  var totalAll      = allItems.length;
-  var totalPending  = allItems.filter(function(i){ return i.status === 'pending'; }).length;
-  var totalApproved = allItems.filter(function(i){ return i.status === 'approved'; }).length;
+  // カウント更新（ライン絞り込みを反映するためlineFilterのみ適用した件数を使用）
+  var lineFiltered  = allItems.filter(function(item) {
+    return apr2LineFilter.length === 0 || apr2LineFilter.indexOf(item.lineId) >= 0;
+  });
+  var totalAll      = lineFiltered.length;
+  var totalPending  = lineFiltered.filter(function(i){ return i.status === 'pending'; }).length;
+  var totalApproved = lineFiltered.filter(function(i){ return i.status === 'approved'; }).length;
   var setT = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
   setT('apr2-count-all',      totalAll);
   setT('apr2-count-pending',  totalPending);
   setT('apr2-count-approved', totalApproved);
+  // 下部タブバーのバッジ更新
+  var btabBadge = document.getElementById('abtab-badge-approval');
+  if (btabBadge) {
+    if (totalPending > 0) {
+      btabBadge.textContent = totalPending;
+      btabBadge.style.display = 'flex';
+    } else {
+      btabBadge.style.display = 'none';
+    }
+  }
 
   // フィルタータブ active 更新
   ['all','pending','approved'].forEach(function(f) {
@@ -5420,31 +5451,6 @@ function renderAdmApproval() {
 
   listEl.innerHTML = html;
 
-  // ── ページネーション ──
-  var pagEl = document.getElementById('apr2-pagination');
-  if (!pagEl) return;
-  var totalPages = paged.totalPages;
-  if (totalPages <= 1 && filtered.length <= apr2PerPage) {
-    pagEl.innerHTML = '<span class="apr2-page-info">全 ' + filtered.length + ' 中 1-' + filtered.length + ' 件を表示</span>' +
-      '<div class="apr2-per-page">表示件数 <select onchange="apr2SetPerPage(this.value)"><option value="10"' + (apr2PerPage===10?' selected':'') + '>10件</option><option value="20"' + (apr2PerPage===20?' selected':'') + '>20件</option><option value="50"' + (apr2PerPage===50?' selected':'') + '>50件</option></select></div>';
-    return;
-  }
-  var start = (apr2Page - 1) * apr2PerPage + 1;
-  var end   = Math.min(apr2Page * apr2PerPage, filtered.length);
-  var btnHtml = '';
-  btnHtml += '<button class="apr2-page-btn" onclick="apr2GoPage(1)" ' + (apr2Page===1?'disabled':'') + '><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg></button>';
-  btnHtml += '<button class="apr2-page-btn" onclick="apr2GoPage(' + (apr2Page-1) + ')" ' + (apr2Page===1?'disabled':'') + '><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>';
-  var pageFrom = Math.max(1, apr2Page-2);
-  var pageTo   = Math.min(totalPages, pageFrom+4);
-  for (var p = pageFrom; p <= pageTo; p++) {
-    btnHtml += '<button class="apr2-page-btn' + (p===apr2Page?' active':'') + '" onclick="apr2GoPage(' + p + ')">' + p + '</button>';
-  }
-  btnHtml += '<button class="apr2-page-btn" onclick="apr2GoPage(' + (apr2Page+1) + ')" ' + (apr2Page===totalPages?'disabled':'') + '><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>';
-  btnHtml += '<button class="apr2-page-btn" onclick="apr2GoPage(' + totalPages + ')" ' + (apr2Page===totalPages?'disabled':'') + '><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M13 17l5-5-5-5M6 17l5-5-5-5"/></svg></button>';
-  pagEl.innerHTML =
-    '<span class="apr2-page-info">全 ' + filtered.length + ' 中 ' + start + '-' + end + ' 件を表示</span>' +
-    '<div class="apr2-page-btns">' + btnHtml + '</div>' +
-    '<div class="apr2-per-page">表示件数 <select onchange="apr2SetPerPage(this.value)"><option value="10"' + (apr2PerPage===10?' selected':'') + '>10件</option><option value="20"' + (apr2PerPage===20?' selected':'') + '>20件</option><option value="50"' + (apr2PerPage===50?' selected':'') + '>50件</option></select></div>';
 }
 
 /* ── 折りたたみトグル ── */
@@ -5467,43 +5473,31 @@ function apr2ToggleEquip(equipId) {
 }
 
 /* ── ライン絞り込みポップアップ ── */
-var apr2PopupLines   = [];   // ポップアップで扱うライン一覧（開いた時にスナップショット）
-var apr2CheckedLines = {};   // lineId → true/false（ポップアップ内の一時チェック状態）
-
 function apr2GetAllLines() {
   var allItems = apr2GetData();
   var lineMap = {};
-  var lineOrder = [];
   allItems.forEach(function(item) {
     if (!lineMap[item.lineId]) {
       lineMap[item.lineId] = { lineId: item.lineId, lineName: item.lineName, pending: 0 };
-      lineOrder.push(item.lineId);
     }
     if (item.status === 'pending') lineMap[item.lineId].pending++;
   });
-  return lineOrder.map(function(k){ return lineMap[k]; });
+  return Object.keys(lineMap).map(function(k){ return lineMap[k]; });
 }
 
 function apr2ToggleLinePopup(e) {
   e.stopPropagation();
   var popup = document.getElementById('apr2-line-popup');
-  if (!popup) return;
   var isOpen = popup.classList.contains('open');
   if (!isOpen) {
-    // ラインリストをスナップショット
-    apr2PopupLines = apr2GetAllLines();
-    // チェック状態を初期化：フィルターなし=全選択、あり=選択中のみ
-    apr2CheckedLines = {};
-    apr2PopupLines.forEach(function(ln) {
-      apr2CheckedLines[ln.lineId] = (apr2LineFilter.length === 0)
-        ? true
-        : (apr2LineFilter.indexOf(ln.lineId) >= 0);
-    });
+    // ポップアップを開く前に一時選択を現在の絞り込みで初期化
+    apr2TempLineFilter = apr2LineFilter.slice();
     apr2RenderLinePopupRows();
     popup.classList.add('open');
+    // 外側クリックで閉じる
     setTimeout(function() {
       document.addEventListener('click', apr2CloseLinePopupOnOutside);
-    }, 10);
+    }, 0);
   } else {
     apr2CloseLinePopup();
   }
@@ -5523,15 +5517,16 @@ function apr2CloseLinePopup() {
 }
 
 function apr2RenderLinePopupRows() {
+  var lines = apr2GetAllLines();
   var rows = document.getElementById('apr2-line-popup-rows');
   if (!rows) return;
-  rows.innerHTML = apr2PopupLines.map(function(ln) {
-    var isChk = !!apr2CheckedLines[ln.lineId];
+  rows.innerHTML = lines.map(function(ln) {
+    var isChk = apr2TempLineFilter.length === 0 || apr2TempLineFilter.indexOf(ln.lineId) >= 0;
     var pendingLabel = ln.pending > 0
       ? '<span class="apr2-line-popup-pending has-pending">未承認 ' + ln.pending + '件</span>'
       : '<span class="apr2-line-popup-pending no-pending">未承認 0件</span>';
-    return '<div class="apr2-line-popup-row" onclick="apr2ToggleLineCheck(\'' + ln.lineId + '\')">' +
-      '<div class="apr2-line-chk' + (isChk ? ' checked' : '') + '">' +
+    return '<div class="apr2-line-popup-row" onclick="apr2ToggleLineCheck(event, \'' + ln.lineId + '\')">' +
+      '<div class="apr2-line-chk' + (isChk ? ' checked' : '') + '" id="apr2-chk-' + ln.lineId + '">' +
         '<svg viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
       '</div>' +
       '<span class="apr2-line-popup-name">' + ln.lineName + '</span>' +
@@ -5540,38 +5535,38 @@ function apr2RenderLinePopupRows() {
   }).join('');
 }
 
-function apr2ToggleLineCheck(lineId) {
-  apr2CheckedLines[lineId] = !apr2CheckedLines[lineId];
-  // チェックが全部外れた場合は全選択に戻す
-  var anyChecked = apr2PopupLines.some(function(ln){ return apr2CheckedLines[ln.lineId]; });
-  if (!anyChecked) {
-    apr2PopupLines.forEach(function(ln){ apr2CheckedLines[ln.lineId] = true; });
-  }
-  // チェックボックスの見た目だけ更新（innerHTML全再描画を避ける）
-  apr2PopupLines.forEach(function(ln) {
-    var row = document.querySelector('.apr2-line-popup-row[onclick*="\'' + ln.lineId + '\'"]');
-    var chk = row ? row.querySelector('.apr2-line-chk') : null;
-    if (chk) {
-      chk.classList.toggle('checked', !!apr2CheckedLines[ln.lineId]);
+function apr2ToggleLineCheck(e, lineId) {
+  if (e) e.stopPropagation();
+  var idx = apr2TempLineFilter.indexOf(lineId);
+  if (apr2TempLineFilter.length === 0) {
+    // 全選択状態からの個別操作：まず全ラインを選択状態にしてから1つ外す
+    var lines = apr2GetAllLines();
+    apr2TempLineFilter = lines.map(function(l){ return l.lineId; });
+    var i2 = apr2TempLineFilter.indexOf(lineId);
+    if (i2 >= 0) apr2TempLineFilter.splice(i2, 1);
+  } else {
+    if (idx >= 0) {
+      apr2TempLineFilter.splice(idx, 1);
+      // 全部なくなったら全選択に戻す
+      if (apr2TempLineFilter.length === 0) apr2TempLineFilter = [];
+    } else {
+      apr2TempLineFilter.push(lineId);
+      // 全ライン選択になったら空配列（＝全選択）に
+      var lines = apr2GetAllLines();
+      if (apr2TempLineFilter.length === lines.length) apr2TempLineFilter = [];
     }
-  });
+  }
+  apr2RenderLinePopupRows();
 }
 
-function apr2SelectAllLines() {
-  apr2PopupLines.forEach(function(ln){ apr2CheckedLines[ln.lineId] = true; });
+function apr2SelectAllLines(e) {
+  if (e) e.stopPropagation();
+  apr2TempLineFilter = [];
   apr2RenderLinePopupRows();
 }
 
 function apr2ApplyLineFilter() {
-  // 全選択なら空配列（=フィルターなし）、一部選択なら選択中のIDリスト
-  var allSelected = apr2PopupLines.every(function(ln){ return apr2CheckedLines[ln.lineId]; });
-  if (allSelected) {
-    apr2LineFilter = [];
-  } else {
-    apr2LineFilter = apr2PopupLines
-      .filter(function(ln){ return apr2CheckedLines[ln.lineId]; })
-      .map(function(ln){ return ln.lineId; });
-  }
+  apr2LineFilter = apr2TempLineFilter.slice();
   apr2Page = 1;
   apr2CloseLinePopup();
   apr2UpdateLineFilterBtn();
