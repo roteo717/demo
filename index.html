@@ -1601,8 +1601,8 @@
 <style>
   /* ── 承認一覧 タイトル行 ── */
   .apr2-title-row {
-    display: flex; align-items: center; gap: 8px;
-    margin-bottom: 12px; flex-wrap: wrap;
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 14px;
   }
   .apr2-title {
     font-size: 17px; font-weight: 800; color: var(--text);
@@ -1611,53 +1611,62 @@
   }
   .apr2-title svg { stroke: var(--blue); fill: none; width: 20px; height: 20px; flex-shrink: 0; }
 
-  /* ── フィルタータブ ── */
+  /* ── フィルタータブ（カード型） ── */
   .apr2-filter-tabs {
-    display: flex; gap: 5px; align-items: center; flex-wrap: nowrap;
+    display: flex; gap: 8px; align-items: stretch;
   }
   .apr2-tab {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    flex: 1;
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
     cursor: pointer; border: 1.5px solid var(--border);
     background: #fff; color: var(--text-sub);
     transition: all 0.15s; white-space: nowrap;
     font-family: inherit;
   }
-  .apr2-tab:active { opacity: 0.75; }
-  .apr2-tab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .apr2-tab.active .apr2-tab-badge { background: rgba(255,255,255,0.28); color: #fff; }
-  .apr2-tab-badge {
-    display: inline-block;
-    background: var(--bg); color: var(--text-sub);
-    font-size: 11px; font-weight: 700;
-    padding: 1px 6px; border-radius: 20px; min-width: 18px; text-align: center;
+  .apr2-tab:active { opacity: 0.75; transform: scale(0.97); }
+  .apr2-tab-icon { width: 15px; height: 15px; flex-shrink: 0; stroke: currentColor; fill: none; }
+  .apr2-tab-label { flex: 1; text-align: left; }
+  .apr2-tab.active {
+    background: var(--blue-light); border-color: var(--blue); color: var(--blue);
   }
+  .apr2-tab-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 22px; padding: 0 5px;
+    background: #E8EEF8; color: var(--text-sub);
+    font-size: 11px; font-weight: 800;
+    border-radius: 20px; flex-shrink: 0;
+  }
+  .apr2-tab.active .apr2-tab-badge { background: var(--blue); color: #fff; }
   .apr2-tab-badge.pending-badge { background: #FF6B35; color: #fff; }
-  .apr2-tab.active .apr2-tab-badge.pending-badge { background: rgba(255,255,255,0.35); color: #fff; }
+  .apr2-tab.active .apr2-tab-badge.pending-badge { background: #FF6B35; color: #fff; }
 
-  /* ── ライン絞り込みボタン ── */
+  /* ── ライン絞り込みボタン（全幅1行） ── */
   .apr2-line-filter-wrap {
     position: relative;
-    display: inline-flex;
+    display: flex;
+    width: 100%;
   }
   .apr2-line-filter-btn {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600;
     cursor: pointer; border: 1.5px solid var(--border);
     background: #fff; color: var(--text-sub);
     transition: all 0.15s; white-space: nowrap;
-    font-family: inherit;
+    font-family: inherit; width: 100%;
   }
   .apr2-line-filter-btn:active { opacity: 0.75; }
   .apr2-line-filter-btn.has-filter {
     background: var(--blue-light); border-color: var(--blue); color: var(--blue);
   }
-  .apr2-line-filter-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; flex-shrink: 0; }
+  .apr2-line-filter-btn > svg { width: 15px; height: 15px; stroke: currentColor; fill: none; flex-shrink: 0; }
+  .apr2-line-filter-chevron { margin-left: auto; width: 15px; height: 15px; stroke: currentColor; fill: none; flex-shrink: 0; }
   .apr2-line-filter-badge {
-    display: inline-block;
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 20px; height: 20px; padding: 0 5px;
     background: var(--blue); color: #fff;
-    font-size: 10px; font-weight: 700;
-    padding: 1px 5px; border-radius: 20px; min-width: 16px; text-align: center;
+    font-size: 10px; font-weight: 800;
+    border-radius: 20px;
   }
 
   /* ── ライン絞り込みポップアップ ── */
@@ -2707,20 +2716,27 @@
       <div class="apr2-title-row">
         <div class="apr2-filter-tabs">
           <button class="apr2-tab active" id="apr2-tab-all" onclick="setApr2Filter('all')">
-            すべて <span class="apr2-tab-badge" id="apr2-count-all">0</span>
+            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span class="apr2-tab-label">すべて</span>
+            <span class="apr2-tab-badge" id="apr2-count-all">0</span>
           </button>
           <button class="apr2-tab" id="apr2-tab-pending" onclick="setApr2Filter('pending')">
-            未承認 <span class="apr2-tab-badge pending-badge" id="apr2-count-pending">0</span>
+            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span class="apr2-tab-label">未承認</span>
+            <span class="apr2-tab-badge pending-badge" id="apr2-count-pending">0</span>
           </button>
           <button class="apr2-tab" id="apr2-tab-approved" onclick="setApr2Filter('approved')">
-            承認済み <span class="apr2-tab-badge" id="apr2-count-approved">0</span>
+            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span class="apr2-tab-label">承認済み</span>
+            <span class="apr2-tab-badge" id="apr2-count-approved">0</span>
           </button>
         </div>
         <!-- ライン絞り込み -->
         <div class="apr2-line-filter-wrap" id="apr2-line-filter-wrap">
           <button class="apr2-line-filter-btn" id="apr2-line-filter-btn" onclick="apr2ToggleLinePopup(event)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
-            ライン絞り込み
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            絞り込み
+            <svg class="apr2-line-filter-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="apr2-line-popup" id="apr2-line-popup">
             <div class="apr2-line-popup-title">
@@ -5578,18 +5594,9 @@ function apr2UpdateLineFilterBtn() {
   if (!btn) return;
   if (apr2LineFilter.length > 0) {
     btn.classList.add('has-filter');
-    // バッジを表示
-    var badge = btn.querySelector('.apr2-line-filter-badge');
-    if (!badge) {
-      badge = document.createElement('span');
-      badge.className = 'apr2-line-filter-badge';
-      btn.appendChild(badge);
-    }
-    badge.textContent = apr2LineFilter.length;
   } else {
     btn.classList.remove('has-filter');
-    var badge = btn.querySelector('.apr2-line-filter-badge');
-    if (badge) badge.remove();
+
   }
 }
 
