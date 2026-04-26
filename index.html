@@ -806,7 +806,7 @@
     overflow: hidden;
     position: fixed;
   }
-  .adm-wrap { max-width: 390px; margin: 0 auto; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(60px + env(safe-area-inset-bottom, 12px)); width: 100%; }
+  .adm-wrap { max-width: 390px; margin: 0 auto; flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding-bottom: calc(60px + env(safe-area-inset-bottom, 12px)); width: 100%; }
   .adm-hdr {
     background: #fff;
     border-bottom: 1px solid #E8E8E8;
@@ -1301,6 +1301,125 @@
   .inspect-date-banner svg { stroke: var(--blue); fill: none; width: 15px; height: 15px; flex-shrink: 0; }
 </style>
 
+<!-- ===== MONTHLY SHEET STYLES ===== -->
+<style>
+  /* ── Monthly Sheet Table ── */
+  /* テーブルラッパーのスクロールバーをPC向けに表示 */
+  #ms-table-wrap {
+    scrollbar-width: thin;
+    scrollbar-color: #B0BEC5 #F5F6F8;
+    -ms-overflow-style: auto;
+  }
+  #ms-table-wrap::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+  }
+  #ms-table-wrap::-webkit-scrollbar-track {
+    background: #F5F6F8;
+    border-radius: 4px;
+  }
+  #ms-table-wrap::-webkit-scrollbar-thumb {
+    background: #B0BEC5;
+    border-radius: 4px;
+  }
+  #ms-table-wrap::-webkit-scrollbar-thumb:hover {
+    background: #90A4AE;
+  }
+  .ms-table {
+    border-collapse: collapse;
+    font-size: 11px;
+    min-width: 700px;
+    width: max-content;
+    background: #fff;
+    margin: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  }
+  .ms-table th, .ms-table td {
+    border: 1px solid #D8D8D8;
+    padding: 0;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  /* Section label column (rotated) */
+  .ms-section-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 8px 4px;
+    background: #EEF4FF;
+    color: var(--blue);
+    width: 20px;
+    min-width: 20px;
+  }
+  .ms-section-label.daily  { background: #EEF4FF; color: var(--blue); }
+  .ms-section-label.tenday { background: #E8F5E9; color: var(--green); }
+  .ms-section-label.monthly-lbl { background: #FFF3E0; color: #E65100; }
+
+  .ms-th-main {
+    background: #2C3E50;
+    color: #fff;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 5px 6px;
+  }
+  .ms-th-sub {
+    background: #37474F;
+    color: #CFD8DC;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 4px;
+  }
+  .ms-th-day {
+    background: #F5F6F8;
+    color: var(--text);
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 22px;
+    padding: 3px 2px;
+  }
+  .ms-th-day.holiday { background: #FEE8E8; color: #E53935; }
+  .ms-th-day.today   { background: #D6E4FF; color: var(--blue); box-shadow: inset 0 0 0 2px var(--blue); }
+
+  .ms-item-no   { width: 22px; min-width: 22px; font-weight: 700; color: var(--text-sub); padding: 4px; }
+  .ms-item-name { text-align: left; padding: 4px 6px; font-size: 11px; min-width: 90px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+
+  .ms-cell {
+    min-width: 22px;
+    width: 22px;
+    height: 28px;
+    padding: 2px;
+  }
+  .ms-cell.holiday  { background: repeating-linear-gradient(45deg,#FEE8E8,#FEE8E8 3px,#FFD0D0 3px,#FFD0D0 6px); }
+  .ms-cell.today    { background: #EEF4FF; }
+
+  .ms-val-ok  { color: var(--blue);  font-size: 13px; font-weight: 700; }
+  .ms-val-ng  { color: var(--red);   font-size: 13px; font-weight: 700; }
+  .ms-val-na  { color: #AAAAAA;      font-size: 12px; }
+  .ms-val-blank { color: #DDDDDD; font-size: 10px; }
+
+  /* 10-day period columns */
+  .ms-period-hdr { background: #E8F5E9; color: #2E7D32; font-weight: 700; padding: 4px 6px; font-size: 10px; }
+  .ms-period-sub { background: #F1F8E9; color: #558B2F; padding: 3px 4px; font-size: 10px; }
+  .ms-period-cell { min-width: 50px; padding: 4px 5px; font-size: 11px; }
+  .ms-period-cell.inspector { color: var(--blue); font-size: 10px; }
+  .ms-period-cell.confirm   { font-size: 10px; color: var(--text-sub); }
+
+  /* monthly section */
+  .ms-monthly-hdr { background: #FFF3E0; color: #E65100; font-weight: 700; padding: 4px 6px; font-size: 10px; }
+  .ms-monthly-sub { background: #FFF8F0; color: #BF360C; padding: 3px 4px; font-size: 10px; }
+  .ms-monthly-cell { min-width: 52px; padding: 4px 5px; font-size: 11px; }
+  .ms-monthly-cell.notes { min-width: 100px; text-align: left; color: var(--text-sub); font-size: 10px; }
+
+  /* Row hover */
+  .ms-table tbody tr:hover td:not(.ms-section-label) { background: rgba(47,107,255,0.04); }
+
+  /* Category divider */
+  .ms-cat-divider td { border-top: 2px solid #B0BEC5 !important; }
+</style>
 <!-- ===== DASHBOARD & APPROVAL: STYLES ===== -->
 <style>
   /* ── Full-page overlay screens (same pattern as #screen-admin) ── */
@@ -2548,6 +2667,14 @@
           <div class="adm-settings-card-sub">休日・特別出勤日の設定</div>
         </div>
 
+        <div class="adm-settings-card" style="grid-column:1/-1;" onclick="showAdmSubTab('monthly-sheet')">
+          <div class="adm-settings-card-icon" style="background:#E8F5E9;">
+            <svg viewBox="0 0 24 24" stroke="#2E7D32"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
+          </div>
+          <div class="adm-settings-card-label">月次点検表</div>
+          <div class="adm-settings-card-sub">設備ごとの1ヶ月点検シート</div>
+        </div>
+
       </div>
     </div>
 
@@ -2761,6 +2888,66 @@
       <!-- (legacy: kept for compatibility) -->
       <div id="adm-apr-card-list" style="display:none;"></div>
       <span id="adm-apr-pending-badge" style="display:none;"></span>
+
+    </div>
+
+    <!-- 月次点検表 パネル -->
+    <div id="adm-panel-monthly-sheet" class="adm-panel" style="display:none;padding:12px 0 20px;">
+
+      <!-- 設備・年月セレクター -->
+      <div style="padding:0 14px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:120px;">
+          <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">設備</div>
+          <select id="ms-equip-sel" class="adm-select" onchange="renderMonthlySheet()" style="font-size:13px;padding:8px 32px 8px 10px;">
+            <option value="">設備を選択</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:110px;">
+          <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">年月</div>
+          <input id="ms-month-sel" type="month" class="adm-select" oninput="renderMonthlySheet()" style="font-size:13px;padding:8px 10px;" />
+        </div>
+        <div style="align-self:flex-end;">
+          <button onclick="renderMonthlySheet()" style="background:var(--blue);color:#fff;border:none;border-radius:9px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;">
+            ↺ 再読み込み
+          </button>
+        </div>
+      </div>
+
+      <!-- 設備なしメッセージ -->
+      <div id="ms-no-equip" style="display:none;padding:20px 16px;text-align:center;color:var(--text-sub);font-size:13px;">
+        設備を選択してください
+      </div>
+
+      <!-- テーブルラッパー -->
+      <div id="ms-table-wrap" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;padding:0 14px 8px;width:100%;box-sizing:border-box;">
+        <!-- JSで描画 -->
+      </div>
+      <!-- 横スクロールヒント -->
+      <div id="ms-scroll-hint" style="display:none;padding:4px 14px 0;text-align:right;font-size:10px;color:var(--text-sub);letter-spacing:0;">
+        ← 横にスクロールできます →
+      </div>
+
+      <!-- 凡例 -->
+      <div id="ms-legend" style="display:none;padding:10px 14px 0;display:flex;gap:14px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
+          <div style="width:14px;height:14px;border-radius:50%;background:#2F6BFF;"></div>○ 正常
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
+          <div style="width:14px;height:14px;border-radius:50%;background:#E53935;"></div>✕ 異常
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
+          <div style="width:14px;height:14px;border-radius:50%;background:#BBBBBB;"></div>／ 対象外
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-sub);">
+          <div style="width:14px;height:14px;border-radius:3px;background:#FDECEC;border:1px solid #FBBCBC;"></div>休日
+        </div>
+      </div>
+
+      <!-- 備考 -->
+      <div style="padding:10px 14px 0;font-size:11px;color:var(--text-sub);line-height:1.7;background:#FFF8E1;margin:10px 14px 0;border-radius:8px;border-left:3px solid #F59E0B;">
+        💡 点検項目がない場合は ／ を記入する　｜　毎月（定期）点検は月末に行う<br>
+        ✓ 10日毎に上司確認、最終M課責任者確認後保管　｜　異常時は復旧後、改善内容欄に具体的に記入
+      </div>
 
     </div>
 
@@ -3018,7 +3205,8 @@
       localStorage.setItem('lastLoginUser', '点検者：' + displayName);
       localStorage.setItem('lastLoginDate', loginStr);
       updateLastLoginDisplay();
-      document.querySelector('.home-user-name').textContent = displayName + ' さん';
+      var homeUserNameEl = document.querySelector('.home-user-name');
+      if (homeUserNameEl) homeUserNameEl.textContent = displayName + ' さん';
       updateHomeDateDisplay();
       buildCalendar();
       showScreen('screen-home');
@@ -3084,6 +3272,7 @@
 
   function buildCalendar() {
     const grid = document.getElementById('cal-grid');
+    if (!grid) return;
     const key = `${calYear}-${calMonth}`;
     const totalDays = new Date(calYear, calMonth + 1, 0).getDate();
     const firstDow  = new Date(calYear, calMonth, 1).getDay();
@@ -3182,10 +3371,11 @@
     const anomalyCount = anomaly.filter(d => !holidays.includes(d)).length;
     const workDays     = totalDays - holidays.length;
     const pendingCount = Math.max(0, workDays - doneCount - anomalyCount);
-    document.getElementById('sum-pending').textContent = pendingCount;
-    document.getElementById('sum-done').textContent    = doneCount;
-    document.getElementById('sum-anomaly').textContent = anomalyCount;
-    document.querySelector('.summary-title').textContent = `点検サマリー（${calYear}年${monthNames[calMonth]}）`;
+    var sumPending = document.getElementById('sum-pending'); if (sumPending) sumPending.textContent = pendingCount;
+    var sumDone    = document.getElementById('sum-done');    if (sumDone)    sumDone.textContent    = doneCount;
+    var sumAnomaly = document.getElementById('sum-anomaly'); if (sumAnomaly) sumAnomaly.textContent = anomalyCount;
+    var summaryTitle = document.querySelector('.summary-title');
+    if (summaryTitle) summaryTitle.textContent = `点検サマリー（${calYear}年${monthNames[calMonth]}）`;
 
     // 今日が休日なら「本日の点検を開始する」ボタンをグレーアウト
     const startBtnWrap = document.getElementById('today-start-btn');
@@ -3197,7 +3387,8 @@
           startBtn.style.opacity = '0.5';
           startBtn.style.cursor = 'default';
           startBtn.style.pointerEvents = 'none';
-          startBtn.querySelector('.start-btn-left').innerHTML =
+          var btnLeftHol = startBtn.querySelector('.start-btn-left');
+          if (btnLeftHol) btnLeftHol.innerHTML =
             '<div class="start-btn-icon">' +
               '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                 '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>' +
@@ -3215,7 +3406,8 @@
           startBtn.style.opacity = '';
           startBtn.style.cursor = '';
           startBtn.style.pointerEvents = '';
-          startBtn.querySelector('.start-btn-left').innerHTML =
+          var btnLeftNorm = startBtn.querySelector('.start-btn-left');
+          if (btnLeftNorm) btnLeftNorm.innerHTML =
             '<div class="start-btn-icon">' +
               '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                 '<rect x="9" y="2" width="6" height="4" rx="1"/>' +
@@ -3306,6 +3498,7 @@
   /* ─── EQUIP SELECT ─── */
   function buildEquipList() {
     const list = document.getElementById('equip-list');
+    if (!list) return;
     list.innerHTML = '';
     // Show only equipment belonging to the selected lines
     const filtered = selectedLineIds.length > 0
@@ -3368,8 +3561,12 @@
     activeTab = {};
     EQUIP_DATA.forEach(eq => {
       if (selectedEquips.includes(eq.id)) {
+        // itemsDaily が未設定の設備は、10日毎でない日に items10 を代替使用する
+        const dailyCount = eq.itemsDaily.length > 0
+          ? eq.itemsDaily.length
+          : (inspectionTypes.is10Day ? 0 : eq.items10.length);
         state[eq.id] = {
-          'daily':   new Array(eq.itemsDaily.length).fill(null),
+          'daily':   new Array(dailyCount).fill(null),
           '10days':  new Array(eq.items10.length).fill(null),
           'monthly': new Array(eq.itemsMonthly.length).fill(null)
         };
@@ -3396,6 +3593,7 @@
 
   function buildInspectChips() {
     const chips = document.getElementById('inspect-chips');
+    if (!chips) return;
     chips.innerHTML = '';
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
@@ -3408,6 +3606,7 @@
 
   function buildInspectSections() {
     const container = document.getElementById('inspect-sections');
+    if (!container) return;
     container.innerHTML = '';
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
@@ -3442,9 +3641,13 @@
     `;
 
     // Build applicable type groups
+    // itemsDaily が空の設備では、10日毎でない日に items10 を毎日点検として代用する
     const groups = [];
-    if (inspectionTypes.isDaily && eq.itemsDaily.length)
-      groups.push({ key:'daily',   label:'毎日点検',  badgeClass:'daily',   items: eq.itemsDaily });
+    const effectiveDailyItems = eq.itemsDaily.length > 0
+      ? eq.itemsDaily
+      : (inspectionTypes.is10Day ? [] : eq.items10);
+    if (inspectionTypes.isDaily && effectiveDailyItems.length)
+      groups.push({ key:'daily',   label:'毎日点検',  badgeClass:'daily',   items: effectiveDailyItems });
     if (inspectionTypes.is10Day)
       groups.push({ key:'10days',  label:'10日毎点検', badgeClass:'days10',  items: eq.items10 });
     if (inspectionTypes.isMonthly)
@@ -3575,6 +3778,7 @@
 
   function buildConfirmChips() {
     const chips = document.getElementById('confirm-chips');
+    if (!chips) return;
     chips.innerHTML = '';
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
@@ -3587,14 +3791,18 @@
 
   function buildConfirmContent() {
     const content = document.getElementById('confirm-content');
+    if (!content) return;
     content.innerHTML = '';
 
     let totalNg = 0;
 
     selectedEquips.forEach(id => {
       const eq   = EQUIP_DATA.find(e => e.id === id);
+      const effectiveDailyItems = eq.itemsDaily.length > 0
+        ? eq.itemsDaily
+        : (inspectionTypes.is10Day ? [] : eq.items10);
       const types = [];
-      if (eq.itemsDaily.length)        types.push({ key:'daily',   label:'毎日点検',   items: eq.itemsDaily });
+      if (effectiveDailyItems.length)  types.push({ key:'daily',   label:'毎日点検',   items: effectiveDailyItems });
       if (inspectionTypes.is10Day)     types.push({ key:'10days',  label:'10日毎点検', items: eq.items10 });
       if (inspectionTypes.isMonthly)   types.push({ key:'monthly', label:'1ヶ月点検',  items: eq.itemsMonthly });
 
@@ -3752,7 +3960,8 @@
     setTimeout(function() { if (typeof renderLoginUsers === 'function') renderLoginUsers(); }, 0);
     const savedUser = localStorage.getItem('loggedInUser');
     if (savedUser) {
-      document.querySelector('.home-user-name').textContent = savedUser + ' さん';
+      var homeNameEl = document.querySelector('.home-user-name');
+      if (homeNameEl) homeNameEl.textContent = savedUser + ' さん';
       document.querySelectorAll('.user-btn').forEach(b => {
         b.classList.remove('selected');
         if (b.textContent.trim() === savedUser) b.classList.add('selected');
@@ -3947,6 +4156,7 @@ function toggleAdmUserMenu(e) {
   e.stopPropagation();
   var chip    = document.getElementById('adm-user-chip');
   var popover = document.getElementById('adm-user-popover');
+  if (!chip || !popover) return;
   var isOpen  = popover.classList.contains('open');
   popover.classList.toggle('open', !isOpen);
   chip.classList.toggle('open', !isOpen);
@@ -3955,6 +4165,7 @@ function toggleHomeUserMenu(e) {
   e.stopPropagation();
   var chip    = document.getElementById('home-user-chip');
   var popover = document.getElementById('home-user-popover');
+  if (!chip || !popover) return;
   var isOpen  = popover.classList.contains('open');
   popover.classList.toggle('open', !isOpen);
   chip.classList.toggle('open', !isOpen);
@@ -4007,7 +4218,7 @@ function showAdmTab(tab) {
     if (b) b.classList.toggle('active', t===tab);
   });
   // hide all panels
-  ['lines','equips','items','assign','users','holidays','dashboard','approval'].forEach(function(t) {
+  ['lines','equips','items','assign','users','holidays','monthly-sheet','dashboard','approval'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = 'none';
   });
@@ -4023,7 +4234,7 @@ function showAdmTab(tab) {
 
 function showAdmSettingsMenu() {
   // すべてのパネルを隠す
-  ['lines','equips','items','assign','users','holidays','dashboard','approval'].forEach(function(t) {
+  ['lines','equips','items','assign','users','holidays','monthly-sheet','dashboard','approval'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = 'none';
   });
@@ -4038,7 +4249,7 @@ function showAdmSettingsMenu() {
 var ADM_PANEL_LABELS = {
   lines: 'ライン管理', equips: '設備管理',
   items: '点検項目', assign: '割当設定', users: 'ユーザー管理',
-  holidays: '休日・出勤設定'
+  holidays: '休日・出勤設定', 'monthly-sheet': '月次点検表'
 };
 
 function showAdmSubTab(sub) {
@@ -4046,7 +4257,7 @@ function showAdmSubTab(sub) {
   var menu = document.getElementById('adm-settings-menu');
   if (menu) menu.classList.remove('visible');
   // すべてのパネルを隠してから対象だけ表示
-  ['lines','equips','items','assign','users','holidays'].forEach(function(t) {
+  ['lines','equips','items','assign','users','holidays','monthly-sheet'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = (t===sub) ? 'block' : 'none';
   });
@@ -4062,6 +4273,7 @@ function showAdmSubTab(sub) {
   if (sub==='assign')   renderAssignInit();
   if (sub==='users')    admRenderUsers();
   if (sub==='holidays') renderHolidayPanel();
+  if (sub==='monthly-sheet') { initMonthlySheetSelectors(); renderMonthlySheet(); }
 }
 
 /* ─ HTML escape ─ */
@@ -4156,6 +4368,7 @@ function admOpenUserModal(type) {
   var color = type==='inspector' ? 'var(--blue)' : 'var(--red)';
   var overlay = document.getElementById('adm-modal-overlay');
   var body    = document.getElementById('adm-modal-body');
+  if (!overlay || !body) return;
   body.innerHTML =
     '<div class="adm-modal-title">新しい' + label + 'を追加</div>' +
     '<label class="adm-modal-label">名前</label>' +
@@ -4171,7 +4384,7 @@ function admOpenUserModal(type) {
 function admSaveUser(type) {
   var nameEl = document.getElementById('user-modal-name');
   var name = nameEl ? nameEl.value.trim() : '';
-  if (!name) { nameEl.style.borderColor='var(--red)'; return; }
+  if (!name) { if (nameEl) nameEl.style.borderColor='var(--red)'; return; }
 
   var arr = type==='inspector' ? ADM.inspectors : ADM.managers;
   var prefix = type==='inspector' ? 'U' : 'M';
@@ -5647,6 +5860,322 @@ function daToast(msg) {
     t.style.opacity = '0';
     setTimeout(function(){ t.remove(); }, 200);
   }, 1800);
+}
+
+/* ──────────────────────────────────────────
+   MONTHLY INSPECTION SHEET
+   ────────────────────────────────────────── */
+
+function initMonthlySheetSelectors() {
+  var equipSel = document.getElementById('ms-equip-sel');
+  if (!equipSel) return;
+  var curEquip = equipSel.value;
+  equipSel.innerHTML = '<option value="">設備を選択</option>';
+  (ADM.equips || []).forEach(function(eq) {
+    var opt = document.createElement('option');
+    opt.value = eq.id;
+    opt.textContent = eq.id + '　' + eq.name;
+    if (eq.id === curEquip) opt.selected = true;
+    equipSel.appendChild(opt);
+  });
+  // default to current year/month
+  var monthSel = document.getElementById('ms-month-sel');
+  if (monthSel && !monthSel.value) {
+    var now = new Date();
+    monthSel.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  }
+}
+
+function renderMonthlySheet() {
+  var equipSel = document.getElementById('ms-equip-sel');
+  var monthSel = document.getElementById('ms-month-sel');
+  var wrap     = document.getElementById('ms-table-wrap');
+  var noEquip  = document.getElementById('ms-no-equip');
+  var legend   = document.getElementById('ms-legend');
+  if (!equipSel || !monthSel || !wrap) return;
+
+  var equipId = equipSel.value;
+  if (!equipId) {
+    wrap.innerHTML = '';
+    if (noEquip) noEquip.style.display = 'block';
+    if (legend)  legend.style.display  = 'none';
+    var hint2 = document.getElementById('ms-scroll-hint');
+    if (hint2) hint2.style.display = 'none';
+    return;
+  }
+  if (noEquip) noEquip.style.display = 'none';
+  if (legend)  legend.style.display  = '';
+
+  var monthVal = monthSel.value || (function(){
+    var n = new Date();
+    return n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0');
+  })();
+  var parts = monthVal.split('-');
+  var year  = parseInt(parts[0], 10);
+  var month = parseInt(parts[1], 10) - 1; // 0-indexed
+
+  var eq = (ADM.equips || []).find(function(e){ return e.id === equipId; }) || {id: equipId, name: ''};
+  var assigns = ADM.assigns[equipId] || [];
+
+  // Get items by type
+  function getItemsByType(type) {
+    return assigns
+      .map(function(a){ return (ADM.items || []).find(function(i){ return i.id === a.itemId; }); })
+      .filter(function(i){ return i && (i.type || '10days') === type; });
+  }
+  var dailyItems   = getItemsByType('daily');
+  var tenDayItems  = getItemsByType('10days');
+  var monthlyItems = getItemsByType('monthly');
+
+  // Days in month
+  var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Holiday check
+  function isDayHoliday(d) {
+    var dt = new Date(year, month, d);
+    return isHoliday(dt);
+  }
+  var today = new Date();
+  function isToday(d) {
+    return today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+  }
+
+  // Load inspection data for this equip/month
+  var inspections = loadInspections();
+  var monthRecs = inspections.filter(function(r) {
+    return r.year === year && r.month === month && (r.equips || []).indexOf(equipId) >= 0;
+  });
+
+  // Build lookup: day -> state[equipId]
+  function getStateForDay(d) {
+    var rec = monthRecs.find(function(r){ return r.day === d; });
+    return rec && rec.state ? (rec.state[equipId] || {}) : {};
+  }
+  function getInspectorForDay(d) {
+    var rec = monthRecs.find(function(r){ return r.day === d; });
+    return rec ? (rec.inspector || '') : '';
+  }
+
+  // 10-day periods: nominal 10, 20, end-of-month(or 30)
+  var periods10 = get10DayDatesForMonth(year, month); // Set of effective dates
+  var periodDates = [10, 20, 30].map(function(nom) {
+    var last = new Date(year, month+1, 0).getDate();
+    var actual = Math.min(nom, last);
+    // find effective date
+    var eff = _effectiveDate(new Date(year, month, actual));
+    return {
+      label: nom === 30 ? '月末' : nom + '日',
+      nominal: nom,
+      eff: (eff.getFullYear() === year && eff.getMonth() === month) ? eff.getDate() : null
+    };
+  });
+
+  // Monthly effective date
+  var monthlyDay = getMonthlyDateForMonth(year, month);
+
+  // Helper: render result symbol
+  function sym(val) {
+    if (val === 'ok') return '<span class="ms-val-ok">○</span>';
+    if (val === 'ng') return '<span class="ms-val-ng">✕</span>';
+    if (val === 'na') return '<span class="ms-val-na">／</span>';
+    return '<span class="ms-val-blank">—</span>';
+  }
+
+  // ── Build HTML ──
+  var html = '';
+  html += '<table class="ms-table">';
+
+  // ════ SECTION 1: 日常点検 ════
+  if (dailyItems.length > 0) {
+    // Header row: day numbers
+    html += '<thead>';
+    html += '<tr>';
+    html += '<th class="ms-th-main" colspan="3" style="text-align:left;padding:5px 8px;">設備：' + esc(eq.id) + '　' + esc(eq.name) + '</th>';
+    for (var d = 1; d <= daysInMonth; d++) {
+      var hol = isDayHoliday(d);
+      html += '<th class="ms-th-day' + (hol ? ' holiday' : '') + (isToday(d) ? ' today' : '') + '">' + d + '</th>';
+    }
+    html += '<th class="ms-th-day" style="min-width:50px;">点検者</th>';
+    html += '</tr>';
+    html += '</thead>';
+    html += '<tbody>';
+    // Section label spanning all daily rows
+    var dailyCount = dailyItems.length;
+    html += '<tr class="ms-cat-divider">';
+    html += '<td class="ms-section-label daily" rowspan="' + dailyCount + '">日常点検</td>';
+    // First item row
+    var item0 = dailyItems[0];
+    html += '<td class="ms-item-no">1</td>';
+    html += '<td class="ms-item-name">' + esc(item0.name) + '</td>';
+    for (var d = 1; d <= daysInMonth; d++) {
+      var hol = isDayHoliday(d);
+      var st = getStateForDay(d);
+      var vals = st['daily'] || [];
+      var itemIdx = assigns.filter(function(a){
+        var it = (ADM.items||[]).find(function(i){ return i.id===a.itemId; });
+        return it && (it.type||'10days')==='daily';
+      }).findIndex(function(a){ return a.itemId === item0.id; });
+      var val = vals[itemIdx] || '';
+      html += '<td class="ms-cell' + (hol ? ' holiday' : '') + (isToday(d) ? ' today' : '') + '">' + sym(val) + '</td>';
+    }
+    html += '<td class="ms-cell" style="font-size:10px;color:var(--blue);">' + (getStateForDay(1)['daily'] ? getInspectorForDay(1).slice(0,4) : '') + '</td>';
+    html += '</tr>';
+    for (var i = 1; i < dailyItems.length; i++) {
+      var item = dailyItems[i];
+      html += '<tr>';
+      html += '<td class="ms-item-no">' + (i+1) + '</td>';
+      html += '<td class="ms-item-name">' + esc(item.name) + '</td>';
+      var dailyAssigns = assigns.filter(function(a){
+        var it = (ADM.items||[]).find(function(ii){ return ii.id===a.itemId; });
+        return it && (it.type||'10days')==='daily';
+      });
+      var itemIdx = dailyAssigns.findIndex(function(a){ return a.itemId === item.id; });
+      for (var d = 1; d <= daysInMonth; d++) {
+        var hol = isDayHoliday(d);
+        var st = getStateForDay(d);
+        var vals = st['daily'] || [];
+        var val = vals[itemIdx] || '';
+        html += '<td class="ms-cell' + (hol ? ' holiday' : '') + (isToday(d) ? ' today' : '') + '">' + sym(val) + '</td>';
+      }
+      html += '<td class="ms-cell"></td>';
+      html += '</tr>';
+    }
+    // Sign row
+    html += '<tr>';
+    html += '<td colspan="3" style="text-align:right;font-size:10px;color:var(--text-sub);padding:4px 8px;">↑機械使用前　点検者サイン</td>';
+    for (var d = 1; d <= daysInMonth; d++) {
+      var hol = isDayHoliday(d);
+      html += '<td class="ms-cell' + (hol ? ' holiday' : '') + '" style="height:20px;background:' + (hol ? 'repeating-linear-gradient(45deg,#FEE8E8,#FEE8E8 3px,#FFD0D0 3px,#FFD0D0 6px)' : '#FAFAFA') + '"></td>';
+    }
+    html += '<td class="ms-cell" style="background:#FAFAFA;"></td>';
+    html += '</tr>';
+    html += '</tbody>';
+  } else {
+    // No daily items — still show header
+    html += '<thead><tr>';
+    html += '<th class="ms-th-main" colspan="2" style="text-align:left;padding:5px 8px;">設備：' + esc(eq.id) + '　' + esc(eq.name) + '</th>';
+    html += '</tr></thead><tbody>';
+    html += '<tr><td colspan="2" style="padding:10px;color:var(--text-sub);font-size:12px;text-align:center;">毎日点検項目なし</td></tr>';
+    html += '</tbody>';
+  }
+
+  // ════ SECTION 2: 10日点検 ════
+  if (tenDayItems.length > 0) {
+    html += '<thead>';
+    html += '<tr>';
+    html += '<th class="ms-period-hdr" colspan="2" rowspan="2" style="vertical-align:middle;">区分</th>';
+    html += '<th class="ms-period-hdr" colspan="2" rowspan="2" style="vertical-align:middle;">点 検 項 目</th>';
+    periodDates.forEach(function(pd) {
+      html += '<th class="ms-period-hdr" colspan="3">' + pd.label + '（' + (pd.eff ? pd.eff + '日' : '−') + '）</th>';
+    });
+    html += '</tr>';
+    html += '<tr>';
+    periodDates.forEach(function() {
+      html += '<th class="ms-period-sub">結果</th>';
+      html += '<th class="ms-period-sub">点検者</th>';
+      html += '<th class="ms-period-sub">日常点検<br>確認</th>';
+    });
+    html += '</tr>';
+    html += '</thead>';
+    html += '<tbody>';
+
+    // Group by category (using a simple separator label)
+    var tenDayAssigns = assigns.filter(function(a){
+      var it = (ADM.items||[]).find(function(i){ return i.id===a.itemId; });
+      return it && (it.type||'10days')==='10days';
+    });
+
+    tenDayItems.forEach(function(item, idx) {
+      var rowClass = idx === 0 ? ' class="ms-cat-divider"' : '';
+      html += '<tr' + rowClass + '>';
+      if (idx === 0) {
+        html += '<td class="ms-section-label tenday" rowspan="' + tenDayItems.length + '">10日点検</td>';
+      }
+      html += '<td class="ms-item-no">' + (idx+1) + '</td>';
+      html += '<td class="ms-item-name" colspan="2">' + esc(item.name) + '</td>';
+
+      var iIdx = tenDayAssigns.findIndex(function(a){ return a.itemId === item.id; });
+
+      periodDates.forEach(function(pd) {
+        var effDay = pd.eff;
+        var result = '';
+        var inspector = '';
+        if (effDay) {
+          var st = getStateForDay(effDay);
+          var vals = st['10days'] || [];
+          result = vals[iIdx] || '';
+          inspector = getInspectorForDay(effDay);
+        }
+        html += '<td class="ms-period-cell">' + sym(result) + '</td>';
+        html += '<td class="ms-period-cell inspector" style="font-size:10px;">' + esc(inspector.slice(0,4)) + '</td>';
+        html += '<td class="ms-period-cell confirm">—</td>';
+      });
+      html += '</tr>';
+    });
+    html += '</tbody>';
+  }
+
+  // ════ SECTION 3: 月次点検 ════
+  if (monthlyItems.length > 0) {
+    html += '<thead>';
+    html += '<tr>';
+    html += '<th class="ms-monthly-hdr" colspan="2" rowspan="2" style="vertical-align:middle;">区分</th>';
+    html += '<th class="ms-monthly-hdr" colspan="2" rowspan="2" style="vertical-align:middle;">点 検 項 目</th>';
+    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">結　果</th>';
+    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">点検者</th>';
+    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;font-size:9px;">全点検確認<br>M課責任者</th>';
+    html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;min-width:100px;">備　考</th>';
+    html += '</tr>';
+    html += '<tr></tr>';
+    html += '</thead>';
+    html += '<tbody>';
+
+    var monthlyAssigns = assigns.filter(function(a){
+      var it = (ADM.items||[]).find(function(i){ return i.id===a.itemId; });
+      return it && it.type === 'monthly';
+    });
+
+    monthlyItems.forEach(function(item, idx) {
+      var rowClass = idx === 0 ? ' class="ms-cat-divider"' : '';
+      html += '<tr' + rowClass + '>';
+      if (idx === 0) {
+        html += '<td class="ms-section-label monthly-lbl" rowspan="' + monthlyItems.length + '">月次点検</td>';
+      }
+      html += '<td class="ms-item-no">' + (idx+1) + '</td>';
+      html += '<td class="ms-item-name" colspan="2">' + esc(item.name) + '</td>';
+
+      var iIdx = monthlyAssigns.findIndex(function(a){ return a.itemId === item.id; });
+      var result = '', inspector = '';
+      if (monthlyDay) {
+        var st = getStateForDay(monthlyDay);
+        var vals = st['monthly'] || [];
+        result = vals[iIdx] || '';
+        inspector = getInspectorForDay(monthlyDay);
+      }
+      html += '<td class="ms-monthly-cell">' + sym(result) + '</td>';
+      html += '<td class="ms-monthly-cell" style="font-size:10px;color:var(--blue);">' + esc(inspector.slice(0,4)) + '</td>';
+      html += '<td class="ms-monthly-cell">—</td>';
+      html += '<td class="ms-monthly-cell notes"></td>';
+      html += '</tr>';
+    });
+
+    // Notes instructions row
+    html += '<tr>';
+    html += '<td colspan="8" style="padding:8px 10px;font-size:10px;color:var(--text-sub);text-align:left;background:#FAFAFA;">';
+    html += '・点検項目がない場合は ／ を記入する　・毎月（定期）点検は月末に行う　・異常時は復旧後、改善内容欄に具体的に記入';
+    html += '</td>';
+    html += '</tr>';
+    html += '</tbody>';
+  }
+
+  if (tenDayItems.length === 0 && monthlyItems.length === 0 && dailyItems.length === 0) {
+    html += '<tbody><tr><td colspan="2" style="padding:16px;color:var(--text-sub);font-size:13px;text-align:center;">この設備に点検項目が割り当てられていません</td></tr></tbody>';
+  }
+
+  html += '</table>';
+  wrap.innerHTML = html;
+  var hint = document.getElementById('ms-scroll-hint');
+  if (hint) hint.style.display = 'block';
 }
 
 /* ──────────────────────────────────────────
