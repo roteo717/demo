@@ -767,22 +767,22 @@
 
   /* ─── COMPLETE SCREEN ─── */
   #screen-complete {
-    background: var(--blue);
+    background: #fff;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     min-height: 100vh; height: 100dvh; min-height: 100dvh;
   }
-  .complete-icon { width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
-  .complete-icon svg { stroke: #fff; fill: none; width: 52px; height: 52px; }
-  .complete-title { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; }
-  .complete-sub { font-size: 15px; color: rgba(255,255,255,0.75); margin-bottom: 40px; text-align: center; line-height: 1.6; }
+  .complete-icon { width: 100px; height: 100px; border-radius: 50%; background: var(--blue-light); display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+  .complete-icon svg { stroke: var(--blue); fill: none; width: 52px; height: 52px; }
+  .complete-title { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .complete-sub { font-size: 15px; color: var(--text-sub); margin-bottom: 40px; text-align: center; line-height: 1.6; }
   .complete-meta {
-    background: rgba(255,255,255,0.15); border-radius: 12px; padding: 14px 24px;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px 24px;
     margin-bottom: 40px; text-align: center;
   }
-  .complete-meta-label { font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 4px; }
-  .complete-meta-val { font-size: 15px; color: #fff; font-weight: 600; }
+  .complete-meta-label { font-size: 12px; color: var(--text-sub); margin-bottom: 4px; }
+  .complete-meta-val { font-size: 15px; color: var(--text); font-weight: 600; }
   .btn-complete-home {
-    width: 240px; background: #fff; color: var(--blue);
+    width: 240px; background: var(--blue); color: #fff;
     border: none; border-radius: 12px; padding: 16px;
     font-size: 16px; font-weight: 700; cursor: pointer;
     -webkit-user-select: none;
@@ -2344,7 +2344,7 @@
 
   <!-- ===== SCREEN 9: COMPLETE ===== -->
   <div class="screen hidden" id="screen-complete">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:40px 24px max(40px,env(safe-area-inset-bottom,40px));background:var(--blue);box-sizing:border-box;">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:40px 24px max(40px,env(safe-area-inset-bottom,40px));background:#fff;box-sizing:border-box;">
       <div class="complete-icon">
         <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
       </div>
