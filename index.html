@@ -1387,20 +1387,33 @@
     vertical-align: middle;
   }
   .ms-table thead th { background: #ECEFF1; font-weight: 700; }
+  .ms-no-top-border th, .ms-no-top-border td { border-top: none !important; }
 
   /* Section label (vertical) */
   .ms-section-label {
-    writing-mode: vertical-rl;
-    text-orientation: upright;
     font-size: 10px; font-weight: 800;
-    padding: 6px 3px;
+    padding: 0;
     width: 18px; min-width: 18px;
     position: sticky; left: 0; z-index: 2;
+    border-left: none !important;
+    border-right: none !important;
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+  }
+  .ms-section-label-inner {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
     letter-spacing: 1px;
+    display: inline-block;
+    font-size: 10px; font-weight: 800;
   }
   .ms-section-label.daily   { background: #E3F2FD; color: #1565C0; }
   .ms-section-label.tenday  { background: #E8F5E9; color: #1B5E20; }
-  .ms-section-label.monthly-lbl { background: #FFF3E0; color: #BF360C; }
+  .ms-section-label.monthly-lbl { background: #FFE0B2; color: #BF360C; }
+  /* 月次ラベル：行間のボーダーを消して視覚的に結合 */
+  tbody tr:not(:first-child) .ms-section-label.monthly-lbl { border-top: none !important; }
+  tbody tr:not(:last-child)  .ms-section-label.monthly-lbl { border-bottom: none !important; }
 
   /* NO column */
   .ms-no-col { width: 20px; min-width: 20px; font-weight: 700; font-size: 10px; padding: 3px 2px; }
@@ -3013,11 +3026,7 @@
           <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">年月</div>
           <input id="ms-month-sel" type="month" class="adm-select" oninput="renderMonthlySheet()" style="font-size:13px;padding:8px 10px;" />
         </div>
-        <div style="align-self:flex-end;">
-          <button onclick="renderMonthlySheet()" style="background:var(--blue);color:#fff;border:none;border-radius:9px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;">
-            ↺ 再読み込み
-          </button>
-        </div>
+
       </div>
 
       <!-- 設備なしメッセージ -->
@@ -3452,7 +3461,8 @@
       grid.appendChild(el);
     }
 
-    document.getElementById('cal-month-label').textContent = `${calYear}年${monthNames[calMonth]}`;
+    var calLbl = document.getElementById('cal-month-label');
+    if (calLbl) calLbl.textContent = `${calYear}年${monthNames[calMonth]}`;
 
     const doneCount    = done.filter(d => !anomaly.includes(d) && !holidays.includes(d)).length;
     const anomalyCount = anomaly.filter(d => !holidays.includes(d)).length;
@@ -3632,7 +3642,8 @@
   }
 
   function updateEquipCount() {
-    document.getElementById('equip-count').textContent = selectedEquips.length;
+    var ec = document.getElementById('equip-count');
+    if (ec) ec.textContent = selectedEquips.length;
   }
 
   /* ─── INSPECTION INPUT ─── */
@@ -3845,8 +3856,10 @@
       if (inspectionTypes.isMonthly) unenteredCount += state[id]['monthly'].filter(v => v === null).length;
     });
     if (unenteredCount > 0) {
-      document.getElementById('unentered-count').textContent = unenteredCount;
-      document.getElementById('unentered-dialog').classList.add('open');
+      var uc = document.getElementById('unentered-count');
+      if (uc) uc.textContent = unenteredCount;
+      var ud = document.getElementById('unentered-dialog');
+      if (ud) ud.classList.add('open');
     } else {
       proceedToConfirm();
     }
@@ -3918,7 +3931,7 @@
               ${eq.id}　${eq.name}${typeLabel}
             </div>
             <span class="equip-status-badge ${ngCount > 0 ? 'badge-anomaly' : 'badge-ok'}" style="margin-left:auto;">
-              ${ngCount > 0 ? '⚠ 異常あり' : '✓ 正常'}
+              ${ngCount > 0 ? '⚠ 異常あり' : '正常'}
             </span>
           </div>
         `;
@@ -5354,12 +5367,14 @@ function renderApproval() {
 function aprApprove(id) {
   saveAprStatusToStorage(id, 'approved');
   renderApproval();
+  if (typeof renderMonthlySheet === 'function') renderMonthlySheet();
   daToast('✓ 承認しました');
 }
 
 function aprReturn(id) {
   saveAprStatusToStorage(id, 'returned');
   renderApproval();
+  if (typeof renderMonthlySheet === 'function') renderMonthlySheet();
   daToast('差し戻しました');
 }
 
@@ -5706,7 +5721,8 @@ function renderAdmApproval() {
       '<svg viewBox="0 0 24 24" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg>' +
       '<div class="apr2-empty-text">表示する点検データがありません</div>' +
     '</div>';
-    document.getElementById('apr2-pagination').innerHTML = '';
+    var pag = document.getElementById('apr2-pagination');
+    if (pag) pag.innerHTML = '';
     return;
   }
 
@@ -6087,23 +6103,21 @@ function renderMonthlySheet() {
   var aprStatuses = loadAprStatuses();
   var aprDetails  = loadAprDetails();
 
-  // 承認セルHTMLを生成するヘルパー
+  // 承認セルHTMLを生成するヘルパー（読み取り専用：操作は管理画面の承認タブから）
   function aprCellHtml(aprId, style) {
     var st  = aprStatuses[aprId] || 'pending';
     var det = aprDetails[aprId];
     if (st === 'approved') {
       var label = det ? det.name.slice(0,4) : '承認';
       return '<td class="ms-apr-cell ms-apr-approved" ' + (style||'') +
-        ' onclick="msResetApproval(\'' + aprId + '\')" title="クリックで取り消し（' + (det ? det.at : '') + '）">' +
-        '<span class="ms-apr-ok">✓</span>' + label + '</td>';
+        ' title="承認済み（' + (det ? det.at : '') + '）">' +
+        label + '</td>';
     } else if (st === 'returned') {
-      return '<td class="ms-apr-cell ms-apr-returned" ' + (style||'') +
-        ' onclick="msApprove(\'' + aprId + '\')" title="クリックで再承認">' +
+      return '<td class="ms-apr-cell ms-apr-returned" ' + (style||'') + '>' +
         '<span class="ms-apr-ng">✗</span>差戻</td>';
     } else {
-      return '<td class="ms-apr-cell ms-apr-pending" ' + (style||'') +
-        ' onclick="msApprove(\'' + aprId + '\')" title="クリックで承認">' +
-        '<span class="ms-apr-btn">承認</span></td>';
+      return '<td class="ms-apr-cell ms-apr-pending" ' + (style||'') + '>' +
+        '<span style="color:#999;font-size:9px;">—</span></td>';
     }
   }
 
@@ -6165,7 +6179,7 @@ function renderMonthlySheet() {
     dailyItems.forEach(function(item, idx) {
       html += '<tr' + (idx===0?' class="ms-section-divider"':'') + '>';
       if (idx === 0) {
-        html += '<td class="ms-section-label daily" rowspan="' + (dailyCount + 1) + '">日常点検</td>';
+        html += '<td class="ms-section-label daily" rowspan="' + (dailyCount + 1) + '"><span class="ms-section-label-inner">日常点検</span></td>';
       }
       html += '<td class="ms-no-col">' + (idx+1) + '</td>';
       html += '<td class="ms-item-name">' + esc(item.name) + '</td>';
@@ -6207,10 +6221,10 @@ function renderMonthlySheet() {
     html += '<table class="ms-table">';
     html += '<thead>';
     html += '<tr>';
-    html += '<th class="ms-section-label tenday" rowspan="' + (tenDayItems.length + 2) + '" style="position:sticky;left:0;z-index:3;">10日毎</th>';
-    html += '<th class="ms-period-hdr" colspan="2" rowspan="2" style="vertical-align:middle;text-align:left;padding:4px 8px;">点　検　項　目</th>';
+    html += '<th class="ms-section-label tenday" rowspan="2" style="position:sticky;left:0;z-index:3;border-top:none!important;border-bottom:none!important;"></th>';
+    html += '<th class="ms-period-hdr" colspan="2" rowspan="2" style="vertical-align:middle;text-align:left;padding:4px 8px;border-top:none!important;">点　検　項　目</th>';
     periodDates.forEach(function(pd) {
-      html += '<th class="ms-period-hdr" colspan="3" style="white-space:pre-line;">' + pd.label + '<br>（' + (pd.eff ? pd.eff + '日' : '−') + '）</th>';
+      html += '<th class="ms-period-hdr" colspan="3" style="white-space:pre-line;border-top:none!important;">' + pd.label + '<br>（' + (pd.eff ? pd.eff + '日' : '−') + '）</th>';
     });
     html += '</tr>';
     html += '<tr>';
@@ -6224,7 +6238,10 @@ function renderMonthlySheet() {
 
     tenDayItems.forEach(function(item, idx) {
       var globalNo = dailyItems.length + idx + 1;
-      html += '<tr' + (idx===0?' class="ms-section-divider"':'') + '>';
+      html += '<tr>';
+      if (idx === 0) {
+        html += '<td class="ms-section-label tenday" rowspan="' + tenDayItems.length + '" style="position:sticky;left:0;z-index:2;border-top:none!important;border-bottom:none!important;"><span class="ms-section-label-inner">10日毎</span></td>';
+      }
       html += '<td class="ms-no-col">' + globalNo + '</td>';
       html += '<td class="ms-item-name" style="position:sticky;left:18px;z-index:2;">' + esc(item.name) + '</td>';
       var iIdx = tenDayAssigns.findIndex(function(a){ return a.itemId === item.id; });
@@ -6263,7 +6280,7 @@ function renderMonthlySheet() {
     html += '<table class="ms-table">';
     html += '<thead>';
     html += '<tr>';
-    html += '<th class="ms-section-label monthly-lbl" rowspan="' + (monthlyItems.length + 2) + '" style="position:sticky;left:0;z-index:3;">一ヶ月一回</th>';
+    html += '<th class="ms-section-label monthly-lbl" style="position:sticky;left:0;z-index:3;border-top:none!important;border-bottom:none!important;"></th>';
     html += '<th class="ms-monthly-hdr" colspan="2" rowspan="2" style="vertical-align:middle;text-align:left;padding:4px 8px;">点　検　項　目</th>';
     html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">結　果</th>';
     html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">点検者</th>';
@@ -6283,14 +6300,23 @@ function renderMonthlySheet() {
         result = vals[iIdx] || '';
         inspector = getInspectorForDay(monthlyDay);
       }
-      html += '<tr' + (idx===0?' class="ms-section-divider"':'') + '>';
+      var isFirst = idx === 0;
+      var isLast  = idx === monthlyItems.length - 1;
+      html += '<tr>';
+      // セクションラベル：最初の行のみrowspanで表示
+      if (isFirst) {
+        html += '<td class="ms-section-label monthly-lbl" rowspan="' + monthlyItems.length + '" style="position:sticky;left:0;z-index:2;border-top:none!important;border-bottom:none!important;"><span class="ms-section-label-inner">一ヶ月一回</span></td>';
+      }
       html += '<td class="ms-no-col">' + globalNo + '</td>';
       html += '<td class="ms-item-name" colspan="1" style="position:sticky;left:18px;z-index:2;">' + esc(item.name) + '</td>';
       html += '<td class="ms-monthly-cell">' + sym(result) + '</td>';
       html += '<td class="ms-monthly-cell" style="font-size:10px;color:#1565C0;">' + esc(inspector.slice(0,4)) + '</td>';
-      // 全点検確認M課責任者：月次点検全体で1つの承認ID
-      if (idx === 0) {
-        html += aprCellHtml(aprIdM, 'rowspan="' + monthlyItems.length + '" style="vertical-align:middle;"').replace('<td ', '<td ');
+      // 全点検確認M課責任者：最初の行のみ表示、残りは空セルで視覚的に結合
+      var aprStyle = 'vertical-align:middle;' +
+        (isFirst ? 'border-top:1px solid #ddd;' : 'border-top:none;') +
+        (isLast  ? 'border-bottom:1px solid #ddd;' : 'border-bottom:none;');
+      if (isFirst) {
+        html += aprCellHtml(aprIdM, 'rowspan="' + monthlyItems.length + '" style="' + aprStyle + '"').replace('<td ', '<td ');
       }
       html += '</tr>';
     });
