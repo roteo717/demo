@@ -1301,6 +1301,437 @@
   .inspect-date-banner svg { stroke: var(--blue); fill: none; width: 15px; height: 15px; flex-shrink: 0; }
 </style>
 
+<!-- ===== PC DASHBOARD STYLES ===== -->
+<style>
+/* ============================================================
+   PC DASHBOARD CSS  ·  v2（display:none バグ修正版）
+   ─ !important を廃止し [style*="..."] 属性セレクターで
+     "表示中のときのみ" グリッドを適用することで
+     JS の display:none を絶対に邪魔しない設計
+   ─ スマホ（〜1023px）は完全現状維持
+   ============================================================ */
+
+:root {
+  --pc-sidebar-w : 224px;
+  --pc-header-h  : 58px;
+  --pc-bg        : #E9EDF3;
+  --pc-radius    : 16px;
+  --pc-shadow    : 0 10px 40px rgba(0,0,0,0.12);
+  --pc-shadow-sm : 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* ============================================================
+   ① スマホ完全維持（〜1023px）
+   ============================================================ */
+@media (max-width: 1023px) {
+  .phone-wrapper {
+    display: block !important;
+    max-width: 390px;
+    margin: 0 auto;
+  }
+}
+
+/* ============================================================
+   ② 幅制限解除（768px〜）
+   ============================================================ */
+@media (min-width: 768px) {
+  .phone-wrapper,
+  #screen-inspector,
+  #screen-manager,
+  #screen-home,
+  #screen-admin { max-width: 100%; width: 100%; }
+}
+
+/* ============================================================
+   ③ PCベースレイアウト（1024px〜）
+   ============================================================ */
+@media (min-width: 1024px) {
+
+  body { background: var(--pc-bg); align-items: flex-start; }
+
+  /* phone-wrapper → 中央カード */
+  .phone-wrapper {
+    max-width: 1440px;
+    width: calc(100% - 40px);
+    margin: 20px auto;
+    min-height: calc(100vh - 40px);
+    height: auto;
+    border-radius: var(--pc-radius);
+    overflow: hidden;
+    box-shadow: var(--pc-shadow);
+    position: relative;
+  }
+
+  .screen {
+    height: auto;
+    min-height: calc(100vh - 40px);
+  }
+
+  /* ─── ロール選択 ─── */
+  #screen-role {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(140deg, #EEF4FF 0%, #F4F6F9 65%);
+    padding: 60px 40px;
+    min-height: calc(100vh - 40px);
+  }
+  .role-hero { padding: 0 0 32px; }
+  .role-hero h1 { font-size: 28px; }
+  .role-cards {
+    max-width: 640px; width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 20px; padding: 0;
+  }
+  .role-card {
+    flex-direction: column; align-items: center;
+    text-align: center; padding: 32px 24px; gap: 14px;
+  }
+  .role-card-arrow { display: none; }
+  .role-footer { max-width: 640px; width: 100%; padding: 24px 0 12px; }
+  .role-section-label { max-width: 640px; width: 100%; padding: 0; align-self: center; }
+
+  /* ─── ログイン画面（点検者 / 管理者）─── */
+  #screen-inspector,
+  #screen-manager {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(140deg, #EEF4FF 0%, #F4F6F9 65%);
+    max-width: 100%;
+    min-height: calc(100vh - 40px);
+    padding: 40px 20px;
+  }
+  /* ナビバーをPC画面で上端に固定・全幅表示（.screenが既にpositioned要素のため動作する） */
+  #screen-inspector .nav-bar,
+  #screen-manager .nav-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 5;
+  }
+  #screen-inspector .nav-bar .nav-title,
+  #screen-manager .nav-bar .nav-title {
+    white-space: nowrap;
+  }
+  .inspector-body,
+  .manager-body {
+    max-width: 540px; width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+    padding: 44px 44px 40px;
+    margin: 0;
+  }
+  .inspector-icon-wrap,
+  .manager-icon-wrap { width: 80px; height: 80px; margin-bottom: 12px; }
+  .user-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* ─── ホーム ─── */
+  #screen-home {
+    max-width: 100%;
+    background: #F4F6F9;
+    min-height: calc(100vh - 40px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "header   header"
+      "calendar summary"
+      "start    summary"
+      "footer   footer";
+  }
+  .status-bar.status-bar-white { display: none !important; }
+  .home-header   { grid-area: header;   padding: 14px 32px; }
+  .calendar-card { grid-area: calendar; margin: 20px 14px 16px 32px; padding: 20px; border-radius: 12px; box-shadow: var(--pc-shadow-sm); }
+  .start-btn-wrap{ grid-area: start;    padding: 0 14px 24px 32px; align-self: start; }
+  .summary-card  { grid-area: summary;  margin: 20px 32px 0 14px; padding: 20px 24px; border-radius: 12px; box-shadow: var(--pc-shadow-sm); align-self: start; }
+  .safe-bottom   { grid-area: footer;   height: 20px; }
+  .summary-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+  .summary-grid  { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .summary-item  { padding: 14px 10px; background: #F8FAFF; border-radius: 10px; border: 1px solid #EEF2FF; }
+  .summary-count { font-size: 24px; margin-top: 4px; }
+
+  /* ─── ライン選択 / 設備選択 ─── */
+  #screen-line, #screen-equip { background: #F4F6F9; min-height: calc(100vh - 40px); }
+  .list-body { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 20px 32px; }
+  .equip-select-count { margin: 16px 32px 4px; }
+  #line-select-label { padding: 20px 32px 8px; }
+  .bottom-action { padding: 16px 32px; padding-bottom: max(20px, env(safe-area-inset-bottom)); background: #fff; }
+
+  /* ─── 点検入力 / 確認 ─── */
+  #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: calc(100vh - 40px); }
+  .selected-equip-chips { padding: 16px 32px 12px; }
+  .inspect-date-banner  { margin: 8px 32px 0; }
+  .inspect-top-actions  { padding: 12px 32px 8px; }
+  #inspect-sections {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 16px; padding: 0 32px 16px;
+  }
+  .equip-section { margin: 0; }
+  #screen-confirm .confirm-section    { margin: 12px 32px 0; }
+  #screen-confirm .confirm-summary-bar{ margin: 12px 32px; }
+
+  /* ─── 完了 ─── */
+  #screen-complete { background: #F4F6F9; min-height: calc(100vh - 40px); }
+  #screen-complete > div { background: transparent; min-height: calc(100vh - 40px); padding: 60px 40px; }
+  .complete-title { font-size: 32px; }
+  .btn-complete-home { width: 280px; }
+
+  /* ============================================================
+     ④ 管理画面サイドバー化
+        ★ [style*="flex"] = JS が display:flex にしたとき「だけ」
+          グリッドを適用。display:none は絶対に上書きしない。
+     ============================================================ */
+  #screen-admin[style*="flex"] {
+    /* サイズ・位置 */
+    max-width : 1440px;
+    width     : calc(100% - 40px);
+    left      : 50%;
+    top       : 20px;
+    transform : translateX(-50%);
+    height    : calc(100vh - 40px);
+    height    : calc(100dvh - 40px);
+    border-radius : var(--pc-radius);
+    overflow  : hidden;
+    box-shadow: var(--pc-shadow);
+    background: #F4F6F9;
+
+    /* グリッドレイアウト */
+    display              : grid;
+    grid-template-columns: var(--pc-sidebar-w) 1fr;
+    grid-template-rows   : var(--pc-header-h) 1fr;
+    grid-template-areas  :
+      "sidebar header"
+      "sidebar content";
+  }
+
+  /* ── ヘッダー（右上） ── */
+  #screen-admin[style*="flex"] .adm-hdr {
+    grid-area   : header;
+    position    : relative;   /* ← ポップオーバーの z-index が機能するよう relative */
+    z-index     : 50;         /* ← adm-wrap より前面に */
+    height      : var(--pc-header-h);
+    padding     : 0 24px;
+    border-bottom: 1px solid #E8E8E8;
+    border-left : 1px solid #E8E8E8;
+    background  : #fff;
+    display     : flex;
+    align-items : center;
+    flex-shrink : unset;
+  }
+
+  /* ポップオーバー z-index 確保 */
+  #screen-admin[style*="flex"] .adm-user-popover {
+    z-index: 200;
+  }
+
+  /* ── コンテンツ（右下） ── */
+  #screen-admin[style*="flex"] .adm-wrap {
+    grid-area          : content;
+    max-width          : none;
+    width              : 100%;
+    margin             : 0;
+    padding            : 24px 32px 48px;
+    overflow-y         : auto;
+    -webkit-overflow-scrolling: touch;
+    border-left        : 1px solid #E8E8E8;
+    background         : #F4F6F9;
+    /* ボトムタブバー分のパディング不要 */
+    padding-bottom     : 40px;
+  }
+
+  /* ── サイドバー（左列・ボトムタブを転用） ── */
+  #screen-admin[style*="flex"] .adm-bottom-tabbar {
+    grid-area   : sidebar;
+
+    /* position: absolute → static に戻す */
+    position    : static !important;
+
+    /* サイズ */
+    width       : var(--pc-sidebar-w) !important;
+    height      : auto !important;
+
+    /* 縦並びに変換 */
+    display     : flex !important;
+    flex-direction: column;
+    grid-template-columns: unset;
+
+    /* スタイル */
+    border-top  : none !important;
+    border-right: 1px solid #E0E0E0;
+    border-bottom: none;
+    background  : #fff;
+    padding     : 0 10px 24px !important;
+    gap         : 3px;
+    overflow-y  : auto;
+    align-items : stretch;
+    justify-content: flex-start;
+  }
+
+  /* サイドバーロゴ */
+  #screen-admin[style*="flex"] .adm-bottom-tabbar::before {
+    content     : '設備点検アプリ';
+    display     : flex;
+    align-items : center;
+    height      : var(--pc-header-h);
+    flex-shrink : 0;
+    padding     : 0 14px;
+    font-size   : 15px;
+    font-weight : 800;
+    color       : var(--blue);
+    letter-spacing: -0.3px;
+    border-bottom: 1px solid #E8E8E8;
+    margin      : 0 -10px 10px;
+  }
+
+  /* タブボタン → サイドバーメニュー */
+  #screen-admin[style*="flex"] .adm-btab {
+    display         : flex !important;
+    flex-direction  : row !important;
+    align-items     : center;
+    justify-content : flex-start !important;
+    gap             : 10px;
+    padding         : 11px 14px !important;
+    border-radius   : 10px;
+    font-size       : 13px !important;
+    font-weight     : 600;
+    width           : 100%;
+    height          : auto !important;
+    color           : var(--text-sub);
+    transition      : background 0.13s, color 0.13s;
+  }
+  #screen-admin[style*="flex"] .adm-btab:hover {
+    background: #F4F6F9;
+    color: var(--text);
+  }
+  #screen-admin[style*="flex"] .adm-btab.active {
+    background: var(--blue-light) !important;
+    color     : var(--blue) !important;
+  }
+  #screen-admin[style*="flex"] .adm-btab-icon {
+    width: 30px; height: 30px; flex-shrink: 0;
+  }
+  #screen-admin[style*="flex"] .adm-btab-icon svg {
+    width: 20px; height: 20px;
+  }
+  #screen-admin[style*="flex"] .adm-btab-badge {
+    position: static; top: unset; right: unset; margin-left: auto;
+  }
+
+  /* ── 設定グリッド 3列 ── */
+  #screen-admin[style*="flex"] .adm-settings-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px;
+  }
+  #screen-admin[style*="flex"] .adm-settings-menu {
+    padding: 0 0 32px;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card {
+    padding: 24px 16px 20px;
+  }
+  #screen-admin[style*="flex"] .adm-panel {
+    padding: 16px 0;
+  }
+  #screen-admin[style*="flex"] .adm-list-row {
+    padding: 14px 18px;
+  }
+
+  /* モーダルをPC中央表示 */
+  .adm-modal-overlay.open {
+    align-items: center;
+  }
+  .adm-modal {
+    border-radius: 16px;
+    max-height: 80vh;
+    padding: 32px 32px max(28px, env(safe-area-inset-bottom, 28px));
+    max-width: 480px;
+  }
+
+  /* ============================================================
+     ⑤ ダッシュボード / 承認画面
+        ★ [style*="block"] で display:none を上書きしない
+     ============================================================ */
+  #screen-dashboard[style*="block"],
+  #screen-approval[style*="block"] {
+    max-width    : 1440px;
+    width        : calc(100% - 40px);
+    left         : 50%;
+    top          : 20px;
+    transform    : translateX(-50%);
+    height       : calc(100vh - 40px);
+    height       : calc(100dvh - 40px);
+    border-radius: var(--pc-radius);
+    overflow     : hidden;
+    box-shadow   : var(--pc-shadow);
+    overflow-y   : hidden;
+    display      : block;
+  }
+
+  #screen-dashboard[style*="block"] .da-wrap,
+  #screen-approval[style*="block"] .da-wrap {
+    max-width  : none;
+    height     : 100%;
+    display    : grid;
+    grid-template-rows: var(--pc-header-h) 1fr;
+  }
+
+  #screen-dashboard[style*="block"] .da-hdr,
+  #screen-approval[style*="block"] .da-hdr {
+    height    : var(--pc-header-h);
+    padding   : 0 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    position  : static;
+  }
+
+  #screen-dashboard[style*="block"] .da-body,
+  #screen-approval[style*="block"] .apr-body {
+    overflow-y: auto;
+    padding   : 24px 32px 40px;
+    max-width : none;
+    height    : 100%;
+  }
+
+  #screen-dashboard[style*="block"] .da-summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  #screen-dashboard[style*="block"] .da-summary-card {
+    padding      : 20px;
+    border-radius: 12px;
+  }
+
+  #screen-dashboard[style*="block"] .da-lines-card,
+  #screen-dashboard[style*="block"] .da-anomaly-list {
+    border-radius: 12px;
+  }
+
+  /* 承認ライン */
+  #screen-approval[style*="block"] .apr2-line-wrap {
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  #screen-approval[style*="block"] .apr2-page-btns {
+    gap: 6px;
+  }
+}
+
+/* ============================================================
+   ⑥ ワイドスクリーン（1400px〜）
+   ============================================================ */
+@media (min-width: 1400px) {
+  :root {
+    --pc-sidebar-w: 240px;
+  }
+  #screen-admin[style*="flex"] .adm-settings-grid {
+    gap: 20px !important;
+  }
+}
+</style>
 <!-- ===== MONTHLY SHEET STYLES ===== -->
 <style>
   /* ── Monthly Sheet Table ── */
