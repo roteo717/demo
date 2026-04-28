@@ -1545,81 +1545,9 @@
   }
 
   /* ── サイドバー（左列・ボトムタブを転用） ── */
+  /* adm-bottom-tabbar は pc-sidebar に移行済みのため完全非表示 */
   #screen-admin[style*="flex"] .adm-bottom-tabbar {
-    grid-area   : sidebar;
-
-    /* position: absolute → static に戻す */
-    position    : static !important;
-
-    /* サイズ */
-    width       : var(--pc-sidebar-w) !important;
-    height      : auto !important;
-
-    /* 縦並びに変換 */
-    display     : flex !important;
-    flex-direction: column;
-    grid-template-columns: unset;
-
-    /* スタイル */
-    border-top  : none !important;
-    border-right: 1px solid #E0E0E0;
-    border-bottom: none;
-    background  : #fff;
-    padding     : 0 10px 24px !important;
-    gap         : 3px;
-    overflow-y  : auto;
-    align-items : stretch;
-    justify-content: flex-start;
-  }
-
-  /* サイドバーロゴ */
-  #screen-admin[style*="flex"] .adm-bottom-tabbar::before {
-    content     : '設備点検アプリ';
-    display     : flex;
-    align-items : center;
-    height      : var(--pc-header-h);
-    flex-shrink : 0;
-    padding     : 0 14px;
-    font-size   : 15px;
-    font-weight : 800;
-    color       : var(--blue);
-    letter-spacing: -0.3px;
-    border-bottom: 1px solid #E8E8E8;
-    margin      : 0 -10px 10px;
-  }
-
-  /* タブボタン → サイドバーメニュー */
-  #screen-admin[style*="flex"] .adm-btab {
-    display         : flex !important;
-    flex-direction  : row !important;
-    align-items     : center;
-    justify-content : flex-start !important;
-    gap             : 10px;
-    padding         : 11px 14px !important;
-    border-radius   : 10px;
-    font-size       : 13px !important;
-    font-weight     : 600;
-    width           : 100%;
-    height          : auto !important;
-    color           : var(--text-sub);
-    transition      : background 0.13s, color 0.13s;
-  }
-  #screen-admin[style*="flex"] .adm-btab:hover {
-    background: #F4F6F9;
-    color: var(--text);
-  }
-  #screen-admin[style*="flex"] .adm-btab.active {
-    background: var(--blue-light) !important;
-    color     : var(--blue) !important;
-  }
-  #screen-admin[style*="flex"] .adm-btab-icon {
-    width: 30px; height: 30px; flex-shrink: 0;
-  }
-  #screen-admin[style*="flex"] .adm-btab-icon svg {
-    width: 20px; height: 20px;
-  }
-  #screen-admin[style*="flex"] .adm-btab-badge {
-    position: static; top: unset; right: unset; margin-left: auto;
+    display: none !important;
   }
 
   /* ── 設定グリッド 3列 ── */
@@ -1732,6 +1660,274 @@
   }
 }
 </style>
+
+<!-- =====================================================
+     【修正②】PC 2カラムレイアウト CSS
+     .pc-layout > .pc-sidebar + .pc-main を正しくグリッドで配置
+     ===================================================== -->
+<style>
+/* ── モバイル：pc-layout は単なるブロック、pc-sidebar は非表示 ── */
+.pc-layout {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+.pc-sidebar {
+  display: none; /* モバイルでは非表示 */
+}
+.pc-main {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ── PC (1024px〜)：グリッドで2カラム ── */
+@media (min-width: 1024px) {
+
+  /* 【修正③】body の flex 中央寄せを解除 */
+  body {
+    display: block !important;
+    align-items: unset !important;
+    justify-content: unset !important;
+  }
+
+  /* 【修正④】phone-wrapper の max-width 制限を解除 */
+  .phone-wrapper {
+    all: unset !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 100vh !important;
+    position: relative !important;
+    overflow-x: hidden !important;
+    background: var(--bg) !important;
+  }
+
+  /* 【修正⑤】pc-layout を2カラム グリッドに */
+  .pc-layout {
+    display: grid !important;
+    grid-template-columns: 240px 1fr !important;
+    grid-template-rows: 1fr !important;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  /* 【修正⑥】pc-sidebar：左列固定 */
+  .pc-sidebar {
+    display: flex !important;
+    flex-direction: column;
+    width: 240px !important;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    background: #FFFFFF !important;
+    border-right: 1px solid #E4E7EC !important;
+    overflow-y: auto;
+    z-index: 50;
+    /* 管理者ログイン前は非表示、JS で制御 */
+  }
+
+  /* pc-sidebar：管理者未ログイン時は非表示 */
+  .pc-sidebar.hidden-sidebar {
+    display: none !important;
+  }
+  /* 管理者未ログイン時 pc-layout を1カラムに */
+  .pc-layout.no-sidebar {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* pc-main：右列 */
+  .pc-main {
+    background: #F5F7FA !important;
+    min-height: 100vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* ── pc-sidebar 内部スタイル ── */
+  .pc-sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 58px;
+    padding: 0 18px;
+    border-bottom: 1px solid #E4E7EC;
+    flex-shrink: 0;
+  }
+  .pc-sidebar-logo-text {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--blue);
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+
+  .pc-sidebar-nav {
+    flex: 1;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .pc-sidebar-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+    transition: background 0.15s, color 0.15s;
+    -webkit-user-select: none;
+  }
+  .pc-sidebar-btn:hover {
+    background: #F5F7FA;
+    color: var(--text);
+  }
+  .pc-sidebar-btn.active {
+    background: var(--blue-light) !important;
+    color: var(--blue) !important;
+    font-weight: 700;
+  }
+  .pc-sidebar-btn-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .pc-sidebar-btn-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .pc-sidebar-badge {
+    position: absolute;
+    top: -5px;
+    right: -7px;
+    background: #E53935;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    padding: 0 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .pc-sidebar-footer {
+    padding: 12px 10px 20px;
+    border-top: 1px solid #E4E7EC;
+    flex-shrink: 0;
+  }
+  .pc-sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+    -webkit-user-select: none;
+  }
+  .pc-sidebar-user:hover { background: #F5F7FA; }
+  .pc-sidebar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--blue-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .pc-sidebar-avatar svg {
+    width: 18px;
+    height: 18px;
+  }
+  .pc-sidebar-username {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── 管理者画面：pc-main 内で全幅表示 ── */
+  #screen-admin {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  #screen-admin[style*="flex"] {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    /* 既存のグリッドを上書き */
+    grid-template-columns: unset !important;
+    grid-template-rows: unset !important;
+  }
+  /* adm-bottom-tabbar はPC時に非表示（pc-sidebar に移行済み） */
+  #screen-admin .adm-bottom-tabbar {
+    display: none !important;
+  }
+  /* ヘッダーのユーザーチップはPC時に非表示（pc-sidebarに統合） */
+  #screen-admin[style*="flex"] .adm-hdr #adm-user-chip,
+  #screen-admin[style*="flex"] .adm-hdr #adm-user-popover {
+    display: none !important;
+  }
+  /* adm-hdr をヘッダーとして表示 */
+  #screen-admin[style*="flex"] .adm-hdr {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 50 !important;
+    width: 100% !important;
+    border-left: none !important;
+    flex-shrink: 0;
+    background: #fff !important;
+    border-bottom: 1px solid #E8E8E8 !important;
+    height: 58px !important;
+    padding: 0 24px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  /* adm-wrap を全幅スクロール */
+  #screen-admin[style*="flex"] .adm-wrap {
+    grid-area: unset !important;
+    width: 100% !important;
+    max-width: none !important;
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 32px 48px !important;
+    background: #F4F6F9 !important;
+  }
+}
+</style>
 <!-- ===== MONTHLY SHEET STYLES ===== -->
 <style>
   /* ── Monthly Sheet Table ── */
@@ -1754,7 +1950,7 @@
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0,0,0,0.12);
     min-width: 680px;
-    width: max-content;
+    width: 100%;
     font-family: -apple-system,'Hiragino Sans','Noto Sans JP',sans-serif;
   }
   /* Title bar */
@@ -2470,10 +2666,12 @@
   /* ── ライン内コンテンツ ── */
   .apr2-line-body {
     padding: 8px 8px 10px;
-    display: flex; flex-direction: column; gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
     overflow: hidden;
     transition: max-height 0.28s cubic-bezier(.4,0,.2,1), opacity 0.22s, padding 0.22s;
-    max-height: 2000px; opacity: 1;
+    max-height: 4000px; opacity: 1;
   }
   .apr2-line-body.collapsed {
     max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0;
@@ -2620,6 +2818,71 @@
 </style>
 </head>
 <body>
+<!-- =====================================================
+     【修正①】body直下に pc-layout を配置
+     pc-sidebar と pc-main を直下の兄弟要素として並べる
+     ===================================================== -->
+<div class="pc-layout">
+
+  <!-- ===== PC SIDEBAR ===== -->
+  <aside class="pc-sidebar" id="pc-sidebar">
+    <!-- ロゴ -->
+    <div class="pc-sidebar-logo">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+        <rect width="26" height="26" rx="7" fill="#EEF4FF"/>
+        <rect x="6" y="7" width="11" height="14" rx="2" stroke="#2F6BFF" stroke-width="1.8" fill="none"/>
+        <rect x="9" y="5" width="5" height="4" rx="1.5" stroke="#2F6BFF" stroke-width="1.8" fill="none"/>
+        <polyline points="8.5,14 10.5,16.5 15,11.5" stroke="#2F6BFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="pc-sidebar-logo-text">設備点検アプリ</span>
+    </div>
+
+    <!-- ナビゲーション -->
+    <nav class="pc-sidebar-nav">
+      <button class="pc-sidebar-btn active" id="pcsb-dashboard" onclick="showAdmTab('dashboard')">
+        <div class="pc-sidebar-btn-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </div>
+        <span>ダッシュボード</span>
+      </button>
+      <button class="pc-sidebar-btn" id="pcsb-approval" onclick="showAdmTab('approval')">
+        <div class="pc-sidebar-btn-icon" style="position:relative;">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span class="pc-sidebar-badge" id="pcsb-badge-approval" style="display:none;">0</span>
+        </div>
+        <span>承認</span>
+      </button>
+      <button class="pc-sidebar-btn" id="pcsb-settings" onclick="showAdmTab('settings')">
+        <div class="pc-sidebar-btn-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </div>
+        <span>設定</span>
+      </button>
+    </nav>
+
+    <!-- ユーザー情報（下部） -->
+    <div class="pc-sidebar-footer" id="pc-sidebar-footer">
+      <div class="pc-sidebar-user" onclick="toggleAdmUserMenu(event)">
+        <div class="pc-sidebar-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <span class="pc-sidebar-username" id="pc-sidebar-username">管理者</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== PC MAIN ===== -->
+  <main class="pc-main" id="pc-main">
+
 <div class="phone-wrapper">
 
   <!-- ===== SCREEN 1: ROLE SELECT ===== -->
@@ -3218,13 +3481,7 @@
           <div class="adm-settings-card-sub">休日・特別出勤日の設定</div>
         </div>
 
-        <div class="adm-settings-card" style="grid-column:1/-1;" onclick="showAdmSubTab('monthly-sheet')">
-          <div class="adm-settings-card-icon" style="background:#E8F5E9;">
-            <svg viewBox="0 0 24 24" stroke="#2E7D32"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
-          </div>
-          <div class="adm-settings-card-label">月次点検表</div>
-          <div class="adm-settings-card-sub">設備ごとの1ヶ月点検シート</div>
-        </div>
+
 
       </div>
     </div>
@@ -3375,17 +3632,40 @@
     <!-- ダッシュボード パネル (管理画面内) -->    <!-- ダッシュボード パネル -->
     <div id="adm-panel-dashboard" class="adm-panel" style="display:none;">
 
-      <!-- ライン進捗 -->
-      <div class="adm-section-hdr">
-        <span class="adm-section-title">ライン別 進捗状況（今月）</span>
-      </div>
-      <div class="adm-list-card" id="adm-dash-lines-list"></div>
+      <div style="display:flex;gap:20px;align-items:flex-start;">
 
-      <!-- 異常一覧 -->
-      <div class="adm-section-hdr" style="margin-top:20px;">
-        <span class="adm-section-title">異常一覧（未対応）</span>
+        <!-- 左：月次点検表 -->
+        <div style="flex:1;min-width:0;">
+          <div class="adm-section-hdr">
+            <span class="adm-section-title">月次点検表</span>
+          </div>
+          <div class="adm-list-card" style="padding:12px 14px;">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+              <div style="flex:1;min-width:120px;">
+                <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">設備</div>
+                <select id="ms-equip-sel" class="adm-select" onchange="renderMonthlySheet()" style="font-size:13px;padding:8px 32px 8px 10px;">
+                  <option value="">設備を選択</option>
+                </select>
+              </div>
+              <div style="flex:1;min-width:110px;">
+                <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">年月</div>
+                <input id="ms-month-sel" type="month" class="adm-select" oninput="renderMonthlySheet()" style="font-size:13px;padding:8px 10px;" />
+              </div>
+            </div>
+            <div id="ms-no-equip" style="display:none;padding:10px 0;text-align:center;color:var(--text-sub);font-size:13px;">設備を選択してください</div>
+            <div id="ms-table-wrap" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;width:100%;box-sizing:border-box;"></div>
+          </div>
+        </div>
+
+        <!-- 右：異常一覧 -->
+        <div style="flex:1;min-width:0;">
+          <div class="adm-section-hdr" style="display:flex;align-items:center;">
+            <span class="adm-section-title" id="adm-anomaly-section-title">異常一覧</span>
+          </div>
+          <div id="adm-dash-anomaly-list" style="display:flex;flex-direction:column;gap:10px;max-height:480px;overflow-y:auto;padding-right:4px;"></div>
+        </div>
+
       </div>
-      <div id="adm-dash-anomaly-list"></div>
 
     </div>
 
@@ -3439,42 +3719,6 @@
       <!-- (legacy: kept for compatibility) -->
       <div id="adm-apr-card-list" style="display:none;"></div>
       <span id="adm-apr-pending-badge" style="display:none;"></span>
-
-    </div>
-
-    <!-- 月次点検表 パネル -->
-    <div id="adm-panel-monthly-sheet" class="adm-panel" style="display:none;padding:12px 0 20px;">
-
-      <!-- 設備・年月セレクター -->
-      <div style="padding:0 14px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <div style="flex:1;min-width:120px;">
-          <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">設備</div>
-          <select id="ms-equip-sel" class="adm-select" onchange="renderMonthlySheet()" style="font-size:13px;padding:8px 32px 8px 10px;">
-            <option value="">設備を選択</option>
-          </select>
-        </div>
-        <div style="flex:1;min-width:110px;">
-          <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">年月</div>
-          <input id="ms-month-sel" type="month" class="adm-select" oninput="renderMonthlySheet()" style="font-size:13px;padding:8px 10px;" />
-        </div>
-
-      </div>
-
-      <!-- 設備なしメッセージ -->
-      <div id="ms-no-equip" style="display:none;padding:20px 16px;text-align:center;color:var(--text-sub);font-size:13px;">
-        設備を選択してください
-      </div>
-
-      <!-- テーブルラッパー -->
-      <div id="ms-table-wrap" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;padding:0 14px 8px;width:100%;box-sizing:border-box;">
-        <!-- JSで描画 -->
-      </div>
-      <!-- 横スクロールヒント -->
-      <div id="ms-scroll-hint" style="display:none;padding:4px 14px 0;text-align:right;font-size:10px;color:var(--text-sub);letter-spacing:0;">
-        ← 横にスクロールできます →
-      </div>
-
-
 
     </div>
 
@@ -4689,6 +4933,16 @@ function toggleAdmUserMenu(e) {
   var popover = document.getElementById('adm-user-popover');
   if (!chip || !popover) return;
   var isOpen  = popover.classList.contains('open');
+  if (!isOpen) {
+    /* transform な祖先を回避: body 直下に移動して fixed 配置 */
+    if (popover.parentNode !== document.body) document.body.appendChild(popover);
+    var rect = chip.getBoundingClientRect();
+    popover.style.position = 'fixed';
+    popover.style.top      = (rect.bottom + 8) + 'px';
+    popover.style.right    = (window.innerWidth - rect.right) + 'px';
+    popover.style.left     = 'auto';
+    popover.style.zIndex   = '99999';
+  }
   popover.classList.toggle('open', !isOpen);
   chip.classList.toggle('open', !isOpen);
 }
@@ -4698,6 +4952,16 @@ function toggleHomeUserMenu(e) {
   var popover = document.getElementById('home-user-popover');
   if (!chip || !popover) return;
   var isOpen  = popover.classList.contains('open');
+  if (!isOpen) {
+    /* will-change:transform な祖先を回避: body 直下に移動して fixed 配置 */
+    if (popover.parentNode !== document.body) document.body.appendChild(popover);
+    var rect = chip.getBoundingClientRect();
+    popover.style.position = 'fixed';
+    popover.style.top      = (rect.bottom + 8) + 'px';
+    popover.style.right    = (window.innerWidth - rect.right) + 'px';
+    popover.style.left     = 'auto';
+    popover.style.zIndex   = '99999';
+  }
   popover.classList.toggle('open', !isOpen);
   chip.classList.toggle('open', !isOpen);
 }
@@ -4715,15 +4979,43 @@ document.addEventListener('click', function() {
   // 管理者名をヘッダーに反映
   var nameEl = document.getElementById('adm-hdr-name');
   if (nameEl && adminName) nameEl.textContent = adminName + ' さん';
+  // PC サイドバーにも名前を反映
+  var pcNameEl = document.getElementById('pc-sidebar-username');
+  if (pcNameEl && adminName) pcNameEl.textContent = adminName + ' さん';
   updateAdmDateDisplay();
+
+  // 【修正】phone-wrapper（点検者側スクリーン群）を非表示にする
+  // → 旧コードは position:fixed でオーバーレイしていたが、
+  //   static レイアウトに変えたため display:none で隠す方式に変更
+  var pw = document.querySelector('.phone-wrapper');
+  if (pw) pw.style.setProperty('display', 'none', 'important');
+
   document.getElementById('screen-admin').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
+  // PC では body overflow は不要（pc-main がスクロール担う）
+  if (window.innerWidth < 1024) {
+    document.body.style.overflow = 'hidden';
+  }
+  // 【修正】PC サイドバーを表示し、pc-layout をグリッドに切り替え
+  var pcSidebar = document.getElementById('pc-sidebar');
+  var pcLayout  = document.querySelector('.pc-layout');
+  if (pcSidebar) pcSidebar.classList.remove('hidden-sidebar');
+  if (pcLayout)  pcLayout.classList.remove('no-sidebar');
   showAdmTab('dashboard');
 }
 
 function adminLogout() {
   document.getElementById('screen-admin').style.display = 'none';
   document.body.style.overflow = '';
+
+  // 【修正】phone-wrapper を再表示する
+  var pw = document.querySelector('.phone-wrapper');
+  if (pw) pw.style.removeProperty('display');
+
+  // 【修正】PC サイドバーを非表示にし、pc-layout を1カラムに
+  var pcSidebar = document.getElementById('pc-sidebar');
+  var pcLayout  = document.querySelector('.pc-layout');
+  if (pcSidebar) pcSidebar.classList.add('hidden-sidebar');
+  if (pcLayout)  pcLayout.classList.add('no-sidebar');
   // ポップオーバーを閉じる
   var popover = document.getElementById('adm-user-popover');
   var chip    = document.getElementById('adm-user-chip');
@@ -4732,6 +5024,8 @@ function adminLogout() {
   // 管理者名リセット
   var nameEl = document.getElementById('adm-hdr-name');
   if (nameEl) nameEl.textContent = '';
+  var pcNameEl = document.getElementById('pc-sidebar-username');
+  if (pcNameEl) pcNameEl.textContent = '管理者';
   // ログイン画面の選択状態をリセット
   var mgrBtns = document.querySelectorAll('#manager-user-grid .mgr-btn');
   mgrBtns.forEach(function(b, i) { b.classList.toggle('selected', i === 0); });
@@ -4743,9 +5037,14 @@ function showAdmTab(tab) {
   // スクロールをトップにリセット
   var wrap = document.querySelector('.adm-wrap');
   if (wrap) wrap.scrollTop = 0;
-  // 下部タブのactive切り替え
+  // 下部タブのactive切り替え（モバイル用）
   ['dashboard','approval','settings'].forEach(function(t) {
     var b = document.getElementById('abtab-'+t);
+    if (b) b.classList.toggle('active', t===tab);
+  });
+  // 【修正】PC サイドバーボタンのactive切り替え
+  ['dashboard','approval','settings'].forEach(function(t) {
+    var b = document.getElementById('pcsb-'+t);
     if (b) b.classList.toggle('active', t===tab);
   });
   // hide all panels
@@ -4758,8 +5057,8 @@ function showAdmTab(tab) {
   if (nav) nav.classList.remove('visible');
   var menu = document.getElementById('adm-settings-menu');
 
-  if (tab==='dashboard') { renderAdmDashboard(); document.getElementById('adm-panel-dashboard').style.display='block'; if (menu) menu.classList.remove('visible'); }
-  if (tab==='approval')  { renderAdmApproval();  document.getElementById('adm-panel-approval').style.display='block'; if (menu) menu.classList.remove('visible'); }
+  if (tab==='dashboard') { document.getElementById('adm-panel-dashboard').style.display='block'; if (menu) menu.classList.remove('visible'); renderAdmDashboard(); }
+  if (tab==='approval')  { document.getElementById('adm-panel-approval').style.display='block'; if (menu) menu.classList.remove('visible'); renderAdmApproval(); }
   if (tab==='settings')  { showAdmSettingsMenu(); }
 }
 
@@ -4784,6 +5083,7 @@ var ADM_PANEL_LABELS = {
 };
 
 function showAdmSubTab(sub) {
+  if (sub === 'monthly-sheet') { showAdmTab('dashboard'); return; }
   // メニューを隠す
   var menu = document.getElementById('adm-settings-menu');
   if (menu) menu.classList.remove('visible');
@@ -5440,6 +5740,7 @@ function computeLiveDashData() {
   var now = new Date();
   var todayY = now.getFullYear(), todayM = now.getMonth(), todayD = now.getDate();
   var inspections = loadInspections();
+  var aprStatuses = loadAprStatuses();
 
   var todayRecs = inspections.filter(function(r) {
     return r.year === todayY && r.month === todayM && r.day === todayD;
@@ -5447,30 +5748,56 @@ function computeLiveDashData() {
 
   var allEquips = ADM.equips || [];
   var totalEquips = allEquips.length;
-  var doneEquipSet = {}, anomalyEquipSet = {}, anomalyList = [];
+  var doneEquipSet = {}, anomalyKeySet = {}, anomalyList = [];
 
+  /* 今日の点検サマリー用 */
   todayRecs.forEach(function(r) {
     (r.equips || []).forEach(function(eid) {
       doneEquipSet[eid] = true;
-      var s = r.state && r.state[eid];
-      var hasNg = s && ['daily','10days','monthly'].some(function(t) {
-        return s[t] && s[t].some(function(v){ return v === 'ng'; });
-      });
-      if (hasNg && !anomalyEquipSet[eid]) {
-        anomalyEquipSet[eid] = true;
-        var eq = allEquips.find(function(e){ return e.id === eid; }) || {};
-        anomalyList.push({
-          equipId: eid,
-          equipName: eq.name || eid,
-          detail: '要確認',
-          time: r.completedAt ? new Date(r.completedAt).toTimeString().slice(0,5) : '--:--'
-        });
-      }
     });
   });
 
+  /* 未対応異常一覧: 全期間の点検データから収集（承認済みは除外） */
+  inspections.forEach(function(r) {
+    var dateStr = r.year + '/' + String(r.month+1).padStart(2,'0') + '/' + String(r.day).padStart(2,'0');
+
+    (r.equips || []).forEach(function(eid) {
+      var s = r.state && r.state[eid];
+      /* 保存済み anomaly フラグ OR state の ng 値で判定 */
+      var hasNg = false;
+      if (s) {
+        hasNg = ['daily','10days','monthly'].some(function(t) {
+          return s[t] && s[t].some(function(v){ return v === 'ng'; });
+        });
+      }
+      if (!hasNg && !r.anomaly) return;
+
+      /* 承認済みかチェック */
+      var aprId10 = 'apr10-' + r.year + '-' + r.month + '-' + r.day + '-' + eid;
+      var aprIdM  = 'aprM-'  + r.year + '-' + r.month + '-' + r.day + '-' + eid;
+      if (aprStatuses[aprId10] === 'approved' || aprStatuses[aprIdM] === 'approved') return;
+
+      var key = eid + '-' + dateStr;
+      if (anomalyKeySet[key]) return;
+      anomalyKeySet[key] = true;
+
+      var eq = allEquips.find(function(e){ return e.id === eid; }) || {};
+      anomalyList.push({
+        equipId: eid,
+        equipName: eq.name || eid,
+        date: dateStr,
+        detail: '要確認',
+        inspector: r.inspector || '',
+        time: r.completedAt ? new Date(r.completedAt).toTimeString().slice(0,5) : '--:--'
+      });
+    });
+  });
+
+  /* 新しい順に並べ替え */
+  anomalyList.sort(function(a, b){ return b.date > a.date ? 1 : -1; });
+
   var doneCount = Object.keys(doneEquipSet).length;
-  var anomalyCount = Object.keys(anomalyEquipSet).length;
+  var anomalyCount = anomalyList.length;
   var notStartedCount = Math.max(0, totalEquips - doneCount);
 
   // Monthly line progress
@@ -5840,8 +6167,28 @@ function injectAdmProgressCss() {
   document.head.appendChild(s);
 }
 
+/* 異常一覧「該当箇所へ」→ 月次点検表に該当設備・年月をセットして移動 */
+function jumpToMonthlySheet(equipId, dateStr) {
+  showAdmTab('dashboard');
+  initMonthlySheetSelectors();
+  var equipSel = document.getElementById('ms-equip-sel');
+  var monthSel = document.getElementById('ms-month-sel');
+  if (equipSel && equipId) equipSel.value = equipId;
+  if (monthSel && dateStr) {
+    var parts = dateStr.split('/');
+    if (parts.length >= 2) monthSel.value = parts[0] + '-' + String(parts[1]).padStart(2,'0');
+  }
+  renderMonthlySheet();
+  setTimeout(function() {
+    var wrap = document.getElementById('ms-table-wrap');
+    if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 120);
+}
+
 function renderAdmDashboard() {
   injectAdmProgressCss();
+  initMonthlySheetSelectors();
+  renderMonthlySheet();
 
   /* — Summary — */
   var liveData = computeLiveDashData();
@@ -5864,40 +6211,28 @@ function renderAdmDashboard() {
     }).join('');
   }
 
-  /* — Line Progress — */
-  var linesEl = document.getElementById('adm-dash-lines-list');
-  if (linesEl) {
-    var now = new Date();
-    var monthStr = now.getFullYear() + '年' + (now.getMonth() + 1) + '月';
-    linesEl.innerHTML = liveData.lines.map(function(ln) {
-      var pct = Math.round(ln.done / ln.total * 100);
-      var fillCls = pct === 100 ? 'full' : pct < 40 ? 'low' : '';
-      return '<div class="adm-list-row">' +
-        '<div style="flex:1"><div class="adm-list-name">' + ln.name + '</div>' +
-        '<div class="adm-list-sub">' + ln.done + ' / ' + ln.total + ' 日完了（' + monthStr + '）</div></div>' +
-        '<div class="adm-prog-wrap"><div class="adm-prog-fill ' + fillCls + '" style="width:' + pct + '%"></div></div>' +
-        '<div style="font-size:13px;font-weight:700;color:var(--blue);width:34px;text-align:right;">' + pct + '%</div>' +
-      '</div>';
-    }).join('');
-  }
-
   /* — Anomaly List — */
   var anEl = document.getElementById('adm-dash-anomaly-list');
   if (anEl) {
     if (!liveData.anomalies.length) {
-      anEl.innerHTML = '<div class="adm-list-card"><div class="adm-list-row"><span class="adm-list-sub">現在、異常はありません</span></div></div>';
+      anEl.innerHTML = '<div style="background:#E8F5E9;border-radius:12px;padding:16px;display:flex;align-items:center;gap:10px;">' +
+        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
+        '<div><div style="font-size:14px;font-weight:700;color:#2E7D32;">未対応の異常はありません</div>' +
+        '<div style="font-size:12px;color:#388E3C;margin-top:2px;">すべての異常は対応済みです</div></div></div>';
     } else {
-      anEl.innerHTML = '<div class="adm-list-card" style="border-left:3px solid var(--red);">' +
-        liveData.anomalies.map(function(a) {
-          return '<div class="adm-list-row">' +
-            '<div style="flex:1">' +
-              '<div class="adm-list-name">' + a.equipId + '　' + a.equipName + '</div>' +
-              '<div class="adm-list-sub">発見時刻：' + a.time + '</div>' +
-            '</div>' +
-            '<span class="adm-anomaly-tag">' + a.detail + '</span>' +
-          '</div>';
-        }).join('') +
-      '</div>';
+      var cards = liveData.anomalies.map(function(a) {
+        return '<div style="background:#fff;border:1px solid #F0D0D0;border-left:4px solid var(--red);border-radius:10px;padding:14px 16px;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+            '<div style="font-size:14px;font-weight:700;color:var(--text);">' + a.equipId + '　' + a.equipName + '</div>' +
+            '' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--text-sub);margin-bottom:4px;">' + (a.date||'') + (a.time && a.time!=='--:--' ? '　'+a.time : '') + '</div>' +
+          '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">' + a.detail + '</div>' +
+          (a.inspector ? '<div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;">点検者：' + a.inspector + '</div>' : '') +
+          '<button onclick="showAdmTab(\'approval\')" style="width:100%;padding:8px;border:1px solid var(--red);background:#fff;color:var(--red);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">該当箇所へ</button>' +
+        '</div>';
+      }).join('');
+      anEl.innerHTML = cards;
     }
   }
 }
@@ -6135,6 +6470,16 @@ function renderAdmApproval() {
       btabBadge.style.display = 'flex';
     } else {
       btabBadge.style.display = 'none';
+    }
+  }
+  // 【修正】PC サイドバーのバッジも同期
+  var pcBadge = document.getElementById('pcsb-badge-approval');
+  if (pcBadge) {
+    if (totalPending > 0) {
+      pcBadge.textContent = totalPending;
+      pcBadge.style.display = 'flex';
+    } else {
+      pcBadge.style.display = 'none';
     }
   }
 
@@ -6448,9 +6793,10 @@ function initMonthlySheetSelectors() {
     var opt = document.createElement('option');
     opt.value = eq.id;
     opt.textContent = eq.id + '　' + eq.name;
-    if (eq.id === curEquip) opt.selected = true;
     equipSel.appendChild(opt);
   });
+  // opt.selected より確実な方法で選択状態を復元
+  if (curEquip) equipSel.value = curEquip;
   // default to current year/month
   var monthSel = document.getElementById('ms-month-sel');
   if (monthSel && !monthSel.value) {
@@ -6471,8 +6817,6 @@ function renderMonthlySheet() {
   if (!equipId) {
     wrap.innerHTML = '';
     if (noEquip) noEquip.style.display = 'block';
-    var hint2 = document.getElementById('ms-scroll-hint');
-    if (hint2) hint2.style.display = 'none';
     return;
   }
   if (noEquip) noEquip.style.display = 'none';
@@ -6570,16 +6914,14 @@ function renderMonthlySheet() {
   // ── Title bar ──
   html += '<div class="ms-doc-titlebar">';
   html += '<div class="ms-doc-title-main">日常・定期点検表　　（' + year + '年　' + monthNames[month] + '月度）</div>';
-  html += '<div class="ms-doc-title-meta"><div>作成日</div><div style="font-weight:700;">2016/11/5</div></div>';
-  html += '<div class="ms-doc-title-box"><div class="ms-doc-title-box-label">承認</div><div style="height:20px;"></div></div>';
-  html += '<div class="ms-doc-title-box"><div class="ms-doc-title-box-label">作成</div><div style="height:20px;"></div></div>';
+
   html += '</div>';
 
   // ── Equipment info row ──
   html += '<div class="ms-doc-equiprow">';
   html += '<span>設備No.　<b>' + esc(eq.id) + '</b></span>';
   html += '<span>設備名：<b>' + esc(eq.name) + '</b></span>';
-  html += '<span style="flex:1;">型式：' + esc(eq.model || '') + '</span>';
+
   html += '<span>管理担当部門：<b>' + esc(eq.dept || 'M課') + '</b></span>';
   html += '</div>';
 
@@ -6792,7 +7134,6 @@ function renderMonthlySheet() {
   html += '</div>'; // .ms-doc
 
   wrap.innerHTML = html;
-  var hint = document.getElementById('ms-scroll-hint');
   if (hint) hint.style.display = 'block';
 }
 
@@ -6955,6 +7296,57 @@ function isHoliday(dateObj) {
    INJECT DASHBOARD BUTTON INTO HOME SCREEN
    ────────────────────────────────────────── */
 /* ダッシュボード・承認ボタンは点検者画面には表示しない */
+
+/* ── PC サイドバー：初期状態は非表示（管理者ログイン前） ── */
+(function() {
+  var pcSidebar = document.getElementById('pc-sidebar');
+  var pcLayout  = document.querySelector('.pc-layout');
+  if (pcSidebar) pcSidebar.classList.add('hidden-sidebar');
+  if (pcLayout)  pcLayout.classList.add('no-sidebar');
+})();
+
+/* ============================================================
+   【修正⑦】PC サイドバーのアクティブ状態を同期させる
+   ============================================================ */
+(function() {
+  // showAdmTab をラップして pc-sidebar-btn も同期更新
+  var _origShowAdmTab = typeof showAdmTab === 'function' ? showAdmTab : null;
+  function syncPcSidebar(tab) {
+    var btns = document.querySelectorAll('.pc-sidebar-btn');
+    btns.forEach(function(b) { b.classList.remove('active'); });
+    var map = { dashboard: 'pcsb-dashboard', approval: 'pcsb-approval', settings: 'pcsb-settings' };
+    if (map[tab]) {
+      var el = document.getElementById(map[tab]);
+      if (el) el.classList.add('active');
+    }
+    // pc-sidebar 表示制御
+    updatePcSidebarVisibility();
+  }
+  // adminLogin / adminLogout でサイドバー表示切り替え
+  function updatePcSidebarVisibility() {
+    var sidebar = document.getElementById('pc-sidebar');
+    if (!sidebar) return;
+    var admEl = document.getElementById('screen-admin');
+    var isAdminVisible = admEl && admEl.style.display && admEl.style.display !== 'none';
+    sidebar.style.display = (window.innerWidth >= 1024 && isAdminVisible) ? '' : '';
+  }
+  // 名前同期
+  var origAdminLogin = window.adminLogin;
+  if (origAdminLogin) {
+    window.adminLogin = function() {
+      origAdminLogin.apply(this, arguments);
+      setTimeout(function() {
+        var nameEl = document.getElementById('adm-hdr-name');
+        var pcNameEl = document.getElementById('pc-sidebar-username');
+        if (nameEl && pcNameEl) pcNameEl.textContent = nameEl.textContent;
+      }, 100);
+    };
+  }
+  window._syncPcSidebar = syncPcSidebar;
+})();
 </script>
+
+  </main><!-- /.pc-main -->
+</div><!-- /.pc-layout -->
 </body>
 </html>
