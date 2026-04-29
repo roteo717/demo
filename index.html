@@ -2667,7 +2667,7 @@
   .apr2-line-body {
     padding: 8px 8px 10px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 8px;
     overflow: hidden;
     transition: max-height 0.28s cubic-bezier(.4,0,.2,1), opacity 0.22s, padding 0.22s;
@@ -2871,11 +2871,16 @@
 
     <!-- ユーザー情報（下部） -->
     <div class="pc-sidebar-footer" id="pc-sidebar-footer">
-      <div class="pc-sidebar-user" onclick="toggleAdmUserMenu(event)">
-        <div class="pc-sidebar-avatar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <div style="display:flex;align-items:center;gap:6px;padding:4px 4px;">
+        <div class="pc-sidebar-user" style="flex:1;margin:0;" onclick="">
+          <div class="pc-sidebar-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <span class="pc-sidebar-username" id="pc-sidebar-username">管理者</span>
         </div>
-        <span class="pc-sidebar-username" id="pc-sidebar-username">管理者</span>
+        <button onclick="adminLogout()" title="ログアウト" style="flex-shrink:0;width:34px;height:34px;border-radius:8px;border:1px solid #E4E7EC;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;" onmouseover="this.style.background='#FFF0F0'" onmouseout="this.style.background='#fff'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
       </div>
     </div>
   </aside>
@@ -3523,14 +3528,7 @@
     </div>
     <!-- 点検項目管理 -->
     <div id="adm-panel-items" class="adm-panel" style="display:none">
-      <div class="adm-section-hdr">
-        <span class="adm-section-title">点検項目一覧</span>
-        <button class="adm-add-btn" onclick="admOpenModal('item','add','')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          項目を追加
-        </button>
-      </div>
-      <div id="adm-items-list" class="adm-list-card"></div>
+      <div id="adm-items-list"></div>
     </div>
     <!-- 割当設定 -->
     <div id="adm-panel-assign" class="adm-panel" style="display:none">
@@ -3552,24 +3550,30 @@
 
     <!-- ユーザー管理 パネル -->
     <div id="adm-panel-users" class="adm-panel" style="display:none">
-      <!-- 点検者 -->
-      <div class="adm-section-hdr">
-        <span class="adm-section-title">点検者一覧</span>
-        <button class="adm-add-btn" onclick="admOpenUserModal('inspector')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          点検者を追加
-        </button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+        <!-- 左：点検者 -->
+        <div>
+          <div class="adm-section-hdr">
+            <span class="adm-section-title">点検者一覧</span>
+            <button class="adm-add-btn" onclick="admOpenUserModal('inspector')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              点検者を追加
+            </button>
+          </div>
+          <div id="adm-inspectors-list" class="adm-list-card"></div>
+        </div>
+        <!-- 右：担当者（管理者） -->
+        <div>
+          <div class="adm-section-hdr">
+            <span class="adm-section-title">担当者（管理者）一覧</span>
+            <button class="adm-add-btn" onclick="admOpenUserModal('manager')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              担当者を追加
+            </button>
+          </div>
+          <div id="adm-managers-list" class="adm-list-card"></div>
+        </div>
       </div>
-      <div id="adm-inspectors-list" class="adm-list-card"></div>
-      <!-- 担当者（管理者） -->
-      <div class="adm-section-hdr" style="margin-top:20px;">
-        <span class="adm-section-title">担当者（管理者）一覧</span>
-        <button class="adm-add-btn" onclick="admOpenUserModal('manager')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-          担当者を追加
-        </button>
-      </div>
-      <div id="adm-managers-list" class="adm-list-card"></div>
     </div>
 
     <!-- 休日・出勤設定 パネル -->
@@ -3632,14 +3636,14 @@
     <!-- ダッシュボード パネル (管理画面内) -->    <!-- ダッシュボード パネル -->
     <div id="adm-panel-dashboard" class="adm-panel" style="display:none;">
 
-      <div style="display:flex;gap:20px;align-items:flex-start;">
+      <div style="display:flex;gap:20px;align-items:flex-start;" id="dash-two-col">
 
         <!-- 左：月次点検表 -->
-        <div style="flex:1;min-width:0;">
+        <div style="flex:2;min-width:0;display:flex;flex-direction:column;">
           <div class="adm-section-hdr">
             <span class="adm-section-title">月次点検表</span>
           </div>
-          <div class="adm-list-card" style="padding:12px 14px;">
+          <div class="adm-list-card" id="ms-card" style="padding:12px 14px;">
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
               <div style="flex:1;min-width:120px;">
                 <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">設備</div>
@@ -3658,11 +3662,11 @@
         </div>
 
         <!-- 右：異常一覧 -->
-        <div style="flex:1;min-width:0;">
-          <div class="adm-section-hdr" style="display:flex;align-items:center;">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;overflow:hidden;max-height:calc(100vh - 160px);overflow-y:auto;" id="dash-anomaly-right-col">
+          <div class="adm-section-hdr" style="display:flex;align-items:center;flex-shrink:0;">
             <span class="adm-section-title" id="adm-anomaly-section-title">異常一覧</span>
           </div>
-          <div id="adm-dash-anomaly-list" style="display:flex;flex-direction:column;gap:10px;max-height:480px;overflow-y:auto;padding-right:4px;"></div>
+          <div id="adm-dash-anomaly-list" style="display:flex;flex-direction:column;gap:10px;overflow-y:auto;padding-right:4px;"></div>
         </div>
 
       </div>
@@ -4652,9 +4656,10 @@
     // Check anomaly across all active inspection types
     const hasAnomaly = selectedEquips.some(id => {
       const s = state[id];
+      if (!s) return false;
       return s['daily'].some(v => v === 'ng') ||
-             (inspectionTypes.is10Day   && s['10days'].some(v => v === 'ng')) ||
-             (inspectionTypes.isMonthly && s['monthly'].some(v => v === 'ng'));
+             (s['10days'] && s['10days'].some(v => v === 'ng')) ||
+             (s['monthly'] && s['monthly'].some(v => v === 'ng'));
     });
     const record = {
       year: calYear, month: calMonth,
@@ -4700,7 +4705,16 @@
       if (!CAL_ANOMALY[mkey]) CAL_ANOMALY[mkey] = [];
       CAL_DONE[mkey] = CAL_DONE[mkey].filter(d => d !== r.day);
       CAL_ANOMALY[mkey] = CAL_ANOMALY[mkey].filter(d => d !== r.day);
-      if (r.anomaly) CAL_ANOMALY[mkey].push(r.day);
+
+      // r.anomaly フラグ OR state内のNG値で判定
+      let hasNg = !!r.anomaly;
+      if (!hasNg && r.state) {
+        hasNg = Object.values(r.state).some(s =>
+          ['daily','10days','monthly'].some(t => s[t] && s[t].some(v => v === 'ng'))
+        );
+      }
+
+      if (hasNg) CAL_ANOMALY[mkey].push(r.day);
       else CAL_DONE[mkey].push(r.day);
     });
   }
@@ -4800,13 +4814,13 @@ var ADM = {
     {id:'I25',name:'外観汚れ・破損確認',type:'monthly'}
   ],
   assigns: {
-    'A-101':[{itemId:'I1',common:true},{itemId:'I2',common:false},{itemId:'I4',common:true},{itemId:'I5',common:false}],
-    'A-102':[{itemId:'I3',common:false},{itemId:'I1',common:false},{itemId:'I6',common:false}],
-    'A-103':[{itemId:'I1',common:false},{itemId:'I8',common:false},{itemId:'I9',common:false}],
-    'A-104':[{itemId:'I3',common:false},{itemId:'I10',common:false},{itemId:'I11',common:false}],
-    'A-105':[{itemId:'I1',common:false},{itemId:'I2',common:false},{itemId:'I5',common:false}],
-    'A-106':[{itemId:'I3',common:false},{itemId:'I5',common:false},{itemId:'I12',common:false}],
-    'A-107':[{itemId:'I1',common:false},{itemId:'I7',common:false},{itemId:'I13',common:false}]
+    'A-101':[{itemId:'I1',common:true},{itemId:'I2',common:false},{itemId:'I4',common:true},{itemId:'I5',common:false},{itemId:'I14',common:false},{itemId:'I15',common:false},{itemId:'I16',common:false},{itemId:'I17',common:false},{itemId:'I23',common:false},{itemId:'I24',common:false},{itemId:'I25',common:false}],
+    'A-102':[{itemId:'I3',common:false},{itemId:'I1',common:false},{itemId:'I6',common:false},{itemId:'I14',common:false},{itemId:'I15',common:false},{itemId:'I16',common:false},{itemId:'I17',common:false},{itemId:'I23',common:false},{itemId:'I24',common:false},{itemId:'I25',common:false}],
+    'A-103':[{itemId:'I1',common:false},{itemId:'I8',common:false},{itemId:'I9',common:false},{itemId:'I14',common:false},{itemId:'I15',common:false},{itemId:'I16',common:false},{itemId:'I17',common:false},{itemId:'I23',common:false},{itemId:'I24',common:false},{itemId:'I25',common:false}],
+    'A-104':[{itemId:'I3',common:false},{itemId:'I10',common:false},{itemId:'I11',common:false},{itemId:'I14',common:false},{itemId:'I15',common:false},{itemId:'I16',common:false},{itemId:'I17',common:false},{itemId:'I23',common:false},{itemId:'I24',common:false},{itemId:'I25',common:false}],
+    'A-105':[{itemId:'I1',common:false},{itemId:'I2',common:false},{itemId:'I5',common:false},{itemId:'I14',common:false},{itemId:'I15',common:false},{itemId:'I16',common:false},{itemId:'I17',common:false},{itemId:'I23',common:false},{itemId:'I24',common:false},{itemId:'I25',common:false}],
+    'A-106':[{itemId:'I3',common:false},{itemId:'I5',common:false},{itemId:'I12',common:false},{itemId:'I14',common:false},{itemId:'I15',common:false},{itemId:'I16',common:false},{itemId:'I17',common:false},{itemId:'I23',common:false},{itemId:'I24',common:false},{itemId:'I25',common:false}],
+    'A-107':[{itemId:'I1',common:false},{itemId:'I7',common:false},{itemId:'I13',common:false},{itemId:'I14',common:false},{itemId:'I15',common:false},{itemId:'I16',common:false},{itemId:'I17',common:false},{itemId:'I23',common:false},{itemId:'I24',common:false},{itemId:'I25',common:false}]
   }
 };
 
@@ -4855,15 +4869,28 @@ function admMigrate() {
     if (def && item.name !== def.name) { item.name = def.name; }
   });
   // 3. デフォルト項目のうち、未追加かつ削除済みでないものだけ追加
-  //    （deletedItemIds に入っているものは絶対に復活させない）
   ADM_DEFAULT_ITEMS.forEach(function(def) {
-    // 削除済みIDはスキップ
     if (ADM.deletedItemIds.indexOf(def.id) >= 0) return;
-    // 既に存在するならスキップ
     var exists = ADM.items.find(function(i){ return i.id === def.id; });
     if (!exists) {
       ADM.items.push({id: def.id, name: def.name, type: def.type});
     }
+  });
+  // 4. 各設備の assigns に毎日・月次のデフォルト項目が未登録なら追加
+  var defaultByType = {
+    daily:   ['I14','I15','I16','I17'],
+    monthly: ['I23','I24','I25']
+  };
+  (ADM.equips || []).forEach(function(eq) {
+    if (!ADM.assigns[eq.id]) ADM.assigns[eq.id] = [];
+    var asgn = ADM.assigns[eq.id];
+    ['daily','monthly'].forEach(function(t) {
+      defaultByType[t].forEach(function(iid) {
+        if (ADM.deletedItemIds.indexOf(iid) >= 0) return;
+        var already = asgn.find(function(a){ return a.itemId === iid; });
+        if (!already) asgn.push({itemId: iid, common: false});
+      });
+    });
   });
 }
 
@@ -4929,73 +4956,53 @@ function admSync() {
 /* ─ user chip popover ─ */
 function toggleAdmUserMenu(e) {
   e.stopPropagation();
-  var chip    = document.getElementById('adm-user-chip');
-  var popover = document.getElementById('adm-user-popover');
-  if (!chip || !popover) return;
-  var isOpen  = popover.classList.contains('open');
-  if (!isOpen) {
-    /* transform な祖先を回避: body 直下に移動して fixed 配置 */
-    if (popover.parentNode !== document.body) document.body.appendChild(popover);
-    var rect = chip.getBoundingClientRect();
-    popover.style.position = 'fixed';
-    popover.style.top      = (rect.bottom + 8) + 'px';
-    popover.style.right    = (window.innerWidth - rect.right) + 'px';
-    popover.style.left     = 'auto';
-    popover.style.zIndex   = '99999';
-  }
-  popover.classList.toggle('open', !isOpen);
-  chip.classList.toggle('open', !isOpen);
+  var existing = document.getElementById('_adm-logout-popup');
+  if (existing) { existing.remove(); return; }
+  var chip = document.getElementById('adm-user-chip');
+  if (!chip) return;
+  var rect = chip.getBoundingClientRect();
+  var popup = document.createElement('div');
+  popup.id = '_adm-logout-popup';
+  var popH=52;popup.style.cssText = 'position:fixed;top:'+(rect.top-popH-6)+'px;left:'+rect.left+'px;'
+    +'background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.18);'
+    +'min-width:160px;z-index:999999;overflow:hidden;'
+    +'animation:popoverIn 0.15s cubic-bezier(.4,0,.2,1);';
+  popup.innerHTML = '<button onclick="adminLogout()" style="width:100%;padding:13px 16px;'
+    +'display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;'
+    +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:left;">'
+    +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
+    +'ログアウト</button>';
+  document.body.appendChild(popup);
+  setTimeout(function() {
+    document.addEventListener('click', function _close() {
+      var p = document.getElementById('_adm-logout-popup');
+      if (p) p.remove();
+      document.removeEventListener('click', _close);
+    });
+  }, 0);
 }
 function toggleHomeUserMenu(e) {
   e.stopPropagation();
+  /* スマホ版: チップ直下のポップオーバーをそのまま使う */
   var chip    = document.getElementById('home-user-chip');
   var popover = document.getElementById('home-user-popover');
   if (!chip || !popover) return;
-  var isOpen  = popover.classList.contains('open');
-  if (!isOpen) {
-    /* will-change:transform な祖先を回避: body 直下に移動して fixed 配置 */
-    if (popover.parentNode !== document.body) document.body.appendChild(popover);
-    var rect = chip.getBoundingClientRect();
-    popover.style.position = 'fixed';
-    popover.style.top      = (rect.bottom + 8) + 'px';
-    popover.style.right    = (window.innerWidth - rect.right) + 'px';
-    popover.style.left     = 'auto';
-    popover.style.zIndex   = '99999';
-  }
+  var isOpen = popover.classList.contains('open');
   popover.classList.toggle('open', !isOpen);
   chip.classList.toggle('open', !isOpen);
 }
-document.addEventListener('click', function() {
-  ['adm-user-popover','home-user-popover'].forEach(function(id) {
-    var el = document.getElementById(id); if (el) el.classList.remove('open');
-  });
-  ['adm-user-chip','home-user-chip'].forEach(function(id) {
-    var el = document.getElementById(id); if (el) el.classList.remove('open');
-  });
-});
 
 /* ─ open/close admin ─ */function openAdminScreen(adminName) {
   admLoad();
-  // 管理者名をヘッダーに反映
   var nameEl = document.getElementById('adm-hdr-name');
   if (nameEl && adminName) nameEl.textContent = adminName + ' さん';
-  // PC サイドバーにも名前を反映
   var pcNameEl = document.getElementById('pc-sidebar-username');
   if (pcNameEl && adminName) pcNameEl.textContent = adminName + ' さん';
   updateAdmDateDisplay();
-
-  // 【修正】phone-wrapper（点検者側スクリーン群）を非表示にする
-  // → 旧コードは position:fixed でオーバーレイしていたが、
-  //   static レイアウトに変えたため display:none で隠す方式に変更
   var pw = document.querySelector('.phone-wrapper');
   if (pw) pw.style.setProperty('display', 'none', 'important');
-
   document.getElementById('screen-admin').style.display = 'flex';
-  // PC では body overflow は不要（pc-main がスクロール担う）
-  if (window.innerWidth < 1024) {
-    document.body.style.overflow = 'hidden';
-  }
-  // 【修正】PC サイドバーを表示し、pc-layout をグリッドに切り替え
+  if (window.innerWidth < 1024) { document.body.style.overflow = 'hidden'; }
   var pcSidebar = document.getElementById('pc-sidebar');
   var pcLayout  = document.querySelector('.pc-layout');
   if (pcSidebar) pcSidebar.classList.remove('hidden-sidebar');
@@ -5311,25 +5318,62 @@ function admRenderEquips() {
 function renderItems() {
   var el = document.getElementById('adm-items-list');
   if (!el) return;
-  if (!ADM.items.length) { el.innerHTML = '<div class="adm-empty">点検項目がありません</div>'; return; }
-  el.innerHTML = '';
+
+  var groups = { daily: [], '10days': [], monthly: [] };
   ADM.items.forEach(function(item) {
-    var itype = item.type || '10days';
-    var typeLabel      = itype === 'monthly' ? '月次' : itype === 'daily' ? '毎日' : '10日';
-    var typeBadgeColor = itype === 'monthly' ? '#F57C00' : itype === 'daily' ? '#2E7D32' : 'var(--blue)';
-    var typeBadgeBg    = itype === 'monthly' ? '#FFF3E0'  : itype === 'daily' ? '#E8F5E9'  : 'var(--blue-light)';
-    var row = document.createElement('div');
-    row.className = 'adm-list-row';
-    row.innerHTML = '<div style="flex:1;display:flex;align-items:center;gap:8px;">' +
-        '<span class="adm-list-name">'+esc(item.name)+'</span>' +
-        '<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:'+typeBadgeBg+';color:'+typeBadgeColor+';flex-shrink:0;">'+typeLabel+'</span>' +
-      '</div>' +
-      '<div class="adm-row-actions">' +
-        '<button class="adm-btn-edit" data-t="item" data-m="edit" data-id="'+esc(item.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
-        '<button class="adm-btn-del"  data-t="item" data-id="'+esc(item.id)+'" onclick="btnDel(this)">'+SVG_DEL+'</button>' +
-      '</div>';
-    el.appendChild(row);
+    var t = item.type || '10days';
+    if (!groups[t]) groups[t] = [];
+    groups[t].push(item);
   });
+
+  var cols = [
+    { key: 'daily',   label: '毎日',  badgeColor: '#2E7D32', badgeBg: '#E8F5E9',       addLabel: '毎日項目を追加' },
+    { key: '10days',  label: '10日',  badgeColor: 'var(--blue)', badgeBg: 'var(--blue-light)', addLabel: '10日項目を追加' },
+    { key: 'monthly', label: '月次',  badgeColor: '#F57C00', badgeBg: '#FFF3E0',       addLabel: '月次項目を追加' }
+  ];
+
+  var grid = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start;">';
+  cols.forEach(function(col) {
+    grid += '<div>';
+    /* ヘッダー: タイトル左 + 追加ボタン右 */
+    grid += '<div class="adm-section-hdr">' +
+      '<span class="adm-section-title">' +
+        '<span style="padding:2px 10px;border-radius:20px;background:' + col.badgeBg + ';color:' + col.badgeColor + ';font-weight:700;font-size:12px;">' + col.label + '</span>' +
+        '<span style="margin-left:8px;font-size:13px;color:var(--text-sub);">' + (groups[col.key] ? groups[col.key].length : 0) + '項目</span>' +
+      '</span>' +
+      '<button class="adm-add-btn" data-itype="'+col.key+'" onclick="admOpenModalWithType(this)">' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>' +
+        '追加' +
+      '</button>' +
+    '</div>';
+    /* カード */
+    grid += '<div class="adm-list-card">';
+    if (!groups[col.key] || !groups[col.key].length) {
+      grid += '<div class="adm-empty" style="font-size:12px;padding:14px;">項目なし</div>';
+    } else {
+      groups[col.key].forEach(function(item) {
+        grid += '<div class="adm-list-row">' +
+          '<div style="flex:1;"><span class="adm-list-name">'+esc(item.name)+'</span></div>' +
+          '<div class="adm-row-actions">' +
+            '<button class="adm-btn-edit" data-t="item" data-m="edit" data-id="'+esc(item.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
+            '<button class="adm-btn-del"  data-t="item" data-id="'+esc(item.id)+'" onclick="btnDel(this)">'+SVG_DEL+'</button>' +
+          '</div></div>';
+      });
+    }
+    grid += '</div></div>';
+  });
+  grid += '</div>';
+  el.innerHTML = grid;
+}
+
+/* 追加ボタンから種別を事前セットしてモーダルを開く */
+function admOpenModalWithType(btn) {
+  var itemType = btn.dataset.itype;
+  admOpenModal('item', 'add', '');
+  setTimeout(function() {
+    var sel = document.getElementById('modal-item-type');
+    if (sel && itemType) { sel.value = itemType; }
+  }, 30);
 }
 
 /* ─ data-* button handlers (avoids quotes-in-onclick issues) ─ */
@@ -5840,7 +5884,8 @@ function saveAprStatusToStorage(id, status) {
   var details = loadAprDetails();
   if (status === 'approved' || status === 'returned') {
     var nameEl = document.getElementById('adm-hdr-name');
-    var approverName = nameEl ? nameEl.textContent.replace(' さん','').trim() : '管理者';
+    var approverName = nameEl ? nameEl.textContent.replace(' さん','').trim() : '';
+    if (!approverName) approverName = '管理者';  // 名前が取れない場合のフォールバック
     var now = new Date();
     var pad = function(n){ return String(n).padStart(2,'0'); };
     details[id] = {
@@ -6169,20 +6214,32 @@ function injectAdmProgressCss() {
 
 /* 異常一覧「該当箇所へ」→ 月次点検表に該当設備・年月をセットして移動 */
 function jumpToMonthlySheet(equipId, dateStr) {
+  /* 先にdashboardタブに切り替え（initMonthlySheetSelectorsによるセレクタ再構築を先に完了させる） */
   showAdmTab('dashboard');
-  initMonthlySheetSelectors();
+
+  /* renderAdmDashboard完了後にセレクタ値をセット */
   var equipSel = document.getElementById('ms-equip-sel');
   var monthSel = document.getElementById('ms-month-sel');
-  if (equipSel && equipId) equipSel.value = equipId;
+
+  if (equipSel) {
+    /* optionがまだない場合は先に追加 */
+    var found = Array.from(equipSel.options).some(function(o){ return o.value === equipId; });
+    if (!found) initMonthlySheetSelectors();
+    equipSel.value = equipId;
+  }
   if (monthSel && dateStr) {
     var parts = dateStr.split('/');
     if (parts.length >= 2) monthSel.value = parts[0] + '-' + String(parts[1]).padStart(2,'0');
   }
+
+  /* セレクタをセットした状態で月次シートを再描画 */
   renderMonthlySheet();
+
+  /* テーブルまでスクロール */
   setTimeout(function() {
-    var wrap = document.getElementById('ms-table-wrap');
-    if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 120);
+    var card = document.getElementById('ms-card') || document.getElementById('ms-table-wrap');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
 }
 
 function renderAdmDashboard() {
@@ -6212,28 +6269,47 @@ function renderAdmDashboard() {
   }
 
   /* — Anomaly List — */
-  var anEl = document.getElementById('adm-dash-anomaly-list');
-  if (anEl) {
-    if (!liveData.anomalies.length) {
-      anEl.innerHTML = '<div style="background:#E8F5E9;border-radius:12px;padding:16px;display:flex;align-items:center;gap:10px;">' +
-        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
-        '<div><div style="font-size:14px;font-weight:700;color:#2E7D32;">未対応の異常はありません</div>' +
-        '<div style="font-size:12px;color:#388E3C;margin-top:2px;">すべての異常は対応済みです</div></div></div>';
+  renderAnomalyListPanel(null);
+  setTimeout(syncAnomalyListHeight, 0);
+}
+
+/* 異常一覧パネルを描画。filterEquipId が非nullの場合その設備のみ表示 */
+function renderAnomalyListPanel(filterEquipId) {
+  var allAnomalies = computeLiveDashData().anomalies;
+  var list = filterEquipId
+    ? allAnomalies.filter(function(a){ return a.equipId === filterEquipId; })
+    : allAnomalies;
+
+  /* タイトル更新 */
+  var titleEl = document.getElementById('adm-anomaly-section-title');
+  if (titleEl) {
+    if (filterEquipId) {
+      var eq = (ADM.equipments || []).find(function(e){ return e.id === filterEquipId; });
+      titleEl.textContent = '異常一覧　' + filterEquipId + (eq ? '　' + eq.name : '');
     } else {
-      var cards = liveData.anomalies.map(function(a) {
-        return '<div style="background:#fff;border:1px solid #F0D0D0;border-left:4px solid var(--red);border-radius:10px;padding:14px 16px;">' +
-          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-            '<div style="font-size:14px;font-weight:700;color:var(--text);">' + a.equipId + '　' + a.equipName + '</div>' +
-            '' +
-          '</div>' +
-          '<div style="font-size:11px;color:var(--text-sub);margin-bottom:4px;">' + (a.date||'') + (a.time && a.time!=='--:--' ? '　'+a.time : '') + '</div>' +
-          '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">' + a.detail + '</div>' +
-          (a.inspector ? '<div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;">点検者：' + a.inspector + '</div>' : '') +
-          '<button onclick="showAdmTab(\'approval\')" style="width:100%;padding:8px;border:1px solid var(--red);background:#fff;color:var(--red);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">該当箇所へ</button>' +
-        '</div>';
-      }).join('');
-      anEl.innerHTML = cards;
+      titleEl.textContent = '異常一覧';
     }
+  }
+
+  var anEl = document.getElementById('adm-dash-anomaly-list');
+  if (!anEl) return;
+  if (!list.length) {
+    anEl.innerHTML = '<div style="background:#E8F5E9;border-radius:12px;padding:16px;display:flex;align-items:center;gap:10px;">' +
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
+      '<div><div style="font-size:14px;font-weight:700;color:#2E7D32;">未対応の異常はありません</div>' +
+      '<div style="font-size:12px;color:#388E3C;margin-top:2px;">すべての異常は対応済みです</div></div></div>';
+  } else {
+    anEl.innerHTML = list.map(function(a) {
+      return '<div style="background:#fff;border:1px solid #F0D0D0;border-left:4px solid var(--red);border-radius:10px;padding:14px 16px;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
+          '<div style="font-size:14px;font-weight:700;color:var(--text);">' + a.equipId + '　' + a.equipName + '</div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text-sub);margin-bottom:4px;">' + (a.date||'') + (a.time && a.time!=='--:--' ? '　'+a.time : '') + '</div>' +
+        '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">' + a.detail + '</div>' +
+        (a.inspector ? '<div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;">点検者：' + a.inspector + '</div>' : '') +
+        '<button onclick="jumpToMonthlySheet(\''+a.equipId+'\',\''+a.date+'\')" style="width:100%;padding:8px;border:1px solid var(--red);background:#fff;color:var(--red);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">該当箇所へ</button>' +
+      '</div>';
+    }).join('');
   }
 }
 
@@ -6817,6 +6893,7 @@ function renderMonthlySheet() {
   if (!equipId) {
     wrap.innerHTML = '';
     if (noEquip) noEquip.style.display = 'block';
+    renderAnomalyListPanel(null);
     return;
   }
   if (noEquip) noEquip.style.display = 'none';
@@ -6883,7 +6960,15 @@ function renderMonthlySheet() {
     var st  = aprStatuses[aprId] || 'pending';
     var det = aprDetails[aprId];
     if (st === 'approved') {
-      var label = det ? det.name.slice(0,4) : '承認';
+      var label;
+      if (det && det.name) {
+        label = det.name.slice(0, 4);
+      } else {
+        /* detailsがない（旧データ等）場合は現在の管理者名をフォールバックとして使用 */
+        var _nameEl = document.getElementById('adm-hdr-name');
+        var _adminName = _nameEl ? _nameEl.textContent.replace(' さん', '').trim() : '';
+        label = _adminName ? _adminName.slice(0, 4) : '✓';
+      }
       return '<td class="ms-apr-cell ms-apr-approved" ' + (style||'') +
         ' title="承認済み（' + (det ? det.at : '') + '）">' +
         label + '</td>';
@@ -7038,6 +7123,9 @@ function renderMonthlySheet() {
       });
       html += '</tr>';
     });
+    // 10日毎と１ヶ月一回の区切り
+    var tenDayCols = 3 + periodDates.length * 3;
+    html += '<tr class="ms-note-row"><td colspan="' + tenDayCols + '">↓下記項目１ヶ月に１回点検を行う。</td></tr>';
     html += '</tbody></table>';
   }
 
@@ -7053,7 +7141,7 @@ function renderMonthlySheet() {
     html += '<table class="ms-table">';
     html += '<thead>';
     html += '<tr>';
-    html += '<th class="ms-section-label monthly-lbl" style="position:sticky;left:0;z-index:3;border-top:none!important;border-bottom:none!important;"></th>';
+    html += '<th class="ms-section-label monthly-lbl" rowspan="2" style="position:sticky;left:0;z-index:3;border-top:none!important;border-bottom:none!important;"></th>';
     html += '<th class="ms-monthly-hdr" colspan="2" rowspan="2" style="vertical-align:middle;text-align:left;padding:4px 8px;">点　検　項　目</th>';
     html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">結　果</th>';
     html += '<th class="ms-monthly-hdr" rowspan="2" style="vertical-align:middle;">点検者</th>';
@@ -7078,7 +7166,7 @@ function renderMonthlySheet() {
       html += '<tr>';
       // セクションラベル：最初の行のみrowspanで表示
       if (isFirst) {
-        html += '<td class="ms-section-label monthly-lbl" rowspan="' + monthlyItems.length + '" style="position:sticky;left:0;z-index:2;border-top:none!important;border-bottom:none!important;"><span class="ms-section-label-inner">一ヶ月一回</span></td>';
+        html += '<td class="ms-section-label monthly-lbl" rowspan="' + monthlyItems.length + '" style="position:sticky;left:0;z-index:2;border-top:none!important;border-bottom:none!important;padding:0;"><div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:#FFE0B2;"><span class="ms-section-label-inner">一ヶ月一回</span></div></td>';
       }
       html += '<td class="ms-no-col">' + globalNo + '</td>';
       html += '<td class="ms-item-name" colspan="1" style="position:sticky;left:18px;z-index:2;">' + esc(item.name) + '</td>';
@@ -7101,40 +7189,80 @@ function renderMonthlySheet() {
   }
 
   // ── Legend & Notes ──
-  html += '<div class="ms-legend-block">';
-  html += '<div class="ms-legend-symbols">';
-  html += '<span>正常：<span class="ms-val-ok">○</span></span>';
-  html += '<span>異常：<span class="ms-val-ng">✕</span></span>';
-  html += '<span>修正：<span class="ms-val-fix">⊗</span></span>';
-  html += '</div>';
-  html += '<div class="ms-legend-notes">';
-  html += '・点検項目欄には、点検項目がない場合は ／ を記入する<br>';
-  html += '・異常時は異常内容欄に記入する、復旧後には、改善内容欄に具体的に記入する<br>';
-  html += '・毎月（定期）点検は月末に行う<br>';
-  html += '・10日毎に点検者上司が点検確認を行い、最終M課責任者が確認を行う、資料を保管する';
-  html += '</div>';
-  html += '</div>';
+  // ── 異常記録テーブル ──
+  var recoveryRows = [];
+  monthRecs.forEach(function(rec) {
+    var s = rec.state && rec.state[equipId];
+    if (!s) return;
+    var dateLabel = String(rec.day).padStart(2,'0') + '日';
+    var inspector = rec.inspector || '';
+    (s['daily'] || []).forEach(function(val, idx) {
+      if (val === 'ng' && dailyItems[idx]) recoveryRows.push({ date: dateLabel, content: dailyItems[idx].name, inspector: inspector });
+    });
+    (s['10days'] || []).forEach(function(val, idx) {
+      if (val === 'ng' && tenDayItems[idx]) recoveryRows.push({ date: dateLabel, content: tenDayItems[idx].name, inspector: inspector });
+    });
+    (s['monthly'] || []).forEach(function(val, idx) {
+      if (val === 'ng' && monthlyItems[idx]) recoveryRows.push({ date: dateLabel, content: monthlyItems[idx].name, inspector: inspector });
+    });
+  });
 
-  // ── 復旧改善記録 ──
   html += '<table class="ms-recovery-table">';
   html += '<thead><tr>';
-  html += '<th rowspan="2" class="ms-rec-sect">復<br>旧<br>改<br>善<br>記<br>録</th>';
   html += '<th style="width:60px;">日　付</th>';
-  html += '<th style="min-width:140px;">異　常　内　容</th>';
-  html += '<th style="min-width:140px;">改　善　内　容</th>';
-  html += '<th style="width:36px;">担当者</th>';
-  html += '<th style="width:36px;">承認</th>';
+  html += '<th style="min-width:200px;">異　常　内　容</th>';
+  html += '<th style="width:60px;">点検者</th>';
   html += '</tr></thead>';
   html += '<tbody>';
-  for (var ri = 0; ri < 3; ri++) {
-    html += '<tr><td style="height:24px;"></td><td></td><td></td><td></td><td></td></tr>';
+  var totalRows = Math.max(recoveryRows.length, 3);
+  for (var ri = 0; ri < totalRows; ri++) {
+    var row = recoveryRows[ri];
+    if (row) {
+      html += '<tr>' +
+        '<td style="height:24px;font-size:11px;text-align:center;">' + row.date + '</td>' +
+        '<td style="font-size:11px;padding:2px 4px;">' + row.content + '</td>' +
+        '<td style="font-size:11px;text-align:center;">' + row.inspector + '</td>' +
+      '</tr>';
+    } else {
+      html += '<tr><td style="height:24px;"></td><td></td><td></td></tr>';
+    }
   }
   html += '</tbody></table>';
 
   html += '</div>'; // .ms-doc
 
   wrap.innerHTML = html;
+  var hint = document.getElementById('ms-no-equip');
   if (hint) hint.style.display = 'block';
+
+  /* 異常一覧を選択設備でフィルタリング */
+  var equipSel2 = document.getElementById('ms-equip-sel');
+  renderAnomalyListPanel(equipSel2 && equipSel2.value ? equipSel2.value : null);
+
+  syncAnomalyListHeight();
+}
+
+/* 異常一覧の高さを月次点検表カードに合わせる */
+function syncAnomalyListHeight() {
+  var equipSel = document.getElementById('ms-equip-sel');
+  var rightCol = document.getElementById('dash-anomaly-right-col');
+  if (!rightCol) return;
+
+  // 設備未選択の場合はビューポート基準のまま（上書きしない）
+  if (!equipSel || !equipSel.value) {
+    rightCol.style.maxHeight = 'calc(100vh - 160px)';
+    return;
+  }
+
+  var card = document.getElementById('ms-card');
+  if (!card) return;
+  requestAnimationFrame(function() {
+    var leftCol = card.parentElement;
+    var h = leftCol ? leftCol.offsetHeight : 0;
+    if (h > 80) {
+      rightCol.style.maxHeight = h + 'px';
+    }
+  });
 }
 
 /* ──────────────────────────────────────────
