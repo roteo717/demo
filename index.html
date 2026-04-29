@@ -1329,6 +1329,59 @@
     max-width: 390px;
     margin: 0 auto;
   }
+
+  /* ─── スマホ：すべてのカードを1列縦並びに ─── */
+
+  /* 設定メニュー：モバイルは2列 */
+  .adm-settings-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* ダッシュボード2カラム（月次点検表 + 異常一覧）→ 縦積み */
+  #dash-two-col {
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+  #dash-anomaly-right-col {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* ユーザー管理（点検者 / 担当者）→ 縦積み */
+  .adm-users-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  /* 点検項目グリッド（JS生成：日次/10日/月次）→ 1列 */
+  .adm-items-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  /* 承認：設備カード → モバイルは縦1列 */
+  .apr2-line-body {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    overflow-x: visible !important;
+    gap: 10px !important;
+    padding: 8px 10px 12px !important;
+  }
+  .apr2-equip-card {
+    min-width: unset !important;
+    flex-shrink: unset !important;
+  }
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* 承認カード内グリッド */
+  .apr-card-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 /* ============================================================
@@ -1555,6 +1608,19 @@
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 16px;
   }
+  /* ── ユーザー管理 2列・点検項目 3列 ── */
+  #screen-admin[style*="flex"] .adm-users-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
+    flex-direction: unset !important;
+  }
+  #screen-admin[style*="flex"] .adm-items-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    gap: 20px !important;
+    flex-direction: unset !important;
+  }
   #screen-admin[style*="flex"] .adm-settings-menu {
     padding: 0 0 32px;
   }
@@ -1645,6 +1711,17 @@
   }
   #screen-approval[style*="block"] .apr2-page-btns {
     gap: 6px;
+  }
+  /* PC：設備カードをグリッドに戻す */
+  #screen-approval[style*="block"] .apr2-line-body {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr !important;
+    flex-direction: unset !important;
+    overflow-x: visible !important;
+    flex-wrap: unset !important;
+  }
+  #screen-approval[style*="block"] .apr2-equip-card {
+    min-width: unset !important;
   }
 }
 
@@ -3550,7 +3627,7 @@
 
     <!-- ユーザー管理 パネル -->
     <div id="adm-panel-users" class="adm-panel" style="display:none">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+      <div class="adm-users-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
         <!-- 左：点検者 -->
         <div>
           <div class="adm-section-hdr">
@@ -5332,7 +5409,7 @@ function renderItems() {
     { key: 'monthly', label: '月次',  badgeColor: '#F57C00', badgeBg: '#FFF3E0',       addLabel: '月次項目を追加' }
   ];
 
-  var grid = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start;">';
+  var grid = '<div class="adm-items-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start;">';
   cols.forEach(function(col) {
     grid += '<div>';
     /* ヘッダー: タイトル左 + 追加ボタン右 */
