@@ -5807,14 +5807,14 @@ function computeLiveDashData() {
 
     (r.equips || []).forEach(function(eid) {
       var s = r.state && r.state[eid];
-      /* 保存済み anomaly フラグ OR state の ng 値で判定 */
+      /* state の ng 値で判定（設備単位） */
       var hasNg = false;
       if (s) {
         hasNg = ['daily','10days','monthly'].some(function(t) {
           return s[t] && s[t].some(function(v){ return v === 'ng'; });
         });
       }
-      if (!hasNg && !r.anomaly) return;
+      if (!hasNg) return;
 
       /* 承認済みかチェック */
       var aprId10 = 'apr10-' + r.year + '-' + r.month + '-' + r.day + '-' + eid;
@@ -5826,13 +5826,30 @@ function computeLiveDashData() {
       anomalyKeySet[key] = true;
 
       var eq = allEquips.find(function(e){ return e.id === eid; }) || {};
+      /* EQUIP_DATA には itemsDaily/items10/itemsMonthly がある */
+      var eqData = EQUIP_DATA.find(function(e){ return e.id === eid; }) || eq;
+
+      /* NG項目名を収集 */
+      var ngItems = [];
+      if (s) {
+        var typeMap = { 'daily': eqData.itemsDaily || [], '10days': eqData.items10 || [], 'monthly': eqData.itemsMonthly || [] };
+        ['daily','10days','monthly'].forEach(function(t) {
+          var vals = s[t] || [];
+          var items = typeMap[t];
+          vals.forEach(function(v, i) {
+            if (v === 'ng' && items[i]) ngItems.push({ type: t, name: items[i] });
+          });
+        });
+      }
+
       anomalyList.push({
         equipId: eid,
         equipName: eq.name || eid,
         date: dateStr,
         detail: '要確認',
         inspector: r.inspector || '',
-        time: r.completedAt ? new Date(r.completedAt).toTimeString().slice(0,5) : '--:--'
+        time: r.completedAt ? new Date(r.completedAt).toTimeString().slice(0,5) : '--:--',
+        ngItems: ngItems
       });
     });
   });
@@ -6065,7 +6082,19 @@ function renderDashAnomalies() {
     '</div>';
     return;
   }
+  var da_typeLabels = { 'daily': '\u6bce\u65e5', '10days': '10\u65e5\u6bce', 'monthly': '\u6708\u6b21' };
   list.innerHTML = anomalies.map(function(a) {
+    var ngItemsHtml = '';
+    if (a.ngItems && a.ngItems.length) {
+      ngItemsHtml = '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">' +
+        a.ngItems.map(function(item) {
+          var tl = da_typeLabels[item.type] || item.type;
+          return '<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#FDECEC;color:var(--red);border:1px solid #FBBCBC;">' +
+            '[' + tl + '] ' + item.name +
+          '</span>';
+        }).join('') +
+      '</div>';
+    }
     return '<div class="da-anomaly-card" onclick="daToast(\'' + a.equipId + ' ' + a.equipName + ': ' + a.detail + '\')">' +
       '<div class="da-anomaly-icon">' +
         '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
@@ -6075,8 +6104,9 @@ function renderDashAnomalies() {
         '<div class="da-anomaly-name">' + a.equipName + '</div>' +
         '<div class="da-anomaly-detail">' +
           '<span class="da-anomaly-badge">NG</span>' +
-          a.detail +
+          (a.ngItems && a.ngItems.length ? a.ngItems.length + '\u9805\u76ee' : a.detail) +
         '</div>' +
+        ngItemsHtml +
       '</div>' +
       '<div class="da-anomaly-arrow"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' +
     '</div>';
@@ -6299,15 +6329,30 @@ function renderAnomalyListPanel(filterEquipId) {
       '<div><div style="font-size:14px;font-weight:700;color:#2E7D32;">未対応の異常はありません</div>' +
       '<div style="font-size:12px;color:#388E3C;margin-top:2px;">すべての異常は対応済みです</div></div></div>';
   } else {
+    var typeLabels = { 'daily': '毎日', '10days': '10日毎', 'monthly': '月次' };
     anEl.innerHTML = list.map(function(a) {
+      var ngHtml = '';
+      if (a.ngItems && a.ngItems.length) {
+        ngHtml = '<div style="margin-bottom:10px;">' +
+          '<div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:5px;letter-spacing:0.3px;">&#x26A0; 異常内容</div>' +
+          a.ngItems.map(function(item) {
+            var tl = typeLabels[item.type] || item.type;
+            return '<div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:#FFF5F5;border-radius:6px;margin-bottom:3px;">' +
+              '<span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;background:var(--red);color:#fff;flex-shrink:0;">' + tl + '</span>' +
+              '<span style="font-size:12px;color:var(--text);">' + item.name + '</span>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      } else {
+        ngHtml = '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;">' + a.detail + '</div>';
+      }
       return '<div style="background:#fff;border:1px solid #F0D0D0;border-left:4px solid var(--red);border-radius:10px;padding:14px 16px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">' +
-          '<div style="font-size:14px;font-weight:700;color:var(--text);">' + a.equipId + '　' + a.equipName + '</div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
+          '<div style="font-size:14px;font-weight:700;color:var(--text);">' + a.equipId + '\u3000' + a.equipName + '</div>' +
         '</div>' +
-        '<div style="font-size:11px;color:var(--text-sub);margin-bottom:4px;">' + (a.date||'') + (a.time && a.time!=='--:--' ? '　'+a.time : '') + '</div>' +
-        '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">' + a.detail + '</div>' +
-        (a.inspector ? '<div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;">点検者：' + a.inspector + '</div>' : '') +
-        '<button onclick="jumpToMonthlySheet(\''+a.equipId+'\',\''+a.date+'\')" style="width:100%;padding:8px;border:1px solid var(--red);background:#fff;color:var(--red);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">該当箇所へ</button>' +
+        '<div style="font-size:11px;color:var(--text-sub);margin-bottom:8px;">' + (a.date||'') + (a.time && a.time!=='--:--' ? '\u3000'+a.time : '') + (a.inspector ? '\u3000\u70b9\u691c\u8005\uff1a' + a.inspector : '') + '</div>' +
+        ngHtml +
+        '<button onclick="jumpToMonthlySheet(\''+a.equipId+'\',\''+a.date+'\')" style="width:100%;padding:8px;border:1px solid var(--red);background:#fff;color:var(--red);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">\u8a72\u5f53\u7b87\u6240\u3078</button>' +
       '</div>';
     }).join('');
   }
@@ -7166,7 +7211,7 @@ function renderMonthlySheet() {
       html += '<tr>';
       // セクションラベル：最初の行のみrowspanで表示
       if (isFirst) {
-        html += '<td class="ms-section-label monthly-lbl" rowspan="' + monthlyItems.length + '" style="position:sticky;left:0;z-index:2;border-top:none!important;border-bottom:none!important;padding:0;"><div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:#FFE0B2;"><span class="ms-section-label-inner">一ヶ月一回</span></div></td>';
+        html += '<td class="ms-section-label monthly-lbl" rowspan="' + monthlyItems.length + '" style="position:sticky;left:0;z-index:2;border-top:none!important;border-bottom:none!important;"><span class="ms-section-label-inner">一ヶ月一回</span></td>';
       }
       html += '<td class="ms-no-col">' + globalNo + '</td>';
       html += '<td class="ms-item-name" colspan="1" style="position:sticky;left:18px;z-index:2;">' + esc(item.name) + '</td>';
