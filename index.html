@@ -275,6 +275,61 @@
   .btn-primary-blue:active { opacity: 0.85; transform: scale(0.99); }
   .btn-primary-blue:disabled { background: #B0C4FF; cursor: default; }
 
+  /* ─── TODAY PANEL (Image2 style) ─── */
+  .today-panel { padding: 20px 20px 16px; }
+  .today-panel-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .today-panel-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .today-panel-icon svg { width: 22px; height: 22px; }
+  .today-panel-title { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
+  .today-panel-date { font-size: 13px; color: var(--text-sub); margin-top: 2px; }
+  .today-rows { display: flex; flex-direction: column; }
+  .today-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 10px; border-radius: 10px;
+    cursor: pointer; transition: background 0.12s;
+  }
+  .today-row + .today-row { border-top: 1px solid #F0F0F0; }
+  .today-row:active { background: #F5F5F5; }
+  .today-row-pending { background: #FFF5F5; border-radius: 10px; }
+  .today-row-pending + .today-row { border-top: none; margin-top: 4px; }
+  .today-row-icon {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .today-row-icon svg { width: 18px; height: 18px; }
+  .today-row-icon-red  { background: #FDECEC; }
+  .today-row-icon-blue { background: var(--blue-light); }
+  .today-row-icon-gray { background: #F0F0F0; }
+  .today-row-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
+  .today-row-count { font-size: 16px; font-weight: 700; display: flex; align-items: baseline; gap: 2px; }
+  .today-row-count span { font-size: 20px; }
+  .today-row-count-red  { color: var(--red); }
+  .today-row-count-blue { color: var(--blue); }
+  .today-row-count-gray { color: var(--text-sub); }
+  .today-row-arrow svg { width: 16px; height: 16px; }
+  .today-notice {
+    margin-top: 14px; background: #EEF4FF; border-radius: 10px;
+    padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .today-notice-icon { flex-shrink: 0; margin-top: 1px; }
+  .today-notice-icon svg { width: 18px; height: 18px; }
+  .today-notice-title { font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 3px; }
+  .today-notice-text { font-size: 12px; color: var(--text-sub); line-height: 1.5; }
+
+  /* Calendar footer hint */
+  .cal-footer-hint {
+    margin-top: 10px; font-size: 11px; color: var(--text-sub);
+    display: flex; align-items: center; gap: 4px; padding: 0 4px;
+  }
+  .cal-footer-hint svg { width: 13px; height: 13px; stroke: var(--text-sub); fill: none; flex-shrink: 0; }
+
   /* ─── SCREEN 3: MANAGER LOGIN ─── */
   #screen-manager { background: var(--card); max-width: 390px; }
 
@@ -887,7 +942,7 @@
     background: #FFFFFF;
     border-top: 1px solid #E0E0E0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     z-index: 100;
     flex-shrink: 0;
   }
@@ -936,6 +991,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
+  /* ── モバイル: 元の小さいカード ── */
   .adm-settings-card {
     background: #fff;
     border-radius: 8px;
@@ -946,21 +1002,25 @@
     cursor: pointer;
     transition: transform 0.13s, box-shadow 0.13s, border-color 0.13s;
     -webkit-user-select: none;
+    position: relative; overflow: hidden;
   }
   .adm-settings-card:active { transform: scale(0.97); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .adm-settings-card-top {
+    display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%;
+  }
   .adm-settings-card-icon {
     width: 52px; height: 52px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   .adm-settings-card-icon svg { width: 26px; height: 26px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .adm-settings-card-label {
     font-size: 13px; font-weight: 700; color: var(--text);
     text-align: center; line-height: 1.4;
   }
-  .adm-settings-card-sub {
-    font-size: 11px; color: var(--text-sub); margin-top: -6px; text-align: center;
-  }
+  /* モバイルでは説明・フッターを非表示 */
+  .adm-settings-card-desc,
+  .adm-settings-card-divider,
+  .adm-settings-card-footer { display: none; }
 
   /* ── パネルナビ（戻るヘッダー）── */
   .adm-panel-nav {
@@ -1329,6 +1389,28 @@
 }
 
 /* ============================================================
+   横向きスマホ：全幅表示（〜1023px landscape）
+   ============================================================ */
+@media (max-width: 1023px) and (orientation: landscape) {
+  .phone-wrapper,
+  .screen,
+  #screen-home,
+  #screen-inspector,
+  #screen-manager,
+  #screen-line,
+  #screen-equip,
+  #screen-inspect,
+  #screen-confirm,
+  #screen-complete,
+  #screen-admin,
+  .adm-wrap,
+  .da-wrap {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+/* ============================================================
    ① スマホ完全維持（〜1023px）
    ============================================================ */
 @media (max-width: 1023px) {
@@ -1336,6 +1418,32 @@
     display: block !important;
     max-width: 390px;
     margin: 0 auto;
+  }
+
+  /* 横向き時は全幅を使う */
+  @media (orientation: landscape) {
+    .phone-wrapper {
+      max-width: 100% !important;
+    }
+    #screen-home,
+    #screen-inspector,
+    #screen-manager,
+    #screen-line,
+    #screen-equip,
+    #screen-inspect,
+    #screen-confirm,
+    #screen-complete,
+    #screen-admin {
+      max-width: 100% !important;
+    }
+    .adm-wrap,
+    .da-wrap {
+      max-width: 100% !important;
+    }
+    /* 横向き時は2列グリッドを活用 */
+    .adm-settings-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
   }
 
   /* ─── スマホ：すべてのカードを1列縦並びに ─── */
@@ -1544,9 +1652,9 @@
   }
   .status-bar.status-bar-white { display: none !important; }
   .home-header   { grid-area: header;   padding: 14px 32px; }
-  .calendar-card { grid-area: calendar; margin: 20px 14px 16px 32px; padding: 20px; border-radius: 12px; box-shadow: var(--pc-shadow-sm); }
-  .start-btn-wrap{ grid-area: start;    padding: 0 14px 24px 32px; align-self: start; }
-  .summary-card  { grid-area: summary;  margin: 20px 32px 0 14px; padding: 20px 24px; border-radius: 12px; box-shadow: var(--pc-shadow-sm); align-self: start; }
+  .calendar-card { grid-area: calendar; margin: 20px 14px 0 32px; padding: 20px; border-radius: 12px; box-shadow: var(--pc-shadow-sm); }
+  .start-btn-wrap{ grid-area: start;    padding: 12px 14px 24px 32px; align-self: start; }
+  .summary-card  { grid-area: summary;  margin: 20px 32px 0 14px; padding: 0; border-radius: 12px; box-shadow: var(--pc-shadow-sm); align-self: start; }
   .safe-bottom   { grid-area: footer;   height: 20px; }
   .summary-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
   .summary-grid  { grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -1651,7 +1759,59 @@
   /* ── 設定グリッド 3列 ── */
   #screen-admin[style*="flex"] .adm-settings-grid {
     grid-template-columns: repeat(3, 1fr) !important;
-    gap: 16px;
+    gap: 20px;
+  }
+  #screen-admin[style*="flex"] .adm-settings-menu {
+    padding: 24px 32px 40px;
+  }
+  /* PC: 大きいカードデザイン */
+  #screen-admin[style*="flex"] .adm-settings-card {
+    align-items: flex-start;
+    padding: 26px 24px 22px;
+    border-radius: 14px;
+    border-color: #EBEBEB;
+    gap: 0;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-top {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    width: 100%;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-icon {
+    width: 72px; height: 72px; border-radius: 16px;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-icon svg {
+    width: 34px; height: 34px;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-label {
+    font-size: 20px; text-align: left;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-desc {
+    display: block;
+    font-size: 14px; color: var(--text-sub); line-height: 1.7;
+    margin-bottom: 18px; padding-left: 2px;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-divider {
+    display: block;
+    height: 1px; background: #F0F0F0; margin: 0 -2px 14px; width: calc(100% + 4px);
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-footer {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-footer-icon svg {
+    width: 16px; height: 16px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-footer-text {
+    flex: 1; font-size: 13px; color: var(--text-sub);
+    display: flex; align-items: baseline; gap: 4px;
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-footer-count {
+    font-size: 15px; font-weight: 700; color: var(--text);
+  }
+  #screen-admin[style*="flex"] .adm-settings-card-footer-arrow svg {
+    width: 16px; height: 16px; stroke: #C0C0C0; fill: none; stroke-width: 2; stroke-linecap: round;
   }
   /* ── ユーザー管理 2列・点検項目 3列 ── */
   #screen-admin[style*="flex"] .adm-users-grid {
@@ -3272,15 +3432,21 @@
     <div class="calendar-card">
       <div class="cal-header">
         <div class="cal-nav" onclick="changeMonth(-1)"><svg viewBox="0 0 16 16" stroke-width="2"><path d="M10 4l-4 4 4 4"/></svg></div>
-        <div class="cal-month" id="cal-month-label">2024年5月</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" width="18" height="18"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <div class="cal-month" id="cal-month-label">2024年5月</div>
+        </div>
         <div class="cal-nav" onclick="changeMonth(1)"><svg viewBox="0 0 16 16" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg></div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-legend">
         <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--blue)"></div>完了</div>
         <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--red)"></div>異常あり</div>
-
       </div>
+    </div>
+    <div class="cal-footer-hint" style="padding: 0 16px 4px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--text-sub)"/></svg>
+      カレンダーの日付をタップすると、その日の点検一覧を確認できます。
     </div>
 
     <!-- Start button -->
@@ -3302,31 +3468,50 @@
       </button>
     </div>
 
-    <!-- Summary -->
-    <div class="summary-card">
-      <div class="summary-title">点検サマリー（2024年5月）</div>
-      <div class="summary-grid">
-        <div class="summary-item">
-          <div class="summary-icon si-gray">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-          </div>
-          <div class="summary-count" id="sum-pending">16</div>
-          <div class="summary-label">未実施</div>
+    <!-- Today's Inspection Panel -->
+    <div class="summary-card today-panel">
+      <div class="today-panel-header">
+        <div class="today-panel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         </div>
-
-        <div class="summary-item">
-          <div class="summary-icon si-blue">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke="var(--blue)"/><polyline points="8,12 11,15 16,9" stroke="var(--blue)"/></svg>
-          </div>
-          <div class="summary-count si-blue-text" id="sum-done">12</div>
-          <div class="summary-label">完了</div>
+        <div>
+          <div class="today-panel-title">今日の点検</div>
+          <div class="today-panel-date" id="today-panel-date"></div>
         </div>
-        <div class="summary-item">
-          <div class="summary-icon si-red">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke="var(--red)"/><path d="M12 8v4" stroke="var(--red)"/><path d="M12 16h.01" stroke="var(--red)"/></svg>
+      </div>
+      <div class="today-rows">
+        <div class="today-row today-row-pending" id="today-row-pending">
+          <div class="today-row-icon today-row-icon-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--red)"/></svg>
           </div>
-          <div class="summary-count si-red-text" id="sum-anomaly">2</div>
-          <div class="summary-label">異常あり</div>
+          <div class="today-row-label">未実施</div>
+          <div class="today-row-count today-row-count-red"><span id="sum-pending">16</span>件</div>
+          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+        </div>
+        <div class="today-row">
+          <div class="today-row-icon today-row-icon-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
+          </div>
+          <div class="today-row-label">完了予定</div>
+          <div class="today-row-count today-row-count-blue"><span id="sum-done">12</span>件</div>
+          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+        </div>
+        <div class="today-row">
+          <div class="today-row-icon today-row-icon-gray">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="#888"/></svg>
+          </div>
+          <div class="today-row-label">異常あり</div>
+          <div class="today-row-count today-row-count-gray"><span id="sum-anomaly">2</span>件</div>
+          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+        </div>
+      </div>
+      <div class="today-notice" id="today-notice">
+        <div class="today-notice-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--blue)"/></svg>
+        </div>
+        <div>
+          <div class="today-notice-title">未実施の点検があります</div>
+          <div class="today-notice-text">未実施の点検を確認して、<br>早めに対応しましょう。</div>
         </div>
       </div>
     </div>
@@ -3630,54 +3815,122 @@
       <div class="adm-settings-grid">
 
         <div class="adm-settings-card" onclick="showAdmSubTab('lines')">
-          <div class="adm-settings-card-icon" style="background:#EEF4FF;">
-            <svg viewBox="0 0 24 24" stroke="var(--blue)"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <div class="adm-settings-card-top">
+            <div class="adm-settings-card-icon" style="background:#EEF4FF;">
+              <svg viewBox="0 0 24 24" stroke="var(--blue)"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            </div>
+            <div class="adm-settings-card-label">ライン管理</div>
           </div>
-          <div class="adm-settings-card-label">ライン管理</div>
-          <div class="adm-settings-card-sub">ラインの追加・編集</div>
+          <div class="adm-settings-card-desc">ラインの追加・編集や<br>基本情報の設定を行います。</div>
+          <div class="adm-settings-card-divider"></div>
+          <div class="adm-settings-card-footer">
+            <div class="adm-settings-card-footer-icon">
+              <svg viewBox="0 0 24 24" stroke="var(--blue)"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+            </div>
+            <div class="adm-settings-card-footer-text">
+              <span class="adm-settings-card-footer-count" id="scard-lines-count">12</span>ライン登録済み
+            </div>
+            <div class="adm-settings-card-footer-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
         </div>
 
         <div class="adm-settings-card" onclick="showAdmSubTab('equips')">
-          <div class="adm-settings-card-icon" style="background:#F3EEFF;">
-            <svg viewBox="0 0 24 24" stroke="#7C3AED"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <div class="adm-settings-card-top">
+            <div class="adm-settings-card-icon" style="background:#F3EEFF;">
+              <svg viewBox="0 0 24 24" stroke="#7C3AED"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </div>
+            <div class="adm-settings-card-label">設備管理</div>
           </div>
-          <div class="adm-settings-card-label">設備管理</div>
-          <div class="adm-settings-card-sub">設備の追加・編集</div>
+          <div class="adm-settings-card-desc">設備の追加・編集や<br>基本情報の設定を行います。</div>
+          <div class="adm-settings-card-divider"></div>
+          <div class="adm-settings-card-footer">
+            <div class="adm-settings-card-footer-icon">
+              <svg viewBox="0 0 24 24" stroke="#7C3AED"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            </div>
+            <div class="adm-settings-card-footer-text">
+              <span class="adm-settings-card-footer-count" id="scard-equips-count">48</span>設備登録済み
+            </div>
+            <div class="adm-settings-card-footer-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
         </div>
 
         <div class="adm-settings-card" onclick="showAdmSubTab('items')">
-          <div class="adm-settings-card-icon" style="background:#E8F5E9;">
-            <svg viewBox="0 0 24 24" stroke="#2E7D32"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><polyline points="9 8 11 10 15 6"/></svg>
+          <div class="adm-settings-card-top">
+            <div class="adm-settings-card-icon" style="background:#E8F5E9;">
+              <svg viewBox="0 0 24 24" stroke="#2E7D32"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><polyline points="9 8 11 10 15 6"/></svg>
+            </div>
+            <div class="adm-settings-card-label">点検項目</div>
           </div>
-          <div class="adm-settings-card-label">点検項目</div>
-          <div class="adm-settings-card-sub">項目の追加・編集</div>
+          <div class="adm-settings-card-desc">点検項目の追加・編集や<br>詳細設定を行います。</div>
+          <div class="adm-settings-card-divider"></div>
+          <div class="adm-settings-card-footer">
+            <div class="adm-settings-card-footer-icon">
+              <svg viewBox="0 0 24 24" stroke="#2E7D32"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
+            </div>
+            <div class="adm-settings-card-footer-text">
+              <span class="adm-settings-card-footer-count" id="scard-items-count">124</span>項目登録済み
+            </div>
+            <div class="adm-settings-card-footer-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
         </div>
 
         <div class="adm-settings-card" onclick="showAdmSubTab('assign')">
-          <div class="adm-settings-card-icon" style="background:#FFF3E0;">
-            <svg viewBox="0 0 24 24" stroke="#E65100"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+          <div class="adm-settings-card-top">
+            <div class="adm-settings-card-icon" style="background:#FFF3E0;">
+              <svg viewBox="0 0 24 24" stroke="#E65100"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <div class="adm-settings-card-label">割当設定</div>
           </div>
-          <div class="adm-settings-card-label">割当設定</div>
-          <div class="adm-settings-card-sub">項目の割り当て</div>
+          <div class="adm-settings-card-desc">ライン・設備と点検項目の<br>割り当て設定を行います。</div>
+          <div class="adm-settings-card-divider"></div>
+          <div class="adm-settings-card-footer">
+            <div class="adm-settings-card-footer-icon">
+              <svg viewBox="0 0 24 24" stroke="#E65100"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <div class="adm-settings-card-footer-text">
+              割当ルール <span class="adm-settings-card-footer-count" id="scard-assign-count">36</span>件
+            </div>
+            <div class="adm-settings-card-footer-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
         </div>
 
         <div class="adm-settings-card" onclick="showAdmSubTab('users')">
-          <div class="adm-settings-card-icon" style="background:#FDECEC;">
-            <svg viewBox="0 0 24 24" stroke="var(--red)"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+          <div class="adm-settings-card-top">
+            <div class="adm-settings-card-icon" style="background:#FDECEC;">
+              <svg viewBox="0 0 24 24" stroke="var(--red)"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+            </div>
+            <div class="adm-settings-card-label">ユーザー管理</div>
           </div>
-          <div class="adm-settings-card-label">ユーザー管理</div>
-          <div class="adm-settings-card-sub">点検者・担当者</div>
+          <div class="adm-settings-card-desc">ユーザーの追加・編集や<br>権限設定を行います。</div>
+          <div class="adm-settings-card-divider"></div>
+          <div class="adm-settings-card-footer">
+            <div class="adm-settings-card-footer-icon">
+              <svg viewBox="0 0 24 24" stroke="var(--red)"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+            </div>
+            <div class="adm-settings-card-footer-text">
+              <span class="adm-settings-card-footer-count" id="scard-users-count">16</span>ユーザー登録済み
+            </div>
+            <div class="adm-settings-card-footer-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
         </div>
 
         <div class="adm-settings-card" onclick="showAdmSubTab('holidays')">
-          <div class="adm-settings-card-icon" style="background:#FFF8E1;">
-            <svg viewBox="0 0 24 24" stroke="#F59E0B"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="16" r="1" fill="#F59E0B"/><circle cx="12" cy="16" r="1" fill="#F59E0B"/><circle cx="16" cy="16" r="1" fill="#F59E0B"/></svg>
+          <div class="adm-settings-card-top">
+            <div class="adm-settings-card-icon" style="background:#FFF8E1;">
+              <svg viewBox="0 0 24 24" stroke="#F59E0B"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="16" r="1" fill="#F59E0B"/><circle cx="12" cy="16" r="1" fill="#F59E0B"/><circle cx="16" cy="16" r="1" fill="#F59E0B"/></svg>
+            </div>
+            <div class="adm-settings-card-label">休日・出勤設定</div>
           </div>
-          <div class="adm-settings-card-label">休日・出勤設定</div>
-          <div class="adm-settings-card-sub">休日・特別出勤日の設定</div>
+          <div class="adm-settings-card-desc">休日・特別出勤日などの<br>カレンダー設定を行います。</div>
+          <div class="adm-settings-card-divider"></div>
+          <div class="adm-settings-card-footer">
+            <div class="adm-settings-card-footer-icon">
+              <svg viewBox="0 0 24 24" stroke="#F59E0B"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div class="adm-settings-card-footer-text">年間カレンダー設定済み</div>
+            <div class="adm-settings-card-footer-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
         </div>
-
-
 
       </div>
     </div>
@@ -3965,16 +4218,6 @@
       </div>
       <span>設定</span>
     </button>
-    <button class="adm-btab" id="abtab-logout" onclick="adminLogout()" style="color:#E53935;">
-      <div class="adm-btab-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
-      </div>
-      <span>ログアウト</span>
-    </button>
   </div>
 </div>
 
@@ -4145,12 +4388,29 @@
   function updateHomeDateDisplay() {
     const now = new Date();
     const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const monthsJP = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    const dowJP = ['日','月','火','水','木','金','土'];
     const dayEl   = document.getElementById('home-date-day');
     const monEl   = document.getElementById('home-date-month');
     const yearEl  = document.getElementById('home-date-year');
     if (dayEl)  dayEl.textContent  = now.getDate();
     if (monEl)  monEl.textContent  = months[now.getMonth()];
     if (yearEl) yearEl.textContent = '/ ' + now.getFullYear();
+    // Today panel date
+    const todayDateEl = document.getElementById('today-panel-date');
+    if (todayDateEl) {
+      todayDateEl.textContent = monthsJP[now.getMonth()] + now.getDate() + '日（' + dowJP[now.getDay()] + '）';
+    }
+    // Show/hide notice based on pending count
+    updateTodayNotice();
+  }
+
+  function updateTodayNotice() {
+    var pendingEl = document.getElementById('sum-pending');
+    var noticeEl  = document.getElementById('today-notice');
+    if (!pendingEl || !noticeEl) return;
+    var count = parseInt(pendingEl.textContent) || 0;
+    noticeEl.style.display = count > 0 ? 'flex' : 'none';
   }
 
   function updateAdmDateDisplay() {
@@ -4363,6 +4623,7 @@
     var sumPending = document.getElementById('sum-pending'); if (sumPending) sumPending.textContent = pendingCount;
     var sumDone    = document.getElementById('sum-done');    if (sumDone)    sumDone.textContent    = doneCount;
     var sumAnomaly = document.getElementById('sum-anomaly'); if (sumAnomaly) sumAnomaly.textContent = anomalyCount;
+    if (typeof updateTodayNotice === 'function') updateTodayNotice();
     var summaryTitle = document.querySelector('.summary-title');
     if (summaryTitle) summaryTitle.textContent = `点検サマリー（${calYear}年${monthNames[calMonth]}）`;
 
@@ -5131,6 +5392,7 @@ function admLoad() {
 function admSave() {
   localStorage.setItem('admData', JSON.stringify(ADM));
   admSync();
+  if (typeof updateSettingsCardCounts === 'function') updateSettingsCardCounts();
 }
 
 function admSync() {
@@ -5167,42 +5429,44 @@ function admSync() {
 }
 
 /* ─ user chip popover ─ */
-function toggleAdmUserMenu(e) {
-  e.stopPropagation();
-  var existing = document.getElementById('_adm-logout-popup');
+function _showUserPopup(id, onClickFn, labelHtml) {
+  var existing = document.getElementById(id);
   if (existing) { existing.remove(); return; }
-  var chip = document.getElementById('adm-user-chip');
+  var chipId = id === '_adm-logout-popup' ? 'adm-user-chip' : 'home-user-chip';
+  var chip = document.getElementById(chipId);
   if (!chip) return;
   var rect = chip.getBoundingClientRect();
   var popup = document.createElement('div');
-  popup.id = '_adm-logout-popup';
-  var popH=52;popup.style.cssText = 'position:fixed;top:'+(rect.top-popH-6)+'px;left:'+rect.left+'px;'
+  popup.id = id;
+  // 下に出す。画面右端にはみ出ないよう right 基準
+  var rightEdge = window.innerWidth - rect.right;
+  popup.style.cssText = 'position:fixed;top:'+(rect.bottom+6)+'px;right:'+Math.max(8,rightEdge)+'px;'
     +'background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.18);'
     +'min-width:160px;z-index:999999;overflow:hidden;'
     +'animation:popoverIn 0.15s cubic-bezier(.4,0,.2,1);';
-  popup.innerHTML = '<button onclick="adminLogout()" style="width:100%;padding:13px 16px;'
+  popup.innerHTML = '<button onclick="'+onClickFn+'()" style="width:100%;padding:13px 16px;'
     +'display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;'
     +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:left;">'
     +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
-    +'ログアウト</button>';
+    +labelHtml+'</button>';
   document.body.appendChild(popup);
   setTimeout(function() {
     document.addEventListener('click', function _close() {
-      var p = document.getElementById('_adm-logout-popup');
+      var p = document.getElementById(id);
       if (p) p.remove();
       document.removeEventListener('click', _close);
     });
   }, 0);
 }
+
+function toggleAdmUserMenu(e) {
+  e.stopPropagation();
+  _showUserPopup('_adm-logout-popup', 'adminLogout', 'ログアウト');
+}
+
 function toggleHomeUserMenu(e) {
   e.stopPropagation();
-  /* スマホ版: チップ直下のポップオーバーをそのまま使う */
-  var chip    = document.getElementById('home-user-chip');
-  var popover = document.getElementById('home-user-popover');
-  if (!chip || !popover) return;
-  var isOpen = popover.classList.contains('open');
-  popover.classList.toggle('open', !isOpen);
-  chip.classList.toggle('open', !isOpen);
+  _showUserPopup('_home-logout-popup', 'logout', 'ログアウト');
 }
 
 /* ─ open/close admin ─ */function openAdminScreen(adminName) {
@@ -5284,6 +5548,35 @@ function showAdmTab(tab) {
   if (tab==='settings')  { showAdmSettingsMenu(); }
 }
 
+function updateSettingsCardCounts() {
+  // ライン数
+  var linesEl = document.getElementById('scard-lines-count');
+  if (linesEl) linesEl.textContent = (ADM.lines || []).length;
+
+  // 設備数
+  var equipsEl = document.getElementById('scard-equips-count');
+  if (equipsEl) equipsEl.textContent = (ADM.equips || []).length;
+
+  // 点検項目数
+  var itemsEl = document.getElementById('scard-items-count');
+  if (itemsEl) itemsEl.textContent = (ADM.items || []).length;
+
+  // 割当ルール数（assigns の全エントリ合計）
+  var assignEl = document.getElementById('scard-assign-count');
+  if (assignEl) {
+    var total = 0;
+    Object.values(ADM.assigns || {}).forEach(function(arr) { total += (arr || []).length; });
+    assignEl.textContent = total;
+  }
+
+  // ユーザー数（点検者 + 管理者）
+  var usersEl = document.getElementById('scard-users-count');
+  if (usersEl) {
+    var uCount = (ADM.inspectors || []).length + (ADM.managers || []).length;
+    usersEl.textContent = uCount;
+  }
+}
+
 function showAdmSettingsMenu() {
   // すべてのパネルを隠す
   ['lines','equips','items','assign','users','holidays','monthly-sheet','dashboard','approval'].forEach(function(t) {
@@ -5296,6 +5589,7 @@ function showAdmSettingsMenu() {
   // メニューを表示
   var menu = document.getElementById('adm-settings-menu');
   if (menu) menu.classList.add('visible');
+  updateSettingsCardCounts();
 }
 
 var ADM_PANEL_LABELS = {
