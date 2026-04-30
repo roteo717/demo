@@ -803,7 +803,8 @@
     background: #F0F2F5;
     z-index: 500;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: hidden;
     position: fixed;
   }
   .adm-wrap { max-width: 390px; margin: 0 auto; flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding-bottom: calc(60px + env(safe-area-inset-bottom, 12px)); width: 100%; }
@@ -869,6 +870,11 @@
   }
   .adm-user-popover-btn svg { width: 16px; height: 16px; stroke: var(--red); flex-shrink: 0; }
   .adm-user-popover-btn:active { background: var(--red-light); }
+  .adm-user-popover-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px 10px;
+  }
+  .adm-user-popover-header .adm-user-chip-name { font-size: 13px; color: var(--text); }
   .adm-tabs-bar { display: none; } /* 上部タブ非表示 */
   .adm-subtabs-bar { display: none; } /* 旧タブバー非表示 */
 
@@ -881,15 +887,15 @@
     background: #FFFFFF;
     border-top: 1px solid #E0E0E0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     z-index: 100;
     flex-shrink: 0;
   }
   .adm-btab {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 3px; background: none; border: none; cursor: pointer;
-    color: #888888; font-size: 10px; font-weight: 500; font-family: inherit;
-    padding: 8px 4px 4px; transition: color 0.15s;
+    color: #888888; font-size: 9px; font-weight: 500; font-family: inherit;
+    padding: 8px 2px 4px; transition: color 0.15s;
     -webkit-user-select: none; user-select: none;
   }
   .adm-btab:active { opacity: 0.7; }
@@ -932,7 +938,7 @@
   }
   .adm-settings-card {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.07);
     border: 1.5px solid var(--border);
     padding: 20px 14px 16px;
@@ -943,7 +949,7 @@
   }
   .adm-settings-card:active { transform: scale(0.97); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
   .adm-settings-card-icon {
-    width: 52px; height: 52px; border-radius: 14px;
+    width: 52px; height: 52px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
   }
@@ -985,6 +991,8 @@
   }
   .adm-add-btn:active { opacity: 0.85; }
   .adm-list-card { background: #fff; border-radius: 12px; box-shadow: var(--shadow-card); overflow: hidden; margin-bottom: 8px; }
+  /* 月次点検表カードはzoomで縮小するためoverflow:visibleを許可 */
+  #ms-card { overflow: visible !important; }
   .adm-list-row {
     display: flex; align-items: center; padding: 13px 16px;
     border-bottom: 1px solid #F5F5F5; gap: 10px;
@@ -1345,6 +1353,15 @@
   #dash-anomaly-right-col {
     max-height: none !important;
     overflow: visible !important;
+    width: 100% !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+  }
+  /* 月次点検表カード側も同幅に揃える */
+  #dash-two-col > div:first-child {
+    width: 100% !important;
+    flex: none !important;
+    box-sizing: border-box !important;
   }
 
   /* ユーザー管理（点検者 / 担当者）→ 縦積み */
@@ -1353,12 +1370,28 @@
     flex-direction: column !important;
     gap: 0 !important;
   }
+  .adm-users-grid > div {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .adm-users-grid .adm-list-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
 
   /* 点検項目グリッド（JS生成：日次/10日/月次）→ 1列 */
   .adm-items-grid {
     display: flex !important;
     flex-direction: column !important;
     gap: 0 !important;
+  }
+  .adm-items-grid > div {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .adm-items-grid .adm-list-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   /* 承認：設備カード → モバイルは縦1列 */
@@ -1374,8 +1407,20 @@
     min-width: unset !important;
     flex-shrink: unset !important;
   }
+  /* ライン・設備選択カードを1列 */
+  .list-body {
     display: flex !important;
     flex-direction: column !important;
+  }
+
+  /* 異常一覧カードを横幅いっぱいに */
+  .da-anomaly-card {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #adm-dash-anomaly-list > div {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   /* 承認カード内グリッド */
@@ -2060,7 +2105,7 @@
     min-width: 52px; text-align: center;
   }
   .ms-doc-title-box + .ms-doc-title-box { border-left: 1px solid #333; }
-  .ms-doc-title-box-label { font-weight: 700; font-size: 11px; border-bottom: 1px solid #ccc; padding-bottom: 1px; margin-bottom: 2px; }
+  .ms-doc-title-box-label { font-weight: 700; font-size: 11px; border-bottom: 1px solid #bbb; padding-bottom: 1px; margin-bottom: 2px; }
 
   /* Equipment info row */
   .ms-doc-equiprow {
@@ -2084,7 +2129,7 @@
     background: #fff;
   }
   .ms-table th, .ms-table td {
-    border: 1px solid #888;
+    border: 1px solid #bbb;
     padding: 0;
     text-align: center;
     white-space: nowrap;
@@ -2177,7 +2222,7 @@
   .ms-monthly-confirm { min-width: 52px; padding: 5px 3px; font-size: 9px; color: #555; }
 
   /* Section divider */
-  .ms-section-divider td, .ms-section-divider th { border-top: 2px solid #444 !important; }
+  .ms-section-divider td, .ms-section-divider th { border-top: 1.5px solid #333 !important; }
 
   /* Legend/notes block */
   .ms-legend-block {
@@ -2189,7 +2234,7 @@
     flex: 1; padding: 6px 10px;
     display: flex; align-items: center; gap: 16px;
     font-weight: 700; font-size: 11px;
-    border-right: 1px solid #ccc;
+    border-right: 1px solid #bbb;
   }
   .ms-legend-notes {
     flex: 2; padding: 4px 8px;
@@ -2205,7 +2250,7 @@
     border-top: 1.5px solid #333;
   }
   .ms-recovery-table th, .ms-recovery-table td {
-    border: 1px solid #888;
+    border: 1px solid #bbb;
     padding: 3px 6px;
     white-space: nowrap;
   }
@@ -2242,7 +2287,18 @@
 
   /* Row hover */
   .ms-table tbody tr:hover td:not(.ms-section-label) { background: rgba(47,107,255,0.04); }
-  .ms-cat-divider td { border-top: 2px solid #777 !important; }
+  .ms-cat-divider td { border-top: 1.5px solid #333 !important; }
+
+  /* ─── モバイル：月次点検表をズームで画面幅に収める ─── */
+  @media (max-width: 767px) {
+    #ms-table-wrap {
+      overflow: visible !important;
+    }
+    /* ズーム前のフォールバック表示用（ラグ防止） */
+    .ms-doc {
+      min-width: 680px;
+    }
+  }
 </style>
 <!-- ===== DASHBOARD & APPROVAL: STYLES ===== -->
 <style>
@@ -2892,6 +2948,57 @@
   }
   .apr2-empty svg { width: 44px; height: 44px; stroke: #C8D6FF; fill: none; margin-bottom: 12px; }
   .apr2-empty-text { font-size: 14px; color: var(--text-sub); }
+
+  /* ─── PDF出力ボタン ─── */
+  .ms-pdf-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--blue); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-user-select: none;
+  }
+  .ms-pdf-btn:hover  { background: #1a55e3; }
+  .ms-pdf-btn:active { transform: scale(0.97); background: #1447cc; }
+  .ms-pdf-btn svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 2; }
+
+  /* ─── 印刷スタイル ─── */
+  @media print {
+    /* すべて非表示 */
+    body > * { display: none !important; }
+    /* 印刷エリアだけ表示 */
+    #ms-print-area { display: block !important; }
+
+    #ms-print-area {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      background: #fff;
+    }
+    /* ボタン・セレクター類を非表示 */
+    .ms-pdf-btn,
+    #ms-print-area .ms-selector-row { display: none !important; }
+
+    /* 点検表を全幅で */
+    #ms-print-area .ms-doc {
+      zoom: 1 !important;
+      transform: none !important;
+      width: 100% !important;
+      max-width: none !important;
+      box-shadow: none !important;
+    }
+    #ms-print-area #ms-table-wrap {
+      overflow: visible !important;
+      width: auto !important;
+    }
+    @page {
+      size: A4 landscape;
+      margin: 10mm;
+    }
+  }
 </style>
 </head>
 <body>
@@ -3502,6 +3609,13 @@
           <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="adm-user-popover" id="adm-user-popover">
+          <div class="adm-user-popover-header">
+            <div class="adm-user-chip-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <span id="adm-popover-name" class="adm-user-chip-name" style="font-size:13px;"></span>
+          </div>
+          <div style="height:1px;background:var(--border);margin:0 12px;"></div>
           <button class="adm-user-popover-btn" onclick="adminLogout()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             ログアウト
@@ -3717,11 +3831,22 @@
 
         <!-- 左：月次点検表 -->
         <div style="flex:2;min-width:0;display:flex;flex-direction:column;">
-          <div class="adm-section-hdr">
+          <div class="adm-section-hdr" style="display:flex;align-items:center;justify-content:space-between;">
             <span class="adm-section-title">月次点検表</span>
+            <button class="ms-pdf-btn" onclick="printMonthlySheet()" title="PDF出力">
+              <svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+              PDF出力
+            </button>
           </div>
+          <div id="ms-print-area">
           <div class="adm-list-card" id="ms-card" style="padding:12px 14px;">
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+            <div class="ms-selector-row" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+              <div style="flex:1;min-width:120px;">
+                <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">ライン</div>
+                <select id="ms-line-sel" class="adm-select" onchange="msFilterLine()" style="font-size:13px;padding:8px 32px 8px 10px;">
+                  <option value="">すべてのライン</option>
+                </select>
+              </div>
               <div style="flex:1;min-width:120px;">
                 <div style="font-size:11px;color:var(--text-sub);font-weight:600;margin-bottom:4px;">設備</div>
                 <select id="ms-equip-sel" class="adm-select" onchange="renderMonthlySheet()" style="font-size:13px;padding:8px 32px 8px 10px;">
@@ -3734,8 +3859,9 @@
               </div>
             </div>
             <div id="ms-no-equip" style="display:none;padding:10px 0;text-align:center;color:var(--text-sub);font-size:13px;">設備を選択してください</div>
-            <div id="ms-table-wrap" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;width:100%;box-sizing:border-box;"></div>
+            <div id="ms-table-wrap" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;width:100%;box-sizing:border-box;padding-bottom:4px;"></div>
           </div>
+          </div><!-- /#ms-print-area -->
         </div>
 
         <!-- 右：異常一覧 -->
@@ -3838,6 +3964,16 @@
         </svg>
       </div>
       <span>設定</span>
+    </button>
+    <button class="adm-btab" id="abtab-logout" onclick="adminLogout()" style="color:#E53935;">
+      <div class="adm-btab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+      <span>ログアウト</span>
     </button>
   </div>
 </div>
@@ -5073,6 +5209,8 @@ function toggleHomeUserMenu(e) {
   admLoad();
   var nameEl = document.getElementById('adm-hdr-name');
   if (nameEl && adminName) nameEl.textContent = adminName + ' さん';
+  var popoverNameEl = document.getElementById('adm-popover-name');
+  if (popoverNameEl && adminName) popoverNameEl.textContent = adminName + ' さん';
   var pcNameEl = document.getElementById('pc-sidebar-username');
   if (pcNameEl && adminName) pcNameEl.textContent = adminName + ' さん';
   updateAdmDateDisplay();
@@ -6159,35 +6297,42 @@ function renderDashAnomalies() {
     '</div>';
     return;
   }
-  var da_typeLabels = { 'daily': '\u6bce\u65e5', '10days': '10\u65e5\u6bce', 'monthly': '\u6708\u6b21' };
-  list.innerHTML = anomalies.map(function(a) {
-    var ngItemsHtml = '';
-    if (a.ngItems && a.ngItems.length) {
-      ngItemsHtml = '<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">' +
-        a.ngItems.map(function(item) {
-          var tl = da_typeLabels[item.type] || item.type;
-          return '<span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#FDECEC;color:var(--red);border:1px solid #FBBCBC;">' +
-            '[' + tl + '] ' + item.name +
-          '</span>';
-        }).join('') +
-      '</div>';
-    }
-    return '<div class="da-anomaly-card" onclick="daToast(\'' + a.equipId + ' ' + a.equipName + ': ' + a.detail + '\')">' +
-      '<div class="da-anomaly-icon">' +
-        '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
-      '</div>' +
-      '<div class="da-anomaly-body">' +
-        '<div class="da-anomaly-id">' + a.equipId + '</div>' +
-        '<div class="da-anomaly-name">' + a.equipName + '</div>' +
-        '<div class="da-anomaly-detail">' +
-          '<span class="da-anomaly-badge">NG</span>' +
-          (a.ngItems && a.ngItems.length ? a.ngItems.length + '\u9805\u76ee' : a.detail) +
-        '</div>' +
-        ngItemsHtml +
-      '</div>' +
-      '<div class="da-anomaly-arrow"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>' +
+  var da_typeLabels = { 'daily': '毎日点検', '10days': '10日毎点検', 'monthly': '月次点検' };
+  var da_typeOrder  = ['daily', '10days', 'monthly'];
+  /* グループ化 */
+  var da_groups = {};
+  da_typeOrder.forEach(function(t){ da_groups[t] = []; });
+  anomalies.forEach(function(a){
+    var key = (a.ngItems && a.ngItems.length && a.ngItems[0].type) ? a.ngItems[0].type : 'daily';
+    if (!da_groups[key]) da_groups[key] = [];
+    da_groups[key].push(a);
+  });
+  var html = '<div style="background:transparent;padding:0;">';
+  var anyGroup = false;
+  da_typeOrder.forEach(function(t){
+    var items = da_groups[t];
+    if (!items || !items.length) return;
+    anyGroup = true;
+    html += '<div style="display:flex;align-items:center;gap:8px;margin:' + (t==='daily'?'0':'14px') + ' 0 10px;">' +
+      '<div style="width:16px;height:1px;background:#DDD;flex-shrink:0;"></div>' +
+      '<span style="font-size:11px;font-weight:600;color:#999;letter-spacing:0.5px;white-space:nowrap;">' + da_typeLabels[t] + '</span>' +
+      '<div style="flex:1;height:1px;background:#DDD;"></div>' +
     '</div>';
-  }).join('');
+    items.forEach(function(a){
+      var detail = (a.ngItems && a.ngItems.length) ? a.ngItems.map(function(i){ return i.name; }).join('、') : a.detail;
+      html += '<div onclick="daToast(\'' + a.equipId + ' ' + a.equipName + ': ' + detail + '\')" style="display:flex;align-items:center;background:#fff;border-radius:10px;border:1px solid #EEEEEE;box-shadow:0 1px 4px rgba(0,0,0,0.06);padding:13px 14px;margin-bottom:7px;cursor:pointer;transition:background 0.15s;" onmouseenter="this.style.background=\'#F8F8F8\'" onmouseleave="this.style.background=\'#fff\'">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:14px;font-weight:700;color:#333;letter-spacing:0.2px;">' + a.equipId + '\u3000' + a.equipName + '</div>' +
+          '<div style="font-size:12px;color:#888;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + detail + '</div>' +
+        '</div>' +
+        '<div style="width:30px;height:30px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+        '</div>' +
+      '</div>';
+    });
+  });
+  html += '</div>';
+  list.innerHTML = html;
 }
 
 /* ──────────────────────────────────────────
@@ -6342,11 +6487,16 @@ function jumpToMonthlySheet(equipId, dateStr) {
   /* セレクタをセットした状態で月次シートを再描画 */
   renderMonthlySheet();
 
-  /* テーブルまでスクロール */
+  /* テーブルまでスクロール（iOS含め確実に動作するよう adm-wrap を直接操作） */
   setTimeout(function() {
-    var card = document.getElementById('ms-card') || document.getElementById('ms-table-wrap');
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 150);
+    var admWrap = document.querySelector('.adm-wrap');
+    var card = document.getElementById('ms-card');
+    if (admWrap) admWrap.scrollTop = 0;
+    if (admWrap && card) {
+      var top = card.offsetTop - 8;
+      admWrap.scrollTop = top > 0 ? top : 0;
+    }
+  }, 200);
 }
 
 function renderAdmDashboard() {
@@ -6391,7 +6541,7 @@ function renderAnomalyListPanel(filterEquipId) {
   var titleEl = document.getElementById('adm-anomaly-section-title');
   if (titleEl) {
     if (filterEquipId) {
-      var eq = (ADM.equipments || []).find(function(e){ return e.id === filterEquipId; });
+      var eq = (ADM.equips || []).find(function(e){ return e.id === filterEquipId; });
       titleEl.textContent = '異常一覧　' + filterEquipId + (eq ? '　' + eq.name : '');
     } else {
       titleEl.textContent = '異常一覧';
@@ -6403,35 +6553,43 @@ function renderAnomalyListPanel(filterEquipId) {
   if (!list.length) {
     anEl.innerHTML = '<div style="background:#E8F5E9;border-radius:12px;padding:16px;display:flex;align-items:center;gap:10px;">' +
       '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
-      '<div><div style="font-size:14px;font-weight:700;color:#2E7D32;">未対応の異常はありません</div>' +
-      '<div style="font-size:12px;color:#388E3C;margin-top:2px;">すべての異常は対応済みです</div></div></div>';
+      '<div><div style="font-size:14px;font-weight:700;color:#2E7D32;">異常はありません</div></div></div>';
   } else {
-    var typeLabels = { 'daily': '毎日', '10days': '10日毎', 'monthly': '月次' };
-    anEl.innerHTML = list.map(function(a) {
-      var ngHtml = '';
-      if (a.ngItems && a.ngItems.length) {
-        ngHtml = '<div style="margin-bottom:10px;">' +
-          '<div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:5px;letter-spacing:0.3px;">&#x26A0; 異常内容</div>' +
-          a.ngItems.map(function(item) {
-            var tl = typeLabels[item.type] || item.type;
-            return '<div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:#FFF5F5;border-radius:6px;margin-bottom:3px;">' +
-              '<span style="font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;background:var(--red);color:#fff;flex-shrink:0;">' + tl + '</span>' +
-              '<span style="font-size:12px;color:var(--text);">' + item.name + '</span>' +
-            '</div>';
-          }).join('') +
-        '</div>';
-      } else {
-        ngHtml = '<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;">' + a.detail + '</div>';
-      }
-      return '<div style="background:#fff;border:1px solid #F0D0D0;border-left:4px solid var(--red);border-radius:10px;padding:14px 16px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">' +
-          '<div style="font-size:14px;font-weight:700;color:var(--text);">' + a.equipId + '\u3000' + a.equipName + '</div>' +
-        '</div>' +
-        '<div style="font-size:11px;color:var(--text-sub);margin-bottom:8px;">' + (a.date||'') + (a.time && a.time!=='--:--' ? '\u3000'+a.time : '') + (a.inspector ? '\u3000\u70b9\u691c\u8005\uff1a' + a.inspector : '') + '</div>' +
-        ngHtml +
-        '<button onclick="jumpToMonthlySheet(\''+a.equipId+'\',\''+a.date+'\')" style="width:100%;padding:8px;border:1px solid var(--red);background:#fff;color:var(--red);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">\u8a72\u5f53\u7b87\u6240\u3078</button>' +
+    var typeLabels2 = { 'daily': '毎日点検', '10days': '10日毎点検', 'monthly': '月次点検' };
+    var typeOrder2  = ['daily', '10days', 'monthly'];
+    var groups2 = {};
+    typeOrder2.forEach(function(t){ groups2[t] = []; });
+    list.forEach(function(a){
+      var key = (a.ngItems && a.ngItems.length && a.ngItems[0].type) ? a.ngItems[0].type : 'daily';
+      if (!groups2[key]) groups2[key] = [];
+      groups2[key].push(a);
+    });
+    var html2 = '<div style="background:transparent;padding:0;">';
+    var anyGroup2 = false;
+    typeOrder2.forEach(function(t){
+      var items2 = groups2[t];
+      if (!items2 || !items2.length) return;
+      html2 += '<div style="display:flex;align-items:center;gap:8px;margin:' + (anyGroup2 ? '14px' : '0') + ' 0 10px;">' +
+        '<div style="width:16px;height:1px;background:#DDD;flex-shrink:0;"></div>' +
+        '<span style="font-size:11px;font-weight:600;color:#999;letter-spacing:0.5px;white-space:nowrap;">' + typeLabels2[t] + '</span>' +
+        '<div style="flex:1;height:1px;background:#DDD;"></div>' +
       '</div>';
-    }).join('');
+      anyGroup2 = true;
+      items2.forEach(function(a){
+        var detail2 = (a.ngItems && a.ngItems.length) ? a.ngItems.map(function(i){ return i.name; }).join('、') : a.detail;
+        html2 += '<div style="display:flex;align-items:center;background:#fff;border-radius:10px;border:1px solid #EEEEEE;box-shadow:0 1px 4px rgba(0,0,0,0.06);padding:13px 14px;margin-bottom:7px;cursor:pointer;transition:background 0.15s;" onclick="jumpToMonthlySheet(\''+a.equipId+'\',\''+a.date+'\')" onmouseenter="this.style.background=\'#F8F8F8\'" onmouseleave="this.style.background=\'#fff\'">' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="font-size:14px;font-weight:700;color:#333;letter-spacing:0.2px;">' + a.equipId + '\u3000' + a.equipName + '</div>' +
+            '<div style="font-size:12px;color:#888;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + detail2 + '</div>' +
+          '</div>' +
+          '<div style="width:30px;height:30px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;">' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+          '</div>' +
+        '</div>';
+      });
+    });
+    html2 += '</div>';
+    anEl.innerHTML = html2;
   }
 }
 
@@ -6983,24 +7141,46 @@ function daToast(msg) {
    ────────────────────────────────────────── */
 
 function initMonthlySheetSelectors() {
+  /* ライン選択 */
+  var lineSel = document.getElementById('ms-line-sel');
+  if (lineSel) {
+    var curLine = lineSel.value;
+    lineSel.innerHTML = '<option value="">すべてのライン</option>';
+    (ADM.lines || []).forEach(function(ln) {
+      var opt = document.createElement('option');
+      opt.value = ln.id;
+      opt.textContent = ln.name;
+      lineSel.appendChild(opt);
+    });
+    if (curLine) lineSel.value = curLine;
+  }
+
+  /* 設備選択（ライン絞り込み適用） */
   var equipSel = document.getElementById('ms-equip-sel');
   if (!equipSel) return;
   var curEquip = equipSel.value;
+  var filterLine = lineSel ? lineSel.value : '';
   equipSel.innerHTML = '<option value="">設備を選択</option>';
   (ADM.equips || []).forEach(function(eq) {
+    if (filterLine && eq.lineId !== filterLine) return;
     var opt = document.createElement('option');
     opt.value = eq.id;
     opt.textContent = eq.id + '　' + eq.name;
     equipSel.appendChild(opt);
   });
-  // opt.selected より確実な方法で選択状態を復元
   if (curEquip) equipSel.value = curEquip;
-  // default to current year/month
+
+  /* 年月デフォルト */
   var monthSel = document.getElementById('ms-month-sel');
   if (monthSel && !monthSel.value) {
     var now = new Date();
     monthSel.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
   }
+}
+
+function msFilterLine() {
+  initMonthlySheetSelectors();
+  renderMonthlySheet();
 }
 
 function renderMonthlySheet() {
@@ -7354,14 +7534,40 @@ function renderMonthlySheet() {
   html += '</div>'; // .ms-doc
 
   wrap.innerHTML = html;
-  var hint = document.getElementById('ms-no-equip');
-  if (hint) hint.style.display = 'block';
 
+  /* モバイル：ms-doc を画面幅に合わせてズーム縮小（layout対応）*/
+  requestAnimationFrame(function() {
+    if (window.innerWidth >= 1024) return;
+    var doc = wrap.querySelector('.ms-doc');
+    if (!doc) return;
+    // reset any previous zoom first so we get correct natural width
+    doc.style.zoom = '';
+    var available = wrap.clientWidth || wrap.offsetWidth || 320;
+    var natural   = doc.scrollWidth;
+    if (!natural || natural <= available) {
+      wrap.style.overflow = '';
+      return;
+    }
+    var scale = available / natural;
+    doc.style.zoom = scale;
+    doc.style.minWidth = natural + 'px';
+    wrap.style.overflow = 'visible'; // zoom adjusts layout; no scroll needed
+  });
   /* 異常一覧を選択設備でフィルタリング */
   var equipSel2 = document.getElementById('ms-equip-sel');
   renderAnomalyListPanel(equipSel2 && equipSel2.value ? equipSel2.value : null);
 
   syncAnomalyListHeight();
+}
+
+/* ─── PDF出力：月次点検表を印刷ダイアログで出力 ─── */
+function printMonthlySheet() {
+  var equipSel = document.getElementById('ms-equip-sel');
+  if (!equipSel || !equipSel.value) {
+    alert('設備を選択してください');
+    return;
+  }
+  window.print();
 }
 
 /* 異常一覧の高さを月次点検表カードに合わせる */
