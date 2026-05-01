@@ -549,7 +549,7 @@
     content: ''; display: block; width: 5px; height: 5px; border-radius: 50%;
     background: var(--red); margin: 2px auto 0;
   }
-  .cal-legend { display: flex; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .cal-legend { display: flex; gap: 14px; margin-top: 12px; padding-top: 12px; }
   .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-sub); }
   .cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 
@@ -662,6 +662,257 @@
   .check-card.selected .check-icon { background: rgba(47,107,255,0.12); }
   .check-card.selected .check-icon svg { stroke: var(--blue); }
 
+  /* ─── PC COMBINED LINE+EQUIP SCREEN ─── */
+  #pc-line-equip-wrap { display: none; }
+
+  @media (min-width: 1024px) {
+    /* Hide mobile elements on screen-line */
+    #screen-line > .nav-bar,
+    #screen-line > #line-select-label,
+    #screen-line > #line-list,
+    #screen-line > .flex-spacer,
+    #screen-line > .bottom-action {
+      display: none !important;
+    }
+    /* Show PC panel */
+    #pc-line-equip-wrap {
+      display: flex !important;
+      flex-direction: column;
+      padding: 28px 32px 0;
+      height: 100vh;
+      background: var(--bg);
+      box-sizing: border-box;
+    }
+    /* Stepper */
+    .pc-lsel-stepper {
+      display: flex; align-items: center; gap: 0;
+      margin-bottom: 8px;
+    }
+    .pc-lsel-step {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 600; color: var(--text-sub);
+    }
+    .pc-lsel-step.active { color: var(--blue); }
+    .pc-step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #D0D0D0; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .pc-lsel-step.active .pc-step-num { background: var(--blue); }
+    .pc-lsel-step-line {
+      flex: 1; height: 2px; background: #D0D0D0;
+      min-width: 80px; max-width: 200px; margin: 0 12px;
+    }
+    /* Subtitle */
+    .pc-lsel-subtitle {
+      font-size: 13px; color: var(--text-sub); margin-bottom: 20px; margin-top: 6px;
+    }
+    /* Two-panel layout */
+    .pc-lsel-panels {
+      flex: 1; display: flex; gap: 20px; align-items: stretch;
+      padding-bottom: 24px; min-height: 0;
+    }
+    /* LEFT: line list */
+    .pc-lsel-left {
+      width: 260px; flex-shrink: 0;
+      background: var(--card);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .pc-lsel-left-header {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      padding: 16px 16px 10px;
+    }
+    .pc-line-search-wrap {
+      position: relative; padding: 0 12px 10px;
+    }
+    .pc-line-search-wrap input {
+      width: 100%; border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 8px 10px 8px 32px;
+      font-size: 13px; color: var(--text); background: var(--bg);
+      outline: none; font-family: inherit;
+      transition: border-color 0.15s;
+    }
+    .pc-line-search-wrap input:focus { border-color: var(--blue); background: #fff; }
+    .pc-line-search-wrap input::placeholder { color: #BBBBBB; }
+    .pc-line-search-icon {
+      position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
+      pointer-events: none;
+    }
+    .pc-line-list-body { flex: 1; overflow-y: auto; padding-bottom: 8px; }
+    .pc-line-section-label {
+      font-size: 12px; color: var(--text-sub); font-weight: 600;
+      padding: 8px 14px 4px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pc-line-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; cursor: pointer;
+      transition: background 0.12s;
+      user-select: none; -webkit-user-select: none;
+      border-left: 3px solid transparent;
+    }
+    .pc-line-item:hover { background: var(--bg); }
+    .pc-line-item.active {
+      background: var(--blue-light);
+      border-left-color: var(--blue);
+    }
+    .pc-line-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
+    .pc-line-item.active .pc-line-name { color: var(--blue); font-weight: 700; }
+    .pc-line-count { font-size: 12px; color: var(--text-sub); flex-shrink: 0; }
+    .pc-line-item.active .pc-line-count { color: var(--blue); }
+    .pc-line-fav-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 2px 4px; color: #CCCCCC; font-size: 14px;
+      flex-shrink: 0; transition: color 0.15s;
+    }
+    .pc-line-fav-btn.active { color: #F59E0B; }
+    .pc-line-arrow { width: 14px; height: 14px; stroke: #CCC; fill: none; flex-shrink: 0; }
+    .pc-line-item.active .pc-line-arrow { stroke: var(--blue); }
+    .pc-lines-total { font-size: 11px; color: var(--text-small); padding: 8px 14px; }
+    /* RIGHT: equip panel */
+    .pc-lsel-right {
+      flex: 1; background: var(--card);
+      border-radius: 14px; border: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      min-width: 0; min-height: 0;
+    }
+    #pc-equip-content { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    /* Equip panel header */
+    .pc-equip-hdr {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .pc-equip-hdr-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .pc-equip-hdr-title {
+      font-size: 16px; font-weight: 700; color: var(--text); flex: 1;
+    }
+    .pc-equip-total-badge {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 20px; font-size: 12px; font-weight: 600;
+      color: var(--text-sub); padding: 2px 10px;
+    }
+    .pc-equip-sel-info {
+      font-size: 13px; font-weight: 700; color: var(--blue);
+    }
+    .pc-equip-hdr-btns { display: flex; gap: 8px; }
+    .pc-equip-hdr-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 7px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--bg);
+      color: var(--text); font-family: inherit;
+      transition: background 0.13s;
+    }
+    .pc-equip-hdr-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .pc-equip-hdr-btn.select-all { color: var(--blue); border-color: var(--blue-mid); background: var(--blue-light); }
+    .pc-equip-hdr-btn:hover { opacity: 0.8; }
+    .pc-equip-search-row {
+      display: flex; gap: 10px;
+    }
+    .pc-equip-search-wrap {
+      flex: 1; position: relative;
+    }
+    .pc-equip-search-wrap input {
+      width: 100%; border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 8px 10px 8px 34px;
+      font-size: 13px; color: var(--text); background: var(--bg);
+      outline: none; font-family: inherit; transition: border-color 0.15s;
+    }
+    .pc-equip-search-wrap input:focus { border-color: var(--blue); background: #fff; }
+    .pc-equip-search-wrap input::placeholder { color: #BBBBBB; }
+    .pc-equip-search-icon {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      pointer-events: none;
+    }
+    /* Equip grid */
+    .pc-equip-grid-wrap { flex: 1; overflow-y: auto; padding: 16px 20px; min-height: 0; }
+    .pc-equip-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      align-items: stretch;
+    }
+    .pc-equip-card {
+      background: var(--card); border: 2px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      user-select: none; -webkit-user-select: none;
+      height: 100%;
+    }
+    .pc-equip-card:hover { border-color: #B0C4FF; background: #F8FBFF; }
+    .pc-equip-card.selected { border-color: var(--blue); background: var(--blue-light); }
+    .pc-equip-card-icon {
+      width: 38px; height: 38px; border-radius: 8px;
+      background: var(--bg); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .pc-equip-card.selected .pc-equip-card-icon { background: rgba(47,107,255,0.12); }
+    .pc-equip-card-icon svg { stroke: var(--text-sub); fill: none; width: 20px; height: 20px; }
+    .pc-equip-card.selected .pc-equip-card-icon svg { stroke: var(--blue); }
+    .pc-equip-card-info { flex: 1; min-width: 0; }
+    .pc-equip-card-id { font-size: 12px; font-weight: 600; color: var(--text-sub); }
+    .pc-equip-card-name { font-size: 15px; font-weight: 600; color: var(--text); }
+    .pc-equip-card.selected .pc-equip-card-name { color: var(--blue); }
+    .pc-equip-card-line { font-size: 12px; color: var(--text-sub); }
+    .pc-equip-checkbox {
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 2px solid var(--border); background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .pc-equip-card.selected .pc-equip-checkbox { border-color: var(--blue); background: var(--blue); }
+    .pc-equip-checkbox svg { display: none; }
+    .pc-equip-card.selected .pc-equip-checkbox svg { display: block; }
+    /* Footer */
+    .pc-equip-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      flex-shrink: 0; background: var(--card);
+    }
+    .pc-equip-footer-count {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 600; color: var(--blue);
+    }
+    .pc-equip-footer-count svg { stroke: var(--blue); fill: none; width: 18px; height: 18px; }
+    .pc-equip-footer-hint { font-size: 13px; color: var(--text-sub); margin-left: auto; }
+    /* Start button */
+    .pc-start-btn-wrap { padding: 12px 20px 16px; flex-shrink: 0; }
+    .pc-start-btn {
+      width: 100%; background: var(--blue); color: #fff;
+      border: none; border-radius: 12px; padding: 16px 20px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 4px 14px rgba(47,107,255,0.3);
+      transition: opacity 0.15s, transform 0.15s;
+      font-family: inherit;
+    }
+    .pc-start-btn:hover { opacity: 0.92; }
+    .pc-start-btn:active { transform: scale(0.99); }
+    .pc-start-btn:disabled { background: #C0CFFF; box-shadow: none; cursor: default; }
+    .pc-start-btn svg { stroke: #fff; fill: none; width: 20px; height: 20px; }
+    .pc-start-note {
+      text-align: center; font-size: 12px; color: var(--text-sub);
+      padding: 0 20px 16px; display: flex; align-items: center; gap: 6px;
+      justify-content: center;
+    }
+    .pc-start-note svg { stroke: var(--text-sub); fill: none; width: 14px; height: 14px; flex-shrink: 0; }
+    /* Empty state */
+    .pc-equip-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 24px; gap: 12px; color: var(--text-sub);
+    }
+    .pc-equip-empty svg { stroke: #CCC; fill: none; width: 48px; height: 48px; }
+    .pc-equip-empty-text { font-size: 15px; font-weight: 500; }
+  }
+
   /* ─── BOTTOM ACTION BAR ─── */
   .bottom-action {
     width: 100%;
@@ -769,7 +1020,6 @@
     padding: 0 14px;
     display: flex; align-items: center;
     min-height: 48px;
-    border-bottom: 1px solid #F3F3F3;
   }
   .check-row:last-child { border-bottom: none; }
   .check-row-name { flex: 1; font-size: 14px; color: var(--text); }
@@ -2373,6 +2623,8 @@
     white-space: nowrap;
     vertical-align: middle;
   }
+  .ms-table thead tr:first-child th { border-top: 1px solid #bbb; }
+  .ms-table tbody tr:last-child td, .ms-table tbody tr:last-child th { border-bottom: 1px solid #bbb; }
   .ms-table thead th { background: #ECEFF1; font-weight: 700; }
   .ms-no-top-border th, .ms-no-top-border td { border-top: none !important; }
 
@@ -3606,6 +3858,102 @@
     <div class="bottom-action">
       <button class="btn-bottom-main" id="line-next-btn" disabled onclick="goToEquipScreen()">次へ</button>
     </div>
+
+    <!-- ===== PC TWO-PANEL LAYOUT (desktop only) ===== -->
+    <div id="pc-line-equip-wrap">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <h2 style="font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.3px;">点検対象の選択</h2>
+        <button onclick="pcShowHelp()" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--text-sub);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          使い方
+        </button>
+      </div>
+      <!-- Stepper -->
+      <div class="pc-lsel-stepper">
+        <div class="pc-lsel-step active" id="pc-step1">
+          <span class="pc-step-num">1</span>
+          <span>ライン選択</span>
+        </div>
+        <div class="pc-lsel-step-line"></div>
+        <div class="pc-lsel-step" id="pc-step2">
+          <span class="pc-step-num">2</span>
+          <span>設備選択</span>
+        </div>
+      </div>
+      <p class="pc-lsel-subtitle">点検するラインと設備を選択してください</p>
+      <!-- Two panels -->
+      <div class="pc-lsel-panels">
+        <!-- Left: line list -->
+        <div class="pc-lsel-left">
+          <div class="pc-lsel-left-header">ラインを選択</div>
+          <div class="pc-line-search-wrap">
+            <svg class="pc-line-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#AAA" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="pc-line-search" placeholder="ライン名で検索" oninput="pcFilterLines(this.value)">
+          </div>
+          <div class="pc-line-list-body" id="pc-line-list">
+            <!-- Rendered by buildPcLineList() -->
+          </div>
+          <div class="pc-lines-total" id="pc-lines-total"></div>
+        </div>
+        <!-- Right: equip panel -->
+        <div class="pc-lsel-right" id="pc-lsel-right">
+          <div class="pc-equip-empty" id="pc-equip-empty-state">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <div class="pc-equip-empty-text">ラインを選択してください</div>
+            <div style="font-size:13px;color:#BBB;">左のリストからラインを選択すると、設備一覧が表示されます</div>
+          </div>
+          <!-- Equip header (hidden until line selected) -->
+          <div id="pc-equip-content" style="display:none;">
+            <div class="pc-equip-hdr">
+              <div class="pc-equip-hdr-top">
+                <div class="pc-equip-hdr-title" id="pc-equip-hdr-title">設備を選択</div>
+                <span class="pc-equip-sel-info" id="pc-equip-sel-info">選択中：0件</span>
+                <div class="pc-equip-hdr-btns">
+                  <button class="pc-equip-hdr-btn select-all" onclick="pcSelectAllEquip()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
+                    すべて選択
+                  </button>
+                  <button class="pc-equip-hdr-btn" onclick="pcClearEquip()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    クリア
+                  </button>
+                </div>
+              </div>
+              <div class="pc-equip-search-row">
+                <div class="pc-equip-search-wrap">
+                  <svg class="pc-equip-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#AAA" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" id="pc-equip-search" placeholder="設備名で検索" oninput="pcFilterEquips(this.value)">
+                </div>
+              </div>
+            </div>
+            <!-- Grid -->
+            <div class="pc-equip-grid-wrap">
+              <div class="pc-equip-grid" id="pc-equip-grid"></div>
+            </div>
+            <!-- Footer -->
+            <div class="pc-equip-footer">
+              <div class="pc-equip-footer-count">
+                <svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
+                選択中：<span id="pc-footer-count">0</span>件
+              </div>
+              <span class="pc-equip-footer-hint" id="pc-footer-hint">設備を選択してください</span>
+            </div>
+            <!-- Start button -->
+            <div class="pc-start-btn-wrap">
+              <button class="pc-start-btn" id="pc-start-btn" disabled onclick="pcStartInspection()">
+                <span>この設備で点検を開始</span>
+                <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+            <p class="pc-start-note">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>
+              選択した設備すべてに対して、今日の点検が登録されます。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
 
@@ -4802,6 +5150,203 @@
     if (btn) { btn.disabled = true; btn.textContent = '次へ'; }
     const label = document.getElementById('line-select-label');
     if (label) label.textContent = '点検するラインを選択してください';
+    // PC mode
+    if (window.innerWidth >= 1024) buildPcLineList();
+  }
+
+  /* ─── PC LINE+EQUIP PANEL ─── */
+  var pcActiveLine = null;
+  var pcEquipSelection = {};
+  var pcEquipFilter = '';
+
+  function pcGetFavLines() {
+    try { return JSON.parse(localStorage.getItem('favLines') || '[]'); } catch(e) { return []; }
+  }
+  function pcToggleFavLine(lineId, e) {
+    e.stopPropagation();
+    try {
+      var favs = pcGetFavLines();
+      if (favs.includes(lineId)) favs = favs.filter(id => id !== lineId);
+      else favs.push(lineId);
+      localStorage.setItem('favLines', JSON.stringify(favs));
+      buildPcLineList();
+      if (pcActiveLine) {
+        document.querySelectorAll('.pc-line-item').forEach(el => {
+          el.classList.toggle('active', el.dataset.lineId === pcActiveLine);
+        });
+      }
+    } catch(e) {}
+  }
+
+  function buildPcLineList() {
+    var list = document.getElementById('pc-line-list');
+    if (!list) return;
+    var filter = (document.getElementById('pc-line-search') || {}).value || '';
+    var favIds = pcGetFavLines();
+    var allLines = ADM.lines;
+    var filtered = filter ? allLines.filter(l => l.name.includes(filter)) : allLines;
+    var favLines = !filter ? allLines.filter(l => favIds.includes(l.id)) : [];
+
+    list.innerHTML = '';
+
+    function makeLineItem(ln) {
+      var cnt = ADM.equips.filter(e => e.lineId === ln.id).length;
+      var isFav = favIds.includes(ln.id);
+      var item = document.createElement('div');
+      item.className = 'pc-line-item' + (ln.id === pcActiveLine ? ' active' : '');
+      item.dataset.lineId = ln.id;
+      item.innerHTML =
+        '<span class="pc-line-name">' + ln.name + '</span>' +
+        '<span class="pc-line-count">' + cnt + '設備</span>' +
+        '<button class="pc-line-fav-btn' + (isFav ? ' active' : '') + '" onclick="pcToggleFavLine(\'' + ln.id + '\',event)" title="よく使うラインに登録">★</button>' +
+        '<svg class="pc-line-arrow" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
+      item.onclick = function() { pcSelectLine(ln.id); };
+      return item;
+    }
+
+    if (favLines.length) {
+      var favHdr = document.createElement('div');
+      favHdr.className = 'pc-line-section-label';
+      favHdr.innerHTML = '<span style="color:#F59E0B;">★</span> よく使うライン';
+      list.appendChild(favHdr);
+      favLines.forEach(ln => list.appendChild(makeLineItem(ln)));
+    }
+
+    var allHdr = document.createElement('div');
+    allHdr.className = 'pc-line-section-label';
+    allHdr.textContent = 'すべてのライン（' + filtered.length + '）';
+    list.appendChild(allHdr);
+    filtered.forEach(ln => list.appendChild(makeLineItem(ln)));
+
+    var tot = document.getElementById('pc-lines-total');
+    if (tot) tot.textContent = allLines.length + 'ライン';
+  }
+
+  function pcFilterLines(val) {
+    buildPcLineList();
+  }
+
+  function pcSelectLine(lineId) {
+    pcActiveLine = lineId;
+    pcEquipFilter = '';
+    // Update stepper
+    var s2 = document.getElementById('pc-step2');
+    if (s2) s2.classList.add('active');
+    // Highlight
+    document.querySelectorAll('.pc-line-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.lineId === lineId);
+    });
+    // Initialize equip selection (all selected by default for new line)
+    var equips = ADM.equips.filter(e => e.lineId === lineId);
+    equips.forEach(e => {
+      if (!(e.id in pcEquipSelection)) pcEquipSelection[e.id] = true;
+    });
+    // Update selectedLineIds so existing flow still works
+    selectedLineIds = [lineId];
+    // Show right panel
+    var empty = document.getElementById('pc-equip-empty-state');
+    var content = document.getElementById('pc-equip-content');
+    if (empty) empty.style.display = 'none';
+    if (content) content.style.display = 'flex';
+    buildPcEquipPanel(lineId);
+  }
+
+  function buildPcEquipPanel(lineId) {
+    var ln = ADM.lines.find(l => l.id === lineId);
+    if (!ln) return;
+    var equips = ADM.equips.filter(e => e.lineId === lineId);
+    var filter = (document.getElementById('pc-equip-search') || {}).value || '';
+    var filtered = filter ? equips.filter(e => (e.name + e.id).includes(filter)) : equips;
+
+    var title = document.getElementById('pc-equip-hdr-title');
+    if (title) title.innerHTML = ln.name + 'の設備を選択&nbsp;<span class="pc-equip-total-badge">' + equips.length + '設備</span>';
+
+    var grid = document.getElementById('pc-equip-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    filtered.forEach(eq => {
+      var isSelected = pcEquipSelection[eq.id];
+      var card = document.createElement('div');
+      card.className = 'pc-equip-card' + (isSelected ? ' selected' : '');
+      card.dataset.eqId = eq.id;
+      card.innerHTML =
+        '<div class="pc-equip-card-icon">' +
+          '<svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' +
+        '</div>' +
+        '<div class="pc-equip-card-info">' +
+          '<div class="pc-equip-card-id">' + eq.id + '</div>' +
+          '<div class="pc-equip-card-name">' + eq.name + '</div>' +
+          '<div class="pc-equip-card-line">' + ln.name + '</div>' +
+        '</div>' +
+        '<div class="pc-equip-checkbox">' +
+          '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '</div>';
+      card.onclick = function() { pcToggleEquip(eq.id); };
+      grid.appendChild(card);
+    });
+    updatePcEquipCounts(lineId);
+  }
+
+  function pcToggleEquip(eqId) {
+    pcEquipSelection[eqId] = !pcEquipSelection[eqId];
+    var card = document.querySelector('[data-eq-id="' + eqId + '"]');
+    if (card) card.classList.toggle('selected', pcEquipSelection[eqId]);
+    updatePcEquipCounts(pcActiveLine);
+  }
+
+  function pcSelectAllEquip() {
+    if (!pcActiveLine) return;
+    ADM.equips.filter(e => e.lineId === pcActiveLine).forEach(e => {
+      pcEquipSelection[e.id] = true;
+    });
+    buildPcEquipPanel(pcActiveLine);
+  }
+
+  function pcClearEquip() {
+    if (!pcActiveLine) return;
+    ADM.equips.filter(e => e.lineId === pcActiveLine).forEach(e => {
+      pcEquipSelection[e.id] = false;
+    });
+    buildPcEquipPanel(pcActiveLine);
+  }
+
+  function pcFilterEquips(val) {
+    if (pcActiveLine) buildPcEquipPanel(pcActiveLine);
+  }
+
+  function updatePcEquipCounts(lineId) {
+    var equips = lineId ? ADM.equips.filter(e => e.lineId === lineId) : [];
+    var selCount = equips.filter(e => pcEquipSelection[e.id]).length;
+    var selInfo = document.getElementById('pc-equip-sel-info');
+    if (selInfo) selInfo.textContent = '選択中：' + selCount + '件';
+    var footCount = document.getElementById('pc-footer-count');
+    if (footCount) footCount.textContent = selCount;
+    var hint = document.getElementById('pc-footer-hint');
+    if (hint) hint.textContent = selCount > 0 ? '' : '設備を選択してください';
+    var btn = document.getElementById('pc-start-btn');
+    if (btn) btn.disabled = selCount === 0;
+  }
+
+  function pcStartInspection() {
+    // Build selectedEquips from pcEquipSelection
+    selectedEquips = Object.keys(pcEquipSelection).filter(id => pcEquipSelection[id]);
+    if (selectedEquips.length === 0) return;
+    startInspection();
+  }
+
+  function pcShowHelp() {
+    alert('使い方:\n① 左のリストからラインを選択します\n② 右に表示された設備を選択します\n③「この設備で点検を開始」ボタンで点検を開始します');
+  }
+
+  // Re-init PC panel when screen is shown
+  var _origShowScreen = window.showScreen;
+  if (typeof showScreen === 'function') {
+    window.showScreen = function(id) {
+      _origShowScreen.apply(this, arguments);
+      if (id === 'screen-line' && window.innerWidth >= 1024) {
+        setTimeout(buildPcLineList, 50);
+      }
+    };
   }
 
   function selectLine(card) {
@@ -7672,7 +8217,7 @@ function renderMonthlySheet() {
         '<span class="ms-apr-ng">✗</span>差戻</td>';
     } else {
       return '<td class="ms-apr-cell ms-apr-pending" ' + (style||'') + '>' +
-        '<span style="color:#999;font-size:9px;">—</span></td>';
+        '<span style="color:#999;font-size:9px;"></span></td>';
     }
   }
 
@@ -7681,7 +8226,7 @@ function renderMonthlySheet() {
     if (val === 'ng')  return '<span class="ms-val-ng">✕</span>';
     if (val === 'fix') return '<span class="ms-val-fix">⊗</span>';
     if (val === 'na')  return '<span class="ms-val-na">／</span>';
-    return '<span class="ms-val-blank">—</span>';
+    return '<span class="ms-val-blank"></span>';
   }
 
   var monthNames = ['1','2','3','4','5','6','7','8','9','10','11','12'];
