@@ -534,7 +534,9 @@
   .cal-day.other-month { color: var(--text-small); cursor: default; }
   .cal-day.holiday { color: var(--text-small); cursor: default; background: #F8F8F8; }
   .cal-day.holiday:active { background: #F8F8F8; }
-  .cal-day.today {
+  .cal-day.today,
+  .cal-day.today.sat,
+  .cal-day.today.sun {
     color: #fff; font-weight: 700;
     background: transparent;
     isolation: isolate;
@@ -634,6 +636,18 @@
   .radio-card.selected .radio-inner { display: flex; }
   .radio-label { font-size: 16px; font-weight: 500; }
   .radio-card.selected .radio-label { color: var(--blue); font-weight: 600; }
+  .radio-card-fav-btn {
+    margin-left: auto; background: none; border: none;
+    font-size: 18px; cursor: pointer; color: #D0D0D0;
+    padding: 4px 2px; flex-shrink: 0; line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s;
+  }
+  .radio-card-fav-btn.active { color: #F59E0B; }
+  .line-section-label {
+    font-size: 12px; color: var(--text-sub); font-weight: 600;
+    padding: 12px 16px 6px; letter-spacing: 0.3px;
+  }
 
   /* ─── EQUIPMENT SELECT ─── */
   #screen-equip { background: var(--bg); }
@@ -695,7 +709,9 @@
     /* Stepper */
     .pc-lsel-stepper {
       display: flex; align-items: center; gap: 0;
-      margin-bottom: 8px;
+      justify-content: center;
+      margin-bottom: 16px;
+      padding: 4px 0 4px 280px;
     }
     .pc-lsel-step {
       display: flex; align-items: center; gap: 8px;
@@ -915,6 +931,7 @@
     .pc-start-note svg { stroke: var(--text-sub); fill: none; width: 14px; height: 14px; flex-shrink: 0; }
     /* Empty state */
     .pc-equip-empty {
+      flex: 1;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 60px 24px; gap: 12px; color: var(--text-sub);
     }
@@ -1973,6 +1990,8 @@
   }
   #screen-home .cal-day.sun { color: #E53935; }
   #screen-home .cal-day.sat { color: var(--blue); }
+  #screen-home .cal-day.today.sun,
+  #screen-home .cal-day.today.sat { color: #fff; }
   #screen-home .cal-day.other-month.sun { color: #f5b0ae; }
   #screen-home .cal-day.other-month.sat { color: #aabfef; }
   .summary-card {
@@ -3874,14 +3893,16 @@
     <div id="pc-line-equip-wrap">
       <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-        <h2 style="font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.3px;">点検対象の選択</h2>
-        <button onclick="pcShowHelp()" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;font-size:13px;color:var(--text-sub);cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          使い方
-        </button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div onclick="showScreen('screen-home')" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:8px;border:1.5px solid var(--border);background:var(--card);flex-shrink:0;transition:background 0.15s;" onmouseover="this.style.background='#F0F0F0'" onmouseout="this.style.background='var(--card)'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </div>
+          <h2 style="font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.3px;">点検対象の選択</h2>
+        </div>
+
       </div>
       <!-- Stepper -->
-      <div class="pc-lsel-stepper">
+      <div class="pc-lsel-stepper" id="pc-step-bar">
         <div class="pc-lsel-step active" id="pc-step1">
           <span class="pc-step-num">1</span>
           <span>ライン選択</span>
@@ -5144,7 +5165,10 @@
     if (!list) return;
     list.innerHTML = '';
     selectedLineIds = [];
-    ADM.lines.forEach(ln => {
+    const favIds = pcGetFavLines();
+
+    function makeLineCard(ln) {
+      const isFav = favIds.includes(ln.id);
       const card = document.createElement('div');
       card.className = 'radio-card';
       card.dataset.lineId = ln.id;
@@ -5153,10 +5177,33 @@
         '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +
         '<polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
         '</svg></div></div>' +
-        '<div class="radio-label">' + ln.name + '</div>';
+        '<div class="radio-label">' + ln.name + '</div>' +
+        '<button class="radio-card-fav-btn' + (isFav ? ' active' : '') + '" data-lineid="' + ln.id + '" title="よく使うラインに登録">★</button>';
+      card.querySelector('.radio-card-fav-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMobileFavLine(ln.id);
+      });
       card.onclick = () => selectLine(card);
-      list.appendChild(card);
-    });
+      return card;
+    }
+
+    // よく使うライン セクション
+    const favLines = ADM.lines.filter(l => favIds.includes(l.id));
+    if (favLines.length) {
+      const favHdr = document.createElement('div');
+      favHdr.className = 'line-section-label';
+      favHdr.innerHTML = '<span style="color:#F59E0B;">★</span> よく使うライン';
+      list.appendChild(favHdr);
+      favLines.forEach(ln => list.appendChild(makeLineCard(ln)));
+    }
+
+    // すべてのライン セクション
+    const allHdr = document.createElement('div');
+    allHdr.className = 'line-section-label';
+    allHdr.textContent = 'すべてのライン（' + ADM.lines.length + '）';
+    list.appendChild(allHdr);
+    ADM.lines.forEach(ln => list.appendChild(makeLineCard(ln)));
+
     const btn = document.getElementById('line-next-btn');
     if (btn) { btn.disabled = true; btn.textContent = '次へ'; }
     const label = document.getElementById('line-select-label');
@@ -5165,13 +5212,28 @@
     if (window.innerWidth >= 1024) buildPcLineList();
   }
 
+  function toggleMobileFavLine(lineId) {
+    var favs = pcGetFavLines();
+    if (favs.includes(lineId)) favs = favs.filter(id => id !== lineId);
+    else favs.push(lineId);
+    localStorage.setItem(pcFavKey(), JSON.stringify(favs));
+    buildLineList();
+  }
+
   /* ─── PC LINE+EQUIP PANEL ─── */
-  var pcActiveLine = null;
+  var pcSelectedLines = []; // array of selected line IDs (multi-select)
   var pcEquipSelection = {};
   var pcEquipFilter = '';
 
+  // Keep pcActiveLine as alias for backward compat (last clicked line)
+  var pcActiveLine = null;
+
+  function pcFavKey() {
+    var user = localStorage.getItem('loggedInUser') || 'default';
+    return 'favLines_' + user;
+  }
   function pcGetFavLines() {
-    try { return JSON.parse(localStorage.getItem('favLines') || '[]'); } catch(e) { return []; }
+    try { return JSON.parse(localStorage.getItem(pcFavKey()) || '[]'); } catch(e) { return []; }
   }
   function pcToggleFavLine(lineId, e) {
     e.stopPropagation();
@@ -5179,13 +5241,8 @@
       var favs = pcGetFavLines();
       if (favs.includes(lineId)) favs = favs.filter(id => id !== lineId);
       else favs.push(lineId);
-      localStorage.setItem('favLines', JSON.stringify(favs));
+      localStorage.setItem(pcFavKey(), JSON.stringify(favs));
       buildPcLineList();
-      if (pcActiveLine) {
-        document.querySelectorAll('.pc-line-item').forEach(el => {
-          el.classList.toggle('active', el.dataset.lineId === pcActiveLine);
-        });
-      }
     } catch(e) {}
   }
 
@@ -5203,10 +5260,14 @@
     function makeLineItem(ln) {
       var cnt = ADM.equips.filter(e => e.lineId === ln.id).length;
       var isFav = favIds.includes(ln.id);
+      var isSelected = pcSelectedLines.includes(ln.id);
       var item = document.createElement('div');
-      item.className = 'pc-line-item' + (ln.id === pcActiveLine ? ' active' : '');
+      item.className = 'pc-line-item' + (isSelected ? ' active' : '');
       item.dataset.lineId = ln.id;
       item.innerHTML =
+        '<div class="pc-line-checkbox' + (isSelected ? ' checked' : '') + '">' +
+          '<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '</div>' +
         '<span class="pc-line-name">' + ln.name + '</span>' +
         '<span class="pc-line-count">' + cnt + '設備</span>' +
         '<button class="pc-line-fav-btn' + (isFav ? ' active' : '') + '" onclick="pcToggleFavLine(\'' + ln.id + '\',event)" title="よく使うラインに登録">★</button>' +
@@ -5238,44 +5299,67 @@
   }
 
   function pcSelectLine(lineId) {
-    pcActiveLine = lineId;
+    // Toggle line in/out of selection
+    if (pcSelectedLines.includes(lineId)) {
+      pcSelectedLines = pcSelectedLines.filter(id => id !== lineId);
+    } else {
+      pcSelectedLines.push(lineId);
+      pcActiveLine = lineId;
+      // Auto-select all equips in newly added line
+      ADM.equips.filter(e => e.lineId === lineId).forEach(e => {
+        if (!(e.id in pcEquipSelection)) pcEquipSelection[e.id] = true;
+      });
+    }
+
     pcEquipFilter = '';
     // Update stepper
     var s2 = document.getElementById('pc-step2');
-    if (s2) s2.classList.add('active');
-    // Highlight
-    document.querySelectorAll('.pc-line-item').forEach(el => {
-      el.classList.toggle('active', el.dataset.lineId === lineId);
-    });
-    // Initialize equip selection (all selected by default for new line)
-    var equips = ADM.equips.filter(e => e.lineId === lineId);
-    equips.forEach(e => {
-      if (!(e.id in pcEquipSelection)) pcEquipSelection[e.id] = true;
-    });
-    // Update selectedLineIds so existing flow still works
-    selectedLineIds = [lineId];
-    // Show right panel
+    if (s2) s2.classList.toggle('active', pcSelectedLines.length > 0);
+    // Rebuild line list to update checkboxes
+    buildPcLineList();
+    // Update selectedLineIds for existing flow
+    selectedLineIds = pcSelectedLines.slice();
+    // Show/hide right panel
     var empty = document.getElementById('pc-equip-empty-state');
     var content = document.getElementById('pc-equip-content');
-    if (empty) empty.style.display = 'none';
-    if (content) content.style.display = 'flex';
-    buildPcEquipPanel(lineId);
+    if (pcSelectedLines.length === 0) {
+      if (empty) empty.style.display = 'flex';
+      if (content) content.style.display = 'none';
+    } else {
+      if (empty) empty.style.display = 'none';
+      if (content) content.style.display = 'flex';
+      buildPcEquipPanel();
+    }
   }
 
-  function buildPcEquipPanel(lineId) {
-    var ln = ADM.lines.find(l => l.id === lineId);
-    if (!ln) return;
-    var equips = ADM.equips.filter(e => e.lineId === lineId);
+  function buildPcEquipPanel() {
+    if (pcSelectedLines.length === 0) return;
     var filter = (document.getElementById('pc-equip-search') || {}).value || '';
-    var filtered = filter ? equips.filter(e => (e.name + e.id).includes(filter)) : equips;
 
+    // Gather all equips from selected lines
+    var allEquips = [];
+    pcSelectedLines.forEach(function(lineId) {
+      var lineEquips = ADM.equips.filter(e => e.lineId === lineId);
+      lineEquips.forEach(e => allEquips.push(e));
+    });
+    var totalCount = allEquips.length;
+    var filtered = filter ? allEquips.filter(e => (e.name + e.id).includes(filter)) : allEquips;
+
+    // Build title
     var title = document.getElementById('pc-equip-hdr-title');
-    if (title) title.innerHTML = ln.name + 'の設備を選択&nbsp;<span class="pc-equip-total-badge">' + equips.length + '設備</span>';
+    if (title) {
+      var titleText = pcSelectedLines.length === 1
+        ? (ADM.lines.find(l => l.id === pcSelectedLines[0]) || {name:''}).name + 'の設備を選択'
+        : pcSelectedLines.length + 'ラインの設備を選択';
+      title.innerHTML = titleText + '&nbsp;<span class="pc-equip-total-badge">' + totalCount + '設備</span>';
+    }
 
     var grid = document.getElementById('pc-equip-grid');
     if (!grid) return;
     grid.innerHTML = '';
+
     filtered.forEach(eq => {
+      var ln = ADM.lines.find(l => l.id === eq.lineId) || {name: eq.lineId};
       var isSelected = pcEquipSelection[eq.id];
       var card = document.createElement('div');
       card.className = 'pc-equip-card' + (isSelected ? ' selected' : '');
@@ -5295,39 +5379,42 @@
       card.onclick = function() { pcToggleEquip(eq.id); };
       grid.appendChild(card);
     });
-    updatePcEquipCounts(lineId);
+    updatePcEquipCounts();
   }
 
   function pcToggleEquip(eqId) {
     pcEquipSelection[eqId] = !pcEquipSelection[eqId];
     var card = document.querySelector('[data-eq-id="' + eqId + '"]');
     if (card) card.classList.toggle('selected', pcEquipSelection[eqId]);
-    updatePcEquipCounts(pcActiveLine);
+    updatePcEquipCounts();
   }
 
   function pcSelectAllEquip() {
-    if (!pcActiveLine) return;
-    ADM.equips.filter(e => e.lineId === pcActiveLine).forEach(e => {
-      pcEquipSelection[e.id] = true;
+    if (pcSelectedLines.length === 0) return;
+    pcSelectedLines.forEach(function(lineId) {
+      ADM.equips.filter(e => e.lineId === lineId).forEach(e => { pcEquipSelection[e.id] = true; });
     });
-    buildPcEquipPanel(pcActiveLine);
+    buildPcEquipPanel();
   }
 
   function pcClearEquip() {
-    if (!pcActiveLine) return;
-    ADM.equips.filter(e => e.lineId === pcActiveLine).forEach(e => {
-      pcEquipSelection[e.id] = false;
+    if (pcSelectedLines.length === 0) return;
+    pcSelectedLines.forEach(function(lineId) {
+      ADM.equips.filter(e => e.lineId === lineId).forEach(e => { pcEquipSelection[e.id] = false; });
     });
-    buildPcEquipPanel(pcActiveLine);
+    buildPcEquipPanel();
   }
 
   function pcFilterEquips(val) {
-    if (pcActiveLine) buildPcEquipPanel(pcActiveLine);
+    if (pcSelectedLines.length > 0) buildPcEquipPanel();
   }
 
-  function updatePcEquipCounts(lineId) {
-    var equips = lineId ? ADM.equips.filter(e => e.lineId === lineId) : [];
-    var selCount = equips.filter(e => pcEquipSelection[e.id]).length;
+  function updatePcEquipCounts() {
+    var allEquips = [];
+    pcSelectedLines.forEach(function(lineId) {
+      ADM.equips.filter(e => e.lineId === lineId).forEach(e => allEquips.push(e));
+    });
+    var selCount = allEquips.filter(e => pcEquipSelection[e.id]).length;
     var selInfo = document.getElementById('pc-equip-sel-info');
     if (selInfo) selInfo.textContent = '選択中：' + selCount + '件';
     var footCount = document.getElementById('pc-footer-count');
@@ -5339,14 +5426,13 @@
   }
 
   function pcStartInspection() {
-    // Build selectedEquips from pcEquipSelection
     selectedEquips = Object.keys(pcEquipSelection).filter(id => pcEquipSelection[id]);
     if (selectedEquips.length === 0) return;
     startInspection();
   }
 
   function pcShowHelp() {
-    alert('使い方:\n① 左のリストからラインを選択します\n② 右に表示された設備を選択します\n③「この設備で点検を開始」ボタンで点検を開始します');
+    alert('使い方:\n① 左のリストからラインを選択します（複数選択可）\n② 右に表示された設備を選択します\n③「この設備で点検を開始」ボタンで点検を開始します');
   }
 
   // Re-init PC panel when screen is shown
