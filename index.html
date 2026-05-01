@@ -518,9 +518,10 @@
   .cal-dow:first-child { color: #E53935; }
   .cal-dow:nth-child(7) { color: var(--blue); }
   .cal-day {
-    font-size: 13px; padding: 6px 2px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; padding: 4px 2px 2px; border-radius: 6px; cursor: pointer;
     transition: background 0.1s;
     position: relative;
+    display: flex; flex-direction: column; align-items: center;
     -webkit-user-select: none; user-select: none;
   }
   .cal-day:active { background: var(--blue-light); }
@@ -534,20 +535,28 @@
   .cal-day.holiday { color: var(--text-small); cursor: default; background: #F8F8F8; }
   .cal-day.holiday:active { background: #F8F8F8; }
   .cal-day.today {
-    background: var(--blue); color: #fff; font-weight: 700;
+    color: #fff; font-weight: 700;
+    background: transparent;
+    isolation: isolate;
+    padding: 4px 2px 2px;
+    width: auto; height: auto; margin: 0;
+  }
+  .cal-day.today::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 28px; height: 28px;
     border-radius: 50%;
-    width: 30px; height: 30px;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto;
-    padding: 0;
+    background: var(--blue);
+    z-index: -1;
   }
   .cal-day.done::after {
     content: ''; display: block; width: 5px; height: 5px; border-radius: 50%;
-    background: var(--blue); margin: 2px auto 0;
+    background: var(--blue); margin: 6px auto 0; flex-shrink: 0;
   }
   .cal-day.anomaly::after {
     content: ''; display: block; width: 5px; height: 5px; border-radius: 50%;
-    background: var(--red); margin: 2px auto 0;
+    background: var(--red); margin: 6px auto 0; flex-shrink: 0;
   }
   .cal-legend { display: flex; gap: 14px; margin-top: 12px; padding-top: 12px; }
   .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-sub); }
@@ -1946,15 +1955,17 @@
   }
   #screen-home .cal-day {
     font-size: 15px;
-    padding: 0;
-    display: flex;
+    padding: 6px 2px 2px;
+    display: flex; flex-direction: column;
     align-items: center;
-    justify-content: center;
     min-height: 48px;
   }
   #screen-home .cal-day.today {
-    width: 36px; height: 36px; min-height: 36px; margin: auto;
-    padding: 0;
+    padding: 6px 2px 2px;
+    width: auto; height: auto; min-height: 48px; margin: 0;
+  }
+  #screen-home .cal-day.today::before {
+    width: 34px; height: 34px; top: 2px;
   }
   /* 休日セルの背景をセル全体に広げない */
   #screen-home .cal-day.holiday {
@@ -3995,7 +4006,7 @@
       </div>
     </div>
     <div class="nav-bar blue-accent">
-      <div class="nav-back" onclick="showScreen('screen-equip')">
+      <div class="nav-back" onclick="window.innerWidth>=1024?showScreen('screen-line'):showScreen('screen-equip')">
         <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検入力</span>
@@ -5344,7 +5355,17 @@
     window.showScreen = function(id) {
       _origShowScreen.apply(this, arguments);
       if (id === 'screen-line' && window.innerWidth >= 1024) {
-        setTimeout(buildPcLineList, 50);
+        setTimeout(function() {
+          buildPcLineList();
+          // Restore the active line panel if one was selected
+          if (pcActiveLine) {
+            var empty = document.getElementById('pc-equip-empty-state');
+            var content = document.getElementById('pc-equip-content');
+            if (empty) empty.style.display = 'none';
+            if (content) content.style.display = 'flex';
+            buildPcEquipPanel(pcActiveLine);
+          }
+        }, 50);
       }
     };
   }
