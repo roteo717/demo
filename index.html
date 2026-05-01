@@ -2031,8 +2031,16 @@
   #screen-home .cal-legend { margin-top: 16px; padding-top: 14px; font-size: 13px; }
   #screen-home .cal-legend-dot { width: 10px; height: 10px; }
 
-  /* ─── ライン選択 / 設備選択 ─── */
-  #screen-line, #screen-equip { background: #F4F6F9; min-height: calc(100vh - 40px); }
+  /* ─── ライン選択 ─── */
+  #screen-line { background: #F4F6F9; min-height: 100vh; }
+  #screen-line .flex-spacer { display: none !important; }
+  #screen-line .bottom-action {
+    position: fixed !important;
+    bottom: 0 !important; left: 0 !important; right: 0 !important;
+    z-index: 200 !important;
+    border-top: 1px solid var(--border) !important;
+  }
+  #screen-equip { display: none !important; }
   .list-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px 16px 16px; }
   .equip-select-count { margin: 16px 32px 4px; }
   #line-select-label { padding: 14px 16px 4px; }
@@ -2040,7 +2048,15 @@
   .line-section-label { grid-column: 1 / -1; }
 
   /* ─── 点検入力 / 確認 ─── */
-  #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: calc(100vh - 40px); }
+  #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: 100vh; }
+  #screen-inspect .flex-spacer { display: none !important; }
+  #screen-inspect .bottom-action {
+    position: fixed !important;
+    bottom: 0 !important; left: 0 !important; right: 0 !important;
+    z-index: 200 !important;
+    border-top: 1px solid var(--border) !important;
+  }
+  #screen-inspect #inspect-sections { padding-bottom: 100px !important; }
   .selected-equip-chips { padding: 16px 32px 12px; }
   .inspect-date-banner  { margin: 8px 32px 0; }
   .inspect-top-actions  { padding: 12px 32px 8px; }
@@ -4070,7 +4086,7 @@
     <div class="flex-spacer"></div>
     <div class="bottom-action">
       <div class="btn-row">
-        <button class="btn-bottom-back" onclick="showScreen('screen-equip')">
+        <button class="btn-bottom-back" onclick="window.innerWidth >= 1024 ? showScreen('screen-line') : showScreen('screen-equip')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           戻る
         </button>
@@ -5499,6 +5515,7 @@
   }
 
   function goToEquipScreen() {
+    if (window.innerWidth >= 1024) return;
     buildEquipList();
     showScreen('screen-equip');
   }
