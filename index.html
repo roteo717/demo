@@ -83,6 +83,9 @@
   }
   .nav-bar.blue-accent  { border-bottom: 2.5px solid var(--blue); }
   .nav-bar.red-accent   { border-bottom: 2.5px solid var(--red); }
+  #screen-line .nav-bar, #screen-equip .nav-bar, #screen-inspect .nav-bar {
+    background: transparent; border-bottom: none;
+  }
   .nav-back {
     width: 40px; height: 40px;
     display: flex; align-items: center; justify-content: center;
@@ -612,34 +615,37 @@
   /* ─── LINE SELECT ─── */
   #screen-line { background: var(--bg); }
   .list-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .list-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .line-group { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
   .radio-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-card);
-    border: 2px solid transparent;
-    padding: 16px;
-    display: flex; align-items: center; gap: 14px;
-    cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    background: transparent;
+    border-radius: 0; border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; position: relative; min-height: auto;
+    transition: background 0.15s;
     -webkit-user-select: none;
   }
-  .radio-card.selected { border-color: var(--blue); background: var(--blue-light); }
-  .radio-card:active { transform: scale(0.99); }
+  .radio-card:last-child { border-bottom: none; }
+  .radio-card.selected { background: var(--blue-light); }
+  .radio-card:active { opacity: 0.75; }
   .radio-circle {
-    width: 22px; height: 22px; border-radius: 6px;
+    position: static;
+    width: 22px; height: 22px; border-radius: 50%;
     border: 2px solid var(--border);
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: all 0.15s; background: #fff;
+    transition: all 0.15s; background: #fff; flex-shrink: 0;
   }
   .radio-card.selected .radio-circle { border-color: var(--blue); background: var(--blue); }
   .radio-inner { width: 12px; height: 12px; display: none; align-items: center; justify-content: center; }
   .radio-card.selected .radio-inner { display: flex; }
-  .radio-label { font-size: 16px; font-weight: 500; }
+  .radio-label { font-size: 15px; font-weight: 500; color: var(--text); flex: 1; }
   .radio-card.selected .radio-label { color: var(--blue); font-weight: 600; }
   .radio-card-fav-btn {
-    margin-left: auto; background: none; border: none;
+    background: none; border: none;
     font-size: 18px; cursor: pointer; color: #D0D0D0;
-    padding: 4px 2px; flex-shrink: 0; line-height: 1;
+    padding: 6px; line-height: 1;
     -webkit-tap-highlight-color: transparent;
     transition: color 0.15s;
   }
@@ -657,20 +663,20 @@
   }
   .equip-select-count span { color: var(--blue); font-weight: 700; }
   .check-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-card);
-    border: 2px solid transparent;
+    background: transparent;
+    border-radius: 0; border: none;
+    border-bottom: 1px solid var(--border);
     padding: 14px 16px;
     display: flex; align-items: center; gap: 12px;
     cursor: pointer;
-    transition: border-color 0.15s;
+    transition: background 0.15s;
     -webkit-user-select: none;
   }
-  .check-card.selected { border-color: var(--blue); background: var(--blue-light); }
-  .check-card:active { transform: scale(0.99); }
+  .check-card:last-child { border-bottom: none; }
+  .check-card.selected { background: var(--blue-light); }
+  .check-card:active { opacity: 0.75; }
   .check-box {
-    width: 22px; height: 22px; border-radius: 6px;
+    width: 22px; height: 22px; border-radius: 50%;
     border: 2px solid var(--border);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: all 0.15s; background: #fff;
@@ -678,12 +684,8 @@
   .check-card.selected .check-box { border-color: var(--blue); background: var(--blue); }
   .check-box svg { display: none; }
   .check-card.selected .check-box svg { display: block; }
-  .check-label { font-size: 15px; font-weight: 500; }
+  .check-label { font-size: 15px; font-weight: 500; flex: 1; }
   .check-card.selected .check-label { color: var(--blue); font-weight: 600; }
-  .check-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .check-icon svg { stroke: var(--text-sub); fill: none; width: 18px; height: 18px; }
-  .check-card.selected .check-icon { background: rgba(47,107,255,0.12); }
-  .check-card.selected .check-icon svg { stroke: var(--blue); }
 
   /* ─── PC COMBINED LINE+EQUIP SCREEN ─── */
   #pc-line-equip-wrap { display: none; }
@@ -956,7 +958,17 @@
   }
   .btn-bottom-main:active { opacity: 0.85; transform: scale(0.99); }
   .btn-bottom-main:disabled { background: #C0CFFF; cursor: default; }
-  .btn-row { display: flex; gap: 10px; }
+  .btn-row { display: flex; gap: 10px; align-items: stretch; }
+  .btn-bottom-back {
+    flex: 0 0 90px;
+    background: transparent; color: var(--blue);
+    border: 1.5px solid #B8CFFF; border-radius: 12px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    transition: background 0.15s, opacity 0.15s;
+    -webkit-user-select: none;
+  }
+  .btn-bottom-back:active { background: var(--blue-light); opacity: 0.8; }
   .btn-bottom-sub {
     flex: 1; background: var(--bg); color: var(--text);
     border: 1.5px solid var(--border); border-radius: 12px; padding: 14px;
@@ -2021,10 +2033,11 @@
 
   /* ─── ライン選択 / 設備選択 ─── */
   #screen-line, #screen-equip { background: #F4F6F9; min-height: calc(100vh - 40px); }
-  .list-body { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; padding: 20px 32px; }
+  .list-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px 16px 16px; }
   .equip-select-count { margin: 16px 32px 4px; }
-  #line-select-label { padding: 20px 32px 8px; }
+  #line-select-label { padding: 14px 16px 4px; }
   .bottom-action { padding: 16px 32px; padding-bottom: max(20px, env(safe-area-inset-bottom)); background: #fff; }
+  .line-section-label { grid-column: 1 / -1; }
 
   /* ─── 点検入力 / 確認 ─── */
   #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: calc(100vh - 40px); }
@@ -3534,9 +3547,9 @@
     <div class="pc-sidebar-logo">
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
         <rect width="26" height="26" rx="7" fill="#EEF4FF"/>
-        <rect x="6" y="7" width="11" height="14" rx="2" stroke="#2F6BFF" stroke-width="1.8" fill="none"/>
-        <rect x="9" y="5" width="5" height="4" rx="1.5" stroke="#2F6BFF" stroke-width="1.8" fill="none"/>
-        <polyline points="8.5,14 10.5,16.5 15,11.5" stroke="#2F6BFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <rect x="6" y="7" width="11" height="14" rx="2" stroke="#2F6BFF" stroke-width="1.5" fill="none"/>
+        <rect x="9" y="5" width="5" height="4" rx="1.5" stroke="#2F6BFF" stroke-width="1.5" fill="none"/>
+        <polyline points="8.5,14 10.5,16.5 15,11.5" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
       </svg>
       <span class="pc-sidebar-logo-text">設備点検アプリ</span>
     </div>
@@ -3545,7 +3558,7 @@
     <nav class="pc-sidebar-nav">
       <button class="pc-sidebar-btn active" id="pcsb-dashboard" onclick="showAdmTab('dashboard')">
         <div class="pc-sidebar-btn-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
             <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
           </svg>
@@ -3554,7 +3567,7 @@
       </button>
       <button class="pc-sidebar-btn" id="pcsb-approval" onclick="showAdmTab('approval')">
         <div class="pc-sidebar-btn-icon" style="position:relative;">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
             <polyline points="22 4 12 14.01 9 11.01"/>
           </svg>
@@ -3564,7 +3577,7 @@
       </button>
       <button class="pc-sidebar-btn" id="pcsb-settings" onclick="showAdmTab('settings')">
         <div class="pc-sidebar-btn-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
           </svg>
@@ -3578,12 +3591,12 @@
       <div style="display:flex;align-items:center;gap:6px;padding:4px 4px;">
         <div class="pc-sidebar-user" style="flex:1;margin:0;" onclick="">
           <div class="pc-sidebar-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           </div>
           <span class="pc-sidebar-username" id="pc-sidebar-username">管理者</span>
         </div>
         <button onclick="adminLogout()" title="ログアウト" style="flex-shrink:0;width:34px;height:34px;border-radius:8px;border:1px solid #E4E7EC;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;" onmouseover="this.style.background='#FFF0F0'" onmouseout="this.style.background='#fff'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
     </div>
@@ -3599,18 +3612,18 @@
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
     <div class="role-hero">
       <div class="role-hero-icon">
         <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
           <rect width="80" height="80" rx="20" fill="#EEF4FF"/>
-          <rect x="20" y="22" width="34" height="42" rx="4" stroke="#2F6BFF" stroke-width="2.5" fill="none"/>
-          <rect x="29" y="16" width="16" height="11" rx="3.5" stroke="#2F6BFF" stroke-width="2.5" fill="none"/>
-          <polyline points="27,43 33,50 47,35" stroke="#2F6BFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <line x1="27" y1="56" x2="47" y2="56" stroke="#2F6BFF" stroke-width="2" stroke-linecap="round"/>
+          <rect x="20" y="22" width="34" height="42" rx="4" stroke="#2F6BFF" stroke-width="1.5" fill="none"/>
+          <rect x="29" y="16" width="16" height="11" rx="3.5" stroke="#2F6BFF" stroke-width="1.5" fill="none"/>
+          <polyline points="27,43 33,50 47,35" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <line x1="27" y1="56" x2="47" y2="56" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
       </div>
       <h1>設備点検アプリ</h1>
@@ -3620,7 +3633,7 @@
     <div class="role-cards">
       <div class="role-card blue" onclick="gotoInspector()">
         <div class="role-icon-wrap blue">
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#2F6BFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M5.5 19 C5.5 12 9.8 7 15 7 C20.2 7 24.5 12 24.5 19"/>
             <line x1="3" y1="19" x2="27" y2="19"/>
             <line x1="15" y1="7" x2="15" y2="19"/>
@@ -3634,12 +3647,12 @@
           <div class="role-card-desc">設備の点検・記録を<br>行います</div>
         </div>
         <div class="role-card-arrow blue">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/></svg>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
         </div>
       </div>
       <div class="role-card red" onclick="gotoManager()">
         <div class="role-icon-wrap red">
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#E53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="15" cy="10" r="5"/>
             <path d="M6 27 C6 21.5 9.8 19 15 19 C20.2 19 24 21.5 24 27"/>
             <line x1="13" y1="19" x2="15" y2="22"/>
@@ -3652,7 +3665,7 @@
           <div class="role-card-desc">点検の確認・承認や<br>各種設定を行います</div>
         </div>
         <div class="role-card-arrow red">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"/></svg>
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
         </div>
       </div>
     </div>
@@ -3665,13 +3678,13 @@
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
     <div class="nav-bar blue-accent">
       <div class="nav-back" onclick="goBack()">
-        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検者ログイン</span>
     </div>
@@ -3709,13 +3722,13 @@
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
     <div class="nav-bar red-accent">
       <div class="nav-back" onclick="goBack()">
-        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">管理者ログイン</span>
     </div>
@@ -3754,8 +3767,8 @@
     <div class="status-bar status-bar-white">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
 
@@ -3773,10 +3786,10 @@
         <div style="position:relative;margin-left:auto;">
           <button class="adm-user-chip" id="home-user-chip" onclick="toggleHomeUserMenu(event)">
             <div class="adm-user-chip-avatar">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             </div>
             <span class="adm-user-chip-name home-user-name">佐藤 太郎 さん</span>
-            <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+            <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="1.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
           </button>
         </div>
       </div>
@@ -3785,9 +3798,9 @@
     <!-- Calendar -->
     <div class="calendar-card">
       <div class="cal-header">
-        <div class="cal-nav" onclick="changeMonth(-1)"><svg viewBox="0 0 16 16" stroke-width="2"><path d="M10 4l-4 4 4 4"/></svg></div>
+        <div class="cal-nav" onclick="changeMonth(-1)"><svg viewBox="0 0 16 16" stroke-width="1.5"><path d="M10 4l-4 4 4 4"/></svg></div>
         <div class="cal-month" id="cal-month-label">2024年5月</div>
-        <div class="cal-nav" onclick="changeMonth(1)"><svg viewBox="0 0 16 16" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg></div>
+        <div class="cal-nav" onclick="changeMonth(1)"><svg viewBox="0 0 16 16" stroke-width="1.5"><path d="M6 4l4 4-4 4"/></svg></div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-legend">
@@ -3807,32 +3820,32 @@
       <div class="today-rows">
         <div class="today-row today-row-pending" id="today-row-pending">
           <div class="today-row-icon today-row-icon-gray">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="#888"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="#888"/></svg>
           </div>
           <div class="today-row-label">未実施</div>
           <div class="today-row-count today-row-count-gray"><span id="sum-pending">16</span>件</div>
-          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
         </div>
         <div class="today-row">
           <div class="today-row-icon today-row-icon-blue">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
           </div>
           <div class="today-row-label">完了</div>
           <div class="today-row-count today-row-count-blue"><span id="sum-done">12</span>件</div>
-          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
         </div>
         <div class="today-row">
           <div class="today-row-icon today-row-icon-red">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--red)"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--red)"/></svg>
           </div>
           <div class="today-row-label">異常あり</div>
           <div class="today-row-count today-row-count-red"><span id="sum-anomaly">2</span>件</div>
-          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
         </div>
       </div>
       <div class="today-notice" id="today-notice">
         <div class="today-notice-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--blue)"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--blue)"/></svg>
         </div>
         <div>
           <div class="today-notice-title">未実施の点検があります</div>
@@ -3845,7 +3858,7 @@
         <button class="start-btn" onclick="startTodayInspection()">
           <div class="start-btn-left">
             <div class="start-btn-icon">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="9" y="2" width="6" height="4" rx="1"/>
                 <path d="M5 6h14l-1 13H6L5 6z"/>
                 <polyline points="10,11 12,13 16,9"/>
@@ -3854,7 +3867,7 @@
             <span>点検を開始する</span>
           </div>
           <div class="start-btn-arrow">
-            <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
         </button>
       </div>
@@ -3869,14 +3882,11 @@
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-    <div class="nav-bar blue-accent">
-      <div class="nav-back" onclick="showScreen('screen-home')">
-        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
+    <div class="nav-bar">
       <span class="nav-title">ライン選択</span>
     </div>
 
@@ -3886,16 +3896,21 @@
     </div>
     <div class="flex-spacer"></div>
     <div class="bottom-action">
-      <button class="btn-bottom-main" id="line-next-btn" disabled onclick="goToEquipScreen()">次へ</button>
+      <div class="btn-row">
+        <button class="btn-bottom-back" onclick="showScreen('screen-home')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          戻る
+        </button>
+        <button class="btn-bottom-main" id="line-next-btn" disabled onclick="goToEquipScreen()">次へ</button>
+      </div>
     </div>
-
     <!-- ===== PC TWO-PANEL LAYOUT (desktop only) ===== -->
     <div id="pc-line-equip-wrap">
       <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
         <div style="display:flex;align-items:center;gap:10px;">
           <div onclick="showScreen('screen-home')" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:8px;border:1.5px solid var(--border);background:var(--card);flex-shrink:0;transition:background 0.15s;" onmouseover="this.style.background='#F0F0F0'" onmouseout="this.style.background='var(--card)'">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </div>
           <h2 style="font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.3px;">点検対象の選択</h2>
         </div>
@@ -3920,7 +3935,7 @@
         <div class="pc-lsel-left">
           <div class="pc-lsel-left-header">ラインを選択</div>
           <div class="pc-line-search-wrap">
-            <svg class="pc-line-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#AAA" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg class="pc-line-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#AAA" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" id="pc-line-search" placeholder="ライン名で検索" oninput="pcFilterLines(this.value)">
           </div>
           <div class="pc-line-list-body" id="pc-line-list">
@@ -3943,18 +3958,18 @@
                 <span class="pc-equip-sel-info" id="pc-equip-sel-info">選択中：0件</span>
                 <div class="pc-equip-hdr-btns">
                   <button class="pc-equip-hdr-btn select-all" onclick="pcSelectAllEquip()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
                     すべて選択
                   </button>
                   <button class="pc-equip-hdr-btn" onclick="pcClearEquip()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                     クリア
                   </button>
                 </div>
               </div>
               <div class="pc-equip-search-row">
                 <div class="pc-equip-search-wrap">
-                  <svg class="pc-equip-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#AAA" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <svg class="pc-equip-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#AAA" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                   <input type="text" id="pc-equip-search" placeholder="設備名で検索" oninput="pcFilterEquips(this.value)">
                 </div>
               </div>
@@ -3975,7 +3990,7 @@
             <div class="pc-start-btn-wrap">
               <button class="pc-start-btn" id="pc-start-btn" disabled onclick="pcStartInspection()">
                 <span>この設備で点検を開始</span>
-                <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
               </button>
             </div>
             <p class="pc-start-note">
@@ -3994,25 +4009,27 @@
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-    <div class="nav-bar blue-accent">
-      <div class="nav-back" onclick="showScreen('screen-line')">
-        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
+    <div class="nav-bar">
       <span class="nav-title">設備選択</span>
     </div>
 
     <div style="padding:16px 16px 4px;font-size:13px;color:var(--text-sub);">点検する設備を選択してください（複数選択可）</div>
-    <div class="equip-select-count"><span id="equip-count">6</span>件選択中</div>
     <div class="list-body" id="equip-list">
       <!-- Rendered by JS -->
     </div>
     <div class="flex-spacer"></div>
     <div class="bottom-action">
-      <button class="btn-bottom-main" id="start-inspect-btn" onclick="startInspection()">この設備で点検開始</button>
+      <div class="btn-row">
+        <button class="btn-bottom-back" onclick="showScreen('screen-line')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          戻る
+        </button>
+        <button class="btn-bottom-main" id="start-inspect-btn" onclick="startInspection()">この設備で点検開始</button>
+      </div>
     </div>
   </div>
 
@@ -4022,14 +4039,11 @@
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-    <div class="nav-bar blue-accent">
-      <div class="nav-back" onclick="window.innerWidth>=1024?showScreen('screen-line'):showScreen('screen-equip')">
-        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
+    <div class="nav-bar">
       <span class="nav-title">点検入力</span>
     </div>
 
@@ -4038,14 +4052,14 @@
 
     <!-- Date & type banner -->
     <div class="inspect-date-banner" id="inspect-date-banner">
-      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       <span id="inspect-date-label">本日の点検</span>
     </div>
 
     <!-- Bulk actions -->
     <div class="inspect-top-actions">
       <button class="bulk-btn" onclick="bulkSetUnenteredOk()">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
         未入力をすべて正常にする
       </button>
     </div>
@@ -4055,7 +4069,13 @@
 
     <div class="flex-spacer"></div>
     <div class="bottom-action">
-      <button class="btn-bottom-main" onclick="goToConfirm()">点検の確認・完了へ</button>
+      <div class="btn-row">
+        <button class="btn-bottom-back" onclick="showScreen('screen-equip')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          戻る
+        </button>
+        <button class="btn-bottom-main" onclick="goToConfirm()">点検の確認・完了へ</button>
+      </div>
     </div>
   </div>
 
@@ -4065,13 +4085,13 @@
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
-        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
     <div class="nav-bar blue-accent">
       <div class="nav-back" onclick="showScreen('screen-inspect')">
-        <svg viewBox="0 0 24 24" stroke-width="2.2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検結果の確認</span>
     </div>
@@ -4095,7 +4115,7 @@
   <div class="screen hidden" id="screen-complete">
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:100dvh;padding:32px 24px;background:#fff;box-sizing:border-box;">
       <div class="complete-icon">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
       </div>
       <div class="complete-title">点検が完了しました</div>
       <div class="complete-sub">お疲れさまでした。<br>入力内容を送信しました。</div>
@@ -4112,7 +4132,7 @@
     <div class="dialog-sheet">
       <div class="dialog-drag-handle"></div>
       <div class="dialog-icon">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
           <line x1="12" y1="9" x2="12" y2="13"/>
           <line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -4138,7 +4158,7 @@
   <div class="da-wrap">
     <div class="da-hdr">
       <div class="da-hdr-title">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
           <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
         </svg>
@@ -4159,7 +4179,7 @@
 
       <!-- Line Progress -->
       <div class="da-section-title">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
         </svg>
         ライン別進捗
@@ -4171,7 +4191,7 @@
 
       <!-- Anomaly List -->
       <div class="da-section-title">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
           <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
@@ -4191,7 +4211,7 @@
   <div class="da-wrap">
     <div class="da-hdr">
       <div class="da-hdr-title">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"/>
         </svg>
         承認画面
@@ -4205,7 +4225,7 @@
 
     <div class="apr-body">
       <div class="apr-pending-count" id="apr-pending-banner">
-        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         承認待ちが <span class="apr-count-num" id="apr-pending-num">0</span> 件あります
@@ -4230,21 +4250,21 @@
       <div style="position:relative;margin-left:auto;">
         <button class="adm-user-chip" id="adm-user-chip" onclick="toggleAdmUserMenu(event)">
           <div class="adm-user-chip-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           </div>
           <span id="adm-hdr-name" class="adm-user-chip-name"></span>
-          <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          <svg class="adm-user-chip-chevron" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="1.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="adm-user-popover" id="adm-user-popover">
           <div class="adm-user-popover-header">
             <div class="adm-user-chip-avatar" style="width:32px;height:32px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" style="width:18px;height:18px;"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
             </div>
             <span id="adm-popover-name" class="adm-user-chip-name" style="font-size:13px;"></span>
           </div>
           <div style="height:1px;background:var(--border);margin:0 12px;"></div>
           <button class="adm-user-popover-btn" onclick="adminLogout()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             ログアウト
           </button>
         </div>
@@ -4380,7 +4400,7 @@
     <!-- パネルナビ（戻るヘッダー）-->
     <div class="adm-panel-nav" id="adm-panel-nav">
       <button class="adm-panel-back" onclick="showAdmSettingsMenu()">
-        <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
       <span class="adm-panel-nav-title" id="adm-panel-nav-title">設定</span>
     </div>
@@ -4389,7 +4409,7 @@
       <div class="adm-section-hdr">
         <span class="adm-section-title">ライン一覧</span>
         <button class="adm-add-btn" onclick="admOpenModal('line','add','')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           ラインを追加
         </button>
       </div>
@@ -4406,7 +4426,7 @@
       <div class="adm-section-hdr">
         <span class="adm-section-title">設備一覧</span>
         <button class="adm-add-btn" onclick="admOpenModal('equip','add','')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           設備を追加
         </button>
       </div>
@@ -4442,7 +4462,7 @@
           <div class="adm-section-hdr">
             <span class="adm-section-title">点検者一覧</span>
             <button class="adm-add-btn" onclick="admOpenUserModal('inspector')">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
               点検者を追加
             </button>
           </div>
@@ -4453,7 +4473,7 @@
           <div class="adm-section-hdr">
             <span class="adm-section-title">担当者（管理者）一覧</span>
             <button class="adm-add-btn" onclick="admOpenUserModal('manager')">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
               担当者を追加
             </button>
           </div>
@@ -4468,11 +4488,11 @@
       <!-- 年月ナビ -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
         <button class="cal-nav" onclick="holidayChangeMonth(-1)" style="width:36px;height:36px;">
-          <svg viewBox="0 0 16 16" stroke-width="2"><path d="M10 4l-4 4 4 4"/></svg>
+          <svg viewBox="0 0 16 16" stroke-width="1.5"><path d="M10 4l-4 4 4 4"/></svg>
         </button>
         <div id="holiday-month-label" style="font-size:16px;font-weight:700;letter-spacing:-0.3px;"></div>
         <button class="cal-nav" onclick="holidayChangeMonth(1)" style="width:36px;height:36px;">
-          <svg viewBox="0 0 16 16" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+          <svg viewBox="0 0 16 16" stroke-width="1.5"><path d="M6 4l4 4-4 4"/></svg>
         </button>
       </div>
 
@@ -4578,17 +4598,17 @@
       <div class="apr2-title-row">
         <div class="apr2-filter-tabs">
           <button class="apr2-tab active" id="apr2-tab-all" onclick="setApr2Filter('all')">
-            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             <span class="apr2-tab-label">すべて</span>
             <span class="apr2-tab-badge" id="apr2-count-all">0</span>
           </button>
           <button class="apr2-tab" id="apr2-tab-pending" onclick="setApr2Filter('pending')">
-            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span class="apr2-tab-label">未承認</span>
             <span class="apr2-tab-badge pending-badge" id="apr2-count-pending">0</span>
           </button>
           <button class="apr2-tab" id="apr2-tab-approved" onclick="setApr2Filter('approved')">
-            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span class="apr2-tab-label">承認済み</span>
             <span class="apr2-tab-badge" id="apr2-count-approved">0</span>
           </button>
@@ -4596,9 +4616,9 @@
         <!-- ライン絞り込み -->
         <div class="apr2-line-filter-wrap" id="apr2-line-filter-wrap">
           <button class="apr2-line-filter-btn" id="apr2-line-filter-btn" onclick="apr2ToggleLinePopup(event)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
             絞り込み
-            <svg class="apr2-line-filter-chevron" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <svg class="apr2-line-filter-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="apr2-line-popup" id="apr2-line-popup">
             <div class="apr2-line-popup-title">
@@ -4634,7 +4654,7 @@
   <div class="adm-bottom-tabbar">
     <button class="adm-btab active" id="abtab-dashboard" onclick="showAdmTab('dashboard')">
       <div class="adm-btab-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
@@ -4643,7 +4663,7 @@
     </button>
     <button class="adm-btab" id="abtab-approval" onclick="showAdmTab('approval')">
       <div class="adm-btab-icon" style="position:relative;">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
           <polyline points="22 4 12 14.01 9 11.01"/>
         </svg>
@@ -4653,7 +4673,7 @@
     </button>
     <button class="adm-btab" id="abtab-settings" onclick="showAdmTab('settings')">
       <div class="adm-btab-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
         </svg>
@@ -5099,7 +5119,7 @@
           var btnLeftHol = startBtn.querySelector('.start-btn-left');
           if (btnLeftHol) btnLeftHol.innerHTML =
             '<div class="start-btn-icon">' +
-              '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+              '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
                 '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>' +
                 '<line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' +
                 '<line x1="10" y1="15" x2="14" y2="19"/><line x1="14" y1="15" x2="10" y2="19"/>' +
@@ -5118,7 +5138,7 @@
           var btnLeftNorm = startBtn.querySelector('.start-btn-left');
           if (btnLeftNorm) btnLeftNorm.innerHTML =
             '<div class="start-btn-icon">' +
-              '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+              '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
                 '<rect x="9" y="2" width="6" height="4" rx="1"/>' +
                 '<path d="M5 6h14l-1 13H6L5 6z"/>' +
                 '<polyline points="10,11 12,13 16,9"/>' +
@@ -5175,7 +5195,7 @@
       card.innerHTML =
         '<div class="radio-circle"><div class="radio-inner">' +
         '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +
-        '<polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
         '</svg></div></div>' +
         '<div class="radio-label">' + ln.name + '</div>' +
         '<button class="radio-card-fav-btn' + (isFav ? ' active' : '') + '" data-lineid="' + ln.id + '" title="よく使うラインに登録">★</button>';
@@ -5187,6 +5207,13 @@
       return card;
     }
 
+    function makeGroup(lines) {
+      const group = document.createElement('div');
+      group.className = 'line-group';
+      lines.forEach(ln => group.appendChild(makeLineCard(ln)));
+      return group;
+    }
+
     // よく使うライン セクション
     const favLines = ADM.lines.filter(l => favIds.includes(l.id));
     if (favLines.length) {
@@ -5194,7 +5221,7 @@
       favHdr.className = 'line-section-label';
       favHdr.innerHTML = '<span style="color:#F59E0B;">★</span> よく使うライン';
       list.appendChild(favHdr);
-      favLines.forEach(ln => list.appendChild(makeLineCard(ln)));
+      list.appendChild(makeGroup(favLines));
     }
 
     // すべてのライン セクション
@@ -5202,7 +5229,7 @@
     allHdr.className = 'line-section-label';
     allHdr.textContent = 'すべてのライン（' + ADM.lines.length + '）';
     list.appendChild(allHdr);
-    ADM.lines.forEach(ln => list.appendChild(makeLineCard(ln)));
+    list.appendChild(makeGroup(ADM.lines));
 
     const btn = document.getElementById('line-next-btn');
     if (btn) { btn.disabled = true; btn.textContent = '次へ'; }
@@ -5266,12 +5293,12 @@
       item.dataset.lineId = ln.id;
       item.innerHTML =
         '<div class="pc-line-checkbox' + (isSelected ? ' checked' : '') + '">' +
-          '<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
         '</div>' +
         '<span class="pc-line-name">' + ln.name + '</span>' +
         '<span class="pc-line-count">' + cnt + '設備</span>' +
         '<button class="pc-line-fav-btn' + (isFav ? ' active' : '') + '" onclick="pcToggleFavLine(\'' + ln.id + '\',event)" title="よく使うラインに登録">★</button>' +
-        '<svg class="pc-line-arrow" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
+        '<svg class="pc-line-arrow" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
       item.onclick = function() { pcSelectLine(ln.id); };
       return item;
     }
@@ -5366,7 +5393,7 @@
       card.dataset.eqId = eq.id;
       card.innerHTML =
         '<div class="pc-equip-card-icon">' +
-          '<svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' +
+          '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' +
         '</div>' +
         '<div class="pc-equip-card-info">' +
           '<div class="pc-equip-card-id">' + eq.id + '</div>' +
@@ -5374,7 +5401,7 @@
           '<div class="pc-equip-card-line">' + ln.name + '</div>' +
         '</div>' +
         '<div class="pc-equip-checkbox">' +
-          '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
         '</div>';
       card.onclick = function() { pcToggleEquip(eq.id); };
       grid.appendChild(card);
@@ -5481,33 +5508,30 @@
     const list = document.getElementById('equip-list');
     if (!list) return;
     list.innerHTML = '';
-    // Show only equipment belonging to the selected lines
     const filtered = selectedLineIds.length > 0
       ? EQUIP_DATA.filter(eq => {
           const admEq = ADM.equips.find(e => e.id === eq.id);
           return admEq && selectedLineIds.includes(admEq.lineId);
         })
       : EQUIP_DATA;
-    // Pre-select all filtered equipment
     selectedEquips = filtered.map(e => e.id);
+
+    const group = document.createElement('div');
+    group.className = 'line-group';
     filtered.forEach(eq => {
       const card = document.createElement('div');
       card.className = 'check-card selected';
       card.dataset.id = eq.id;
       card.innerHTML = `
-        <div class="check-icon">
-          <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
+        <div class="check-box">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <div class="check-label">${eq.id}　${eq.name}</div>
-        <div class="check-box" style="margin-left:auto;">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
       `;
       card.onclick = () => toggleEquip(card, eq.id);
-      list.appendChild(card);
+      group.appendChild(card);
     });
+    list.appendChild(group);
     updateEquipCount();
     const btn = document.getElementById('start-inspect-btn');
     if (btn) btn.disabled = selectedEquips.length === 0;
@@ -5607,7 +5631,7 @@
       <div class="equip-section-header">
         <div class="equip-header-main">
           <div class="equip-icon-lg">
-            <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="3" width="20" height="14" rx="2"/>
               <line x1="8" y1="21" x2="16" y2="21"/>
               <line x1="12" y1="17" x2="12" y2="21"/>
@@ -5805,7 +5829,7 @@
         sec.innerHTML = `
           <div class="confirm-section-header" style="${headerBg}">
             <div class="equip-icon-sm">
-              <svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="3" width="20" height="14" rx="2"/>
                 <line x1="8" y1="21" x2="16" y2="21"/>
                 <line x1="12" y1="17" x2="12" y2="21"/>
@@ -5843,7 +5867,7 @@
       bar.className = 'confirm-summary-bar';
       bar.innerHTML = `
         <div class="confirm-summary-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
         </div>
         <div class="confirm-summary-text">異常項目が <strong>${totalNg}件</strong> あります。内容を確認してください。</div>
       `;
@@ -6178,7 +6202,7 @@ function _showUserPopup(id, onClickFn, labelHtml) {
   popup.innerHTML = '<button onclick="'+onClickFn+'()" style="width:100%;padding:13px 16px;'
     +'display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;'
     +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:left;">'
-    +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
+    +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
     +labelHtml+'</button>';
   document.body.appendChild(popup);
   setTimeout(function() {
@@ -6494,9 +6518,9 @@ function admDeleteUser(type, id) {
 }
 
 /* ─ icon SVG strings ─ */
-var SVG_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
-var SVG_DEL  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>';
-var SVG_CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
+var SVG_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+var SVG_DEL  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>';
+var SVG_CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
 
 /* ─ LINES ─ */
 function renderLines() {
@@ -6582,7 +6606,7 @@ function renderItems() {
         '<span style="margin-left:8px;font-size:13px;color:var(--text-sub);">' + (groups[col.key] ? groups[col.key].length : 0) + '項目</span>' +
       '</span>' +
       '<button class="adm-add-btn" data-itype="'+col.key+'" onclick="admOpenModalWithType(this)">' +
-        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>' +
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>' +
         '追加' +
       '</button>' +
     '</div>';
@@ -7267,18 +7291,18 @@ function renderDashSummary() {
   var cards = [
     {
       colorClass: 'gray', label: '未実施', count: s.notStarted,
-      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+      icon: '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
       extra: ''
     },
 
     {
       colorClass: 'blue', label: '完了', count: s.done,
-      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+      icon: '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
       extra: ''
     },
     {
       colorClass: 'red', label: '異常', count: s.anomaly,
-      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      icon: '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
       extra: 'anomaly'
     }
   ];
@@ -7361,7 +7385,7 @@ function renderDashAnomalies() {
           '<div style="font-size:12px;color:#888;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + detail + '</div>' +
         '</div>' +
         '<div style="width:30px;height:30px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;">' +
-          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
         '</div>' +
       '</div>';
     });
@@ -7405,30 +7429,30 @@ function renderApproval() {
         : '<span class="apr-status-badge returned">差し戻し</span>';
 
     var iconClass = hasAnomaly ? 'apr-equip-icon red-icon' : 'apr-equip-icon';
-    var iconSvg = '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    var iconSvg = '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
       '<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="15" x2="13" y2="15"/>' +
     '</svg>';
 
     var anomalyBanner = hasAnomaly
-      ? '<div class="apr-anomaly-banner"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>異常あり：' + item.anomaly + '</div>'
+      ? '<div class="apr-anomaly-banner"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>異常あり：' + item.anomaly + '</div>'
       : '';
 
     var actionArea;
     if (item.status === 'pending') {
       actionArea = '<div class="apr-card-actions">' +
         '<button class="apr-btn approve" onclick="aprApprove(\'' + item.id + '\')">' +
-          '<svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+          '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
           '承認する' +
         '</button>' +
       '</div>';
     } else if (item.status === 'approved') {
       actionArea = '<div class="apr-card-done-row approved">' +
-        '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
+        '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
         '承認済み' +
       '</div>';
     } else {
       actionArea = '<div class="apr-card-done-row returned">' +
-        '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>' +
+        '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>' +
         '差し戻し済み' +
       '</div>';
     }
@@ -7442,8 +7466,8 @@ function renderApproval() {
             (item.type ? '<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:' + (item.type==='月次点検' ? '#FFF3E0' : 'var(--blue-light)') + ';color:' + (item.type==='月次点検' ? '#F57C00' : 'var(--blue)') + ';white-space:nowrap;">' + item.type + '</span>' : '') +
           '</div>' +
           '<div class="apr-meta">' +
-            '<div class="apr-meta-row"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>点検者：' + item.inspector + '</div>' +
-            '<div class="apr-meta-row"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + item.date + '</div>' +
+            '<div class="apr-meta-row"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>点検者：' + item.inspector + '</div>' +
+            '<div class="apr-meta-row"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + item.date + '</div>' +
           '</div>' +
         '</div>' +
         statusBadge +
@@ -7587,7 +7611,7 @@ function renderAnomalyListPanel(filterEquipId) {
   if (!anEl) return;
   if (!list.length) {
     anEl.innerHTML = '<div style="background:#E8F5E9;border-radius:12px;padding:16px;display:flex;align-items:center;gap:10px;">' +
-      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg>' +
       '<div><div style="font-size:14px;font-weight:700;color:#2E7D32;">異常はありません</div></div></div>';
   } else {
     var typeLabels2 = { 'daily': '毎日点検', '10days': '10日毎点検', 'monthly': '月次点検' };
@@ -7628,7 +7652,7 @@ function renderAnomalyListPanel(filterEquipId) {
             '<div style="font-size:12px;color:#888;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + detail2 + '</div>' +
           '</div>' +
           '<div style="width:30px;height:30px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;">' +
-            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
           '</div>' +
         '</div>';
       });
@@ -7831,17 +7855,17 @@ function apr2GetPagedLines(lines) {
 function apr2EquipIcon(equipId) {
   var s = equipId || '';
   if (s.indexOf('ポンプ') >= 0 || s === 'A-102') {
-    return '<svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M5 12H2M22 12h-3M12 5V2M12 22v-3"/><circle cx="12" cy="12" r="7"/></svg>';
+    return '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M5 12H2M22 12h-3M12 5V2M12 22v-3"/><circle cx="12" cy="12" r="7"/></svg>';
   }
   if (s.indexOf('ボイラー') >= 0 || s.charAt(0) === 'B') {
-    return '<svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 017 7v6a5 5 0 01-14 0V9a7 7 0 017-7z"/><path d="M9 12l2 2 4-4"/></svg>';
+    return '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 017 7v6a5 5 0 01-14 0V9a7 7 0 017-7z"/><path d="M9 12l2 2 4-4"/></svg>';
   }
   // default
-  return '<svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg>';
+  return '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg>';
 }
 
 function apr2LineIcon() {
-  return '<svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>';
+  return '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>';
 }
 
 /* ── メインレンダラー ── */
@@ -7936,7 +7960,7 @@ function renderAdmApproval() {
           ? '<span class="apr2-line-pending">未承認 ' + linePending + '件</span>'
           : '') +
         '<span class="apr2-line-total">' + lineTotal + '件</span>' +
-        '<svg class="apr2-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+        '<svg class="apr2-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
       '</div>' +
       '<div class="apr2-line-body' + bodyCls + '">';
 
@@ -7957,9 +7981,9 @@ function renderAdmApproval() {
           '</div>' +
           '<span class="apr2-equip-count">' + eTotal + '件</span>' +
           (hasPend
-            ? '<div class="apr2-equip-status"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>未承認 ' + ePending + '/' + eTotal + '件</div>'
-            : '<div class="apr2-equip-status all-done"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>承認済み</div>') +
-          '<svg class="apr2-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+            ? '<div class="apr2-equip-status"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>未承認 ' + ePending + '/' + eTotal + '件</div>'
+            : '<div class="apr2-equip-status all-done"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>承認済み</div>') +
+          '<svg class="apr2-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
         '</div>' +
         '<div class="apr2-equip-body' + eBodCls + '">';
 
@@ -7969,7 +7993,7 @@ function renderAdmApproval() {
           ? '<span class="apr2-type-tag tenday">10日点検</span>'
           : '<span class="apr2-type-tag monthly">月次点検</span>';
         var action = isApproved
-          ? '<div class="apr2-check-done"><svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>承認済み</span></div>'
+          ? '<div class="apr2-check-done"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>承認済み</span></div>'
           : '<button class="apr2-approve-btn" onclick="apr2Approve(\'' + insp.id + '\')">承認する</button>';
 
         html += '<div class="apr2-insp-row' + (isApproved ? ' is-approved' : '') + '" id="apr2-row-' + insp.id + '">' +
@@ -8065,7 +8089,7 @@ function apr2RenderLinePopupRows() {
       : '<span class="apr2-line-popup-pending no-pending">未承認 0件</span>';
     return '<div class="apr2-line-popup-row" onclick="apr2ToggleLineCheck(event, \'' + ln.lineId + '\')">' +
       '<div class="apr2-line-chk' + (isChk ? ' checked' : '') + '" id="apr2-chk-' + ln.lineId + '">' +
-        '<svg viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+        '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
       '</div>' +
       '<span class="apr2-line-popup-name">' + ln.lineName + '</span>' +
       pendingLabel +
@@ -8704,9 +8728,9 @@ function buildHolidayCal() {
       bg = '#E8F5E9'; color = '#2E7D32'; border = '1.5px solid #A5D6A7';
     } else {
       // default coloring by dow
-      if (dow === 0)      { bg = '#FFF5F5'; color = '#E53935'; border = '1px solid #FFE0E0'; }
-      else if (dow === 6) { bg = '#EEF4FF'; color = 'var(--blue)'; border = '1px solid #D6E4FF'; }
-      else               { bg = '#F8F8F8'; color = 'var(--text)'; border = '1px solid transparent'; }
+      if (dow === 0)      { bg = '#FFFFFF'; color = '#E53935'; border = '1px solid transparent'; }
+      else if (dow === 6) { bg = '#FFFFFF'; color = 'var(--blue)'; border = '1px solid transparent'; }
+      else               { bg = '#FFFFFF'; color = 'var(--text)'; border = '1px solid transparent'; }
     }
 
     var todayStyle = isToday ? 'box-shadow:0 0 0 2px var(--blue);font-weight:700;' : '';
@@ -8764,7 +8788,7 @@ function buildHolidaySummary(y, m, data) {
       '<div style="flex:1"><div class="adm-list-name">' + k.slice(5).replace('-','/') + '（' + getDowLabel(k) + '）</div></div>' +
       chip +
       '<button onclick="holidayRemove(\'' + k + '\')" style="margin-left:8px;background:none;border:none;cursor:pointer;padding:4px;color:var(--text-sub);">' +
-        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
       '</button>' +
     '</div>';
   }).join('');
