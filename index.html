@@ -690,6 +690,9 @@
   .check-icon svg { stroke: var(--text-sub); fill: none; width: 18px; height: 18px; }
   .check-card.selected .check-icon { background: rgba(47,107,255,0.12); }
   .check-card.selected .check-icon svg { stroke: var(--blue); }
+  .line-group-header { display: flex; align-items: center; gap: 8px; padding: 4px 0 2px; }
+  .line-group-pill { font-size: 11px; font-weight: 700; color: #185FA5; background: #E6F1FB; border-radius: 20px; padding: 3px 10px; white-space: nowrap; flex-shrink: 0; letter-spacing: 0.02em; }
+  .line-group-rule { flex: 1; height: 1px; background: #B5D4F4; }
 
   /* ─── PC COMBINED LINE+EQUIP SCREEN ─── */
   #pc-line-equip-wrap { display: none; }
@@ -1501,19 +1504,21 @@
   /* ─── INSPECTION TYPE TABS ─── */
   .insp-type-divider {
     display: flex; align-items: center; gap: 8px;
-    padding: 10px 0 6px;
+    padding: 12px 0 4px;
     margin-top: 4px;
-    border-bottom: 1.5px solid var(--border);
-    font-size: 12px; font-weight: 700; color: var(--text-sub);
   }
   .insp-type-divider:first-child { margin-top: 0; padding-top: 4px; }
+  .insp-type-rule { flex: 1; height: 1px; }
   .insp-type-badge {
-    display: inline-block; border-radius: 20px;
-    padding: 2px 9px; font-size: 11px; font-weight: 700; white-space: nowrap;
+    display: inline-block; border-radius: 20px; flex-shrink: 0;
+    padding: 3px 10px; font-size: 11px; font-weight: 700; white-space: nowrap;
   }
-  .insp-type-badge.days10  { background: var(--blue-light); color: var(--blue); }
+  .insp-type-badge.days10  { background: var(--blue-light); color: #185FA5; }
+  .insp-type-badge.days10  + .insp-type-rule { background: #B5D4F4; }
   .insp-type-badge.monthly { background: #FFF3E0; color: #E65100; }
+  .insp-type-badge.monthly + .insp-type-rule { background: #FFCC80; }
   .insp-type-badge.daily   { background: #E8F5E9; color: #2E7D32; }
+  .insp-type-badge.daily   + .insp-type-rule { background: #A5D6A7; }
 
   /* ─── IMPROVED EQUIP HEADER ─── */
   .equip-header-main {
@@ -1655,12 +1660,16 @@
     border-radius: 10px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
     font-size: 13px;
     color: var(--blue);
     font-weight: 500;
   }
-  .inspect-date-banner svg { stroke: var(--blue); fill: none; width: 15px; height: 15px; flex-shrink: 0; }
+  .inspect-date-left { display: flex; align-items: center; gap: 8px; }
+  .inspect-date-left svg { stroke: var(--blue); fill: none; width: 15px; height: 15px; flex-shrink: 0; }
+  .inspect-date-change-btn { display: none; }
+  .pc-inspect-header { display: none; }
 </style>
 
 <!-- ===== PC DASHBOARD STYLES ===== -->
@@ -2035,14 +2044,91 @@
 
   /* ─── 点検入力 / 確認 ─── */
   #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: calc(100vh - 40px); }
-  .selected-equip-chips { padding: 16px 32px 12px; }
-  .inspect-date-banner  { margin: 8px 32px 0; }
-  .inspect-top-actions  { padding: 12px 32px 8px; }
-  #inspect-sections {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 16px; padding: 0 32px 16px;
+
+  /* PC header */
+  .pc-inspect-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 32px 0;
   }
-  .equip-section { margin: 0; }
+  .pc-inspect-header-left { display: flex; align-items: center; gap: 12px; }
+  .pc-inspect-back {
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid #E0E0E0;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); transition: background 0.15s;
+  }
+  .pc-inspect-back:hover { background: var(--bg); }
+  .pc-inspect-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: var(--text); }
+  .pc-inspect-bulk-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: #fff; border: 1.5px solid var(--blue); color: var(--blue);
+    border-radius: 10px; padding: 9px 16px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .pc-inspect-bulk-btn:hover { background: var(--blue-light); }
+  .pc-inspect-bulk-btn svg { stroke: var(--blue); }
+
+  /* Mobile elements hidden on PC */
+  #inspect-mobile-nav { display: none; }
+  #inspect-mobile-bulk { display: none; }
+
+  /* Tabs */
+  .selected-equip-chips {
+    padding: 0 32px;
+    border-bottom: 1px solid #E0E0E0;
+    display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0;
+    margin-top: 16px;
+  }
+  .chip { display: none; }
+  .inspect-tab {
+    flex-shrink: 0;
+    padding: 10px 18px;
+    font-size: 13px; font-weight: 500; color: var(--text-sub);
+    cursor: pointer; border-bottom: 2.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    background: none; border-top: none; border-left: none; border-right: none;
+    margin-bottom: -1px;
+  }
+  .inspect-tab:hover { color: var(--blue); }
+  .inspect-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+  /* Date banner */
+  .inspect-date-banner { margin: 16px 32px 0; border-radius: 12px; padding: 12px 18px; }
+  .inspect-date-change-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: #fff; border: 1px solid var(--blue-mid); color: var(--blue);
+    border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s; white-space: nowrap;
+  }
+  .inspect-date-change-btn:hover { background: var(--blue-light); }
+  .inspect-date-change-btn svg { stroke: var(--blue); }
+
+  /* Sections grid */
+  #inspect-sections {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; padding: 16px 32px 16px;
+    align-items: stretch;
+  }
+  .equip-section { margin: 0; height: 100%; }
+
+  /* Card header: remove icon, restyle */
+  #screen-inspect .equip-icon-lg { display: none; }
+  #screen-inspect .equip-section-header { padding: 20px 20px 16px; }
+  #screen-inspect .equip-id-label { font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 2px; }
+  #screen-inspect .equip-name-only { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  #screen-inspect .equip-header-main { gap: 0; flex-direction: column; align-items: flex-start; }
+
+  /* Type badge styling */
+  #screen-inspect .insp-type-divider { padding: 8px 20px 4px; }
+
+  /* Larger ○/×/－ buttons */
+  #screen-inspect .tri-btn {
+    width: 46px; height: 42px; border-radius: 10px;
+    font-size: 20px; border: 1.5px solid #E0E0E0;
+  }
+  #screen-inspect .check-row { padding: 0 20px; min-height: 54px; }
+  #screen-inspect .check-row-name { font-size: 14px; }
   #screen-confirm .confirm-section    { margin: 12px 32px 0; }
   #screen-confirm .confirm-summary-bar{ margin: 12px 32px; }
 
@@ -4037,24 +4123,43 @@
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-    <div class="nav-bar blue-accent">
+
+    <!-- Mobile nav bar -->
+    <div class="nav-bar blue-accent" id="inspect-mobile-nav">
       <div class="nav-back" onclick="window.innerWidth>=1024?showScreen('screen-line'):showScreen('screen-equip')">
         <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検入力</span>
     </div>
 
-    <!-- Selected chips -->
+    <!-- PC header (hidden on mobile) -->
+    <div class="pc-inspect-header" id="pc-inspect-header">
+      <div class="pc-inspect-header-left">
+        <div class="pc-inspect-back" onclick="showScreen('screen-line')">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </div>
+        <h1 class="pc-inspect-title">点検入力</h1>
+      </div>
+      <button class="pc-inspect-bulk-btn" onclick="bulkSetUnenteredOk()">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
+        未入力をすべて正常にする
+      </button>
+    </div>
+
+    <!-- Selected chips (mobile) / tabs (PC) -->
     <div class="selected-equip-chips" id="inspect-chips"></div>
 
     <!-- Date & type banner -->
     <div class="inspect-date-banner" id="inspect-date-banner">
-      <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      <span id="inspect-date-label">本日の点検</span>
+      <div class="inspect-date-left">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span id="inspect-date-label">本日の点検</span>
+      </div>
+
     </div>
 
-    <!-- Bulk actions -->
-    <div class="inspect-top-actions">
+    <!-- Mobile bulk action -->
+    <div class="inspect-top-actions" id="inspect-mobile-bulk">
       <button class="bulk-btn" onclick="bulkSetUnenteredOk()">
         <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
         未入力をすべて正常にする
@@ -5393,26 +5498,40 @@
     if (!grid) return;
     grid.innerHTML = '';
 
-    filtered.forEach(eq => {
-      var ln = ADM.lines.find(l => l.id === eq.lineId) || {name: eq.lineId};
-      var isSelected = pcEquipSelection[eq.id];
-      var card = document.createElement('div');
-      card.className = 'pc-equip-card' + (isSelected ? ' selected' : '');
-      card.dataset.eqId = eq.id;
-      card.innerHTML =
-        '<div class="pc-equip-card-icon">' +
-          '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' +
-        '</div>' +
-        '<div class="pc-equip-card-info">' +
-          '<div class="pc-equip-card-id">' + eq.id + '</div>' +
-          '<div class="pc-equip-card-name">' + eq.name + '</div>' +
-          '<div class="pc-equip-card-line">' + ln.name + '</div>' +
-        '</div>' +
-        '<div class="pc-equip-checkbox">' +
-          '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-        '</div>';
-      card.onclick = function() { pcToggleEquip(eq.id); };
-      grid.appendChild(card);
+    // Group by line preserving pcSelectedLines order
+    var lineOrder = [];
+    var lineGroups = {};
+    filtered.forEach(function(eq) {
+      var lineId = eq.lineId || '__none__';
+      if (!lineGroups[lineId]) { lineGroups[lineId] = []; lineOrder.push(lineId); }
+      lineGroups[lineId].push(eq);
+    });
+    var showHeader = pcSelectedLines.length > 1 || lineOrder.length > 1;
+    lineOrder.forEach(function(lineId) {
+      if (showHeader) {
+        var ln = ADM.lines.find(function(l){ return l.id === lineId; }) || {name: lineId};
+        var hdr = document.createElement('div');
+        hdr.className = 'line-group-header';
+        hdr.style.cssText = 'grid-column:1/-1;';
+        hdr.innerHTML = '<span class="line-group-pill">' + ln.name + '</span><div class="line-group-rule"></div>';
+        grid.appendChild(hdr);
+      }
+      lineGroups[lineId].forEach(function(eq) {
+        var isSelected = pcEquipSelection[eq.id];
+        var card = document.createElement('div');
+        card.className = 'pc-equip-card' + (isSelected ? ' selected' : '');
+        card.dataset.eqId = eq.id;
+        card.innerHTML =
+          '<div class="pc-equip-card-info">' +
+            '<div class="pc-equip-card-id">' + eq.id + '</div>' +
+            '<div class="pc-equip-card-name">' + eq.name + '</div>' +
+          '</div>' +
+          '<div class="pc-equip-checkbox">' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '</div>';
+        card.onclick = function() { pcToggleEquip(eq.id); };
+        grid.appendChild(card);
+      });
     });
     updatePcEquipCounts();
   }
@@ -5525,23 +5644,37 @@
       : EQUIP_DATA;
     // Pre-select all filtered equipment
     selectedEquips = filtered.map(e => e.id);
+    // Group by line (only when ADM is available)
+    const canGroup = typeof ADM !== 'undefined' && ADM.lines && ADM.equips;
+    const lineOrder = [];
+    const lineGroups = {};
     filtered.forEach(eq => {
-      const card = document.createElement('div');
-      card.className = 'check-card selected';
-      card.dataset.id = eq.id;
-      card.innerHTML = `
-        <div class="check-icon">
-          <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
-        </div>
-        <div class="check-label">${eq.id}　${eq.name}</div>
-        <div class="check-box" style="margin-left:auto;">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-      `;
-      card.onclick = () => toggleEquip(card, eq.id);
-      list.appendChild(card);
+      const lineId = canGroup ? ((ADM.equips.find(e => e.id === eq.id) || {}).lineId || '__none__') : '__none__';
+      if (!lineGroups[lineId]) { lineGroups[lineId] = []; lineOrder.push(lineId); }
+      lineGroups[lineId].push(eq);
+    });
+    lineOrder.forEach(lineId => {
+      if (canGroup && lineId !== '__none__') {
+        const ln = ADM.lines.find(l => l.id === lineId);
+        const lineName = ln ? ln.name : lineId;
+        const header = document.createElement('div');
+        header.className = 'line-group-header';
+        header.innerHTML = `<span class="line-group-pill">${lineName}</span><div class="line-group-rule"></div>`;
+        list.appendChild(header);
+      }
+      lineGroups[lineId].forEach(eq => {
+        const card = document.createElement('div');
+        card.className = 'check-card selected';
+        card.dataset.id = eq.id;
+        card.innerHTML = `
+          <div class="check-label">${eq.id}　${eq.name}</div>
+          <div class="check-box" style="margin-left:auto;">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        `;
+        card.onclick = () => toggleEquip(card, eq.id);
+        list.appendChild(card);
+      });
     });
     updateEquipCount();
     const btn = document.getElementById('start-inspect-btn');
@@ -5612,13 +5745,29 @@
     const chips = document.getElementById('inspect-chips');
     if (!chips) return;
     chips.innerHTML = '';
-    selectedEquips.forEach(id => {
-      const eq = EQUIP_DATA.find(e => e.id === id);
-      const chip = document.createElement('div');
-      chip.className = 'chip';
-      chip.textContent = `${eq.id} ${eq.name}`;
-      chips.appendChild(chip);
-    });
+    if (window.innerWidth >= 1024) {
+      selectedEquips.forEach((id, idx) => {
+        const eq = EQUIP_DATA.find(e => e.id === id);
+        const tab = document.createElement('button');
+        tab.className = 'inspect-tab' + (idx === 0 ? ' active' : '');
+        tab.textContent = `${eq.id} ${eq.name}`;
+        tab.onclick = function() {
+          chips.querySelectorAll('.inspect-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const sec = document.getElementById('section-' + eq.id);
+          if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+        chips.appendChild(tab);
+      });
+    } else {
+      selectedEquips.forEach(id => {
+        const eq = EQUIP_DATA.find(e => e.id === id);
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.textContent = `${eq.id} ${eq.name}`;
+        chips.appendChild(chip);
+      });
+    }
   }
 
   function buildInspectSections() {
@@ -5676,7 +5825,7 @@
       // Type divider label
       const divider = document.createElement('div');
       divider.className = 'insp-type-divider';
-      divider.innerHTML = `<span class="insp-type-badge ${group.badgeClass}">${group.label}</span>`;
+      divider.innerHTML = `<span class="insp-type-badge ${group.badgeClass}">${group.label}</span><div class="insp-type-rule"></div>`;
       section.appendChild(divider);
 
       const vals = state[eq.id][group.key];
