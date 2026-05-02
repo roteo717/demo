@@ -278,8 +278,8 @@
   /* ─── TODAY PANEL (Image2 style) ─── */
   .today-panel { padding: 20px 20px 16px; }
   .today-panel-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 16px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 14px;
   }
   .today-panel-icon {
     width: 44px; height: 44px; border-radius: 50%;
@@ -289,33 +289,51 @@
   .today-panel-icon svg { width: 22px; height: 22px; }
   .today-panel-title { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
   .today-panel-date { font-size: 13px; color: var(--text-sub); margin-top: 2px; }
-  .today-rows { display: flex; flex-direction: column; }
-  .today-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 13px 10px; border-radius: 10px;
-    cursor: pointer; transition: background 0.12s;
+  .today-panel-detail-btn {
+    font-size: 13px; color: var(--text-sub); font-weight: 500;
+    display: flex; align-items: center; gap: 2px;
+    cursor: pointer; white-space: nowrap; padding-top: 2px;
+    background: none; border: 1px solid var(--border); border-radius: 8px;
+    padding: 5px 10px; transition: background 0.12s;
   }
-  .today-row + .today-row { border-top: 1px solid #F0F0F0; }
-  .today-row:active { background: #F5F5F5; }
-  .today-row-pending { background: #F5F5F5; border-radius: 10px; }
-  .today-row-pending + .today-row { border-top: none; margin-top: 4px; }
-  .today-row-icon {
-    width: 34px; height: 34px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  .today-panel-detail-btn:active { background: var(--bg); }
+  .today-panel-detail-btn svg { width: 14px; height: 14px; stroke: var(--text-sub); fill: none; }
+
+  /* 新：3カードグリッド */
+  .today-stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;
   }
-  .today-row-icon svg { width: 18px; height: 18px; }
-  .today-row-icon-red  { background: #FDECEC; }
-  .today-row-icon-blue { background: var(--blue-light); }
-  .today-row-icon-gray { background: #F0F0F0; }
-  .today-row-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
-  .today-row-count { font-size: 16px; font-weight: 700; display: flex; align-items: baseline; gap: 2px; }
-  .today-row-count span { font-size: 20px; }
-  .today-row-count-red  { color: var(--red); }
-  .today-row-count-blue { color: var(--blue); }
-  .today-row-count-gray { color: var(--text-sub); }
-  .today-row-arrow svg { width: 16px; height: 16px; }
+  .today-stat-card {
+    background: var(--bg); border: 1px solid #EBEBEB;
+    border-radius: 14px; padding: 14px 10px 12px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    cursor: pointer; transition: box-shadow 0.15s;
+  }
+  .today-stat-card:active { box-shadow: 0 0 0 2px var(--blue-mid); }
+  .today-stat-icon {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .today-stat-icon svg { width: 20px; height: 20px; }
+  .today-stat-icon-gray  { background: #F0F0F0; }
+  .today-stat-icon-blue  { background: var(--blue-light); }
+  .today-stat-icon-red   { background: #FDECEC; }
+  .today-stat-label { font-size: 12px; color: var(--text-sub); font-weight: 500; }
+  .today-stat-count {
+    font-size: 22px; font-weight: 700; line-height: 1;
+    display: flex; align-items: baseline; gap: 2px;
+  }
+  .today-stat-count .unit { font-size: 13px; font-weight: 500; }
+  .today-stat-count-gray  { color: var(--text); }
+  .today-stat-count-blue  { color: var(--blue); }
+  .today-stat-count-red   { color: var(--red); }
+
+  /* 旧リスト（非表示） */
+  .today-rows { display: none; }
+  .today-row { display: none; }
+
   .today-notice {
-    margin-top: 14px; background: #EEF4FF; border-radius: 10px;
+    margin-top: 0; background: #EEF4FF; border-radius: 10px;
     padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px;
   }
   .today-notice-icon { flex-shrink: 0; margin-top: 1px; }
@@ -500,69 +518,77 @@
   .calendar-card {
     background: var(--card);
     margin: 16px 16px 0;
-    border-radius: var(--radius);
+    border-radius: 18px;
     box-shadow: var(--shadow);
-    padding: 16px;
+    padding: 20px 12px 16px;
   }
   .cal-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 16px; padding: 0 4px;
   }
-  .cal-month { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
-  .cal-nav { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; }
-  .cal-nav svg { stroke: var(--text); fill: none; width: 16px; height: 16px; }
+  .cal-month { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  .cal-nav {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1.5px solid var(--border); background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .cal-nav:active { background: var(--bg); }
+  .cal-nav svg { stroke: var(--text-sub); fill: none; width: 16px; height: 16px; stroke-width: 2; }
   .cal-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;
   }
-  .cal-dow { font-size: 11px; color: var(--text-sub); font-weight: 500; padding: 4px 0; }
+  .cal-dow { font-size: 11px; color: var(--text-sub); font-weight: 600; padding: 4px 0 6px; letter-spacing: 0.2px; }
   .cal-dow:first-child { color: #E53935; }
   .cal-dow:nth-child(7) { color: var(--blue); }
   .cal-day {
-    font-size: 13px; padding: 4px 2px 2px; border-radius: 6px; cursor: pointer;
-    transition: background 0.1s;
-    position: relative;
-    display: flex; flex-direction: column; align-items: center;
+    background: #F8F9FB;
+    border: 1px solid #EBEBEB;
+    border-radius: 10px;
+    padding: 7px 2px 6px;
+    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    min-height: 52px;
+    transition: all 0.15s;
     -webkit-user-select: none; user-select: none;
+    position: relative;
   }
-  .cal-day:active { background: var(--blue-light); }
+  .cal-day:active { opacity: 0.7; }
+  .cal-day-num { font-size: 15px; font-weight: 600; line-height: 1.1; }
+  .cal-day-status { font-size: 13px; line-height: 1; font-weight: 500; }
+  .cal-day.sun .cal-day-num { color: #E53935; }
+  .cal-day.sat .cal-day-num { color: var(--blue); }
+  .cal-day.other-month { background: transparent; border-color: transparent; cursor: default; }
+  .cal-day.other-month .cal-day-num { color: #BBBBBB; }
+  .cal-day.other-month .cal-day-status { color: #CCCCCC; }
+  .cal-day.holiday { background: transparent; border-color: transparent; cursor: default; }
+  .cal-day.holiday .cal-day-num { color: #BBBBBB; }
+  .cal-day.holiday .cal-day-status { color: #CCCCCC; }
+  .cal-day.done .cal-day-status { color: var(--blue); }
+  .cal-day.anomaly .cal-day-status { color: var(--red); }
+  .cal-day.pending .cal-day-status { color: #AAAAAA; }
+  .cal-day.today {
+    background: var(--blue-light);
+    border: 2px solid var(--blue);
+    cursor: pointer;
+  }
+  .cal-day.today .cal-day-num { color: var(--blue); font-weight: 700; }
+  .cal-day.today.sun .cal-day-num { color: var(--blue); }
+  .cal-day.today.sat .cal-day-num { color: var(--blue); }
   .cal-day.selected-day {
-    background: var(--blue-mid); color: var(--blue); font-weight: 700;
-    border-radius: 6px;
+    background: var(--blue-mid); border-color: var(--blue);
   }
-  .cal-day.sun { color: #E53935; }
-  .cal-day.sat { color: var(--blue); }
-  .cal-day.other-month { color: var(--text-small); cursor: default; }
-  .cal-day.holiday { color: var(--text-small); cursor: default; background: #F8F8F8; }
-  .cal-day.holiday:active { background: #F8F8F8; }
-  .cal-day.today,
-  .cal-day.today.sat,
-  .cal-day.today.sun {
-    color: #fff; font-weight: 700;
-    background: transparent;
-    isolation: isolate;
-    padding: 4px 2px 2px;
-    width: auto; height: auto; margin: 0;
+  .cal-day.selected-day .cal-day-num { color: var(--blue); }
+  .cal-legend {
+    display: flex; gap: 16px; justify-content: center;
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid var(--border);
   }
-  .cal-day.today::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%; transform: translateX(-50%);
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--blue);
-    z-index: -1;
-  }
-  .cal-day.done::after {
-    content: ''; display: block; width: 5px; height: 5px; border-radius: 50%;
-    background: var(--blue); margin: 6px auto 0; flex-shrink: 0;
-  }
-  .cal-day.anomaly::after {
-    content: ''; display: block; width: 5px; height: 5px; border-radius: 50%;
-    background: var(--red); margin: 6px auto 0; flex-shrink: 0;
-  }
-  .cal-legend { display: flex; gap: 14px; margin-top: 12px; padding-top: 12px; }
-  .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-sub); }
-  .cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-sub); font-weight: 500; }
+  .cal-legend-sym { font-size: 13px; font-weight: 700; }
+  .cal-legend-sym.done { color: var(--blue); }
+  .cal-legend-sym.anomaly { color: var(--red); }
+  .cal-legend-sym.pending { color: #AAAAAA; }
 
   /* Big start button */
   .start-btn-wrap { padding: 16px; }
@@ -1024,9 +1050,7 @@
   }
   .equip-section-left { display: flex; align-items: center; gap: 12px; }
   .equip-icon-sm {
-    width: 44px; height: 44px; border-radius: 11px;
-    background: var(--blue-light);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    display: none;
   }
   .equip-icon-sm svg { stroke: var(--blue); fill: none; width: 22px; height: 22px; }
   .equip-name { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.25; }
@@ -1077,33 +1101,7 @@
 
   /* ─── CONFIRM SCREEN ─── */
   #screen-confirm { background: var(--bg); }
-  .confirm-section {
-    margin: 12px 16px 0;
-    background: var(--card);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-card);
-    overflow: hidden;
-  }
-  .confirm-section-header {
-    padding: 12px 14px;
-    display: flex; align-items: center; gap: 10px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-  }
-  .confirm-equip-name { font-size: 14px; font-weight: 600; }
-  .confirm-row {
-    padding: 11px 14px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid #F5F5F5;
-    font-size: 14px;
-  }
-  .confirm-row:last-child { border-bottom: none; }
-  .confirm-row-name { color: var(--text); }
-  .result-ok { color: var(--blue); font-weight: 600; font-size: 16px; }
-  .result-ng { color: var(--red); font-weight: 700; font-size: 16px; }
-  .result-na { color: var(--text-small); font-weight: 500; font-size: 15px; }
-  .confirm-anomaly-row { background: var(--red-light); }
-  .confirm-anomaly-row .confirm-row-name { color: var(--red); font-weight: 500; }
+  /* 旧confirm-sectionは不要になったため最小限だけ残す */
   .confirm-summary-bar {
     margin: 12px 16px;
     background: var(--card);
@@ -1116,6 +1114,11 @@
   .confirm-summary-icon svg { stroke: var(--red); fill: none; width: 18px; height: 18px; }
   .confirm-summary-text { font-size: 13px; }
   .confirm-summary-text strong { color: var(--red); }
+  /* 確認画面のボタンは読み取り専用（押せない）*/
+  #screen-confirm .tri-btn { pointer-events: none; opacity: 0.55; }
+  #screen-confirm .tri-btn.ok-selected,
+  #screen-confirm .tri-btn.ng-selected,
+  #screen-confirm .tri-btn.na-selected { opacity: 1; }
 
   /* ─── COMPLETE SCREEN ─── */
   #screen-complete {
@@ -2071,6 +2074,8 @@
   /* Mobile elements hidden on PC */
   #inspect-mobile-nav { display: none; }
   #inspect-mobile-bulk { display: none; }
+  #confirm-mobile-nav  { display: none; }
+  #pc-confirm-header   { display: flex; }
 
   /* Tabs */
   .selected-equip-chips {
@@ -2129,8 +2134,23 @@
   }
   #screen-inspect .check-row { padding: 0 20px; min-height: 54px; }
   #screen-inspect .check-row-name { font-size: 14px; }
-  #screen-confirm .confirm-section    { margin: 12px 32px 0; }
   #screen-confirm .confirm-summary-bar{ margin: 12px 32px; }
+  /* 確認画面もinspectと同じグリッドレイアウト */
+  #confirm-sections {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; padding: 16px 32px 16px;
+    align-items: stretch;
+  }
+  #screen-confirm .equip-section { margin: 0; height: 100%; }
+  #screen-confirm .equip-icon-lg { display: none; }
+  #screen-confirm .equip-section-header { padding: 20px 20px 16px; }
+  #screen-confirm .equip-id-label { font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 2px; }
+  #screen-confirm .equip-name-only { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  #screen-confirm .equip-header-main { gap: 0; flex-direction: column; align-items: flex-start; }
+  #screen-confirm .insp-type-divider { padding: 8px 20px 4px; }
+  #screen-confirm .tri-btn { width: 46px; height: 42px; border-radius: 10px; font-size: 20px; border: 1.5px solid #E0E0E0; }
+  #screen-confirm .check-row { padding: 0 20px; min-height: 54px; }
+  #screen-confirm .check-row-name { font-size: 14px; }
 
   /* ─── 完了 ─── */
   #screen-complete { background: #F4F6F9; min-height: calc(100vh - 40px); }
@@ -3888,8 +3908,9 @@
       </div>
       <div class="cal-grid" id="cal-grid"></div>
       <div class="cal-legend">
-        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--blue)"></div>完了</div>
-        <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--red)"></div>異常あり</div>
+        <div class="cal-legend-item"><span class="cal-legend-sym done">○</span>完了</div>
+        <div class="cal-legend-item"><span class="cal-legend-sym anomaly">×</span>異常あり</div>
+        <div class="cal-legend-item"><span class="cal-legend-sym pending">—</span>未点検</div>
       </div>
     </div>
 
@@ -3901,31 +3922,35 @@
           <div class="today-panel-date" id="today-panel-date"></div>
         </div>
       </div>
-      <div class="today-rows">
-        <div class="today-row today-row-pending" id="today-row-pending">
-          <div class="today-row-icon today-row-icon-gray">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="#888"/></svg>
+
+      <!-- 新：3カードグリッド -->
+      <div class="today-stat-grid">
+        <div class="today-stat-card">
+          <div class="today-stat-icon today-stat-icon-gray">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 9.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0M15.5 9.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0M8.5 14.5h7"/></svg>
           </div>
-          <div class="today-row-label">未実施</div>
-          <div class="today-row-count today-row-count-gray"><span id="sum-pending">16</span>件</div>
-          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="today-stat-label">未実施</div>
+          <div class="today-stat-count today-stat-count-gray"><span id="sum-pending">0</span><span class="unit">件</span></div>
         </div>
-        <div class="today-row">
-          <div class="today-row-icon today-row-icon-blue">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
+        <div class="today-stat-card">
+          <div class="today-stat-icon today-stat-icon-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="8,12 11,15 16,9"/></svg>
           </div>
-          <div class="today-row-label">完了</div>
-          <div class="today-row-count today-row-count-blue"><span id="sum-done">12</span>件</div>
-          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="today-stat-label">完了</div>
+          <div class="today-stat-count today-stat-count-blue"><span id="sum-done">0</span><span class="unit">件</span></div>
         </div>
-        <div class="today-row">
-          <div class="today-row-icon today-row-icon-red">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--red)"/></svg>
+        <div class="today-stat-card">
+          <div class="today-stat-icon today-stat-icon-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--red)"/></svg>
           </div>
-          <div class="today-row-label">異常あり</div>
-          <div class="today-row-count today-row-count-red"><span id="sum-anomaly">2</span>件</div>
-          <div class="today-row-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></div>
+          <div class="today-stat-label">異常あり</div>
+          <div class="today-stat-count today-stat-count-red"><span id="sum-anomaly">0</span><span class="unit">件</span></div>
         </div>
+      </div>
+
+      <!-- 旧リスト（JS互換のため残す、CSSで非表示） -->
+      <div class="today-rows" style="display:none">
+        <div class="today-row today-row-pending" id="today-row-pending"></div>
       </div>
       <div class="today-notice" id="today-notice">
         <div class="today-notice-icon">
@@ -4185,17 +4210,34 @@
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-    <div class="nav-bar blue-accent">
+    <div class="nav-bar blue-accent" id="confirm-mobile-nav">
       <div class="nav-back" onclick="showScreen('screen-inspect')">
         <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検結果の確認</span>
     </div>
 
-    <!-- Selected chips -->
-    <div class="selected-equip-chips" id="confirm-chips"></div>
+    <!-- PC header (hidden on mobile) -->
+    <div class="pc-inspect-header" id="pc-confirm-header">
+      <div class="pc-inspect-header-left">
+        <div class="pc-inspect-back" onclick="showScreen('screen-inspect')">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </div>
+        <h1 class="pc-inspect-title">点検結果の確認</h1>
+      </div>
+      <button class="pc-inspect-bulk-btn" onclick="showScreen('screen-inspect')">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        修正する
+      </button>
+    </div>
 
-    <div id="confirm-content"></div>
+    <!-- Selected chips (非表示) -->
+    <div class="selected-equip-chips" id="confirm-chips" style="display:none"></div>
+
+    <div id="confirm-content">
+      <!-- summary bar injected here by JS -->
+    </div>
+    <div id="confirm-sections"></div>
 
     <div class="flex-spacer"></div>
     <div class="bottom-action">
@@ -5130,7 +5172,8 @@
       el.className = 'cal-day other-month';
       if (i === 0) el.classList.add('sun');
       if (i === 6) el.classList.add('sat');
-      el.textContent = prevMonthDays - (firstDow - 1 - i);
+      const prevDay = prevMonthDays - (firstDow - 1 - i);
+      el.innerHTML = `<div class="cal-day-num">${prevDay}</div><div class="cal-day-status" style="color:#CCCCCC">—</div>`;
       grid.appendChild(el);
     }
 
@@ -5138,46 +5181,51 @@
       const el = document.createElement('div');
       el.dataset.day = d;
       const isHoliday   = holidays.includes(d);
-      const isAdminHol  = adminHolidays.includes(d);   // 管理設定：休日
-      const isAdminWork = adminWorkdays.includes(d);   // 管理設定：特別出勤
+      const isAdminHol  = adminHolidays.includes(d);
+      const isAdminWork = adminWorkdays.includes(d);
 
-      // Compute schedule markers for this date
       const days10  = get10DayDatesForMonth(calYear, calMonth);
       const dayM    = getMonthlyDateForMonth(calYear, calMonth);
       const is10    = days10.has(d);
       const isMon   = dayM === d;
 
+      const dayDow = (firstDow + d - 1) % 7;
+      const isDone    = done.includes(d);
+      const isAnomaly = anomaly.includes(d);
+
+      // ステータスアイコン決定
+      let statusSym = '—', statusClass = 'pending';
+      if (isHoliday) { statusSym = '—'; statusClass = 'pending'; }
+      else if (isAnomaly) { statusSym = '×'; statusClass = 'anomaly'; }
+      else if (isDone)    { statusSym = '○'; statusClass = 'done'; }
+      else                { statusSym = '—'; statusClass = 'pending'; }
+
+      el.innerHTML = `<div class="cal-day-num">${d}</div><div class="cal-day-status">${statusSym}</div>`;
+
       if (d === todayDay) {
-        el.className = 'cal-day today'; el.textContent = d;
-        const todayDow = (firstDow + d - 1) % 7;
-        if (todayDow === 0) el.classList.add('sun');
-        if (todayDow === 6) el.classList.add('sat');
-        if (isHoliday) {
-          el.classList.add('holiday');
-        } else {
-          el.onclick = () => selectCalDay(el, d);
-        }
-      } else {
-        el.className = 'cal-day'; el.textContent = d;
-        const dayDow = (firstDow + d - 1) % 7;
+        el.className = 'cal-day today';
         if (dayDow === 0) el.classList.add('sun');
         if (dayDow === 6) el.classList.add('sat');
-        if (isHoliday) {
-          el.classList.add('holiday');
-        } else if (anomaly.includes(d)) {
-          el.classList.add('anomaly');
-        } else if (done.includes(d)) {
-          el.classList.add('done');
+        if (isHoliday) el.classList.add('holiday');
+        else el.onclick = () => selectCalDay(el, d);
+      } else {
+        el.className = 'cal-day';
+        if (dayDow === 0) el.classList.add('sun');
+        if (dayDow === 6) el.classList.add('sat');
+        if (isHoliday) el.classList.add('holiday');
+        else {
+          el.classList.add(statusClass);
+          el.onclick = () => selectCalDay(el, d);
         }
-        if (!isHoliday) el.onclick = () => selectCalDay(el, d);
       }
 
-      // Add schedule indicator dot(s) under date
-      if (!isHoliday && (is10 || isMon)) {
-        const dot = document.createElement('div');
-        dot.style.cssText = 'display:flex;gap:2px;justify-content:center;margin-top:1px;';
-
-        el.appendChild(dot);
+      // ステータスアイコン色をクラスで制御
+      const statusEl = el.querySelector('.cal-day-status');
+      if (statusEl) {
+        if (statusClass === 'done')    statusEl.style.color = 'var(--blue)';
+        else if (statusClass === 'anomaly') statusEl.style.color = 'var(--red)';
+        else statusEl.style.color = '#AAAAAA';
+        if (isHoliday) statusEl.style.color = '#CCCCCC';
       }
 
       if (d === selectedCalDay) el.classList.add('selected-day');
@@ -5958,70 +6006,86 @@
   }
 
   function buildConfirmContent() {
-    const content = document.getElementById('confirm-content');
-    if (!content) return;
-    content.innerHTML = '';
+    const content  = document.getElementById('confirm-content');
+    const sections = document.getElementById('confirm-sections');
+    if (!content || !sections) return;
+    content.innerHTML  = '';
+    sections.innerHTML = '';
 
     let totalNg = 0;
 
     selectedEquips.forEach(id => {
-      const eq   = EQUIP_DATA.find(e => e.id === id);
+      const eq = EQUIP_DATA.find(e => e.id === id);
+
       const effectiveDailyItems = eq.itemsDaily.length > 0
         ? eq.itemsDaily
         : (inspectionTypes.is10Day ? [] : eq.items10);
-      const types = [];
-      if (effectiveDailyItems.length)  types.push({ key:'daily',   label:'毎日点検',   items: effectiveDailyItems });
-      if (inspectionTypes.is10Day)     types.push({ key:'10days',  label:'10日毎点検', items: eq.items10 });
-      if (inspectionTypes.isMonthly)   types.push({ key:'monthly', label:'1ヶ月点検',  items: eq.itemsMonthly });
+      const groups = [];
+      if (inspectionTypes.isDaily && effectiveDailyItems.length)
+        groups.push({ key:'daily',   label:'毎日点検',   badgeClass:'daily',   items: effectiveDailyItems });
+      if (inspectionTypes.is10Day)
+        groups.push({ key:'10days',  label:'10日毎点検', badgeClass:'days10',  items: eq.items10 });
+      if (inspectionTypes.isMonthly)
+        groups.push({ key:'monthly', label:'1ヶ月点検',  badgeClass:'monthly', items: eq.itemsMonthly });
 
-      types.forEach(({ key, label, items }) => {
-        const vals    = state[id][key];
-        const ngCount = vals.filter(v => v === 'ng').length;
-        totalNg += ngCount;
+      // Count NG for this equip
+      let equipNg = 0;
+      groups.forEach(({ key, items }) => {
+        equipNg += (state[id][key] || []).filter(v => v === 'ng').length;
+      });
+      totalNg += equipNg;
 
-        const sec = document.createElement('div');
-        sec.className = 'confirm-section';
-
-        const headerBg = ngCount > 0 ? 'background:var(--red-light);' : 'background:var(--bg);';
-        const typeLabel = types.length > 1
-          ? `<span style="font-size:11px;color:var(--text-sub);margin-left:6px;font-weight:500;">[${label}]</span>`
-          : '';
-        sec.innerHTML = `
-          <div class="confirm-section-header" style="${headerBg}">
-            <div class="equip-icon-sm">
+      // Build card (same structure as buildSection)
+      const section = document.createElement('div');
+      section.className = 'equip-section' + (equipNg > 0 ? ' has-anomaly' : '');
+      section.innerHTML = `
+        <div class="equip-section-header">
+          <div class="equip-header-main">
+            <div class="equip-icon-lg">
               <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="3" width="20" height="14" rx="2"/>
                 <line x1="8" y1="21" x2="16" y2="21"/>
                 <line x1="12" y1="17" x2="12" y2="21"/>
               </svg>
             </div>
-            <div class="confirm-equip-name" style="${ngCount > 0 ? 'color:var(--red);' : ''}">
-              ${eq.id}　${eq.name}${typeLabel}
+            <div class="equip-header-info">
+              <div class="equip-id-label">${eq.id}</div>
+              <div class="equip-name-only">${eq.name}</div>
+              <span class="equip-status-badge ${equipNg > 0 ? 'badge-anomaly' : 'badge-ok'}">
+                ${equipNg > 0 ? '⚠ 異常あり' : '✓ 正常'}
+              </span>
             </div>
-            <span class="equip-status-badge ${ngCount > 0 ? 'badge-anomaly' : 'badge-ok'}" style="margin-left:auto;">
-              ${ngCount > 0 ? '⚠ 異常あり' : '正常'}
-            </span>
           </div>
-        `;
+        </div>
+      `;
 
-        items.forEach((item, i) => {
+      groups.forEach(group => {
+        const divider = document.createElement('div');
+        divider.className = 'insp-type-divider';
+        divider.innerHTML = `<span class="insp-type-badge ${group.badgeClass}">${group.label}</span><div class="insp-type-rule"></div>`;
+        section.appendChild(divider);
+
+        const vals = state[id][group.key] || [];
+        group.items.forEach((item, i) => {
           const v = vals[i];
           const row = document.createElement('div');
-          row.className = 'confirm-row' + (v === 'ng' ? ' confirm-anomaly-row' : '');
-          let resultHtml = '';
-          if (v === 'ok')      resultHtml = '<span class="result-ok">○</span>';
-          else if (v === 'ng') resultHtml = '<span class="result-ng">✕</span>';
-          else if (v === 'na') resultHtml = '<span class="result-na">ー</span>';
-          else                 resultHtml = '<span class="result-na" style="color:#ccc;">―</span>';
-          row.innerHTML = `<span class="confirm-row-name">${item}</span>${resultHtml}`;
-          sec.appendChild(row);
+          row.className = 'check-row' + (v === 'ng' ? ' has-anomaly-row' : '');
+          row.innerHTML = `
+            <span class="check-row-name" style="${v === 'ng' ? 'color:var(--red);font-weight:600;' : ''}">${item}</span>
+            <div class="tri-btns">
+              <button class="tri-btn${v==='ok'?' ok-selected':''}">○</button>
+              <button class="tri-btn${v==='ng'?' ng-selected':''}">✕</button>
+              <button class="tri-btn${v==='na'?' na-selected':''}">ー</button>
+            </div>
+          `;
+          section.appendChild(row);
         });
-
-        content.appendChild(sec);
       });
+
+      sections.appendChild(section);
     });
 
-    // Summary bar for anomalies
+    // Summary bar for anomalies (insert into content div above sections)
     if (totalNg > 0) {
       const bar = document.createElement('div');
       bar.className = 'confirm-summary-bar';
@@ -6031,12 +6095,12 @@
         </div>
         <div class="confirm-summary-text">異常項目が <strong>${totalNg}件</strong> あります。内容を確認してください。</div>
       `;
-      content.insertBefore(bar, content.firstChild);
+      content.appendChild(bar);
     }
 
     const spacer = document.createElement('div');
     spacer.className = 'flex-spacer';
-    content.appendChild(spacer);
+    sections.appendChild(spacer);
   }
 
   /* ─── SAVE & COMPLETE ─── */
