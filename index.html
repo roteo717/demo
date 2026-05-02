@@ -1101,24 +1101,94 @@
 
   /* ─── CONFIRM SCREEN ─── */
   #screen-confirm { background: var(--bg); }
-  /* 旧confirm-sectionは不要になったため最小限だけ残す */
+
+  /* ── 確認画面：サマリーバー ── */
   .confirm-summary-bar {
-    margin: 12px 16px;
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    box-shadow: var(--shadow-card);
+    margin: 12px 16px 4px;
+    background: #FFF6F6;
+    border: 1.5px solid var(--red-mid);
+    border-radius: 12px;
+    padding: 12px 14px;
     display: flex; align-items: center; gap: 10px;
   }
-  .confirm-summary-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--red-light); display: flex; align-items: center; justify-content: center; }
-  .confirm-summary-icon svg { stroke: var(--red); fill: none; width: 18px; height: 18px; }
-  .confirm-summary-text { font-size: 13px; }
+  .confirm-summary-ok-bar {
+    margin: 12px 16px 4px;
+    background: var(--green-light);
+    border: 1.5px solid #A5D6A7;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .confirm-summary-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--red-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .confirm-summary-icon svg { stroke: var(--red); fill: none; width: 16px; height: 16px; }
+  .confirm-summary-ok-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .confirm-summary-ok-icon svg { stroke: var(--green); fill: none; width: 16px; height: 16px; }
+  .confirm-summary-text { font-size: 13px; line-height: 1.5; color: var(--text); }
   .confirm-summary-text strong { color: var(--red); }
-  /* 確認画面のボタンは読み取り専用（押せない）*/
-  #screen-confirm .tri-btn { pointer-events: none; opacity: 0.55; }
-  #screen-confirm .tri-btn.ok-selected,
-  #screen-confirm .tri-btn.ng-selected,
-  #screen-confirm .tri-btn.na-selected { opacity: 1; }
+
+  /* ── 確認画面：設備カード（シンプル版） ── */
+  .cf-card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    margin: 8px 16px;
+    overflow: hidden;
+  }
+  .cf-card.cf-anomaly { border-color: var(--red-mid); }
+
+  .cf-card-head {
+    display: flex; align-items: center;
+    padding: 12px 14px;
+    gap: 10px;
+    border-bottom: 1px solid #F0F0F0;
+  }
+  .cf-card.cf-anomaly .cf-card-head { background: #FFF8F8; border-bottom-color: var(--red-mid); }
+  .cf-equip-id { font-size: 11px; font-weight: 700; color: var(--blue); letter-spacing: 0.04em; }
+  .cf-equip-name { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; flex: 1; }
+  .cf-badge-ok {
+    font-size: 11px; font-weight: 700; padding: 3px 8px;
+    border-radius: 20px; background: var(--green-light); color: var(--green);
+    flex-shrink: 0;
+  }
+  .cf-badge-ng {
+    font-size: 11px; font-weight: 700; padding: 3px 8px;
+    border-radius: 20px; background: var(--red-light); color: var(--red);
+    flex-shrink: 0;
+  }
+
+  .cf-group-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+    color: #185FA5; background: #EAF3FC;
+    padding: 5px 14px;
+    border-bottom: 1px solid #DAE9F7;
+  }
+
+  .cf-item-row {
+    display: flex; align-items: center;
+    padding: 10px 14px;
+    gap: 10px;
+    border-bottom: 1px solid #F5F5F5;
+  }
+  .cf-item-row:last-child { border-bottom: none; }
+  .cf-item-row.cf-item-ng { background: #FFF8F8; }
+
+  .cf-item-name {
+    flex: 1; font-size: 14px; color: var(--text); line-height: 1.4;
+  }
+  .cf-item-row.cf-item-ng .cf-item-name { color: var(--red); font-weight: 600; }
+
+  .cf-result-chip {
+    font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    flex-shrink: 0; min-width: 36px; text-align: center;
+  }
+  .cf-result-ok  { background: var(--blue-light); color: var(--blue); }
+  .cf-result-ng  { background: var(--red-light);  color: var(--red); }
+  .cf-result-na  { background: #F0F0F0; color: #888; }
+  .cf-result-none { background: #F5F5F5; color: #BBB; font-weight: 500; }
+
+  /* 旧ボタン確認画面では非表示 */
+  #screen-confirm .tri-btn { display: none; }
 
   /* ─── COMPLETE SCREEN ─── */
   #screen-complete {
@@ -1672,7 +1742,91 @@
   .inspect-date-left { display: flex; align-items: center; gap: 8px; }
   .inspect-date-left svg { stroke: var(--blue); fill: none; width: 15px; height: 15px; flex-shrink: 0; }
   .inspect-date-change-btn { display: none; }
-  .pc-inspect-header { display: none; }
+
+  /* ────────────────────────────────────────────
+     モバイル点検画面をPC風に統一
+     ──────────────────────────────────────────── */
+
+  /* ① モバイル専用ナビ・バルクを非表示 */
+  #inspect-mobile-nav  { display: none !important; }
+  #inspect-mobile-bulk { display: none !important; }
+  #confirm-mobile-nav  { display: none !important; }
+
+  /* ② PC ヘッダーをモバイルでも表示 */
+  .pc-inspect-header {
+    display: flex !important;
+    padding: 14px 16px 0;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pc-inspect-header-left { display: flex; align-items: center; gap: 10px; }
+  .pc-inspect-back {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid #E0E0E0;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .pc-inspect-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+  .pc-inspect-bulk-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: #fff; border: 1.5px solid var(--blue); color: var(--blue);
+    border-radius: 9px; padding: 7px 11px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: inherit; white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .pc-inspect-bulk-btn svg { stroke: var(--blue); fill: none; }
+  .pc-inspect-bulk-btn:active { background: var(--blue-light); }
+
+  /* ③ 背景を PC 風に */
+  #screen-inspect, #screen-confirm { background: #F4F6F9; }
+
+  /* ④ タブバー：チップ → タブ */
+  #inspect-chips {
+    padding: 0 16px;
+    border-bottom: 1px solid #E0E0E0;
+    display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0;
+    margin-top: 12px; background: #fff;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chip { display: none !important; }
+  .inspect-tab {
+    flex-shrink: 0;
+    padding: 10px 14px;
+    font-size: 13px; font-weight: 500; color: var(--text-sub);
+    cursor: pointer; border-bottom: 2.5px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    background: none; border-top: none; border-left: none; border-right: none;
+    margin-bottom: -1px; font-family: inherit;
+    -webkit-user-select: none;
+  }
+  .inspect-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+  /* ⑤ デートバナー余白 */
+  .inspect-date-banner { margin: 10px 16px 0; border-radius: 11px; }
+
+  /* ⑥ カードヘッダーを PC 風に（アイコン非表示・縦レイアウト） */
+  #screen-inspect .equip-section { margin: 0 16px 12px; }
+  #screen-inspect .equip-icon-lg { display: none !important; }
+  #screen-inspect .equip-section-header { padding: 14px 16px 12px; }
+  #screen-inspect .equip-header-main { gap: 0; flex-direction: column; align-items: flex-start; }
+  #screen-inspect .equip-id-label {
+    font-size: 11px; font-weight: 700; color: var(--blue);
+    margin-bottom: 1px; letter-spacing: 0.04em;
+  }
+  #screen-inspect .equip-name-only { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  #screen-inspect .insp-type-divider { padding: 8px 16px 4px; }
+
+  /* ⑦ チェックボタン・行を PC サイズに */
+  #screen-inspect .tri-btn {
+    width: 44px; height: 40px; border-radius: 10px;
+    font-size: 19px; border: 1.5px solid #E0E0E0;
+  }
+  #screen-inspect .check-row { padding: 0 16px; min-height: 52px; }
+  #screen-inspect .check-row-name { font-size: 14px; }
+
+  /* ⑧ 確認画面カード余白調整 */
+  #screen-confirm .cf-card { margin: 8px 16px; }
 </style>
 
 <!-- ===== PC DASHBOARD STYLES ===== -->
@@ -2134,23 +2288,15 @@
   }
   #screen-inspect .check-row { padding: 0 20px; min-height: 54px; }
   #screen-inspect .check-row-name { font-size: 14px; }
-  #screen-confirm .confirm-summary-bar{ margin: 12px 32px; }
-  /* 確認画面もinspectと同じグリッドレイアウト */
+  #screen-confirm .confirm-summary-bar,
+  #screen-confirm .confirm-summary-ok-bar { margin: 12px 32px 4px; }
+  /* 確認画面：PC グリッドレイアウト */
   #confirm-sections {
     display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 16px; padding: 16px 32px 16px;
-    align-items: stretch;
+    gap: 16px; padding: 0 32px 16px;
+    align-items: start;
   }
-  #screen-confirm .equip-section { margin: 0; height: 100%; }
-  #screen-confirm .equip-icon-lg { display: none; }
-  #screen-confirm .equip-section-header { padding: 20px 20px 16px; }
-  #screen-confirm .equip-id-label { font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 2px; }
-  #screen-confirm .equip-name-only { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
-  #screen-confirm .equip-header-main { gap: 0; flex-direction: column; align-items: flex-start; }
-  #screen-confirm .insp-type-divider { padding: 8px 20px 4px; }
-  #screen-confirm .tri-btn { width: 46px; height: 42px; border-radius: 10px; font-size: 20px; border: 1.5px solid #E0E0E0; }
-  #screen-confirm .check-row { padding: 0 20px; min-height: 54px; }
-  #screen-confirm .check-row-name { font-size: 14px; }
+  #screen-confirm .cf-card { margin: 0; }
 
   /* ─── 完了 ─── */
   #screen-complete { background: #F4F6F9; min-height: calc(100vh - 40px); }
@@ -5793,29 +5939,20 @@
     const chips = document.getElementById('inspect-chips');
     if (!chips) return;
     chips.innerHTML = '';
-    if (window.innerWidth >= 1024) {
-      selectedEquips.forEach((id, idx) => {
-        const eq = EQUIP_DATA.find(e => e.id === id);
-        const tab = document.createElement('button');
-        tab.className = 'inspect-tab' + (idx === 0 ? ' active' : '');
-        tab.textContent = `${eq.id} ${eq.name}`;
-        tab.onclick = function() {
-          chips.querySelectorAll('.inspect-tab').forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          const sec = document.getElementById('section-' + eq.id);
-          if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        };
-        chips.appendChild(tab);
-      });
-    } else {
-      selectedEquips.forEach(id => {
-        const eq = EQUIP_DATA.find(e => e.id === id);
-        const chip = document.createElement('div');
-        chip.className = 'chip';
-        chip.textContent = `${eq.id} ${eq.name}`;
-        chips.appendChild(chip);
-      });
-    }
+    // 常にタブ表示（モバイル・PC 共通）
+    selectedEquips.forEach((id, idx) => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      const tab = document.createElement('button');
+      tab.className = 'inspect-tab' + (idx === 0 ? ' active' : '');
+      tab.textContent = `${eq.id} ${eq.name}`;
+      tab.onclick = function() {
+        chips.querySelectorAll('.inspect-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const sec = document.getElementById('section-' + eq.id);
+        if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+      chips.appendChild(tab);
+    });
   }
 
   function buildInspectSections() {
@@ -6022,72 +6159,69 @@
         : (inspectionTypes.is10Day ? [] : eq.items10);
       const groups = [];
       if (inspectionTypes.isDaily && effectiveDailyItems.length)
-        groups.push({ key:'daily',   label:'毎日点検',   badgeClass:'daily',   items: effectiveDailyItems });
+        groups.push({ key:'daily',   label:'毎日点検',   items: effectiveDailyItems });
       if (inspectionTypes.is10Day)
-        groups.push({ key:'10days',  label:'10日毎点検', badgeClass:'days10',  items: eq.items10 });
+        groups.push({ key:'10days',  label:'10日毎点検', items: eq.items10 });
       if (inspectionTypes.isMonthly)
-        groups.push({ key:'monthly', label:'1ヶ月点検',  badgeClass:'monthly', items: eq.itemsMonthly });
+        groups.push({ key:'monthly', label:'1ヶ月点検',  items: eq.itemsMonthly });
 
       // Count NG for this equip
       let equipNg = 0;
-      groups.forEach(({ key, items }) => {
+      groups.forEach(({ key }) => {
         equipNg += (state[id][key] || []).filter(v => v === 'ng').length;
       });
       totalNg += equipNg;
 
-      // Build card (same structure as buildSection)
-      const section = document.createElement('div');
-      section.className = 'equip-section' + (equipNg > 0 ? ' has-anomaly' : '');
-      section.innerHTML = `
-        <div class="equip-section-header">
-          <div class="equip-header-main">
-            <div class="equip-icon-lg">
-              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="3" width="20" height="14" rx="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
-            </div>
-            <div class="equip-header-info">
-              <div class="equip-id-label">${eq.id}</div>
-              <div class="equip-name-only">${eq.name}</div>
-              <span class="equip-status-badge ${equipNg > 0 ? 'badge-anomaly' : 'badge-ok'}">
-                ${equipNg > 0 ? '⚠ 異常あり' : '✓ 正常'}
-              </span>
-            </div>
-          </div>
-        </div>
-      `;
+      // ── シンプルカード ──
+      const card = document.createElement('div');
+      card.className = 'cf-card' + (equipNg > 0 ? ' cf-anomaly' : '');
 
+      // カードヘッダー
+      const head = document.createElement('div');
+      head.className = 'cf-card-head';
+      head.innerHTML = `
+        <div style="flex:1;min-width:0;">
+          <div class="cf-equip-id">${eq.id}</div>
+          <div class="cf-equip-name">${eq.name}</div>
+        </div>
+        <span class="${equipNg > 0 ? 'cf-badge-ng' : 'cf-badge-ok'}">
+          ${equipNg > 0 ? '⚠ 異常あり' : '✓ 正常'}
+        </span>
+      `;
+      card.appendChild(head);
+
+      // 各グループ
       groups.forEach(group => {
-        const divider = document.createElement('div');
-        divider.className = 'insp-type-divider';
-        divider.innerHTML = `<span class="insp-type-badge ${group.badgeClass}">${group.label}</span><div class="insp-type-rule"></div>`;
-        section.appendChild(divider);
+        const lbl = document.createElement('div');
+        lbl.className = 'cf-group-label';
+        lbl.textContent = group.label;
+        card.appendChild(lbl);
 
         const vals = state[id][group.key] || [];
         group.items.forEach((item, i) => {
           const v = vals[i];
           const row = document.createElement('div');
-          row.className = 'check-row' + (v === 'ng' ? ' has-anomaly-row' : '');
+          row.className = 'cf-item-row' + (v === 'ng' ? ' cf-item-ng' : '');
+
+          let chipClass = 'cf-result-none', chipText = '未';
+          if (v === 'ok') { chipClass = 'cf-result-ok'; chipText = '○'; }
+          else if (v === 'ng') { chipClass = 'cf-result-ng'; chipText = '✕'; }
+          else if (v === 'na') { chipClass = 'cf-result-na'; chipText = 'ー'; }
+
           row.innerHTML = `
-            <span class="check-row-name" style="${v === 'ng' ? 'color:var(--red);font-weight:600;' : ''}">${item}</span>
-            <div class="tri-btns">
-              <button class="tri-btn${v==='ok'?' ok-selected':''}">○</button>
-              <button class="tri-btn${v==='ng'?' ng-selected':''}">✕</button>
-              <button class="tri-btn${v==='na'?' na-selected':''}">ー</button>
-            </div>
+            <span class="cf-item-name">${item}</span>
+            <span class="cf-result-chip ${chipClass}">${chipText}</span>
           `;
-          section.appendChild(row);
+          card.appendChild(row);
         });
       });
 
-      sections.appendChild(section);
+      sections.appendChild(card);
     });
 
-    // Summary bar for anomalies (insert into content div above sections)
+    // サマリーバー（上部に挿入）
+    const bar = document.createElement('div');
     if (totalNg > 0) {
-      const bar = document.createElement('div');
       bar.className = 'confirm-summary-bar';
       bar.innerHTML = `
         <div class="confirm-summary-icon">
@@ -6095,11 +6229,19 @@
         </div>
         <div class="confirm-summary-text">異常項目が <strong>${totalNg}件</strong> あります。内容を確認してください。</div>
       `;
-      content.appendChild(bar);
+    } else {
+      bar.className = 'confirm-summary-ok-bar';
+      bar.innerHTML = `
+        <div class="confirm-summary-ok-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="confirm-summary-text" style="color:var(--green);font-weight:600;">すべての項目が正常です</div>
+      `;
     }
+    content.appendChild(bar);
 
     const spacer = document.createElement('div');
-    spacer.className = 'flex-spacer';
+    spacer.style.height = '16px';
     sections.appendChild(spacer);
   }
 
