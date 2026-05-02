@@ -1825,8 +1825,41 @@
   #screen-inspect .check-row { padding: 0 16px; min-height: 52px; }
   #screen-inspect .check-row-name { font-size: 14px; }
 
-  /* ⑧ 確認画面カード余白調整 */
-  #screen-confirm .cf-card { margin: 8px 16px; }
+  /* 点検入力画面：ボタンのみ表示（バー背景なし） */
+  #screen-inspect > .bottom-action {
+    background: transparent;
+    border-top: none;
+    padding: 12px 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  /* ⑨ ライン選択・設備選択ヘッダーを点検入力と同スタイルに */
+  #screen-line > .nav-bar,
+  #screen-equip > .nav-bar {
+    border-bottom: 1px solid var(--border);
+    height: auto;
+    padding: 14px 16px;
+    gap: 10px;
+    background: var(--bg);
+  }
+  #screen-line > .nav-bar.blue-accent,
+  #screen-equip > .nav-bar.blue-accent { border-bottom: 1px solid var(--border); }
+
+  #screen-line > .nav-bar .nav-back,
+  #screen-equip > .nav-bar .nav-back {
+    width: 32px; height: 32px;
+    border: 1px solid #E0E0E0;
+    background: #fff;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  #screen-line > .nav-bar .nav-title,
+  #screen-equip > .nav-bar .nav-title {
+    position: static;
+    transform: none;
+    font-size: 18px; font-weight: 700; letter-spacing: -0.3px;
+    color: var(--text);
+  }
 </style>
 
 <!-- ===== PC DASHBOARD STYLES ===== -->
