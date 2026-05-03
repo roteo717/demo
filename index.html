@@ -2008,6 +2008,13 @@
     display: none;
   }
 
+  /* 画面自体の最小高さを解除してコンテンツ分だけにする */
+  #screen-line,
+  #screen-equip {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
   /* ラインカードをcheck-card風の横並びに（チェック左・名前中・星右） */
   #screen-line .radio-card {
     flex-direction: row !important;
