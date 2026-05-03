@@ -34,8 +34,7 @@
     background: var(--bg);
     font-family: -apple-system, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
     color: var(--text);
-    min-height: 100dvh;
-    height: auto;
+    min-height: 100vh; height: 100dvh; min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -44,8 +43,7 @@
   .phone-wrapper {
     width: 100%;
     max-width: 390px;
-    min-height: 100dvh;
-    height: auto;
+    min-height: 100vh; height: 100dvh; min-height: 100dvh;
     position: relative;
     overflow-x: hidden;
     background: var(--bg);
@@ -54,8 +52,7 @@
   /* ─── SCREENS ─── */
   .screen {
     width: 100%;
-    min-height: 100dvh;
-    height: 100dvh; /* アニメーション中のみ固定高さ */
+    min-height: 100vh; height: 100dvh; min-height: 100dvh;
     background: var(--bg);
     position: absolute;
     top: 0; left: 0;
@@ -66,8 +63,8 @@
   .screen.hidden          { transform: translateX(100%); opacity: 0; pointer-events: none; }
   .screen.slide-out-left  { transform: translateX(-30%); opacity: 0; pointer-events: none; }
   .screen.active          { transform: translateX(0);    opacity: 1; pointer-events: auto; }
-  /* settled になったら高さをコンテンツに合わせて伸縮 → 余白解消 */
-  .screen.active.settled  { position: relative; height: auto; min-height: 100dvh; }
+  /* Active screen becomes relative so wrapper grows and page scrolls naturally */
+  .screen.active.settled  { position: relative; }
 
   /* ─── STATUS BAR ─── */
   .status-bar { display: none; }
@@ -1105,93 +1102,242 @@
   /* ─── CONFIRM SCREEN ─── */
   #screen-confirm { background: var(--bg); }
 
-  /* ── 確認画面：サマリーバー ── */
-  .confirm-summary-bar {
-    margin: 12px 16px 4px;
-    background: #FFF6F6;
-    border: 1.5px solid var(--red-mid);
-    border-radius: 12px;
-    padding: 12px 14px;
-    display: flex; align-items: center; gap: 10px;
+  /* ── 確認画面：新サマリーカード ── */
+  .cf-summary-card {
+    margin: 14px 16px 8px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
   }
-  .confirm-summary-ok-bar {
-    margin: 12px 16px 4px;
-    background: var(--green-light);
+  .cf-summary-card.cf-summary-ng {
+    border: 2px solid var(--red-mid);
+    background: #fff;
+  }
+  .cf-summary-card.cf-summary-ok {
     border: 1.5px solid #A5D6A7;
-    border-radius: 12px;
-    padding: 12px 14px;
-    display: flex; align-items: center; gap: 10px;
+    background: #fff;
   }
-  .confirm-summary-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--red-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .confirm-summary-icon svg { stroke: var(--red); fill: none; width: 16px; height: 16px; }
-  .confirm-summary-ok-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .confirm-summary-ok-icon svg { stroke: var(--green); fill: none; width: 16px; height: 16px; }
-  .confirm-summary-text { font-size: 13px; line-height: 1.5; color: var(--text); }
-  .confirm-summary-text strong { color: var(--red); }
 
-  /* ── 確認画面：設備カード（シンプル版） ── */
+  /* サマリー上部：メイン情報 */
+  .cf-summary-top {
+    display: flex; align-items: center;
+    padding: 16px 16px 14px;
+    gap: 14px;
+  }
+  .cf-summary-card.cf-summary-ng .cf-summary-top { background: #FFF3F3; }
+  .cf-summary-card.cf-summary-ok .cf-summary-top { background: #F0FAF1; }
+
+  .cf-summary-alert-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--red-light); border: 1.5px solid var(--red-mid);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .cf-summary-alert-icon svg { stroke: var(--red); fill: none; width: 22px; height: 22px; }
+  .cf-summary-ok-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--green-light); border: 1.5px solid #A5D6A7;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .cf-summary-ok-icon svg { stroke: var(--green); fill: none; width: 22px; height: 22px; }
+
+  .cf-summary-main { flex: 1; min-width: 0; }
+  .cf-summary-headline {
+    font-size: 19px; font-weight: 800; letter-spacing: -0.4px; line-height: 1.2;
+  }
+  .cf-summary-card.cf-summary-ng .cf-summary-headline { color: var(--red); }
+  .cf-summary-card.cf-summary-ok .cf-summary-headline { color: var(--green); }
+
+  .cf-summary-counts {
+    display: flex; align-items: center; gap: 0;
+    margin-top: 6px;
+  }
+  .cf-summary-count-item {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 14px 0 0;
+  }
+  .cf-summary-count-item + .cf-summary-count-item {
+    padding: 0 0 0 14px;
+    border-left: 1px solid #E0E0E0;
+  }
+  .cf-summary-count-label {
+    font-size: 10px; font-weight: 600; color: var(--text-sub); letter-spacing: 0.03em;
+  }
+  .cf-summary-count-num {
+    font-size: 24px; font-weight: 800; line-height: 1.1; letter-spacing: -0.5px;
+  }
+  .cf-summary-count-unit { font-size: 12px; font-weight: 600; }
+  .cf-count-ok .cf-summary-count-num  { color: var(--green); }
+  .cf-count-ok .cf-summary-count-unit { color: var(--green); }
+  .cf-count-ng .cf-summary-count-num  { color: var(--red); }
+  .cf-count-ng .cf-summary-count-unit { color: var(--red); }
+
+  /* サマリー下部：異常一覧 */
+  .cf-summary-anomaly-list {
+    border-top: 1px solid var(--red-mid);
+    background: #fff;
+    padding: 10px 16px 12px;
+  }
+  .cf-summary-anomaly-title {
+    font-size: 11px; font-weight: 700; color: var(--red);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .cf-summary-anomaly-title svg { stroke: var(--red); fill: none; width: 13px; height: 13px; }
+  .cf-summary-anomaly-row {
+    display: flex; align-items: baseline; gap: 6px;
+    padding: 3px 0;
+    font-size: 13px; color: var(--text); line-height: 1.5;
+  }
+  .cf-summary-anomaly-row::before {
+    content: '•'; color: var(--red); font-weight: 700; flex-shrink: 0;
+  }
+  .cf-summary-anomaly-equip {
+    font-weight: 700; color: var(--red); flex-shrink: 0;
+  }
+  .cf-summary-anomaly-desc { color: #555; font-size: 12px; }
+
+  /* ── 確認画面：設備カードグリッド ── */
+  .cf-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 16px;
+    margin-bottom: 4px;
+  }
+
+  /* ── 確認画面：設備カード（新デザイン） ── */
   .cf-card {
     background: var(--card);
     border-radius: 14px;
     border: 1.5px solid var(--border);
-    margin: 8px 16px;
     overflow: hidden;
+    cursor: default;
   }
-  .cf-card.cf-anomaly { border-color: var(--red-mid); }
+  .cf-card.cf-anomaly {
+    border-color: #F5A5A5;
+    border-width: 2px;
+    background: #fff;
+  }
 
+  /* カードヘッダー */
   .cf-card-head {
-    display: flex; align-items: center;
-    padding: 12px 14px;
-    gap: 10px;
-    border-bottom: 1px solid #F0F0F0;
+    display: flex; align-items: flex-start;
+    padding: 12px 12px 10px;
+    gap: 8px;
   }
-  .cf-card.cf-anomaly .cf-card-head { background: #FFF8F8; border-bottom-color: var(--red-mid); }
-  .cf-equip-id { font-size: 11px; font-weight: 700; color: var(--blue); letter-spacing: 0.04em; }
-  .cf-equip-name { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; flex: 1; }
+  .cf-card.cf-anomaly .cf-card-head { background: #FFF3F3; }
+  .cf-equip-id { font-size: 10px; font-weight: 700; color: var(--blue); letter-spacing: 0.06em; margin-bottom: 1px; }
+  .cf-card.cf-anomaly .cf-equip-id { color: #C0392B; }
+  .cf-equip-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
+  .cf-card.cf-anomaly .cf-equip-name { color: var(--red); }
+  .cf-card-head-left { flex: 1; min-width: 0; }
+
   .cf-badge-ok {
-    font-size: 11px; font-weight: 700; padding: 3px 8px;
-    border-radius: 20px; background: var(--green-light); color: var(--green);
-    flex-shrink: 0;
+    font-size: 10px; font-weight: 700; padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--green-light); color: var(--green);
+    border: 1px solid #A5D6A7;
+    flex-shrink: 0; white-space: nowrap;
   }
   .cf-badge-ng {
-    font-size: 11px; font-weight: 700; padding: 3px 8px;
-    border-radius: 20px; background: var(--red-light); color: var(--red);
-    flex-shrink: 0;
+    font-size: 10px; font-weight: 700; padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--red-light); color: var(--red);
+    border: 1px solid var(--red-mid);
+    flex-shrink: 0; white-space: nowrap;
   }
+
+  /* 正常カード：フッター（点検項目数） */
+  .cf-card-footer {
+    padding: 8px 12px 10px;
+    border-top: 1px solid #F0F0F0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cf-card-footer-label {
+    font-size: 11px; color: var(--text-sub);
+  }
+  .cf-card-footer-count {
+    font-size: 11px; font-weight: 700; color: var(--text-sub);
+  }
+  .cf-card-footer-arrow {
+    display: flex; align-items: center;
+  }
+  .cf-card-footer-arrow svg { stroke: #CCC; fill: none; width: 14px; height: 14px; }
+
+  /* 異常カード：異常内容エリア */
+  .cf-anomaly-body {
+    border-top: 1px solid #F5A5A5;
+    padding: 10px 12px 12px;
+    background: #fff;
+  }
+  .cf-anomaly-body-label {
+    font-size: 10px; font-weight: 700; color: var(--red);
+    letter-spacing: 0.05em; margin-bottom: 6px;
+  }
+  .cf-anomaly-item {
+    font-size: 12px; color: #C0392B; font-weight: 600;
+    padding: 3px 0; line-height: 1.4;
+    display: flex; gap: 5px; align-items: baseline;
+  }
+  .cf-anomaly-item::before { content: '✕'; font-size: 10px; flex-shrink: 0; }
+
+  /* 詳細アコーディオン */
+  .cf-detail-toggle {
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    padding: 7px 12px 8px;
+    border-top: 1px solid #F5A5A5;
+    font-size: 11px; font-weight: 600; color: var(--red);
+    cursor: pointer; background: #FFF8F8;
+    transition: background 0.15s;
+    -webkit-user-select: none;
+  }
+  .cf-detail-toggle:active { background: var(--red-light); }
+  .cf-detail-toggle svg { stroke: var(--red); fill: none; width: 13px; height: 13px; transition: transform 0.2s; }
+  .cf-detail-toggle.open svg { transform: rotate(180deg); }
+
+  .cf-detail-content {
+    display: none;
+    border-top: 1px solid #F5A5A5;
+    background: #FFF8F8;
+  }
+  .cf-detail-content.open { display: block; }
 
   .cf-group-label {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
     color: #185FA5; background: #EAF3FC;
-    padding: 5px 14px;
+    padding: 5px 12px;
     border-bottom: 1px solid #DAE9F7;
   }
-
   .cf-item-row {
     display: flex; align-items: center;
-    padding: 10px 14px;
-    gap: 10px;
+    padding: 9px 12px;
+    gap: 8px;
     border-bottom: 1px solid #F5F5F5;
   }
   .cf-item-row:last-child { border-bottom: none; }
-  .cf-item-row.cf-item-ng { background: #FFF8F8; }
-
-  .cf-item-name {
-    flex: 1; font-size: 14px; color: var(--text); line-height: 1.4;
-  }
+  .cf-item-row.cf-item-ng { background: #FFF0F0; }
+  .cf-item-name { flex: 1; font-size: 12px; color: var(--text); line-height: 1.4; }
   .cf-item-row.cf-item-ng .cf-item-name { color: var(--red); font-weight: 600; }
 
   .cf-result-chip {
-    font-size: 12px; font-weight: 700;
-    padding: 3px 10px; border-radius: 20px;
-    flex-shrink: 0; min-width: 36px; text-align: center;
+    font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px;
+    flex-shrink: 0; min-width: 30px; text-align: center;
   }
-  .cf-result-ok  { background: var(--blue-light); color: var(--blue); }
-  .cf-result-ng  { background: var(--red-light);  color: var(--red); }
-  .cf-result-na  { background: #F0F0F0; color: #888; }
+  .cf-result-ok   { background: var(--blue-light); color: var(--blue); }
+  .cf-result-ng   { background: var(--red-light);  color: var(--red); }
+  .cf-result-na   { background: #F0F0F0; color: #888; }
   .cf-result-none { background: #F5F5F5; color: #BBB; font-weight: 500; }
 
-  /* 旧ボタン確認画面では非表示 */
-  #screen-confirm .tri-btn { display: none; }
+  #screen-confirm .bottom-action {
+    background: transparent;
+    border-top: none;
+  }
+
+  /* 旧サマリーバー（後方互換） */
+  .confirm-summary-bar,
+  .confirm-summary-ok-bar { display: none; }
 
   /* ─── COMPLETE SCREEN ─── */
   #screen-complete {
@@ -2384,13 +2530,15 @@
   }
   #screen-inspect .check-row { padding: 0 20px; min-height: 54px; }
   #screen-inspect .check-row-name { font-size: 14px; }
-  #screen-confirm .confirm-summary-bar,
-  #screen-confirm .confirm-summary-ok-bar { margin: 12px 32px 4px; }
+  /* 確認画面：PC サマリーカード */
+  #screen-confirm .cf-summary-card { margin: 16px 32px 8px; }
   /* 確認画面：PC グリッドレイアウト */
   #confirm-sections {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 16px; padding: 0 32px 16px;
-    align-items: start;
+    padding: 0 32px 16px;
+  }
+  #confirm-sections .cf-cards-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px; padding: 0;
   }
   #screen-confirm .cf-card { margin: 0; }
 
@@ -4249,11 +4397,7 @@
       <!-- Rendered by buildLineList() -->
     </div>
     <div class="flex-spacer"></div>
-    <div class="bottom-action" style="display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;gap:8px;">
-        <button class="ln-bulk-btn" onclick="selectAllLines()">すべて選択</button>
-        <button class="ln-bulk-btn" onclick="clearAllLines()">すべて解除</button>
-      </div>
+    <div class="bottom-action">
       <button class="btn-bottom-main" id="line-next-btn" disabled onclick="goToEquipScreen()">次へ</button>
     </div>
 
@@ -6269,10 +6413,12 @@
     sections.innerHTML = '';
 
     let totalNg = 0;
+    let totalOk = 0;
+    const anomalyEquips = []; // { id, name, ngItems: [{label, item}] }
 
+    // ── データ集計 ──
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
-
       const effectiveDailyItems = eq.itemsDaily.length > 0
         ? eq.itemsDaily
         : (inspectionTypes.is10Day ? [] : eq.items10);
@@ -6284,14 +6430,116 @@
       if (inspectionTypes.isMonthly)
         groups.push({ key:'monthly', label:'1ヶ月点検',  items: eq.itemsMonthly });
 
-      // Count NG for this equip
       let equipNg = 0;
-      groups.forEach(({ key }) => {
-        equipNg += (state[id][key] || []).filter(v => v === 'ng').length;
-      });
-      totalNg += equipNg;
+      let equipOk = 0;
+      const ngItems = [];
 
-      // ── シンプルカード ──
+      groups.forEach(({ key, label, items }) => {
+        const vals = state[id][key] || [];
+        items.forEach((item, i) => {
+          const v = vals[i];
+          if (v === 'ng') { equipNg++; ngItems.push({ label, item }); }
+          else if (v === 'ok' || v === 'na') { equipOk++; }
+        });
+      });
+
+      totalNg += equipNg;
+      totalOk += equipOk;
+
+      if (equipNg > 0) {
+        anomalyEquips.push({ eq, groups, ngItems, equipNg, equipOk });
+      }
+
+      // カードをグリッドに追加（後で処理）
+      eq._groups  = groups;
+      eq._equipNg = equipNg;
+      eq._equipOk = equipOk;
+      eq._ngItems = ngItems;
+    });
+
+    // ── サマリーカード ──
+    const summaryCard = document.createElement('div');
+    if (totalNg > 0) {
+      summaryCard.className = 'cf-summary-card cf-summary-ng';
+      const anomalyRows = anomalyEquips.map(({ eq, ngItems }) => {
+        const desc = ngItems.map(n => n.item).join('・');
+        return `<div class="cf-summary-anomaly-row">
+          <span class="cf-summary-anomaly-equip">${eq.id} ${eq.name}</span>
+          <span class="cf-summary-anomaly-desc">　${desc}</span>
+        </div>`;
+      }).join('');
+      summaryCard.innerHTML = `
+        <div class="cf-summary-top">
+          <div class="cf-summary-alert-icon">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div class="cf-summary-main">
+            <div class="cf-summary-headline">異常が ${totalNg}件 あります</div>
+            <div class="cf-summary-counts">
+              <div class="cf-summary-count-item cf-count-ok">
+                <span class="cf-summary-count-label">正常</span>
+                <span><span class="cf-summary-count-num">${totalOk}</span><span class="cf-summary-count-unit">件</span></span>
+              </div>
+              <div class="cf-summary-count-item cf-count-ng">
+                <span class="cf-summary-count-label">異常</span>
+                <span><span class="cf-summary-count-num">${totalNg}</span><span class="cf-summary-count-unit">件</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cf-summary-anomaly-list">
+          <div class="cf-summary-anomaly-title">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            異常一覧
+          </div>
+          ${anomalyRows}
+        </div>
+      `;
+    } else {
+      summaryCard.className = 'cf-summary-card cf-summary-ok';
+      summaryCard.innerHTML = `
+        <div class="cf-summary-top">
+          <div class="cf-summary-ok-icon">
+            <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="cf-summary-main">
+            <div class="cf-summary-headline">異常はありませんでした</div>
+            <div class="cf-summary-counts">
+              <div class="cf-summary-count-item cf-count-ok">
+                <span class="cf-summary-count-label">正常</span>
+                <span><span class="cf-summary-count-num">${totalOk}</span><span class="cf-summary-count-unit">件</span></span>
+              </div>
+              <div class="cf-summary-count-item cf-count-ng">
+                <span class="cf-summary-count-label">異常</span>
+                <span><span class="cf-summary-count-num">0</span><span class="cf-summary-count-unit">件</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    content.appendChild(summaryCard);
+
+    // ── 設備カードグリッド ──
+    const grid = document.createElement('div');
+    grid.className = 'cf-cards-grid';
+
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      const groups  = eq._groups;
+      const equipNg = eq._equipNg;
+      const ngItems = eq._ngItems;
+
+      // 全点検項目数
+      const totalItems = groups.reduce((sum, g) => sum + g.items.length, 0);
+
       const card = document.createElement('div');
       card.className = 'cf-card' + (equipNg > 0 ? ' cf-anomaly' : '');
 
@@ -6299,65 +6547,93 @@
       const head = document.createElement('div');
       head.className = 'cf-card-head';
       head.innerHTML = `
-        <div style="flex:1;min-width:0;">
+        <div class="cf-card-head-left">
           <div class="cf-equip-id">${eq.id}</div>
           <div class="cf-equip-name">${eq.name}</div>
         </div>
         <span class="${equipNg > 0 ? 'cf-badge-ng' : 'cf-badge-ok'}">
-          ${equipNg > 0 ? '⚠ 異常あり' : '✓ 正常'}
+          ${equipNg > 0 ? '⚠ 異常' : '✓ 正常'}
         </span>
       `;
       card.appendChild(head);
 
-      // 各グループ
-      groups.forEach(group => {
-        const lbl = document.createElement('div');
-        lbl.className = 'cf-group-label';
-        lbl.textContent = group.label;
-        card.appendChild(lbl);
+      if (equipNg === 0) {
+        // 正常カード：フッターのみ
+        const footer = document.createElement('div');
+        footer.className = 'cf-card-footer';
+        footer.innerHTML = `
+          <span class="cf-card-footer-label">点検項目：${totalItems}項目</span>
+          <div class="cf-card-footer-arrow">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        `;
+        card.appendChild(footer);
+      } else {
+        // 異常カード：異常内容 + 詳細アコーディオン
+        const anomalyBody = document.createElement('div');
+        anomalyBody.className = 'cf-anomaly-body';
+        anomalyBody.innerHTML = `
+          <div class="cf-anomaly-body-label">異常内容：</div>
+          ${ngItems.map(n => `<div class="cf-anomaly-item">${n.item}</div>`).join('')}
+        `;
+        card.appendChild(anomalyBody);
 
-        const vals = state[id][group.key] || [];
-        group.items.forEach((item, i) => {
-          const v = vals[i];
-          const row = document.createElement('div');
-          row.className = 'cf-item-row' + (v === 'ng' ? ' cf-item-ng' : '');
+        // 詳細トグル
+        const toggleBtn = document.createElement('div');
+        const toggleId = 'cf-detail-' + id;
+        toggleBtn.className = 'cf-detail-toggle';
+        toggleBtn.innerHTML = `詳細を開く
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+        toggleBtn.onclick = function() {
+          this.classList.toggle('open');
+          const detail = document.getElementById(toggleId);
+          if (detail) detail.classList.toggle('open');
+          this.querySelector('span') && (this.querySelector('span').textContent = this.classList.contains('open') ? '詳細を閉じる' : '詳細を開く');
+          // テキスト更新
+          const txt = this.childNodes[0];
+          if (txt && txt.nodeType === 3) {
+            txt.textContent = this.classList.contains('open') ? '詳細を閉じる\n          ' : '詳細を開く\n          ';
+          }
+        };
+        card.appendChild(toggleBtn);
 
-          let chipClass = 'cf-result-none', chipText = '未';
-          if (v === 'ok') { chipClass = 'cf-result-ok'; chipText = '○'; }
-          else if (v === 'ng') { chipClass = 'cf-result-ng'; chipText = '✕'; }
-          else if (v === 'na') { chipClass = 'cf-result-na'; chipText = 'ー'; }
+        // 詳細コンテンツ（アコーディオン）
+        const detailDiv = document.createElement('div');
+        detailDiv.className = 'cf-detail-content';
+        detailDiv.id = toggleId;
 
-          row.innerHTML = `
-            <span class="cf-item-name">${item}</span>
-            <span class="cf-result-chip ${chipClass}">${chipText}</span>
-          `;
-          card.appendChild(row);
+        groups.forEach(group => {
+          const vals = state[id][group.key] || [];
+          const lbl = document.createElement('div');
+          lbl.className = 'cf-group-label';
+          lbl.textContent = group.label;
+          detailDiv.appendChild(lbl);
+
+          group.items.forEach((item, i) => {
+            const v = vals[i];
+            const row = document.createElement('div');
+            row.className = 'cf-item-row' + (v === 'ng' ? ' cf-item-ng' : '');
+            let chipClass = 'cf-result-none', chipText = '未';
+            if (v === 'ok') { chipClass = 'cf-result-ok'; chipText = '○'; }
+            else if (v === 'ng') { chipClass = 'cf-result-ng'; chipText = '✕'; }
+            else if (v === 'na') { chipClass = 'cf-result-na'; chipText = 'ー'; }
+            row.innerHTML = `
+              <span class="cf-item-name">${item}</span>
+              <span class="cf-result-chip ${chipClass}">${chipText}</span>
+            `;
+            detailDiv.appendChild(row);
+          });
         });
-      });
+        card.appendChild(detailDiv);
+      }
 
-      sections.appendChild(card);
+      grid.appendChild(card);
     });
 
-    // サマリーバー（上部に挿入）
-    const bar = document.createElement('div');
-    if (totalNg > 0) {
-      bar.className = 'confirm-summary-bar';
-      bar.innerHTML = `
-        <div class="confirm-summary-icon">
-          <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-        </div>
-        <div class="confirm-summary-text">異常項目が <strong>${totalNg}件</strong> あります。内容を確認してください。</div>
-      `;
-    } else {
-      bar.className = 'confirm-summary-ok-bar';
-      bar.innerHTML = `
-        <div class="confirm-summary-ok-icon">
-          <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div class="confirm-summary-text" style="color:var(--green);font-weight:600;">すべての項目が正常です</div>
-      `;
-    }
-    content.appendChild(bar);
+    const wrapper = document.createElement('div');
+    wrapper.style.padding = '6px 0 4px';
+    wrapper.appendChild(grid);
+    sections.appendChild(wrapper);
 
     const spacer = document.createElement('div');
     spacer.style.height = '16px';
