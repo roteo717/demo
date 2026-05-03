@@ -2002,6 +2002,12 @@
     bottom: 0;
   }
 
+  /* モバイルではスペーサーを非表示にして余白をなくす */
+  #screen-line > .flex-spacer,
+  #screen-equip > .flex-spacer {
+    display: none;
+  }
+
   /* ラインカードをcheck-card風の横並びに（チェック左・名前中・星右） */
   #screen-line .radio-card {
     flex-direction: row !important;
