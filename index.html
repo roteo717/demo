@@ -1204,6 +1204,7 @@
     gap: 10px;
     padding: 0 16px;
     margin-bottom: 4px;
+    align-items: start;
   }
 
   /* ── 確認画面：設備カード（新デザイン） ── */
@@ -1213,6 +1214,9 @@
     border: 1.5px solid var(--border);
     overflow: hidden;
     cursor: default;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
   .cf-card.cf-anomaly {
     border-color: #F5A5A5;
@@ -1223,13 +1227,13 @@
   /* カードヘッダー */
   .cf-card-head {
     display: flex; align-items: flex-start;
-    padding: 12px 12px 10px;
+    padding: 8px 10px 7px;
     gap: 8px;
   }
   .cf-card.cf-anomaly .cf-card-head { background: #FFF3F3; }
   .cf-equip-id { font-size: 10px; font-weight: 700; color: var(--blue); letter-spacing: 0.06em; margin-bottom: 1px; }
   .cf-card.cf-anomaly .cf-equip-id { color: #C0392B; }
-  .cf-equip-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
+  .cf-equip-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .cf-card.cf-anomaly .cf-equip-name { color: var(--red); }
   .cf-card-head-left { flex: 1; min-width: 0; }
 
@@ -1250,7 +1254,7 @@
 
   /* 正常カード：フッター（点検項目数） */
   .cf-card-footer {
-    padding: 8px 12px 10px;
+    padding: 5px 10px 7px;
     border-top: 1px solid #F0F0F0;
     display: flex; align-items: center; justify-content: space-between;
   }
@@ -1267,17 +1271,15 @@
 
   /* 異常カード：異常内容エリア */
   .cf-anomaly-body {
-    border-top: 1px solid #F5A5A5;
-    padding: 10px 12px 12px;
-    background: #fff;
+    display: none;
   }
   .cf-anomaly-body-label {
     font-size: 10px; font-weight: 700; color: var(--red);
-    letter-spacing: 0.05em; margin-bottom: 6px;
+    letter-spacing: 0.05em; margin-bottom: 3px;
   }
   .cf-anomaly-item {
     font-size: 12px; color: #C0392B; font-weight: 600;
-    padding: 3px 0; line-height: 1.4;
+    padding: 1px 0; line-height: 1.4;
     display: flex; gap: 5px; align-items: baseline;
   }
   .cf-anomaly-item::before { content: '✕'; font-size: 10px; flex-shrink: 0; }
@@ -1285,7 +1287,7 @@
   /* 詳細アコーディオン */
   .cf-detail-toggle {
     display: flex; align-items: center; justify-content: center; gap: 4px;
-    padding: 7px 12px 8px;
+    padding: 5px 10px 6px;
     border-top: 1px solid #F5A5A5;
     font-size: 11px; font-weight: 600; color: var(--red);
     cursor: pointer; background: #FFF8F8;
@@ -1335,7 +1337,10 @@
     border-top: none;
   }
 
-  /* 旧サマリーバー（後方互換） */
+  .cf-ok-toggle { cursor: pointer; transition: background 0.15s; -webkit-user-select: none; }
+  .cf-ok-toggle:active { background: #F0F0F0; }
+  .cf-ok-toggle svg { transition: transform 0.2s; }
+  .cf-ok-detail { border-top: 1px solid #F0F0F0; background: #FAFAFA; }
   .confirm-summary-bar,
   .confirm-summary-ok-bar { display: none; }
 
@@ -2115,6 +2120,13 @@
 /* ============================================================
    ① スマホ完全維持（〜1023px）
    ============================================================ */
+@media (max-width: 767px) {
+  .cf-cards-grid {
+    grid-template-columns: 1fr !important;
+    grid-auto-rows: auto !important;
+  }
+}
+
 @media (max-width: 1023px) {
   .phone-wrapper {
     display: block !important;
@@ -5719,11 +5731,6 @@
 
     const CARD_COLORS = [
       { color: '#2F6BFF', bg: '#EEF4FF', border: '#B8CFFF' },
-      { color: '#2E9E6B', bg: '#E6F7F0', border: '#A3D9C0' },
-      { color: '#F59E0B', bg: '#FFF8E6', border: '#FFD980' },
-      { color: '#9C27B0', bg: '#F5EAF9', border: '#D9A8E8' },
-      { color: '#E53935', bg: '#FDECEC', border: '#FBBCBC' },
-      { color: '#00838F', bg: '#E0F5F7', border: '#80D4DA' },
     ];
     const CONVEYOR_SVG = '<svg width="44" height="36" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">' +
       '<rect x="3" y="9" width="38" height="16" rx="8" stroke="currentColor" stroke-width="2"/>' +
@@ -5741,7 +5748,7 @@
       const card = document.createElement('div');
       card.className = 'radio-card';
       card.dataset.lineId = ln.id;
-      card.style.cssText = '--card-color:' + c.color + ';--card-bg:' + c.bg + ';--card-border:' + c.border + ';';
+      card.style.cssText = '--card-color:' + c.color + ';--card-bg:' + c.bg + ';--card-border: var(--border);';
       card.innerHTML =
         '<div class="radio-circle"><div class="radio-inner">' +
         '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +
@@ -6558,16 +6565,50 @@
       card.appendChild(head);
 
       if (equipNg === 0) {
-        // 正常カード：フッターのみ
+        // 正常カード：フッター（タップで詳細展開）
+        const toggleId = 'cf-detail-' + id;
         const footer = document.createElement('div');
-        footer.className = 'cf-card-footer';
+        footer.className = 'cf-card-footer cf-ok-toggle';
         footer.innerHTML = `
           <span class="cf-card-footer-label">点検項目：${totalItems}項目</span>
           <div class="cf-card-footer-arrow">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
         `;
+        footer.onclick = function() {
+          this.classList.toggle('open');
+          const detail = document.getElementById(toggleId);
+          if (detail) detail.classList.toggle('open');
+          const arrow = this.querySelector('svg');
+          if (arrow) arrow.style.transform = this.classList.contains('open') ? 'rotate(180deg)' : '';
+        };
         card.appendChild(footer);
+
+        // 詳細コンテンツ（アコーディオン）
+        const detailDiv = document.createElement('div');
+        detailDiv.className = 'cf-detail-content cf-ok-detail';
+        detailDiv.id = toggleId;
+        groups.forEach(group => {
+          const vals = state[id][group.key] || [];
+          const lbl = document.createElement('div');
+          lbl.className = 'cf-group-label';
+          lbl.textContent = group.label;
+          detailDiv.appendChild(lbl);
+          group.items.forEach((item, i) => {
+            const v = vals[i];
+            const row = document.createElement('div');
+            row.className = 'cf-item-row';
+            let chipClass = 'cf-result-none', chipText = '未';
+            if (v === 'ok') { chipClass = 'cf-result-ok'; chipText = '○'; }
+            else if (v === 'na') { chipClass = 'cf-result-na'; chipText = 'ー'; }
+            row.innerHTML = `
+              <span class="cf-item-name">${item}</span>
+              <span class="cf-result-chip ${chipClass}">${chipText}</span>
+            `;
+            detailDiv.appendChild(row);
+          });
+        });
+        card.appendChild(detailDiv);
       } else {
         // 異常カード：異常内容 + 詳細アコーディオン
         const anomalyBody = document.createElement('div');
