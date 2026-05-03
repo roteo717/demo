@@ -1004,12 +1004,7 @@
   .screen-flex { display: flex; flex-direction: column; }
 
   /* ─── INSPECTION INPUT ─── */
-  #screen-inspect {
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    min-height: 100dvh;
-  }
+  #screen-inspect { background: var(--bg); }
 
   .inspect-top-actions {
     padding: 12px 16px 8px;
@@ -1998,11 +1993,12 @@
     bottom: 0;
   }
 
-  /* ライン選択・設備選択画面：ボタンも下部固定・背景なし */
+  /* ライン選択・設備選択・点検入力画面：ボタンも下部固定・背景なし */
   #screen-line > .bottom-action,
-  #screen-equip > .bottom-action {
-    background: transparent;
-    border-top: none;
+  #screen-equip > .bottom-action,
+  #screen-inspect > .bottom-action {
+    background: var(--card);
+    border-top: 1px solid var(--border);
     position: sticky;
     bottom: 0;
   }
@@ -2133,11 +2129,13 @@
 
   /* スペーサーを非表示・ラッパー高さをコンテンツに合わせる */
   #screen-line > .flex-spacer,
-  #screen-equip > .flex-spacer {
+  #screen-equip > .flex-spacer,
+  #screen-inspect > .flex-spacer {
     display: none !important;
   }
   #screen-line,
-  #screen-equip {
+  #screen-equip,
+  #screen-inspect {
     min-height: 0 !important;
     height: auto !important;
   }
