@@ -2002,27 +2002,6 @@
     bottom: 0;
   }
 
-  /* モバイルではスペーサーを非表示にして余白をなくす */
-  #screen-line > .flex-spacer,
-  #screen-equip > .flex-spacer {
-    display: none;
-  }
-
-  /* 画面自体の最小高さを解除してコンテンツ分だけにする */
-  #screen-line,
-  #screen-equip {
-    min-height: 0 !important;
-    height: auto !important;
-  }
-
-  /* ラッパー類の強制フルハイトを解除 */
-  .pc-layout,
-  .pc-main,
-  .phone-wrapper {
-    min-height: 0 !important;
-    height: auto !important;
-  }
-
   /* ラインカードをcheck-card風の横並びに（チェック左・名前中・星右） */
   #screen-line .radio-card {
     flex-direction: row !important;
@@ -2145,6 +2124,23 @@
   .cf-cards-grid {
     grid-template-columns: 1fr !important;
     grid-auto-rows: auto !important;
+  }
+
+  /* スペーサーを非表示・ラッパー高さをコンテンツに合わせる */
+  #screen-line > .flex-spacer,
+  #screen-equip > .flex-spacer {
+    display: none !important;
+  }
+  #screen-line,
+  #screen-equip {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+  .pc-layout,
+  .pc-main,
+  .phone-wrapper {
+    min-height: 0 !important;
+    height: auto !important;
   }
 }
 
