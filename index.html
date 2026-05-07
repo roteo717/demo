@@ -261,6 +261,7 @@
   /* Continue button */
   .btn-primary-blue {
     width: 100%;
+    height: 52px;
     background: var(--blue);
     color: #fff;
     border: none;
@@ -274,6 +275,31 @@
   }
   .btn-primary-blue:active { opacity: 0.85; transform: scale(0.99); }
   .btn-primary-blue:disabled { background: #B0C4FF; cursor: default; }
+
+  .login-btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    align-items: center;
+  }
+  .login-btn-row .btn-primary-blue,
+  .login-btn-row .btn-primary-red { margin-top: 0; margin-bottom: 0; flex: 1; }
+  .btn-back-blue, .btn-back-red {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    align-self: center;
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    display: flex; align-items: center; justify-content: center;
+    -webkit-user-select: none;
+  }
+  .btn-back-blue { background: var(--blue-light); color: var(--blue); }
+  .btn-back-red  { background: var(--red-light);  color: var(--red); }
+  .btn-back-blue:active, .btn-back-red:active { opacity: 0.75; transform: scale(0.97); }
 
   /* ─── TODAY PANEL (Image2 style) ─── */
   .today-panel { padding: 20px 20px 16px; }
@@ -402,6 +428,7 @@
 
   .btn-primary-red {
     width: 100%;
+    height: 52px;
     background: var(--red);
     color: #fff;
     border: none;
@@ -4210,12 +4237,6 @@
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-    <div class="nav-bar blue-accent">
-      <div class="nav-back" onclick="goBack()">
-        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <span class="nav-title">点検者ログイン</span>
-    </div>
     <div class="inspector-body">
       <div class="inspector-icon-wrap">
         <svg width="38" height="38" viewBox="0 0 30 30" fill="none" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -4241,7 +4262,12 @@
         </div>
         <span class="inspector-notice-text">ご自身の名前がない場合は<br>「その他」から選択してください。</span>
       </div>
-      <button class="btn-primary-blue" onclick="doLogin()">ログイン</button>
+      <div class="login-btn-row">
+        <button class="btn-back-blue" onclick="goBack()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="btn-primary-blue" onclick="doLogin()">ログイン</button>
+      </div>
     </div>
     <div class="safe-bottom"></div>
   </div>
@@ -4255,12 +4281,6 @@
         <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
-    </div>
-    <div class="nav-bar red-accent">
-      <div class="nav-back" onclick="goBack()">
-        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <span class="nav-title">管理者ログイン</span>
     </div>
     <div class="inspector-body">
       <div class="manager-icon-wrap">
@@ -4287,7 +4307,12 @@
         </div>
         <span class="inspector-notice-text" style="color:var(--red);">ご自身の名前がない場合は<br>「その他」から選択してください。</span>
       </div>
-      <button class="btn-primary-red" style="margin-top:24px;" onclick="doLogin()">ログイン</button>
+      <div class="login-btn-row" style="margin-top:24px;">
+        <button class="btn-back-red" onclick="goBack()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="btn-primary-red" onclick="doLogin()">ログイン</button>
+      </div>
     </div>
     <div class="safe-bottom"></div>
   </div>
@@ -5458,6 +5483,12 @@
   }
   window.addEventListener('DOMContentLoaded', updateLastLoginDisplay);
   window.addEventListener('DOMContentLoaded', updateHomeDateDisplay);
+  window.addEventListener('resize', function() {
+    if (typeof renderMonthlySheet === 'function') {
+      var sel = document.getElementById('ms-equip-sel');
+      if (sel && sel.value) renderMonthlySheet();
+    }
+  });
 
   function selectAdminUser(btn) {
     document.querySelectorAll('#screen-manager .mgr-btn').forEach(b => b.classList.remove('selected'));
@@ -9495,21 +9526,44 @@ function renderMonthlySheet() {
 
   /* モバイル：ms-doc を画面幅に合わせてズーム縮小（layout対応）*/
   requestAnimationFrame(function() {
-    if (window.innerWidth >= 1024) return;
     var doc = wrap.querySelector('.ms-doc');
     if (!doc) return;
-    // reset any previous zoom first so we get correct natural width
-    doc.style.zoom = '';
-    var available = wrap.clientWidth || wrap.offsetWidth || 320;
-    var natural   = doc.scrollWidth;
-    if (!natural || natural <= available) {
-      wrap.style.overflow = '';
-      return;
+
+    if (window.innerWidth < 1024) {
+      // モバイル：横幅フィット
+      doc.style.zoom = '';
+      var available = wrap.clientWidth || wrap.offsetWidth || 320;
+      var natural   = doc.scrollWidth;
+      if (!natural || natural <= available) {
+        wrap.style.overflow = '';
+        return;
+      }
+      var scale = available / natural;
+      doc.style.zoom = scale;
+      doc.style.minWidth = natural + 'px';
+      wrap.style.overflow = 'visible';
+    } else {
+      // PC：縦横両方フィット（はみ出す場合のみ縮小）
+      doc.style.zoom = '';
+      requestAnimationFrame(function() {
+        var wrapRect  = wrap.getBoundingClientRect();
+        var availH    = window.innerHeight - wrapRect.top - 40; // 40px余白
+        var availW    = wrap.clientWidth || wrap.offsetWidth;
+        var naturalW  = doc.scrollWidth;
+        var naturalH  = doc.scrollHeight;
+        var scaleW    = (naturalW > availW) ? availW / naturalW : 1;
+        var scaleH    = (naturalH > availH) ? availH / naturalH : 1;
+        var scale     = Math.min(scaleW, scaleH);
+        if (scale < 1) {
+          doc.style.zoom     = scale;
+          doc.style.minWidth = naturalW + 'px';
+          wrap.style.overflow = 'visible';
+        } else {
+          doc.style.zoom = '';
+          wrap.style.overflow = '';
+        }
+      });
     }
-    var scale = available / natural;
-    doc.style.zoom = scale;
-    doc.style.minWidth = natural + 'px';
-    wrap.style.overflow = 'visible'; // zoom adjusts layout; no scroll needed
   });
   /* 異常一覧を選択設備でフィルタリング */
   var equipSel2 = document.getElementById('ms-equip-sel');
