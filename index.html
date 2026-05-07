@@ -4051,6 +4051,426 @@
   .ms-pdf-btn:active { transform: scale(0.97); background: #1447cc; }
   .ms-pdf-btn svg { width: 15px; height: 15px; fill: none; stroke: #fff; stroke-width: 2; }
 
+/* ============================================================
+   承認一覧画面 H+F ハイブリッドUI（白ボタン版）オーバーライド
+   ※ 承認画面のみデザイン変更。他画面・機能・ロジックは一切変更なし
+   ============================================================ */
+
+  /* ── タブ（iOS セグメント風） ── */
+  #adm-panel-approval .apr2-filter-tabs {
+    display: flex;
+    gap: 4px;
+    background: #F1F3F5;
+    border-radius: 14px;
+    padding: 4px;
+  }
+  #adm-panel-approval .apr2-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 6px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: #64748B;
+    transition: background 0.18s, color 0.18s;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  #adm-panel-approval .apr2-tab-icon { display: none; }
+  #adm-panel-approval .apr2-tab-label { flex: unset; text-align: center; font-size: 13px; }
+  #adm-panel-approval .apr2-tab.active {
+    background: #FFFFFF;
+    color: #0F172A;
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  }
+  #adm-panel-approval .apr2-tab-badge {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    background: #E2E8F0;
+    color: #64748B;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 20px;
+  }
+  #adm-panel-approval .apr2-tab.active .apr2-tab-badge {
+    background: #DBEAFE;
+    color: #1E40AF;
+  }
+  #adm-panel-approval .apr2-tab-badge.pending-badge {
+    background: #FED7AA;
+    color: #C2410C;
+  }
+  #adm-panel-approval .apr2-tab.active .apr2-tab-badge.pending-badge {
+    background: #FED7AA;
+    color: #C2410C;
+  }
+
+  /* ── ライン絞り込みボタン ── */
+  #adm-panel-approval .apr2-line-filter-btn {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 11px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748B;
+    gap: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: background 0.15s;
+  }
+  #adm-panel-approval .apr2-line-filter-btn:active { background: #F8FAFC; }
+  #adm-panel-approval .apr2-line-filter-btn.has-filter {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
+    color: #1D4ED8;
+  }
+
+  /* ── title row 余白 ── */
+  #adm-panel-approval .apr2-title-row {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  /* ── ラインカード（白カード） ── */
+  #adm-panel-approval .apr2-line {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 14px;
+    overflow: visible;
+  }
+  #adm-panel-approval .apr2-line-hdr {
+    background: #FFFFFF;
+    padding: 14px 16px;
+    border-radius: 16px;
+    gap: 10px;
+  }
+  #adm-panel-approval .apr2-line-hdr:active { background: #F8FAFC; }
+  #adm-panel-approval .apr2-line-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0F172A;
+  }
+  #adm-panel-approval .apr2-line-pending {
+    font-size: 11px;
+    font-weight: 600;
+    color: #C2410C;
+    background: #FEF3C7;
+    border: 1px solid #FDE68A;
+    padding: 2px 9px;
+    border-radius: 20px;
+  }
+  #adm-panel-approval .apr2-line-total {
+    font-size: 12px;
+    color: #94A3B8;
+    font-weight: 500;
+    margin-left: auto;
+  }
+  #adm-panel-approval .apr2-chevron {
+    stroke: #94A3B8;
+    transition: transform 0.22s ease-in-out;
+  }
+  #adm-panel-approval .apr2-line-hdr:not(.collapsed) .apr2-chevron { transform: rotate(0deg); }
+  #adm-panel-approval .apr2-line-hdr.collapsed .apr2-chevron { transform: rotate(-90deg); }
+
+  /* ── ライン内本文：縦1列レイアウト ── */
+  #adm-panel-approval .apr2-line-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 10px 12px;
+    grid-template-columns: unset;
+  }
+  #adm-panel-approval .apr2-line-body.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  /* ── 設備カード ── */
+  #adm-panel-approval .apr2-equip-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  #adm-panel-approval .apr2-equip-card.has-pending {
+    border-color: #FDE68A;
+  }
+  #adm-panel-approval .apr2-equip-hdr {
+    padding: 12px 14px;
+    border-bottom: 1px solid #F1F5F9;
+    gap: 8px;
+  }
+  #adm-panel-approval .apr2-equip-hdr.collapsed { border-bottom-color: transparent; }
+  #adm-panel-approval .apr2-equip-hdr:active { background: #F8FAFC; }
+  #adm-panel-approval .apr2-equip-id {
+    font-size: 11px;
+    color: #94A3B8;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  #adm-panel-approval .apr2-equip-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0F172A;
+  }
+  #adm-panel-approval .apr2-equip-count {
+    font-size: 11px;
+    font-weight: 600;
+    background: #F1F5F9;
+    border: none;
+    color: #64748B;
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+  #adm-panel-approval .apr2-equip-status {
+    color: #C2410C;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  #adm-panel-approval .apr2-equip-status svg { stroke: #C2410C; }
+  #adm-panel-approval .apr2-equip-status.all-done { color: #16A34A; }
+  #adm-panel-approval .apr2-equip-status.all-done svg { stroke: #16A34A; }
+
+  /* ── 点検行 ── */
+  #adm-panel-approval .apr2-insp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-bottom: 1px solid #F8FAFC;
+    min-height: 52px;
+    flex-wrap: nowrap;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  #adm-panel-approval .apr2-insp-row:last-child { border-bottom: none; }
+  #adm-panel-approval .apr2-insp-row.is-pending-row {
+    background: #FFFDF8;
+  }
+  #adm-panel-approval .apr2-insp-row.is-approved {
+    opacity: 1;
+  }
+  #adm-panel-approval .apr2-insp-row:active { background: #F8FAFC; }
+
+  /* 左グループ */
+  #adm-panel-approval .apr2-insp-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+  }
+  #adm-panel-approval .apr2-insp-left-top {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  /* 点検タグ（pill型） */
+  #adm-panel-approval .apr2-type-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: none;
+    flex-shrink: 0;
+  }
+  #adm-panel-approval .apr2-type-tag.tenday {
+    background: #EFF6FF;
+    color: #3B82F6;
+    border: none;
+  }
+  #adm-panel-approval .apr2-type-tag.monthly {
+    background: #FFF7ED;
+    color: #EA580C;
+    border: none;
+  }
+
+  /* 点検者名 */
+  #adm-panel-approval .apr2-insp-name-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #0F172A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 相対時間 */
+  #adm-panel-approval .apr2-rel-time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #94A3B8;
+    font-weight: 400;
+  }
+  #adm-panel-approval .apr2-rel-time svg {
+    width: 11px;
+    height: 11px;
+    stroke: #94A3B8;
+    fill: none;
+    flex-shrink: 0;
+  }
+
+  /* 右グループ */
+  #adm-panel-approval .apr2-action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* ── 白ボタン（承認する）── */
+  #adm-panel-approval .apr2-approve-btn {
+    background: #FFFFFF;
+    color: #1F2937;
+    border: 1px solid #E5E7EB;
+    border-radius: 9px;
+    padding: 7px 13px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+    transition: background 0.12s, box-shadow 0.12s;
+    -webkit-user-select: none;
+  }
+  #adm-panel-approval .apr2-approve-btn:hover { background: #F8FAFC; }
+  #adm-panel-approval .apr2-approve-btn:active {
+    background: #EEF2F7;
+    transform: scale(0.97);
+    box-shadow: none;
+  }
+
+  /* ── 承認済み表示 ── */
+  #adm-panel-approval .apr2-check-done {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #16A34A;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  #adm-panel-approval .apr2-check-done svg {
+    width: 15px;
+    height: 15px;
+    stroke: #16A34A;
+    fill: none;
+    flex-shrink: 0;
+  }
+  #adm-panel-approval .apr2-row-chevron {
+    width: 14px;
+    height: 14px;
+    stroke: #CBD5E1;
+    fill: none;
+    flex-shrink: 0;
+    transition: transform 0.22s ease-in-out;
+  }
+  #adm-panel-approval .apr2-insp-row.row-expanded .apr2-row-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* ── アコーディオン詳細パネル ── */
+  #adm-panel-approval .apr2-detail-panel {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.25s ease-in-out, opacity 0.2s ease-in-out;
+    background: #F8FAFC;
+    border-top: 1px solid #F1F5F9;
+  }
+  #adm-panel-approval .apr2-detail-panel.open {
+    max-height: 200px;
+    opacity: 1;
+  }
+  #adm-panel-approval .apr2-detail-inner {
+    padding: 12px 16px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+  }
+  #adm-panel-approval .apr2-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  #adm-panel-approval .apr2-detail-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: #94A3B8;
+    font-weight: 500;
+  }
+  #adm-panel-approval .apr2-detail-label svg {
+    width: 11px;
+    height: 11px;
+    stroke: #94A3B8;
+    fill: none;
+    flex-shrink: 0;
+  }
+  #adm-panel-approval .apr2-detail-val {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0F172A;
+  }
+  #adm-panel-approval .apr2-detail-val.empty { color: #CBD5E1; font-weight: 400; }
+  #adm-panel-approval .apr2-detail-close {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 4px;
+  }
+  #adm-panel-approval .apr2-detail-close-btn {
+    font-size: 11px;
+    color: #3B82F6;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    font-family: inherit;
+  }
+  #adm-panel-approval .apr2-detail-close-btn svg {
+    width: 12px; height: 12px;
+    stroke: #3B82F6; fill: none;
+    transform: rotate(180deg);
+    transition: transform 0.2s;
+  }
+
+  /* ── 空状態 ── */
+  #adm-panel-approval .apr2-empty {
+    background: #FFFFFF;
+    border: 1px dashed #E5E7EB;
+    border-radius: 14px;
+  }
+
+  /* ── ページネーション ── */
+  #adm-panel-approval .apr2-page-btn.active {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
+    color: #1D4ED8;
+  }
+
   /* ─── 印刷スタイル ─── */
   @media print {
     /* すべて非表示 */
@@ -8665,6 +9085,7 @@ function apr2GetData() {
   var lineNameMap = {};
   (ADM.lines || []).forEach(function(l){ lineNameMap[l.id] = l.name; });
 
+  var aprDetails = loadAprDetails();
   return all.map(function(item) {
     // 日付からday番号を抽出: id = 'apr10-YEAR-MONTH-DAY-EQUIPID' or 'aprM-...'
     var day = '';
@@ -8678,13 +9099,16 @@ function apr2GetData() {
       : '月次点検';
     var lineId = lineIdMap[item.equipId] || item.equipId.charAt(0);
     var lineName = lineNameMap[lineId] || equipLineMap[item.equipId] || 'ライン' + item.equipId.charAt(0);
+    var det = aprDetails[item.id] || {};
     return {
       id: item.id, lineId: lineId, lineName: lineName,
       equipId: item.equipId, equipName: item.equipName,
       typeKey: item.type === '10日点検' ? 'tenday' : 'monthly',
       typeName: displayName,
       inspector: item.inspector, datetime: item.date,
-      status: item.status, anomaly: item.anomaly || null
+      status: item.status, anomaly: item.anomaly || null,
+      approver: det.name || '',
+      approvedAt: det.at || ''
     };
   });
 }
@@ -8731,39 +9155,6 @@ function apr2GroupByLine(items) {
     });
   });
   return lineOrder.map(function(lid) { return lineMap[lid]; });
-}
-
-/* ── 月別グループ化 ── */
-function apr2GroupByMonth(items) {
-  var monthOrder = [];
-  var monthMap   = {};
-  items.forEach(function(item) {
-    var mk = item.datetime ? item.datetime.substring(0, 7) : '不明';
-    var parts = mk.split('/');
-    var mName = (parts.length === 2)
-      ? parseInt(parts[0]) + '年' + parseInt(parts[1]) + '月'
-      : '不明';
-    if (!monthMap[mk]) {
-      monthMap[mk] = {lineId: mk, lineName: mName, equips: {}};
-      monthOrder.push(mk);
-    }
-    var eMap = monthMap[mk].equips;
-    if (!eMap[item.equipId]) {
-      eMap[item.equipId] = {equipId: item.equipId, equipName: item.equipName, items: []};
-    }
-    eMap[item.equipId].items.push(item);
-  });
-  monthOrder.sort(function(a, b) { return b.localeCompare(a); });
-  monthOrder.forEach(function(mk) {
-    Object.keys(monthMap[mk].equips).forEach(function(eid) {
-      monthMap[mk].equips[eid].items.sort(function(a, b) {
-        if (a.status === 'pending' && b.status !== 'pending') return -1;
-        if (a.status !== 'pending' && b.status === 'pending') return 1;
-        return 0;
-      });
-    });
-  });
-  return monthOrder.map(function(mk) { return monthMap[mk]; });
 }
 
 /* ── ページネーション：設備単位でページング ── */
@@ -8819,6 +9210,53 @@ function apr2EquipIcon(equipId) {
 
 function apr2LineIcon() {
   return '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>';
+}
+
+/* ── 相対時間表示ヘルパー（承認画面用）── */
+function apr2RelTime(datetimeStr) {
+  if (!datetimeStr) return '';
+  // "YYYY/MM/DD HH:MM" or "YYYY/MM/DD" 形式
+  var parts = datetimeStr.split(' ');
+  var datePart = parts[0] || '';
+  var timePart = parts[1] || '';
+  var dParts = datePart.split('/');
+  if (dParts.length < 3) return datetimeStr;
+  var dt = new Date(parseInt(dParts[0]), parseInt(dParts[1])-1, parseInt(dParts[2]),
+    timePart ? parseInt(timePart.split(':')[0]) : 0,
+    timePart ? parseInt(timePart.split(':')[1]) : 0);
+  var now = new Date();
+  var diffMs = now - dt;
+  var diffMin = Math.floor(diffMs / 60000);
+  var diffH   = Math.floor(diffMs / 3600000);
+  var diffD   = Math.floor(diffMs / 86400000);
+
+  if (diffMin < 1)  return 'たった今';
+  if (diffMin < 60) return diffMin + '分前';
+  if (diffH < 24) {
+    // 今日
+    return '今日 ' + (timePart || datePart);
+  }
+  if (diffD === 1) return '昨日 ' + (timePart || '');
+  if (diffD < 7)   return diffD + '日前 ' + (timePart || '');
+  if (diffD < 14)  return '1週間前';
+  return datePart.slice(5).replace('/','/'); // MM/DD
+}
+
+/* ── 行アコーディオントグル（承認画面用）── */
+var apr2RowExpanded = {};
+function apr2ToggleRow(rowId) {
+  // ボタンクリック時は伝播を止める（親rowのクリックに反応しないよう）
+  apr2RowExpanded[rowId] = !apr2RowExpanded[rowId];
+  var row    = document.getElementById('apr2-row-' + rowId);
+  var panel  = document.getElementById('apr2-detail-' + rowId);
+  if (!row || !panel) return;
+  if (apr2RowExpanded[rowId]) {
+    row.classList.add('row-expanded');
+    panel.classList.add('open');
+  } else {
+    row.classList.remove('row-expanded');
+    panel.classList.remove('open');
+  }
 }
 
 /* ── メインレンダラー ── */
@@ -8924,7 +9362,6 @@ function renderAdmApproval() {
       var eHdrCls   = isExpEq ? '' : ' collapsed';
       var eBodCls   = isExpEq ? '' : ' collapsed';
       var hasPend   = ePending > 0;
-      var allDone   = ePending === 0;
 
       html += '<div class="apr2-equip-card' + (hasPend ? ' has-pending' : '') + '">' +
         '<div class="apr2-equip-hdr' + eHdrCls + '" onclick="apr2ToggleEquip(\'' + equip.equipId + '\')">' +
@@ -8942,20 +9379,81 @@ function renderAdmApproval() {
 
       equip.items.forEach(function(insp) {
         var isApproved = insp.status === 'approved';
+        var isPending  = insp.status === 'pending';
+        var rowCls     = isPending ? ' is-pending-row' : (isApproved ? ' is-approved' : '');
+        var relTime    = apr2RelTime(insp.datetime);
+
         var tag = insp.typeKey === 'tenday'
           ? '<span class="apr2-type-tag tenday">10日点検</span>'
           : '<span class="apr2-type-tag monthly">月次点検</span>';
-        var action = isApproved
-          ? '<div class="apr2-check-done"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>承認済み</span></div>'
-          : '<button class="apr2-approve-btn" onclick="apr2Approve(\'' + insp.id + '\')">承認する</button>';
 
-        html += '<div class="apr2-insp-row' + (isApproved ? ' is-approved' : '') + '" id="apr2-row-' + insp.id + '">' +
+        // 右側アクション
+        var actionHtml;
+        if (isPending) {
+          actionHtml =
+            '<button class="apr2-approve-btn" onclick="event.stopPropagation();apr2Approve(\'' + insp.id + '\')">承認する</button>' +
+            '<svg class="apr2-row-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+        } else {
+          actionHtml =
+            '<div class="apr2-check-done">' +
+              '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+              '<span>承認済み</span>' +
+            '</div>' +
+            '<svg class="apr2-row-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+        }
+
+        // 詳細パネル（アコーディオン展開時）
+        var detailHtml =
+          '<div class="apr2-detail-panel" id="apr2-detail-' + insp.id + '">' +
+            '<div class="apr2-detail-inner">' +
+              '<div class="apr2-detail-item">' +
+                '<span class="apr2-detail-label">' +
+                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+                  '検査日時' +
+                '</span>' +
+                '<span class="apr2-detail-val">' + (insp.datetime || '–') + '</span>' +
+              '</div>' +
+              '<div class="apr2-detail-item">' +
+                '<span class="apr2-detail-label">' +
+                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+                  '検査者' +
+                '</span>' +
+                '<span class="apr2-detail-val">' + esc(insp.inspector || '–') + '</span>' +
+              '</div>' +
+              '<div class="apr2-detail-item">' +
+                '<span class="apr2-detail-label">' +
+                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+                  '承認日時' +
+                '</span>' +
+                '<span class="apr2-detail-val' + (isApproved && insp.approvedAt ? '' : ' empty') + '">' + (isApproved ? (insp.approvedAt || '–') : '–') + '</span>' +
+              '</div>' +
+              '<div class="apr2-detail-item">' +
+                '<span class="apr2-detail-label">' +
+                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+                  '承認者' +
+                '</span>' +
+                '<span class="apr2-detail-val' + (isApproved ? '' : ' empty') + '">' + (isApproved ? (esc(insp.approver) || '–') : '–') + '</span>' +
+              '</div>' +
+              '<div class="apr2-detail-close">' +
+                '<button class="apr2-detail-close-btn" onclick="event.stopPropagation();apr2ToggleRow(\'' + insp.id + '\')">' +
+                  '閉じる' +
+                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+
+        html += '<div class="apr2-insp-row' + rowCls + '" id="apr2-row-' + insp.id + '" onclick="apr2ToggleRow(\'' + insp.id + '\')">' +
           '<div class="apr2-insp-left">' +
-            tag +
-            '<span class="apr2-inspector">' + esc(insp.inspector) + '</span>' +
+            '<div class="apr2-insp-left-top">' + tag + '<span class="apr2-insp-name-text">' + esc(insp.inspector) + '</span></div>' +
+            '<div class="apr2-rel-time">' +
+              '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
+              relTime +
+            '</div>' +
           '</div>' +
-          '<div class="apr2-action">' + action + '</div>' +
-        '</div>';
+          '<div class="apr2-action">' + actionHtml + '</div>' +
+        '</div>' +
+        detailHtml;
       });
 
       html += '</div></div>'; // equip-body + equip-card
