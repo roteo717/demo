@@ -64,7 +64,7 @@
   .screen.slide-out-left  { transform: translateX(-30%); opacity: 0; pointer-events: none; }
   .screen.active          { transform: translateX(0);    opacity: 1; pointer-events: auto; }
   /* Active screen: fixed + internal scroll (管理者と同じ構造で余白なし) */
-  .screen.active.settled  { position: fixed; height: 100dvh; min-height: unset; overflow-y: auto; overflow-x: hidden; }
+  .screen.active.settled  { position: fixed; height: 100dvh !important; min-height: unset !important; overflow-y: auto !important; overflow-x: hidden; }
 
   /* ─── STATUS BAR ─── */
   .status-bar { display: none; }
@@ -432,7 +432,7 @@
   .btn-admin-warn svg { width: 18px; height: 18px; fill: var(--red); }
 
   /* ─── SAFE AREA PAD ─── */
-  .safe-bottom { height: env(safe-area-inset-bottom, 12px); }
+  .safe-bottom { height: max(32px, env(safe-area-inset-bottom, 32px)); }
 
   /* ======================================
      POST-LOGIN SCREENS
@@ -482,7 +482,7 @@
   }
 
   /* ─── HOME SCREEN ─── */
-  #screen-home { background: var(--bg); min-height: 0; height: auto; max-width: 390px; }
+  #screen-home { background: var(--bg); min-height: 0 !important; max-width: 390px; }
 
   .home-header {
     background: #fff;
@@ -977,8 +977,8 @@
   /* ─── BOTTOM ACTION BAR ─── */
   .bottom-action {
     width: 100%;
-    background: var(--card);
-    border-top: 1px solid var(--border);
+    background: transparent;
+    border-top: none;
     padding: 12px 16px;
     padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
@@ -1987,10 +1987,10 @@
   #screen-inspect > .bottom-action {
     background: transparent;
     border-top: none;
+    box-shadow: none;
     padding: 12px 16px;
     padding-bottom: max(16px, env(safe-area-inset-bottom));
-    position: sticky;
-    bottom: 0;
+    position: static;
   }
 
   /* ライン選択・設備選択画面：ボタンも下部固定・背景なし */
@@ -2362,14 +2362,16 @@
   #screen-home {
     max-width: 100%;
     background: #F4F6F9;
-    height: calc(100vh - 40px);
+    height: calc(100dvh - 40px) !important;
+    min-height: unset !important;
     display: grid;
     grid-template-columns: 2fr 1fr;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
     grid-template-areas:
       "header  header"
-      "calendar summary"
-      "footer  footer";
+      "calendar summary";
+    align-items: stretch;
+    overflow: hidden;
   }
   .status-bar.status-bar-white { display: none !important; }
   .home-header {
@@ -2389,12 +2391,14 @@
   }
   .calendar-card {
     grid-area: calendar;
-    margin: 24px 12px 0 32px;
+    margin: 24px 12px 24px 32px;
     padding: 36px 40px;
     border-radius: 14px;
     box-shadow: var(--pc-shadow-sm);
     display: flex;
     flex-direction: column;
+    align-self: stretch;
+    min-height: 0;
   }
   #screen-home .cal-grid {
     flex: 1;
@@ -2429,13 +2433,15 @@
   #screen-home .cal-day.other-month.sat { color: #aabfef; }
   .summary-card {
     grid-area: summary;
-    margin: 24px 32px 0 12px;
+    margin: 24px 32px 24px 12px;
     padding: 0;
     border-radius: 14px;
     box-shadow: var(--pc-shadow-sm);
+    align-self: stretch;
+    min-height: 0;
+    overflow-y: auto;
   }
-  .start-btn-wrap { padding: 14px 20px 20px; }
-  .safe-bottom { grid-area: footer; height: 24px; }
+  .safe-bottom { grid-area: unset; height: 0; display: none; }
   .summary-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
   .summary-grid  { grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .summary-item  { padding: 14px 10px; background: #F8FAFF; border-radius: 10px; border: 1px solid #EEF2FF; }
@@ -2457,11 +2463,18 @@
   .list-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px 16px 16px; }
   .equip-select-count { margin: 16px 32px 4px; }
   #line-select-label { padding: 14px 16px 4px; }
-  .bottom-action { padding: 16px 32px; padding-bottom: max(20px, env(safe-area-inset-bottom)); background: #fff; }
+  .bottom-action { padding: 16px 32px; padding-bottom: max(20px, env(safe-area-inset-bottom)); background: transparent; border-top: none; }
   .line-section-label { grid-column: 1 / -1; }
 
   /* ─── 点検入力 / 確認 ─── */
-  #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: calc(100vh - 40px); }
+  #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: calc(100vh - 40px); padding-bottom: 0; }
+  #screen-inspect > .bottom-action {
+    position: sticky !important;
+    bottom: 0 !important;
+    left: auto !important;
+    width: auto !important;
+    box-shadow: none !important;
+  }
 
   /* PC header */
   .pc-inspect-header {
@@ -3215,8 +3228,12 @@
     padding: 5px 8px;
     font-size: 10px;
     min-width: 110px; max-width: 160px;
-    white-space: normal; word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     line-height: 1.3;
+    height: 28px;
+    max-height: 28px;
     position: sticky; left: 18px; z-index: 2; background: #fff;
   }
 
@@ -3232,7 +3249,7 @@
   /* Day cell */
   .ms-cell {
     min-width: 20px; width: 20px;
-    height: 28px; padding: 2px 1px;
+    height: 28px; max-height: 28px; padding: 2px 1px;
   }
   .ms-cell.holiday { background: repeating-linear-gradient(45deg,#FFEBEE,#FFEBEE 3px,#FFCDD2 3px,#FFCDD2 6px); }
   .ms-cell.today   { background: #E3F2FD; }
@@ -4603,7 +4620,6 @@
     <!-- Equipment sections -->
     <div id="inspect-sections"></div>
 
-    <div class="flex-spacer"></div>
     <div class="bottom-action">
       <button class="btn-bottom-main" onclick="goToConfirm()">点検の確認・完了へ</button>
     </div>
@@ -9510,7 +9526,34 @@ function printMonthlySheet() {
     alert('設備を選択してください');
     return;
   }
-  window.print();
+
+  var tableWrap = document.getElementById('ms-table-wrap');
+  if (!tableWrap || !tableWrap.innerHTML.trim()) {
+    alert('点検表を表示してから出力してください');
+    return;
+  }
+
+  // ページ内の全<style>タグをそのまま取得
+  var allStyles = '';
+  var styleTags = document.querySelectorAll('style');
+  styleTags.forEach(function(s) { allStyles += s.innerHTML + '\n'; });
+
+  var docContent = tableWrap.querySelector('.ms-doc') || tableWrap;
+
+  var html = '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">' +
+    '<style>' + allStyles +
+    'body { margin: 0; padding: 10mm; background: #fff; }' +
+    '.ms-doc { box-shadow: none !important; border: none !important; }' +
+    '@page { size: A4 landscape; margin: 8mm; }' +
+    '</style></head><body>' +
+    docContent.outerHTML +
+    '</body></html>';
+
+  var win = window.open('', '_blank', 'width=1200,height=800');
+  if (!win) { alert('ポップアップがブロックされています。許可してください。'); return; }
+  win.document.write(html);
+  win.document.close();
+  win.onload = function() { win.focus(); win.print(); };
 }
 
 /* 異常一覧の高さを月次点検表カードに合わせる */
