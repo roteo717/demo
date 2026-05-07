@@ -63,8 +63,8 @@
   .screen.hidden          { transform: translateX(100%); opacity: 0; pointer-events: none; }
   .screen.slide-out-left  { transform: translateX(-30%); opacity: 0; pointer-events: none; }
   .screen.active          { transform: translateX(0);    opacity: 1; pointer-events: auto; }
-  /* Active screen becomes relative so wrapper grows and page scrolls naturally */
-  .screen.active.settled  { position: relative; }
+  /* Active screen: fixed + internal scroll (管理者と同じ構造で余白なし) */
+  .screen.active.settled  { position: fixed; height: 100dvh; min-height: unset; overflow-y: auto; overflow-x: hidden; }
 
   /* ─── STATUS BAR ─── */
   .status-bar { display: none; }
@@ -2285,6 +2285,13 @@
   .screen {
     height: auto;
     min-height: calc(100vh - 40px);
+  }
+  /* PCでは settled = relative（通常のページスクロール） */
+  .screen.active.settled {
+    position: relative !important;
+    height: auto !important;
+    min-height: calc(100vh - 40px) !important;
+    overflow-y: visible !important;
   }
 
   /* ─── ロール選択 ─── */
@@ -5358,18 +5365,17 @@
     prev.classList.remove('active');
     prev.classList.add(isBack ? 'hidden' : 'slide-out-left');
 
-    next.style.position = 'absolute';
     next.classList.remove('hidden', 'slide-out-left', 'settled');
     next.classList.add('active');
+    next.scrollTop = 0;
     window.scrollTo(0, 0);
     currentScreen = id;
 
-    // After transition, make active screen relative so page can scroll
+    // After transition, add settled for fixed+scroll behavior
     clearTimeout(window._settleTimer);
     window._settleTimer = setTimeout(() => {
-      next.style.position = '';
       next.classList.add('settled');
-      window.scrollTo(0, 0);
+      next.scrollTop = 0;
     }, 350);
   }
 
