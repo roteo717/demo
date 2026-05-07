@@ -8733,6 +8733,39 @@ function apr2GroupByLine(items) {
   return lineOrder.map(function(lid) { return lineMap[lid]; });
 }
 
+/* ── 月別グループ化 ── */
+function apr2GroupByMonth(items) {
+  var monthOrder = [];
+  var monthMap   = {};
+  items.forEach(function(item) {
+    var mk = item.datetime ? item.datetime.substring(0, 7) : '不明';
+    var parts = mk.split('/');
+    var mName = (parts.length === 2)
+      ? parseInt(parts[0]) + '年' + parseInt(parts[1]) + '月'
+      : '不明';
+    if (!monthMap[mk]) {
+      monthMap[mk] = {lineId: mk, lineName: mName, equips: {}};
+      monthOrder.push(mk);
+    }
+    var eMap = monthMap[mk].equips;
+    if (!eMap[item.equipId]) {
+      eMap[item.equipId] = {equipId: item.equipId, equipName: item.equipName, items: []};
+    }
+    eMap[item.equipId].items.push(item);
+  });
+  monthOrder.sort(function(a, b) { return b.localeCompare(a); });
+  monthOrder.forEach(function(mk) {
+    Object.keys(monthMap[mk].equips).forEach(function(eid) {
+      monthMap[mk].equips[eid].items.sort(function(a, b) {
+        if (a.status === 'pending' && b.status !== 'pending') return -1;
+        if (a.status !== 'pending' && b.status === 'pending') return 1;
+        return 0;
+      });
+    });
+  });
+  return monthOrder.map(function(mk) { return monthMap[mk]; });
+}
+
 /* ── ページネーション：設備単位でページング ── */
 function apr2GetPagedLines(lines) {
   // 全設備を flat list にしてページング
