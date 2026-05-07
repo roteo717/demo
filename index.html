@@ -1001,10 +1001,11 @@
   }
   .btn-bottom-sub:active { opacity: 0.7; }
   .flex-spacer { flex: 1; min-height: 20px; }
-  .screen-flex { display: flex; flex-direction: column; }
+  .screen-flex { display: flex; flex-direction: column; min-height: 100%; }
 
   /* ─── INSPECTION INPUT ─── */
   #screen-inspect { background: var(--bg); }
+  .pc-inspect-header { display: none; } /* モバイルでは非表示、1024px+で上書き */
 
   .inspect-top-actions {
     padding: 12px 16px 8px;
@@ -1335,6 +1336,7 @@
   #screen-confirm .bottom-action {
     background: transparent;
     border-top: none;
+    margin-top: auto;
   }
 
   .cf-ok-toggle { cursor: pointer; transition: background 0.15s; -webkit-user-select: none; }
@@ -1993,13 +1995,13 @@
     position: static;
   }
 
-  /* ライン選択・設備選択画面：ボタンも下部固定・背景なし */
+  /* ライン選択・設備選択画面：カードが少ない時は画面下、多い時はカード直後 */
   #screen-line > .bottom-action,
   #screen-equip > .bottom-action {
     background: transparent;
     border-top: none;
-    position: sticky;
-    bottom: 0;
+    position: static;
+    margin-top: auto;
   }
 
   /* ラインカードをcheck-card風の横並びに（チェック左・名前中・星右） */
@@ -4432,7 +4434,6 @@
     <div class="list-body" id="line-list">
       <!-- Rendered by buildLineList() -->
     </div>
-    <div class="flex-spacer"></div>
     <div class="bottom-action">
       <button class="btn-bottom-main" id="line-next-btn" disabled onclick="goToEquipScreen()">次へ</button>
     </div>
@@ -4558,7 +4559,6 @@
     <div class="list-body" id="equip-list">
       <!-- Rendered by JS -->
     </div>
-    <div class="flex-spacer"></div>
     <div class="bottom-action">
       <button class="btn-bottom-main" id="start-inspect-btn" onclick="startInspection()">この設備で点検開始</button>
     </div>
@@ -4660,7 +4660,6 @@
     </div>
     <div id="confirm-sections"></div>
 
-    <div class="flex-spacer"></div>
     <div class="bottom-action">
       <div class="btn-row">
         <button class="btn-bottom-sub" onclick="showScreen('screen-inspect')">修正する</button>
