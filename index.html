@@ -3410,11 +3410,14 @@
     border-collapse: collapse;
     width: 100%;
     font-size: 10px;
+    table-layout: fixed;   /* 異常内容が長くてもテーブル幅を固定 */
   }
   .ms-recovery-table th, .ms-recovery-table td {
     border: 1px solid #999;
     padding: 3px 6px;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
   /* ─ 外枠二重防止：左端・右端・上端・下端セルのボーダーを消す ─ */
   .ms-recovery-table > * > tr > th:first-child,
@@ -10165,10 +10168,15 @@ function renderMonthlySheet() {
   });
 
   html += '<table class="ms-recovery-table">';
+  html += '<colgroup>';
+  html += '<col style="width:52px;">';     /* 日付列：固定 */
+  html += '<col>';                           /* 異常内容列：残り幅を使う */
+  html += '<col style="width:62px;">';     /* 点検者列：固定 */
+  html += '</colgroup>';
   html += '<thead><tr>';
-  html += '<th style="width:60px;">日　付</th>';
-  html += '<th style="min-width:200px;">異　常　内　容</th>';
-  html += '<th style="width:60px;">点検者</th>';
+  html += '<th style="width:52px;">日　付</th>';
+  html += '<th>異　常　内　容</th>';
+  html += '<th style="width:62px;">点検者</th>';
   html += '</tr></thead>';
   html += '<tbody>';
   var totalRows = Math.max(recoveryRows.length, 3);
@@ -10176,9 +10184,9 @@ function renderMonthlySheet() {
     var row = recoveryRows[ri];
     if (row) {
       html += '<tr>' +
-        '<td style="height:24px;font-size:11px;text-align:center;">' + row.date + '</td>' +
-        '<td style="font-size:11px;padding:2px 4px;">' + row.content + '</td>' +
-        '<td style="font-size:11px;text-align:center;">' + row.inspector + '</td>' +
+        '<td style="height:24px;font-size:11px;text-align:center;white-space:nowrap;overflow:hidden;">' + row.date + '</td>' +
+        '<td style="font-size:13px;padding:2px 6px;white-space:normal;word-break:break-word;">' + row.content + '</td>' +
+        '<td style="font-size:11px;text-align:center;white-space:nowrap;overflow:hidden;">' + row.inspector + '</td>' +
       '</tr>';
     } else {
       html += '<tr><td style="height:24px;"></td><td></td><td></td></tr>';
@@ -10251,7 +10259,13 @@ function renderMonthlySheet() {
       // モバイル：横幅フィット
       doc.style.zoom = '';
       var available = wrap.clientWidth || wrap.offsetWidth || 320;
-      var natural   = doc.scrollWidth;
+      /* 異常内容テーブルは width:100%+table-layout:fixed で幅固定済みのため
+         ms-table の最大幅のみを基準に zoom を計算する（recovery tableを除外） */
+      var natural = 0;
+      doc.querySelectorAll('.ms-table').forEach(function(t) {
+        natural = Math.max(natural, t.scrollWidth);
+      });
+      if (!natural) natural = doc.scrollWidth;
       if (!natural || natural <= available) {
         wrap.style.overflow = '';
         applyBorderOverlap(1);
@@ -10271,7 +10285,12 @@ function renderMonthlySheet() {
         var wrapRect  = wrap.getBoundingClientRect();
         var availH    = window.innerHeight - wrapRect.top - 40; // 40px余白
         var availW    = wrap.clientWidth || wrap.offsetWidth;
-        var naturalW  = doc.scrollWidth;
+        /* 異常内容テーブルを除いたms-tableの最大幅を基準にする */
+        var naturalW = 0;
+        doc.querySelectorAll('.ms-table').forEach(function(t) {
+          naturalW = Math.max(naturalW, t.scrollWidth);
+        });
+        if (!naturalW) naturalW = doc.scrollWidth;
         var naturalH  = doc.scrollHeight;
         var scaleW    = (naturalW > availW) ? availW / naturalW : 1;
         var scaleH    = (naturalH > availH) ? availH / naturalH : 1;
