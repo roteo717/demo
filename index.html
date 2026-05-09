@@ -7412,14 +7412,32 @@
   /* ─── INIT ─── */
   (function init() {
     loadSavedInspections(); // Load persisted inspection results first
-    buildEquipList();
-    // ログイン画面のユーザーを初期描画（LocalStorageから）
-    try {
-      var saved = JSON.parse(localStorage.getItem('admData') || 'null');
-      if (saved && saved.inspectors) ADM.inspectors = saved.inspectors;
-      if (saved && saved.managers)   ADM.managers   = saved.managers;
-    } catch(e) {}
-    setTimeout(function() { if (typeof renderLoginUsers === 'function') renderLoginUsers(); }, 0);
+    buildEquipList(); // 初期描画（admSyncより先に呼ぶ暫定描画）
+
+    // ── 管理者設定の完全ロード & EQUIP_DATA同期 ──
+    // admSync/admMigrate は後続の<script>ブロックで定義されるため、
+    // setTimeout(0) で全スクリプト解析後に実行する
+    setTimeout(function() {
+      try {
+        var saved = JSON.parse(localStorage.getItem('admData') || 'null');
+        if (saved && saved.equips) {
+          // equips / items / assigns / lines を含むフルデータをADMに反映
+          if (saved.lines)          ADM.lines          = saved.lines;
+          if (saved.equips)         ADM.equips         = saved.equips;
+          if (saved.items)          ADM.items          = saved.items;
+          if (saved.assigns)        ADM.assigns        = saved.assigns;
+          if (saved.inspectors)     ADM.inspectors     = saved.inspectors;
+          if (saved.managers)       ADM.managers       = saved.managers;
+          if (saved.deletedItemIds) ADM.deletedItemIds = saved.deletedItemIds;
+          // 新設備への点検項目デフォルト割当補完
+          if (typeof admMigrate === 'function') admMigrate();
+          // EQUIP_DATAを管理者設定で再構築 → buildEquipList()も内部で再実行
+          if (typeof admSync    === 'function') admSync();
+        }
+      } catch(e) { console.error('admData同期エラー(点検者init):', e); }
+      // ログイン画面ユーザー一覧を描画
+      if (typeof renderLoginUsers === 'function') renderLoginUsers();
+    }, 0);
     const savedUser = localStorage.getItem('loggedInUser');
     if (savedUser) {
       var homeNameEl = document.querySelector('.home-user-name');
