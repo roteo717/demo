@@ -7583,12 +7583,21 @@ function admLoad() {
   localStorage.setItem('admData', JSON.stringify(ADM));
   admSync();
   renderLoginUsers();
+  // Firebase Integration Start
+  // 初回ロード時にFirestoreへもアップロード（onSnapshotが未到着の場合の初期値として）
+  setTimeout(function() {
+    if (typeof window._firestoreSave === 'function') window._firestoreSave('admData', ADM);
+  }, 2000);
+  // Firebase Integration End
 }
 
 function admSave() {
   localStorage.setItem('admData', JSON.stringify(ADM));
   admSync();
   updateSettingsCardCounts();
+  // Firebase Integration Start
+  if (typeof window._firestoreSave === 'function') window._firestoreSave('admData', ADM);
+  // Firebase Integration End
 }
 
 function admSync() {
@@ -8620,6 +8629,12 @@ function saveAprStatusToStorage(id, status) {
     delete details[id];
   }
   localStorage.setItem('approvalDetails', JSON.stringify(details));
+  // Firebase Integration Start
+  if (typeof window._firestoreSave === 'function') {
+    window._firestoreSave('approvalStatuses', data);
+    window._firestoreSave('approvalDetails', details);
+  }
+  // Firebase Integration End
 }
 /* 月次点検表から直接承認 */
 function msApprove(aprId) {
@@ -10378,6 +10393,9 @@ function holidayLoad() {
 }
 function holidaySave(data) {
   localStorage.setItem('holidaySettings', JSON.stringify(data));
+  // Firebase Integration Start
+  if (typeof window._firestoreSave === 'function') window._firestoreSave('holidaySettings', data);
+  // Firebase Integration End
 }
 function holidayKey(y, m, d) {
   return y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
@@ -10534,9 +10552,12 @@ function isHoliday(dateObj) {
 
 <!-- Firebase Integration Start -->
 <script type="module">
-  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp }
-                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, doc,
+    addDoc, setDoc, onSnapshot,
+    query, orderBy, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey:            "AIzaSyA6fxlaWUULIMT3bC-Ahul-izBUHziY6FI",
@@ -10550,43 +10571,109 @@ function isHoliday(dateObj) {
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
 
-  // ── 書き込み ──
-  async function saveInspectionToFirestore(data) {
+  // ── 汎用保存（appData コレクションに docId で上書き保存）──
+  async function firestoreSave(docId, data) {
     try {
-      await addDoc(collection(db, "inspections"), {
-        ...data,
-        createdAt: serverTimestamp()
-      });
-      console.log("Firestore保存成功");
-    } catch (error) {
-      console.error("Firestore保存エラー", error);
+      await setDoc(doc(db, "appData", docId), { ...data, updatedAt: serverTimestamp() });
+      console.log("Firestore保存成功:", docId);
+    } catch (e) {
+      console.error("Firestore保存エラー:", docId, e);
     }
   }
 
-  // ── リアルタイム読み込み（onSnapshot） ──
-  const q = query(collection(db, "inspections"), orderBy("createdAt", "asc"));
-
-  onSnapshot(q, (snapshot) => {
-    const records = snapshot.docs.map(doc => {
-      const d = doc.data();
-      return {
-        year:    d.year,
-        month:   d.month,
-        day:     d.day,
-        anomaly: d.anomaly,
-        state:   d.results || d.state || {},
-      };
-    }).filter(r => r.year !== undefined && r.day !== undefined);
-
-    if (typeof window._applyFirestoreSnapshots === 'function') {
-      window._applyFirestoreSnapshots(records);
+  // ── 点検結果の保存 ──
+  async function saveInspectionToFirestore(data) {
+    try {
+      await addDoc(collection(db, "inspections"), { ...data, createdAt: serverTimestamp() });
+      console.log("Firestore保存成功: inspections");
+    } catch (e) {
+      console.error("Firestore保存エラー: inspections", e);
     }
-    console.log(`Firestore同期: ${records.length}件`);
-  }, (error) => {
-    console.error("Firestoreリアルタイム受信エラー", error);
+  }
+
+  // ── admData のリアルタイム同期 ──
+  onSnapshot(doc(db, "appData", "admData"), (snap) => {
+    if (!snap.exists()) return;
+    try {
+      const d = snap.data();
+      const clean = (({ updatedAt, ...rest }) => rest)(d);
+      localStorage.setItem('admData', JSON.stringify(clean));
+      if (typeof ADM !== 'undefined' && clean.lines) {
+        Object.assign(ADM, clean);
+        if (typeof admSync       === 'function') admSync();
+        if (typeof renderLoginUsers === 'function') renderLoginUsers();
+        if (typeof admRenderEquips  === 'function') admRenderEquips();
+        if (typeof renderLines      === 'function') renderLines();
+        if (typeof renderItems      === 'function') renderItems();
+        if (typeof updateSettingsCardCounts === 'function') updateSettingsCardCounts();
+      }
+      console.log("Firestore同期: admData");
+    } catch(e) { console.error("admData同期エラー", e); }
   });
 
-  window.saveInspectionToFirestore = saveInspectionToFirestore;
+  // ── holidaySettings のリアルタイム同期 ──
+  onSnapshot(doc(db, "appData", "holidaySettings"), (snap) => {
+    if (!snap.exists()) return;
+    try {
+      const d = snap.data();
+      const clean = (({ updatedAt, ...rest }) => rest)(d);
+      localStorage.setItem('holidaySettings', JSON.stringify(clean));
+      if (typeof buildHolidayCal === 'function') buildHolidayCal();
+      console.log("Firestore同期: holidaySettings");
+    } catch(e) { console.error("holidaySettings同期エラー", e); }
+  });
+
+  // ── approvalStatuses のリアルタイム同期 ──
+  onSnapshot(doc(db, "appData", "approvalStatuses"), (snap) => {
+    if (!snap.exists()) return;
+    try {
+      const d = snap.data();
+      const clean = (({ updatedAt, ...rest }) => rest)(d);
+      localStorage.setItem('approvalStatuses', JSON.stringify(clean));
+      if (typeof renderApproval       === 'function') renderApproval();
+      if (typeof renderMonthlySheet   === 'function') renderMonthlySheet();
+      console.log("Firestore同期: approvalStatuses");
+    } catch(e) { console.error("approvalStatuses同期エラー", e); }
+  });
+
+  // ── approvalDetails のリアルタイム同期 ──
+  onSnapshot(doc(db, "appData", "approvalDetails"), (snap) => {
+    if (!snap.exists()) return;
+    try {
+      const d = snap.data();
+      const clean = (({ updatedAt, ...rest }) => rest)(d);
+      localStorage.setItem('approvalDetails', JSON.stringify(clean));
+      if (typeof renderApproval       === 'function') renderApproval();
+      if (typeof renderMonthlySheet   === 'function') renderMonthlySheet();
+      console.log("Firestore同期: approvalDetails");
+    } catch(e) { console.error("approvalDetails同期エラー", e); }
+  });
+
+  // ── inspections のリアルタイム同期（カレンダー反映）──
+  const q = query(collection(db, "inspections"), orderBy("createdAt", "asc"));
+  onSnapshot(q, (snapshot) => {
+    try {
+      const records = snapshot.docs.map(d => {
+        const data = d.data();
+        return {
+          year:    data.year,
+          month:   data.month,
+          day:     data.day,
+          anomaly: data.anomaly,
+          state:   data.results || data.state || {},
+        };
+      }).filter(r => r.year !== undefined && r.day !== undefined);
+
+      if (typeof window._applyFirestoreSnapshots === 'function') {
+        window._applyFirestoreSnapshots(records);
+      }
+      console.log("Firestore同期: inspections", records.length + "件");
+    } catch(e) { console.error("inspections同期エラー", e); }
+  }, (e) => console.error("inspectionsリスナーエラー", e));
+
+  // グローバル公開
+  window._firestoreSave             = firestoreSave;
+  window.saveInspectionToFirestore  = saveInspectionToFirestore;
 </script>
 <!-- Firebase Integration End -->
 
