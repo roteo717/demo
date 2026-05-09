@@ -64,7 +64,11 @@
   .screen.slide-out-left  { transform: translateX(-30%); opacity: 0; pointer-events: none; }
   .screen.active          { transform: translateX(0);    opacity: 1; pointer-events: auto; }
   /* Active screen: fixed + internal scroll (管理者と同じ構造で余白なし) */
-  .screen.active.settled  { position: fixed; height: 100dvh !important; min-height: unset !important; overflow-y: auto !important; overflow-x: hidden; }
+  .screen.active.settled  { position: fixed; height: 100dvh !important; min-height: unset !important; overflow-y: auto !important; overflow-x: hidden; width: 100%; max-width: 390px; left: 0; }
+  /* 横向き時は全幅に拡張（position:fixed は viewport 基準のため個別指定が必要） */
+  @media (max-width: 1023px) and (orientation: landscape) {
+    .screen.active.settled { max-width: 100vw !important; }
+  }
 
   /* ─── STATUS BAR ─── */
   .status-bar { display: none; }
@@ -5985,11 +5989,36 @@
     updateLastLoginDisplay();
     updateHomeDateDisplay();
   });
+  /* ── 向き変更・リサイズ時に settled を再適用して dvh を再計算させる ── */
+  function _reSettleActiveScreen() {
+    var active = document.querySelector('.screen.active.settled');
+    if (!active) return;
+    active.classList.remove('settled');
+    setTimeout(function() {
+      if (active.classList.contains('active')) {
+        active.classList.add('settled');
+      }
+    }, 250);
+  }
+  /* orientationchange の直後はまだ新しい viewport サイズが確定していないため少し待つ */
+  window.addEventListener('orientationchange', function() {
+    setTimeout(_reSettleActiveScreen, 100);
+  });
+  /* screen.orientation が使える環境ではそちらも監視（より確実） */
+  if (window.screen && window.screen.orientation) {
+    window.screen.orientation.addEventListener('change', function() {
+      setTimeout(_reSettleActiveScreen, 100);
+    });
+  }
   window.addEventListener('resize', function() {
-    if (typeof renderMonthlySheet === 'function') {
-      var sel = document.getElementById('ms-equip-sel');
-      if (sel && sel.value) renderMonthlySheet();
-    }
+    clearTimeout(window._resizeSettleTimer);
+    window._resizeSettleTimer = setTimeout(function() {
+      _reSettleActiveScreen();
+      if (typeof renderMonthlySheet === 'function') {
+        var sel = document.getElementById('ms-equip-sel');
+        if (sel && sel.value) renderMonthlySheet();
+      }
+    }, 150);
   });
 
   function selectAdminUser(btn) {
