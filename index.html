@@ -10667,24 +10667,40 @@ function isHoliday(dateObj) {
     } catch(e) { console.error("approvalDetails同期エラー", e); }
   });
 
-  // ── inspections のリアルタイム同期（カレンダー反映）──
+  // ── inspections のリアルタイム同期（カレンダー・管理者画面・承認・月次表に反映）──
   const q = query(collection(db, "inspections"), orderBy("createdAt", "asc"));
   onSnapshot(q, (snapshot) => {
     try {
+      // Firestoreのフィールド名を localStorage が期待する形式に正規化
+      // Firestore保存時: equipment / results → localStorage期待値: equips / state
       const records = snapshot.docs.map(d => {
         const data = d.data();
         return {
-          year:    data.year,
-          month:   data.month,
-          day:     data.day,
-          anomaly: data.anomaly,
-          state:   data.results || data.state || {},
+          year:            data.year,
+          month:           data.month,
+          day:             data.day,
+          anomaly:         data.anomaly,
+          equips:          data.equipment      || data.equips || [],
+          state:           data.results        || data.state  || {},
+          inspectionTypes: data.inspectionTypes || { isDaily: true, is10Day: false, isMonthly: false },
+          completedAt:     data.completedAt    || null,
+          inspector:       data.inspector      || '',
+          line:            data.line           || [],
         };
       }).filter(r => r.year !== undefined && r.day !== undefined);
 
+      // localStorage に同期（管理者ダッシュボード・承認・月次点検表が参照）
+      localStorage.setItem('inspections', JSON.stringify(records));
+
+      // カレンダーへの反映（点検者ホーム画面）
       if (typeof window._applyFirestoreSnapshots === 'function') {
         window._applyFirestoreSnapshots(records);
       }
+      // 管理者画面が開いていれば即時再描画
+      if (typeof renderDashboard    === 'function') renderDashboard();
+      if (typeof renderApproval     === 'function') renderApproval();
+      if (typeof renderMonthlySheet === 'function') renderMonthlySheet();
+
       console.log("Firestore同期: inspections", records.length + "件");
     } catch(e) { console.error("inspections同期エラー", e); }
   }, (e) => console.error("inspectionsリスナーエラー", e));
