@@ -2187,9 +2187,78 @@
 
   /* ─── スマホ：すべてのカードを1列縦並びに ─── */
 
-  /* 設定メニュー：モバイルは2列 */
+  /* 設定メニュー：モバイルは縦一列・PCと同じデザイン */
   .adm-settings-grid {
-    grid-template-columns: 1fr 1fr !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .adm-settings-card {
+    align-items: flex-start !important;
+    padding: 20px 18px 16px !important;
+    border-radius: 14px !important;
+    border-color: #EBEBEB !important;
+    gap: 0 !important;
+    flex-direction: column !important;
+  }
+  .adm-settings-card-top {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 14px !important;
+    margin-bottom: 14px !important;
+    width: 100% !important;
+    flex: unset !important;
+  }
+  .adm-settings-card-icon {
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: 12px !important;
+  }
+  .adm-settings-card-icon svg {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .adm-settings-card-label {
+    font-size: 17px !important;
+    text-align: left !important;
+  }
+  .adm-settings-card-desc {
+    display: block !important;
+    font-size: 13px !important;
+    color: var(--text-sub) !important;
+    line-height: 1.7 !important;
+    margin-bottom: 14px !important;
+    padding-left: 2px !important;
+  }
+  .adm-settings-card-divider {
+    display: block !important;
+    height: 1px !important;
+    background: #F0F0F0 !important;
+    margin: 0 -2px 12px !important;
+    width: calc(100% + 4px) !important;
+  }
+  .adm-settings-card-footer {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+  .adm-settings-card-footer-icon svg {
+    width: 16px !important; height: 16px !important;
+    fill: none !important; stroke-width: 1.8 !important;
+    stroke-linecap: round !important; stroke-linejoin: round !important;
+  }
+  .adm-settings-card-footer-text {
+    flex: 1 !important; font-size: 13px !important;
+    color: var(--text-sub) !important;
+    display: flex !important; align-items: baseline !important; gap: 4px !important;
+  }
+  .adm-settings-card-footer-count {
+    font-size: 15px !important; font-weight: 700 !important; color: var(--text) !important;
+  }
+  .adm-settings-card-footer-arrow svg {
+    width: 16px !important; height: 16px !important;
+    stroke: #C0C0C0 !important; fill: none !important;
+    stroke-width: 2 !important; stroke-linecap: round !important;
   }
 
   /* ダッシュボード2カラム（月次点検表 + 異常一覧）→ 縦積み */
@@ -4814,7 +4883,7 @@
       <div class="today-stat-grid">
         <div class="today-stat-card">
           <div class="today-stat-icon today-stat-icon-gray">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 9.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0M15.5 9.5a.5.5 0 1 1 1 0 .5.5 0 0 1-1 0M8.5 14.5h7"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
           </div>
           <div class="today-stat-label">未実施</div>
           <div class="today-stat-count today-stat-count-gray"><span id="sum-pending">0</span><span class="unit">件</span></div>
@@ -7260,32 +7329,68 @@
     var el = document.getElementById('complete-datetime');
     if (el) el.textContent = y + '年' + m + '月' + d + '日　' + hh + ':' + mm;
 
+    // Firebase Integration Start
+    try {
+      const firestoreData = {
+        inspector:       record.inspector || "",
+        line:            selectedLineIds  || [],
+        equipment:       selectedEquips   || [],
+        results:         record.state     || {},
+        year:            record.year,
+        month:           record.month,
+        day:             record.day,
+        anomaly:         record.anomaly,
+        completedAt:     record.completedAt,
+        inspectionTypes: record.inspectionTypes || {},
+      };
+      if (typeof window.saveInspectionToFirestore === 'function') {
+        window.saveInspectionToFirestore(firestoreData);
+      }
+    } catch(e) {
+      console.error("Firestore呼び出しエラー", e);
+    }
+    // Firebase Integration End
+
     showScreen('screen-complete');
   }
 
   /* ─── LOAD SAVED INSPECTIONS INTO CALENDAR DATA ─── */
+  function applyInspectionRecord(r) {
+    const mkey = `${r.year}-${r.month}`;
+    if (!CAL_DONE[mkey])    CAL_DONE[mkey]    = [];
+    if (!CAL_ANOMALY[mkey]) CAL_ANOMALY[mkey] = [];
+    CAL_DONE[mkey]    = CAL_DONE[mkey].filter(d => d !== r.day);
+    CAL_ANOMALY[mkey] = CAL_ANOMALY[mkey].filter(d => d !== r.day);
+
+    let hasNg = !!r.anomaly;
+    if (!hasNg && r.state) {
+      hasNg = Object.values(r.state).some(s =>
+        ['daily','10days','monthly'].some(t => s[t] && s[t].some(v => v === 'ng'))
+      );
+    }
+    if (!hasNg && r.results) {
+      hasNg = Object.values(r.results).some(s =>
+        ['daily','10days','monthly'].some(t => s[t] && s[t].some(v => v === 'ng'))
+      );
+    }
+
+    if (hasNg) CAL_ANOMALY[mkey].push(r.day);
+    else       CAL_DONE[mkey].push(r.day);
+  }
+
   function loadSavedInspections() {
     let all = [];
     try { all = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
-    all.forEach(r => {
-      const mkey = `${r.year}-${r.month}`;
-      if (!CAL_DONE[mkey]) CAL_DONE[mkey] = [];
-      if (!CAL_ANOMALY[mkey]) CAL_ANOMALY[mkey] = [];
-      CAL_DONE[mkey] = CAL_DONE[mkey].filter(d => d !== r.day);
-      CAL_ANOMALY[mkey] = CAL_ANOMALY[mkey].filter(d => d !== r.day);
-
-      // r.anomaly フラグ OR state内のNG値で判定
-      let hasNg = !!r.anomaly;
-      if (!hasNg && r.state) {
-        hasNg = Object.values(r.state).some(s =>
-          ['daily','10days','monthly'].some(t => s[t] && s[t].some(v => v === 'ng'))
-        );
-      }
-
-      if (hasNg) CAL_ANOMALY[mkey].push(r.day);
-      else CAL_DONE[mkey].push(r.day);
-    });
+    all.forEach(applyInspectionRecord);
   }
+
+  // Firebase Integration Start
+  // Firestoreのスナップショットをカレンダーに反映（モジュールスクリプトから呼び出す）
+  window._applyFirestoreSnapshots = function(records) {
+    records.forEach(applyInspectionRecord);
+    if (typeof buildCalendar === 'function') buildCalendar();
+  };
+  // Firebase Integration End
 
   /* ─── GO HOME ─── */
   function goHome() {
@@ -10426,5 +10531,64 @@ function isHoliday(dateObj) {
 
   </main><!-- /.pc-main -->
 </div><!-- /.pc-layout -->
+
+<!-- Firebase Integration Start -->
+<script type="module">
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp }
+                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyA6fxlaWUULIMT3bC-Ahul-izBUHziY6FI",
+    authDomain:        "daily-inspection-f0751.firebaseapp.com",
+    projectId:         "daily-inspection-f0751",
+    storageBucket:     "daily-inspection-f0751.firebasestorage.app",
+    messagingSenderId: "914637653048",
+    appId:             "1:914637653048:web:a04541807ca83439a152cd"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ── 書き込み ──
+  async function saveInspectionToFirestore(data) {
+    try {
+      await addDoc(collection(db, "inspections"), {
+        ...data,
+        createdAt: serverTimestamp()
+      });
+      console.log("Firestore保存成功");
+    } catch (error) {
+      console.error("Firestore保存エラー", error);
+    }
+  }
+
+  // ── リアルタイム読み込み（onSnapshot） ──
+  const q = query(collection(db, "inspections"), orderBy("createdAt", "asc"));
+
+  onSnapshot(q, (snapshot) => {
+    const records = snapshot.docs.map(doc => {
+      const d = doc.data();
+      return {
+        year:    d.year,
+        month:   d.month,
+        day:     d.day,
+        anomaly: d.anomaly,
+        state:   d.results || d.state || {},
+      };
+    }).filter(r => r.year !== undefined && r.day !== undefined);
+
+    if (typeof window._applyFirestoreSnapshots === 'function') {
+      window._applyFirestoreSnapshots(records);
+    }
+    console.log(`Firestore同期: ${records.length}件`);
+  }, (error) => {
+    console.error("Firestoreリアルタイム受信エラー", error);
+  });
+
+  window.saveInspectionToFirestore = saveInspectionToFirestore;
+</script>
+<!-- Firebase Integration End -->
+
 </body>
 </html>
