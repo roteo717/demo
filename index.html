@@ -7447,9 +7447,14 @@
     buildEquipList(); // 初期描画（admSyncより先に呼ぶ暫定描画）
 
     // ── 管理者設定の完全ロード & EQUIP_DATA同期 ──
-    // admSync/admMigrate は後続の<script>ブロックで定義されるため、
-    // setTimeout(0) で全スクリプト解析後に実行する
-    setTimeout(function() {
+    // admSync/admMigrate/ADM は後続の<script>ブロックで定義されるため、
+    // setTimeout(0) で全スクリプト解析後に実行する。
+    // 万一 ADM がまだ未定義の場合は 50ms ずつリトライする。
+    function _doAdmInit() {
+      if (typeof ADM === 'undefined') {
+        setTimeout(_doAdmInit, 50);
+        return;
+      }
       try {
         var saved = JSON.parse(localStorage.getItem('admData') || 'null');
         if (saved && saved.equips) {
@@ -7469,7 +7474,8 @@
       } catch(e) { console.error('admData同期エラー(点検者init):', e); }
       // ログイン画面ユーザー一覧を描画
       if (typeof renderLoginUsers === 'function') renderLoginUsers();
-    }, 0);
+    }
+    setTimeout(_doAdmInit, 0);
     const savedUser = localStorage.getItem('loggedInUser');
     if (savedUser) {
       var homeNameEl = document.querySelector('.home-user-name');
@@ -9916,6 +9922,8 @@ function renderMonthlySheet() {
   var monthRecs = inspections.filter(function(r) {
     return r.year === year && r.month === month && (r.equips || []).indexOf(equipId) >= 0;
   });
+  /* 異常内容テーブルを日にち順（昇順）で表示するため、先に並べ替える */
+  monthRecs.sort(function(a, b) { return a.day - b.day; });
   function getStateForDay(d) {
     var rec = monthRecs.find(function(r){ return r.day === d; });
     return rec && rec.state ? (rec.state[equipId] || {}) : {};
@@ -10186,15 +10194,17 @@ function renderMonthlySheet() {
     var dateLabel = String(rec.day).padStart(2,'0') + '日';
     var inspector = rec.inspector || '';
     (s['daily'] || []).forEach(function(val, idx) {
-      if (val === 'ng' && dailyItems[idx]) recoveryRows.push({ date: dateLabel, content: dailyItems[idx].name, inspector: inspector });
+      if (val === 'ng' && dailyItems[idx]) recoveryRows.push({ day: rec.day, date: dateLabel, content: dailyItems[idx].name, inspector: inspector });
     });
     (s['10days'] || []).forEach(function(val, idx) {
-      if (val === 'ng' && tenDayItems[idx]) recoveryRows.push({ date: dateLabel, content: tenDayItems[idx].name, inspector: inspector });
+      if (val === 'ng' && tenDayItems[idx]) recoveryRows.push({ day: rec.day, date: dateLabel, content: tenDayItems[idx].name, inspector: inspector });
     });
     (s['monthly'] || []).forEach(function(val, idx) {
-      if (val === 'ng' && monthlyItems[idx]) recoveryRows.push({ date: dateLabel, content: monthlyItems[idx].name, inspector: inspector });
+      if (val === 'ng' && monthlyItems[idx]) recoveryRows.push({ day: rec.day, date: dateLabel, content: monthlyItems[idx].name, inspector: inspector });
     });
   });
+  /* 万全を期して日にち順（昇順）で並べ直す */
+  recoveryRows.sort(function(a, b) { return a.day - b.day; });
 
   html += '<table class="ms-recovery-table">';
   html += '<colgroup>';
