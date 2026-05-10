@@ -1558,6 +1558,21 @@
     position: relative; overflow: hidden;
   }
   .adm-settings-card:active { transform: scale(0.97); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .adm-settings-card.scard-dragging { opacity: 0.35; transform: scale(0.97); box-shadow: none; transition: none; }
+  .adm-settings-card.scard-drag-over { box-shadow: 0 0 0 2.5px var(--blue); transform: scale(1.02); }
+  .scard-drag-handle {
+    position: absolute; top: 10px; right: 10px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: grab; border-radius: 6px;
+    opacity: 0; transition: opacity 0.15s;
+    touch-action: none;
+    z-index: 2;
+  }
+  .scard-drag-handle:active { cursor: grabbing; }
+  .adm-settings-card:hover .scard-drag-handle,
+  .adm-settings-card.scard-touch-active .scard-drag-handle { opacity: 1; }
+  .adm-settings-card { position: relative; }
   .adm-settings-card-top {
     display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%;
   }
@@ -1609,8 +1624,21 @@
   .adm-list-row {
     display: flex; align-items: center; padding: 13px 16px;
     border-bottom: 1px solid #F5F5F5; gap: 10px;
+    transition: background 0.1s;
   }
   .adm-list-row:last-child { border-bottom: none; }
+  /* ─ 行ドラッグ ─ */
+  .adm-row-drag-handle {
+    width: 24px; height: 36px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: grab; color: #D0D0D0; touch-action: none;
+    transition: color 0.15s; margin-left: -4px;
+  }
+  .adm-row-drag-handle:hover { color: var(--text-sub); }
+  .adm-row-drag-handle:active { cursor: grabbing; }
+  .adm-list-row.row-is-dragging { opacity: 0.25; background: var(--bg) !important; }
+  .adm-list-row.row-drop-above { box-shadow: inset 0 2px 0 var(--blue); }
+  .adm-list-row.row-drop-below { box-shadow: inset 0 -2px 0 var(--blue); }
   .adm-list-name { font-size: 15px; font-weight: 500; margin-bottom: 2px; }
   .adm-list-sub { font-size: 12px; color: var(--text-sub); white-space: nowrap; }
   .adm-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
@@ -2762,6 +2790,8 @@
     border-color: #EBEBEB;
     gap: 0;
   }
+  #screen-admin[style*="flex"] .scard-drag-handle { opacity: 0; }
+  #screen-admin[style*="flex"] .adm-settings-card:hover .scard-drag-handle { opacity: 1; }
   #screen-admin[style*="flex"] .adm-settings-card-top {
     flex-direction: row;
     align-items: center;
@@ -3197,6 +3227,71 @@
     overflow-y: auto;
     padding: 24px 32px 48px !important;
     background: #F4F6F9 !important;
+  }
+
+  /* ══════════════════════════════════════════
+     PCレイアウト完全修正：
+     モバイル CSS の max-width: 390px をすべて上書き
+     ══════════════════════════════════════════ */
+
+  /* phone-wrapper 内の全スクリーン：幅制限を完全解除 */
+  .phone-wrapper .screen,
+  .phone-wrapper .screen.hidden,
+  .phone-wrapper .screen.active,
+  .phone-wrapper .screen.active.settled,
+  .screen.active.settled {
+    max-width: none !important;
+    width: 100% !important;
+    left: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 個別スクリーンの max-width 解除 */
+  #screen-role,
+  #screen-inspector,
+  #screen-manager,
+  #screen-home,
+  #screen-admin {
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  /* pc-main が全高さを確保 */
+  .pc-main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .pc-main .phone-wrapper {
+    flex: 1;
+    min-height: 100vh;
+  }
+
+  /* ロール選択：全幅・全高でセンタリング */
+  #screen-role {
+    width: 100% !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(140deg, #EEF4FF 0%, #F5F7FA 65%) !important;
+  }
+
+  /* ログイン画面（点検者・管理者）全幅 */
+  #screen-inspector,
+  #screen-manager {
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: var(--card) !important;
+  }
+
+  /* ホーム画面全幅 */
+  #screen-home {
+    min-height: 100vh !important;
   }
 }
 </style>
@@ -5369,7 +5464,10 @@
     <div class="adm-settings-menu" id="adm-settings-menu">
       <div class="adm-settings-grid">
 
-        <div class="adm-settings-card" onclick="showAdmSubTab('lines')">
+        <div class="adm-settings-card" data-card-id="lines" onclick="showAdmSubTab('lines')">
+          <div class="scard-drag-handle" onclick="event.stopPropagation()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-small)" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+          </div>
           <div class="adm-settings-card-top">
             <div class="adm-settings-card-icon" style="background:#EEF4FF;">
               <svg viewBox="0 0 24 24" stroke="var(--blue)"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
@@ -5389,7 +5487,10 @@
           </div>
         </div>
 
-        <div class="adm-settings-card" onclick="showAdmSubTab('equips')">
+        <div class="adm-settings-card" data-card-id="equips" onclick="showAdmSubTab('equips')">
+          <div class="scard-drag-handle" onclick="event.stopPropagation()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-small)" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+          </div>
           <div class="adm-settings-card-top">
             <div class="adm-settings-card-icon" style="background:#F3EEFF;">
               <svg viewBox="0 0 24 24" stroke="#7C3AED"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -5409,7 +5510,10 @@
           </div>
         </div>
 
-        <div class="adm-settings-card" onclick="showAdmSubTab('items')">
+        <div class="adm-settings-card" data-card-id="items" onclick="showAdmSubTab('items')">
+          <div class="scard-drag-handle" onclick="event.stopPropagation()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-small)" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+          </div>
           <div class="adm-settings-card-top">
             <div class="adm-settings-card-icon" style="background:#E8F5E9;">
               <svg viewBox="0 0 24 24" stroke="#2E7D32"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><polyline points="9 8 11 10 15 6"/></svg>
@@ -5429,7 +5533,10 @@
           </div>
         </div>
 
-        <div class="adm-settings-card" onclick="showAdmSubTab('assign')">
+        <div class="adm-settings-card" data-card-id="assign" onclick="showAdmSubTab('assign')">
+          <div class="scard-drag-handle" onclick="event.stopPropagation()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-small)" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+          </div>
           <div class="adm-settings-card-top">
             <div class="adm-settings-card-icon" style="background:#FFF3E0;">
               <svg viewBox="0 0 24 24" stroke="#E65100"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
@@ -5449,7 +5556,10 @@
           </div>
         </div>
 
-        <div class="adm-settings-card" onclick="showAdmSubTab('users')">
+        <div class="adm-settings-card" data-card-id="users" onclick="showAdmSubTab('users')">
+          <div class="scard-drag-handle" onclick="event.stopPropagation()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-small)" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+          </div>
           <div class="adm-settings-card-top">
             <div class="adm-settings-card-icon" style="background:#FDECEC;">
               <svg viewBox="0 0 24 24" stroke="var(--red)"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
@@ -5469,7 +5579,10 @@
           </div>
         </div>
 
-        <div class="adm-settings-card" onclick="showAdmSubTab('holidays')">
+        <div class="adm-settings-card" data-card-id="holidays" onclick="showAdmSubTab('holidays')">
+          <div class="scard-drag-handle" onclick="event.stopPropagation()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-small)" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+          </div>
           <div class="adm-settings-card-top">
             <div class="adm-settings-card-icon" style="background:#FFF8E1;">
               <svg viewBox="0 0 24 24" stroke="#F59E0B"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="16" r="1" fill="#F59E0B"/><circle cx="12" cy="16" r="1" fill="#F59E0B"/><circle cx="16" cy="16" r="1" fill="#F59E0B"/></svg>
@@ -5940,7 +6053,7 @@
   function goBack()        { showScreen('screen-role'); }
 
   function selectUser(btn) {
-    document.querySelectorAll('.user-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('#screen-inspector .user-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
   }
 
@@ -6445,7 +6558,7 @@
       else favs.push(lineId);
       localStorage.setItem(pcFavKey(), JSON.stringify(favs));
       buildPcLineList();
-    } catch(e) {}
+    } catch(_err) {}
   }
 
   function buildPcLineList() {
@@ -7472,7 +7585,7 @@
     if (savedUser) {
       var homeNameEl = document.querySelector('.home-user-name');
       if (homeNameEl) homeNameEl.textContent = savedUser + ' さん';
-      document.querySelectorAll('.user-btn').forEach(b => {
+      document.querySelectorAll('#screen-inspector .user-btn').forEach(b => {
         b.classList.remove('selected');
         if (b.textContent.trim() === savedUser) b.classList.add('selected');
       });
@@ -7668,13 +7781,12 @@ function admSync() {
         }
       }
     });
-    var fallback = ['点検項目なし'];
     EQUIP_DATA.push({
       id: eq.id,
       name: eq.name,
-      itemsDaily:   itemsDaily.length   ? itemsDaily   : [],
-      items10:      items10.length      ? items10      : (itemsMonthly.length ? itemsMonthly : fallback),
-      itemsMonthly: itemsMonthly.length ? itemsMonthly : (items10.length      ? items10      : fallback)
+      itemsDaily:   itemsDaily,
+      items10:      items10,
+      itemsMonthly: itemsMonthly
     });
   });
   if (typeof buildEquipList === 'function') buildEquipList();
@@ -7798,7 +7910,7 @@ function showAdmTab(tab) {
 
   if (tab==='dashboard') { document.getElementById('adm-panel-dashboard').style.display='block'; if (menu) menu.classList.remove('visible'); renderAdmDashboard(); }
   if (tab==='approval')  { document.getElementById('adm-panel-approval').style.display='block'; if (menu) menu.classList.remove('visible'); renderAdmApproval(); }
-  if (tab==='settings')  { showAdmSettingsMenu(); }
+  if (tab==='settings')  { showAdmSettingsMenu(); initSettingsCardDrag(); }
 }
 
 function updateSettingsCardCounts() {
@@ -7843,7 +7955,167 @@ function showAdmSettingsMenu() {
   var menu = document.getElementById('adm-settings-menu');
   if (menu) menu.classList.add('visible');
   updateSettingsCardCounts();
+  // 保存された順番を適用
+  applySettingsCardOrder();
 }
+
+/* ─── 設定カード並び替え ─── */
+var SCARD_DEFAULT_ORDER = ['lines','equips','items','assign','users','holidays'];
+
+function getSettingsCardOrder() {
+  try {
+    var saved = localStorage.getItem('settingsCardOrder');
+    if (saved) {
+      var arr = JSON.parse(saved);
+      // 未知のIDを除外し、新しいIDが追加された場合は末尾に補完
+      var valid = arr.filter(function(id){ return SCARD_DEFAULT_ORDER.indexOf(id) >= 0; });
+      SCARD_DEFAULT_ORDER.forEach(function(id){ if (valid.indexOf(id) < 0) valid.push(id); });
+      return valid;
+    }
+  } catch(e) {}
+  return SCARD_DEFAULT_ORDER.slice();
+}
+
+function saveSettingsCardOrder() {
+  var grid = document.querySelector('#adm-settings-menu .adm-settings-grid');
+  if (!grid) return;
+  var order = Array.from(grid.querySelectorAll('.adm-settings-card[data-card-id]'))
+                   .map(function(c){ return c.dataset.cardId; });
+  localStorage.setItem('settingsCardOrder', JSON.stringify(order));
+}
+
+function applySettingsCardOrder() {
+  var grid = document.querySelector('#adm-settings-menu .adm-settings-grid');
+  if (!grid) return;
+  var order = getSettingsCardOrder();
+  order.forEach(function(id) {
+    var card = grid.querySelector('[data-card-id="' + id + '"]');
+    if (card) grid.appendChild(card);
+  });
+}
+
+function initSettingsCardDrag() {
+  var grid = document.querySelector('#adm-settings-menu .adm-settings-grid');
+  if (!grid || grid._dragInited) return;
+  grid._dragInited = true;
+
+  var dragging = null;
+  var touchSrc = null;
+  var touchClone = null;
+
+  // ── マウス（PC）ドラッグ ──
+  grid.addEventListener('dragstart', function(e) {
+    var handle = e.target.closest('.scard-drag-handle');
+    var card   = e.target.closest('.adm-settings-card');
+    if (!handle || !card) { e.preventDefault(); return; }
+    dragging = card;
+    card.classList.add('scard-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  grid.addEventListener('dragend', function() {
+    if (dragging) { dragging.classList.remove('scard-dragging'); dragging = null; }
+    grid.querySelectorAll('.scard-drag-over').forEach(function(c){ c.classList.remove('scard-drag-over'); });
+    saveSettingsCardOrder();
+  });
+
+  grid.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    var over = e.target.closest('.adm-settings-card');
+    if (!over || over === dragging) return;
+    grid.querySelectorAll('.scard-drag-over').forEach(function(c){ c.classList.remove('scard-drag-over'); });
+    over.classList.add('scard-drag-over');
+    // 上半分なら前に、下半分なら後ろに挿入
+    var rect = over.getBoundingClientRect();
+    var mid  = rect.top + rect.height / 2;
+    if (e.clientY < mid) {
+      grid.insertBefore(dragging, over);
+    } else {
+      grid.insertBefore(dragging, over.nextSibling);
+    }
+  });
+
+  grid.addEventListener('dragleave', function(e) {
+    var over = e.target.closest('.adm-settings-card');
+    if (over) over.classList.remove('scard-drag-over');
+  });
+
+  grid.addEventListener('drop', function(e) {
+    e.preventDefault();
+    grid.querySelectorAll('.scard-drag-over').forEach(function(c){ c.classList.remove('scard-drag-over'); });
+    saveSettingsCardOrder();
+  });
+
+  // ── タッチ（モバイル）ドラッグ ──
+  grid.addEventListener('touchstart', function(e) {
+    var handle = e.target.closest('.scard-drag-handle');
+    if (!handle) return;
+    e.preventDefault();
+    touchSrc = handle.closest('.adm-settings-card');
+    touchSrc.classList.add('scard-dragging', 'scard-touch-active');
+    // フローティングクローン作成
+    touchClone = touchSrc.cloneNode(true);
+    var rect = touchSrc.getBoundingClientRect();
+    touchClone.style.cssText = [
+      'position:fixed','width:'+rect.width+'px','left:'+rect.left+'px',
+      'top:'+rect.top+'px','z-index:9999','pointer-events:none',
+      'opacity:0.9','box-shadow:0 8px 24px rgba(0,0,0,0.18)',
+      'transition:none','border-radius:var(--radius)','background:var(--card)'
+    ].join(';');
+    document.body.appendChild(touchClone);
+  }, { passive: false });
+
+  grid.addEventListener('touchmove', function(e) {
+    if (!touchSrc || !touchClone) return;
+    e.preventDefault();
+    var t = e.touches[0];
+    var rect = touchSrc.getBoundingClientRect();
+    touchClone.style.left = (t.clientX - rect.width / 2) + 'px';
+    touchClone.style.top  = (t.clientY - rect.height / 2) + 'px';
+    // ホバー判定
+    touchClone.style.display = 'none';
+    var el = document.elementFromPoint(t.clientX, t.clientY);
+    touchClone.style.display = '';
+    var over = el && el.closest('.adm-settings-card');
+    grid.querySelectorAll('.scard-drag-over').forEach(function(c){ c.classList.remove('scard-drag-over'); });
+    if (over && over !== touchSrc) {
+      over.classList.add('scard-drag-over');
+      var r2 = over.getBoundingClientRect();
+      if (t.clientY < r2.top + r2.height / 2) {
+        grid.insertBefore(touchSrc, over);
+      } else {
+        grid.insertBefore(touchSrc, over.nextSibling);
+      }
+    }
+  }, { passive: false });
+
+  function touchEnd() {
+    if (!touchSrc) return;
+    grid.querySelectorAll('.scard-drag-over').forEach(function(c){ c.classList.remove('scard-drag-over'); });
+    touchSrc.classList.remove('scard-dragging', 'scard-touch-active');
+    if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
+    touchSrc = null;
+    saveSettingsCardOrder();
+  }
+  grid.addEventListener('touchend',    touchEnd, { passive: false });
+  grid.addEventListener('touchcancel', touchEnd, { passive: false });
+
+  // ハンドルにdraggable属性を付与
+  grid.querySelectorAll('.adm-settings-card[data-card-id]').forEach(function(card) {
+    var handle = card.querySelector('.scard-drag-handle');
+    if (handle) {
+      handle.addEventListener('mousedown', function() { card.draggable = true; });
+      handle.addEventListener('mouseup',   function() { card.draggable = false; });
+    }
+    card.draggable = false; // デフォルトはfalse（カードクリックを妨げない）
+  });
+}
+
+// 初期化（DOMロード後）
+document.addEventListener('DOMContentLoaded', function() {
+  applySettingsCardOrder();
+  initSettingsCardDrag();
+});
 
 var ADM_PANEL_LABELS = {
   lines: 'ライン管理', equips: '設備管理',
@@ -7951,7 +8223,9 @@ function _renderUserList(type) {
   arr.forEach(function(u) {
     var row = document.createElement('div');
     row.className = 'adm-list-row';
+    row.dataset.itemId = u.id;
     row.innerHTML =
+      DRAG_HDL +
       '<div style="flex:1">' +
         '<div class="adm-list-name">' + esc(u.name) + '</div>' +
         '<div class="adm-list-sub">ID: ' + esc(u.id) + '</div>' +
@@ -7961,6 +8235,16 @@ function _renderUserList(type) {
       '</div>';
     el.appendChild(row);
   });
+  /* 再描画のたびに再初期化 */
+  el._listDragInited = false;
+  initListDrag(elId,
+    function(){ return type==='inspector' ? ADM.inspectors : ADM.managers; },
+    function(arr){
+      if (type==='inspector') ADM.inspectors = arr;
+      else                    ADM.managers   = arr;
+    },
+    function(){ admRenderUsers(); renderLoginUsers(); }
+  );
 }
 
 function admOpenUserModal(type) {
@@ -8019,6 +8303,138 @@ function admDeleteUser(type, id) {
 var SVG_EDIT = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
 var SVG_DEL  = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1v2"/></svg>';
 var SVG_CHEV = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>';
+var SVG_DRAG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>';
+var DRAG_HDL = '<div class="adm-row-drag-handle" title="ドラッグで並び替え" onclick="event.stopPropagation()">'+SVG_DRAG+'</div>';
+
+/* ══════════════════════════════════════════
+   汎用リスト並び替え（ライン・設備・点検項目・ユーザー共通）
+   ══════════════════════════════════════════ */
+var _rowDragHandleDown = false;
+document.addEventListener('mouseup',   function(){ _rowDragHandleDown = false; });
+document.addEventListener('touchend',  function(){ _rowDragHandleDown = false; }, {passive:true});
+document.addEventListener('touchcancel',function(){ _rowDragHandleDown = false; }, {passive:true});
+
+/**
+ * @param {string}   containerId  adm-list-card の id
+ * @param {Function} getArr       現在の配列を返す
+ * @param {Function} setArr       並び替え後の配列をセット
+ * @param {Function} afterSave    admSave() 後に呼ぶ再描画
+ */
+function initListDrag(containerId, getArr, setArr, afterSave) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  // すでにリスナー登録済みならスキップ
+  if (el._listDragInited) return;
+  el._listDragInited = true;
+
+  var dragging   = null;
+  var touchSrc   = null;
+  var touchClone = null;
+
+  function clearHighlight() {
+    el.querySelectorAll('.row-drop-above,.row-drop-below').forEach(function(r){
+      r.classList.remove('row-drop-above','row-drop-below');
+    });
+  }
+  function commitOrder() {
+    clearHighlight();
+    var ids = Array.from(el.querySelectorAll('.adm-list-row[data-item-id]'))
+                   .map(function(r){ return r.dataset.itemId; });
+    if (!ids.length) return;
+    var arr    = getArr();
+    var sorted = ids.map(function(id){ return arr.find(function(a){ return a.id===id; }); }).filter(Boolean);
+    arr.forEach(function(x){ if (!sorted.find(function(s){ return s.id===x.id; })) sorted.push(x); });
+    setArr(sorted);
+    admSave();
+    if (afterSave) afterSave();
+    admToast('✓ 順番を変更しました');
+  }
+  function positionOver(over, clientY) {
+    if (!over || over===dragging || over===touchSrc) return;
+    clearHighlight();
+    var rect = over.getBoundingClientRect();
+    var isTop = clientY < rect.top + rect.height / 2;
+    over.classList.add(isTop ? 'row-drop-above' : 'row-drop-below');
+    var src = dragging || touchSrc;
+    if (src) {
+      if (isTop) el.insertBefore(src, over);
+      else       el.insertBefore(src, over.nextSibling);
+    }
+  }
+
+  /* ── マウス ── */
+  el.addEventListener('mousedown', function(e) {
+    if (e.target.closest('.adm-row-drag-handle')) {
+      _rowDragHandleDown = true;
+      var row = e.target.closest('.adm-list-row[data-item-id]');
+      if (row) row.setAttribute('draggable','true');
+    }
+  });
+  el.addEventListener('dragstart', function(e) {
+    if (!_rowDragHandleDown) { e.preventDefault(); return; }
+    var row = e.target.closest('.adm-list-row[data-item-id]');
+    if (!row) { e.preventDefault(); return; }
+    dragging = row;
+    row.classList.add('row-is-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', row.dataset.itemId);
+  });
+  el.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    positionOver(e.target.closest('.adm-list-row[data-item-id]'), e.clientY);
+  });
+  el.addEventListener('dragleave', function(e) {
+    var over = e.target.closest('.adm-list-row[data-item-id]');
+    if (over) { over.classList.remove('row-drop-above','row-drop-below'); }
+  });
+  el.addEventListener('dragend', function() {
+    if (dragging) { dragging.classList.remove('row-is-dragging'); dragging.removeAttribute('draggable'); }
+    _rowDragHandleDown = false;
+    commitOrder();
+    dragging = null;
+  });
+  el.addEventListener('drop', function(e) { e.preventDefault(); });
+
+  /* ── タッチ ── */
+  el.addEventListener('touchstart', function(e) {
+    var handle = e.target.closest('.adm-row-drag-handle');
+    if (!handle) return;
+    e.preventDefault();
+    touchSrc = handle.closest('.adm-list-row[data-item-id]');
+    if (!touchSrc) return;
+    touchSrc.classList.add('row-is-dragging');
+    var rect = touchSrc.getBoundingClientRect();
+    touchClone = touchSrc.cloneNode(true);
+    touchClone.style.cssText = [
+      'position:fixed','z-index:9999','pointer-events:none',
+      'width:'+rect.width+'px','left:'+rect.left+'px','top:'+rect.top+'px',
+      'opacity:0.88','box-shadow:0 6px 20px rgba(0,0,0,0.14)',
+      'background:var(--card)','border-radius:0','transition:none'
+    ].join(';');
+    document.body.appendChild(touchClone);
+  }, {passive:false});
+  el.addEventListener('touchmove', function(e) {
+    if (!touchSrc || !touchClone) return;
+    e.preventDefault();
+    var t = e.touches[0];
+    var rect = touchSrc.getBoundingClientRect();
+    touchClone.style.top  = (t.clientY - rect.height/2) + 'px';
+    touchClone.style.left = rect.left + 'px';
+    touchClone.style.display = 'none';
+    var hit = document.elementFromPoint(t.clientX, t.clientY);
+    touchClone.style.display = '';
+    positionOver(hit && hit.closest('.adm-list-row[data-item-id]'), t.clientY);
+  }, {passive:false});
+  function touchEnd() {
+    if (!touchSrc) return;
+    touchSrc.classList.remove('row-is-dragging');
+    if (touchClone) { document.body.removeChild(touchClone); touchClone=null; }
+    commitOrder();
+    touchSrc = null;
+  }
+  el.addEventListener('touchend',    touchEnd, {passive:false});
+  el.addEventListener('touchcancel', touchEnd, {passive:false});
+}
 
 /* ─ LINES ─ */
 function renderLines() {
@@ -8030,13 +8446,20 @@ function renderLines() {
     var cnt = ADM.equips.filter(function(e){ return e.lineId===ln.id; }).length;
     var row = document.createElement('div');
     row.className = 'adm-list-row';
-    row.innerHTML = '<div style="flex:1"><div class="adm-list-name">'+esc(ln.name)+'</div><div class="adm-list-sub">設備 '+cnt+'台</div></div>' +
+    row.dataset.itemId = ln.id;
+    row.innerHTML = DRAG_HDL +
+      '<div style="flex:1"><div class="adm-list-name">'+esc(ln.name)+'</div><div class="adm-list-sub">設備 '+cnt+'台</div></div>' +
       '<div class="adm-row-actions">' +
         '<button class="adm-btn-edit" data-t="line" data-m="edit" data-id="'+esc(ln.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
         '<button class="adm-btn-del"  data-t="line" data-id="'+esc(ln.id)+'" onclick="btnDel(this)">'+SVG_DEL+'</button>' +
       '</div>';
     el.appendChild(row);
   });
+  initListDrag('adm-lines-list',
+    function(){ return ADM.lines; },
+    function(arr){ ADM.lines = arr; },
+    function(){ renderLines(); renderLoginUsers(); }
+  );
 }
 
 /* ─ EQUIPS ─ */
@@ -8067,13 +8490,30 @@ function admRenderEquips() {
     var assigns = ADM.assigns[eq.id] || [];
     var row = document.createElement('div');
     row.className = 'adm-list-row';
-    row.innerHTML = '<div style="flex:1"><div class="adm-list-name">'+esc(eq.id)+'　'+esc(eq.name)+'</div><div class="adm-list-sub">'+(ln?esc(ln.name):'-')+'　点検項目 '+assigns.length+'件</div></div>' +
+    row.dataset.itemId = eq.id;
+    row.innerHTML = DRAG_HDL +
+      '<div style="flex:1"><div class="adm-list-name">'+esc(eq.id)+'　'+esc(eq.name)+'</div><div class="adm-list-sub">'+(ln?esc(ln.name):'-')+'　点検項目 '+assigns.length+'件</div></div>' +
       '<div class="adm-row-actions">' +
         '<button class="adm-btn-edit" data-t="equip" data-m="edit" data-id="'+esc(eq.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
         '<button class="adm-btn-del"  data-t="equip" data-id="'+esc(eq.id)+'" onclick="btnDel(this)">'+SVG_DEL+'</button>' +
       '</div>';
     el.appendChild(row);
   });
+  // フィルター表示時は全体の順番を維持するため containerId に専用関数を用意
+  var containerId = 'adm-equips-list';
+  var elRef = el;
+  if (elRef._listDragInited) { elRef._listDragInited = false; } // フィルター変更時は再初期化
+  initListDrag(containerId,
+    function(){ return ADM.equips; },
+    function(arr){
+      // フィルター中は表示行だけ並び替え、残りはそのまま後ろに続ける
+      var displayedIds = Array.from(elRef.querySelectorAll('.adm-list-row[data-item-id]')).map(function(r){ return r.dataset.itemId; });
+      var newEquips = displayedIds.map(function(id){ return ADM.equips.find(function(e){ return e.id===id; }); }).filter(Boolean);
+      ADM.equips.forEach(function(e){ if (!newEquips.find(function(n){ return n.id===e.id; })) newEquips.push(e); });
+      ADM.equips = newEquips;
+    },
+    function(){ admRenderEquips(); }
+  );
 }
 
 /* ─ ITEMS ─ */
@@ -8097,7 +8537,6 @@ function renderItems() {
   var grid = '<div class="adm-items-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start;">';
   cols.forEach(function(col) {
     grid += '<div>';
-    /* ヘッダー: タイトル左 + 追加ボタン右 */
     grid += '<div class="adm-section-hdr">' +
       '<span class="adm-section-title">' +
         '<span style="padding:2px 10px;border-radius:20px;background:' + col.badgeBg + ';color:' + col.badgeColor + ';font-weight:700;font-size:12px;">' + col.label + '</span>' +
@@ -8108,13 +8547,15 @@ function renderItems() {
         '追加' +
       '</button>' +
     '</div>';
-    /* カード */
-    grid += '<div class="adm-list-card">';
+    /* カード（安定したIDを付与） */
+    var subId = 'adm-items-sublist-' + col.key;
+    grid += '<div class="adm-list-card" id="'+subId+'">';
     if (!groups[col.key] || !groups[col.key].length) {
       grid += '<div class="adm-empty" style="font-size:12px;padding:14px;">項目なし</div>';
     } else {
       groups[col.key].forEach(function(item) {
-        grid += '<div class="adm-list-row">' +
+        grid += '<div class="adm-list-row" data-item-id="'+esc(item.id)+'">' +
+          DRAG_HDL +
           '<div style="flex:1;"><span class="adm-list-name">'+esc(item.name)+'</span></div>' +
           '<div class="adm-row-actions">' +
             '<button class="adm-btn-edit" data-t="item" data-m="edit" data-id="'+esc(item.id)+'" onclick="btnModal(this)">'+SVG_EDIT+'</button>' +
@@ -8126,6 +8567,22 @@ function renderItems() {
   });
   grid += '</div>';
   el.innerHTML = grid;
+
+  /* 各列に並び替えを初期化（innerHTML 再生成後は _listDragInited をリセット） */
+  cols.forEach(function(col) {
+    var subId = 'adm-items-sublist-' + col.key;
+    var subEl = document.getElementById(subId);
+    if (subEl) subEl._listDragInited = false;
+    initListDrag(subId,
+      function(){ return ADM.items.filter(function(x){ return (x.type||'10days')===col.key; }); },
+      function(arr){
+        // このタイプの項目を arr の順番に並び替え、他のタイプは保持
+        var others = ADM.items.filter(function(x){ return (x.type||'10days')!==col.key; });
+        ADM.items = arr.concat(others);
+      },
+      function(){ renderItems(); }
+    );
+  });
 }
 
 /* 追加ボタンから種別を事前セットしてモーダルを開く */
@@ -8617,7 +9074,7 @@ function computeLiveDashData() {
   });
 
   /* 新しい順に並べ替え */
-  anomalyList.sort(function(a, b){ return b.date > a.date ? 1 : -1; });
+  anomalyList.sort(function(a, b){ return b.date > a.date ? 1 : b.date < a.date ? -1 : 0; });
 
   var doneCount = Object.keys(doneEquipSet).length;
   var anomalyCount = anomalyList.length;
@@ -8746,7 +9203,7 @@ function computeLiveAprData() {
     });
   });
 
-  var sortDesc = function(a, b){ return b.date > a.date ? 1 : -1; };
+  var sortDesc = function(a, b){ return b.date > a.date ? 1 : b.date < a.date ? -1 : 0; };
   tenDay.sort(sortDesc);
   monthly.sort(sortDesc);
   return { tenDay: tenDay, monthly: monthly };
@@ -9917,8 +10374,23 @@ function renderMonthlySheet() {
   /* 異常内容テーブルを日にち順（昇順）で表示するため、先に並べ替える */
   monthRecs.sort(function(a, b) { return a.day - b.day; });
   function getStateForDay(d) {
-    var rec = monthRecs.find(function(r){ return r.day === d; });
-    return rec && rec.state ? (rec.state[equipId] || {}) : {};
+    // 同日に複数担当者が点検している場合、全レコードをマージして返す
+    var recs = monthRecs.filter(function(r){ return r.day === d; });
+    if (!recs.length) return {};
+    var merged = {};
+    recs.forEach(function(rec) {
+      var s = rec.state && rec.state[equipId];
+      if (!s) return;
+      ['daily','10days','monthly'].forEach(function(t) {
+        if (!s[t]) return;
+        if (!merged[t]) { merged[t] = s[t].slice(); return; }
+        // 既存値が未入力(''/undefined)のところだけ上書き
+        s[t].forEach(function(v, i) {
+          if ((merged[t][i] === '' || merged[t][i] == null) && v) merged[t][i] = v;
+        });
+      });
+    });
+    return merged;
   }
   function getInspectorForDay(d) {
     var rec = monthRecs.find(function(r){ return r.day === d; });
@@ -10580,7 +11052,8 @@ function buildHolidaySummary(y, m, data) {
 
 function getDowLabel(key) {
   var labels = ['日','月','火','水','木','金','土'];
-  var d = new Date(key);
+  var p = key.split('-');
+  var d = new Date(+p[0], +p[1] - 1, +p[2]); // ローカル時刻で生成（UTCバグ回避）
   return labels[d.getDay()];
 }
 
