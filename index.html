@@ -5968,7 +5968,11 @@
 
   function _prevBizDay(date) {
     let d = new Date(date);
-    do { d.setDate(d.getDate() - 1); } while (_isWeekendOrHoliday(d));
+    let guard = 0;
+    do {
+      d.setDate(d.getDate() - 1);
+      if (++guard > 60) break; // 最大60日遡って見つからなければ打ち切り
+    } while (_isWeekendOrHoliday(d));
     return d;
   }
 
@@ -7196,11 +7200,11 @@
         anomalyEquips.push({ eq, groups, ngItems, equipNg, equipOk });
       }
 
-      // カードをグリッドに追加（後で処理）
-      eq._groups  = groups;
-      eq._equipNg = equipNg;
-      eq._equipOk = equipOk;
-      eq._ngItems = ngItems;
+      // カードデータを別オブジェクトで保持（EQUIP_DATAを汚染しない）
+      eq.__confirmGroups  = groups;
+      eq.__confirmNg      = equipNg;
+      eq.__confirmOk      = equipOk;
+      eq.__confirmNgItems = ngItems;
     });
 
     // ── サマリーカード ──
@@ -7279,9 +7283,9 @@
 
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
-      const groups  = eq._groups;
-      const equipNg = eq._equipNg;
-      const ngItems = eq._ngItems;
+      const groups  = eq.__confirmGroups;
+      const equipNg = eq.__confirmNg;
+      const ngItems = eq.__confirmNgItems;
 
       // 全点検項目数
       const totalItems = groups.reduce((sum, g) => sum + g.items.length, 0);
@@ -7532,6 +7536,10 @@
   function goHome() {
     state = {};
     selectedEquips = EQUIP_DATA.slice(0, 6).map(e => e.id);
+    // PC版の選択状態もリセット
+    pcSelectedLines = [];
+    pcEquipSelection = {};
+    pcActiveLine = null;
     buildCalendar(); // Refresh calendar with latest data
     showScreen('screen-home');
   }
@@ -9284,7 +9292,7 @@ function renderDashLines() {
   var monthTitleEl = document.getElementById('dash-lines-month-label');
   if (monthTitleEl) monthTitleEl.textContent = now.getFullYear() + '年' + (now.getMonth() + 1) + '月';
   card.innerHTML = computeLiveDashData().lines.map(function(ln) {
-    var pct = Math.round(ln.done / ln.total * 100);
+    var pct = ln.total > 0 ? Math.min(100, Math.round(ln.done / ln.total * 100)) : 0;
     var fillClass = pct === 100 ? 'complete' : (pct < 40 ? 'warning' : '');
     return '<div class="da-line-row da-line-row-monthly">' +
       '<div class="da-line-name-block">' +
@@ -9691,7 +9699,7 @@ var APR2_DUMMY = (function() {
 function apr2GetData() {
   var raw = computeLiveAprData();
   var all = (raw.tenDay || []).concat(raw.monthly || []);
-  if (!all.length) return APR2_DUMMY;
+  if (!all.length) return []; // 実データなし（ダミーは表示しない）
 
   // ADMデータからequip→line対応を構築
   var equipLineMap = {};
@@ -10243,13 +10251,7 @@ function apr2SetPerPage(v) {
 
 /* ── 承認アクション ── */
 function apr2Approve(id) {
-  // ダミーデータの場合はダミー配列を更新
-  var dummyIdx = APR2_DUMMY.findIndex(function(d){ return d.id === id; });
-  if (dummyIdx >= 0) {
-    APR2_DUMMY[dummyIdx].status = 'approved';
-  } else {
-    saveAprStatusToStorage(id, 'approved');
-  }
+  saveAprStatusToStorage(id, 'approved');
   renderAdmApproval();
   admToast('✓ 承認しました');
 }
