@@ -3450,7 +3450,7 @@
     background: #fff;
   }
   .ms-apr-cell:active { opacity: 0.75; transform: scale(0.97); }
-  .ms-apr-approved { background: #E8F5E9; color: #1B5E20; }
+  .ms-apr-approved { background: #fff; color: #1B5E20; }
   .ms-apr-returned { background: #FFF3E0; color: #BF360C; }
   .ms-apr-pending  { background: #fff; color: #1565C0; }
   .ms-apr-ok  { color: #2E7D32; font-size: 11px; margin-right: 2px; }
@@ -6070,16 +6070,8 @@
   let calYear = _today.getFullYear(), calMonth = _today.getMonth(); // 今日の年月
   let selectedCalDay = _today.getDate(); // 今日の日付を選択
 
-  const CAL_DONE = {
-    '2024-3': [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,22,23,24,25,26],
-    '2024-4': [1,2,3,4,7,8,9,10,11,14,15,16,17,18],
-    '2024-5': [1,2,3,5,6,9,10],
-  };
-  const CAL_ANOMALY = {
-    '2024-3': [12,22],
-    '2024-4': [10,15],
-    '2024-5': [3],
-  };
+  // 担当者ごとの点検記録をまとめて保持（全レコード）
+  var ALL_INSPECTION_RECORDS = [];
   const PUBLIC_HOLIDAYS = {
     '2024-3': [20], // 春分の日
     '2024-4': [3,4,5,6], // 憲法記念日・みどりの日・こどもの日・振替
@@ -6115,8 +6107,14 @@
     const isCurrentMonth = now.getFullYear() === calYear && now.getMonth() === calMonth;
     const todayDay = isCurrentMonth ? now.getDate() : -1;
 
-    const done    = CAL_DONE[key]    || [];
-    const anomaly = CAL_ANOMALY[key] || [];
+    // ログイン中の担当者でフィルタ（担当者ごとのカレンダー表示）
+    const currentUser = localStorage.getItem('loggedInUser') || '';
+    const userRecs = ALL_INSPECTION_RECORDS.filter(function(r) {
+      return r.year === calYear && r.month === calMonth &&
+             (currentUser === '' || r.inspector === currentUser);
+    });
+    const done    = userRecs.filter(function(r){ return !r.anomaly; }).map(function(r){ return r.day; });
+    const anomaly = userRecs.filter(function(r){ return  r.anomaly; }).map(function(r){ return r.day; });
     const pubHols = PUBLIC_HOLIDAYS[key] || [];
     const weekends = getWeekends(calYear, calMonth);
 
@@ -7336,21 +7334,17 @@
     const key = 'inspections';
     let all = [];
     try { all = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
-    // Remove existing record for same day if any
-    all = all.filter(r => !(r.year === record.year && r.month === record.month && r.day === record.day));
+    // Remove existing record for same day AND same inspector only
+    all = all.filter(r => !(r.year === record.year && r.month === record.month && r.day === record.day && r.inspector === record.inspector));
     all.push(record);
     localStorage.setItem(key, JSON.stringify(all));
 
-    // Update in-memory calendar data
-    const mkey = `${record.year}-${record.month}`;
-    if (!CAL_DONE[mkey]) CAL_DONE[mkey] = [];
-    if (!CAL_ANOMALY[mkey]) CAL_ANOMALY[mkey] = [];
-    // Remove day from both lists first
-    CAL_DONE[mkey] = CAL_DONE[mkey].filter(d => d !== record.day);
-    CAL_ANOMALY[mkey] = CAL_ANOMALY[mkey].filter(d => d !== record.day);
-    // Add to appropriate list
-    if (hasAnomaly) CAL_ANOMALY[mkey].push(record.day);
-    else CAL_DONE[mkey].push(record.day);
+    // Update in-memory calendar data（担当者ごとに記録）
+    ALL_INSPECTION_RECORDS = ALL_INSPECTION_RECORDS.filter(function(r) {
+      return !(r.year === record.year && r.month === record.month &&
+               r.day === record.day && r.inspector === record.inspector);
+    });
+    ALL_INSPECTION_RECORDS.push(record);
 
     // 完了日時を現在時刻で更新
     var y = now.getFullYear();
@@ -7388,12 +7382,6 @@
 
   /* ─── LOAD SAVED INSPECTIONS INTO CALENDAR DATA ─── */
   function applyInspectionRecord(r) {
-    const mkey = `${r.year}-${r.month}`;
-    if (!CAL_DONE[mkey])    CAL_DONE[mkey]    = [];
-    if (!CAL_ANOMALY[mkey]) CAL_ANOMALY[mkey] = [];
-    CAL_DONE[mkey]    = CAL_DONE[mkey].filter(d => d !== r.day);
-    CAL_ANOMALY[mkey] = CAL_ANOMALY[mkey].filter(d => d !== r.day);
-
     let hasNg = !!r.anomaly;
     if (!hasNg && r.state) {
       hasNg = Object.values(r.state).some(s =>
@@ -7405,9 +7393,12 @@
         ['daily','10days','monthly'].some(t => s[t] && s[t].some(v => v === 'ng'))
       );
     }
-
-    if (hasNg) CAL_ANOMALY[mkey].push(r.day);
-    else       CAL_DONE[mkey].push(r.day);
+    // 同一担当者・同一日のレコードは上書き
+    ALL_INSPECTION_RECORDS = ALL_INSPECTION_RECORDS.filter(function(rec) {
+      return !(rec.year === r.year && rec.month === r.month &&
+               rec.day === r.day && rec.inspector === r.inspector);
+    });
+    ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
   }
 
   function loadSavedInspections() {
@@ -7419,6 +7410,7 @@
   // Firebase Integration Start
   // Firestoreのスナップショットをカレンダーに反映（モジュールスクリプトから呼び出す）
   window._applyFirestoreSnapshots = function(records) {
+    ALL_INSPECTION_RECORDS = []; // Firestoreから全件再構築
     records.forEach(applyInspectionRecord);
     if (typeof buildCalendar === 'function') buildCalendar();
   };
