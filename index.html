@@ -7693,11 +7693,7 @@ function admMigrate() {
       item.type = def ? def.type : '10days';
     }
   });
-  // 2. デフォルト項目の名称が変わっていたら既存データも更新（略称化対応）
-  ADM.items.forEach(function(item) {
-    var def = ADM_DEFAULT_ITEMS.find(function(d){ return d.id === item.id; });
-    if (def && item.name !== def.name) { item.name = def.name; }
-  });
+  // 2. （削除）カスタム名をデフォルトで上書きしないよう、名称の強制更新は行わない
   // 3. デフォルト項目のうち、未追加かつ削除済みでないものだけ追加
   ADM_DEFAULT_ITEMS.forEach(function(def) {
     if (ADM.deletedItemIds.indexOf(def.id) >= 0) return;
@@ -7725,9 +7721,10 @@ function admMigrate() {
 }
 
 function admLoad() {
+  var _fromStorage = false;
   try {
     var d = JSON.parse(localStorage.getItem('admData') || 'null');
-    if (d && d.lines && d.equips && d.items && d.assigns) { ADM = d; }
+    if (d && d.lines && d.equips && d.items && d.assigns) { ADM = d; _fromStorage = true; }
   } catch(e) {}
   admMigrate();
   // inspectors/managers がなければデフォルトを補完
@@ -7744,10 +7741,15 @@ function admLoad() {
   admSync();
   renderLoginUsers();
   // Firebase Integration Start
-  // 初回ロード時にFirestoreへもアップロード（onSnapshotが未到着の場合の初期値として）
-  setTimeout(function() {
-    if (typeof window._firestoreSave === 'function') window._firestoreSave('admData', ADM);
-  }, 2000);
+  // ローカルにデータがなかった場合のみ、Firestoreが未応答なら初期値としてアップロード
+  // （Firestoreが先に応答した場合は _admFirestoreLoaded フラグでキャンセル）
+  if (!_fromStorage) {
+    window._admInitUploadTimer = setTimeout(function() {
+      if (!window._admFirestoreLoaded && typeof window._firestoreSave === 'function') {
+        window._firestoreSave('admData', ADM);
+      }
+    }, 6000); // Firestoreの応答を十分に待つ
+  }
   // Firebase Integration End
 }
 
@@ -11133,6 +11135,12 @@ function isHoliday(dateObj) {
 
   // ── admData のリアルタイム同期 ──
   onSnapshot(doc(db, "appData", "admData"), (snap) => {
+    // Firestoreから応答が来たのでデフォルト初期アップロードタイマーをキャンセル
+    window._admFirestoreLoaded = true;
+    if (window._admInitUploadTimer) {
+      clearTimeout(window._admInitUploadTimer);
+      window._admInitUploadTimer = null;
+    }
     if (!snap.exists()) return;
     try {
       const d = snap.data();
