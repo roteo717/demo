@@ -1119,6 +1119,7 @@
   /* ─── INSPECTION INPUT ─── */
   #screen-inspect { background: var(--bg); }
   .pc-inspect-header { display: none; } /* モバイルでは非表示、1024px+で上書き */
+  #pc-result-header { display: flex; }
 
   .inspect-top-actions {
     padding: 12px 16px 8px;
@@ -1489,10 +1490,10 @@
 
     /* PC: 設備カードを3列グリッド */
     #screen-result > #result-sections {
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 32px 0;
+      max-width: none;
+      margin-left: unset;
+      margin-right: unset;
+      padding: 16px 32px 16px;
       box-sizing: border-box;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1716,7 +1717,7 @@
     background: #FFFFFF;
     border-top: 1px solid #E0E0E0;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     z-index: 100;
     flex-shrink: 0;
   }
@@ -2853,9 +2854,9 @@
   #inspect-mobile-nav { display: none; }
   #inspect-mobile-bulk { display: none; }
   #confirm-mobile-nav  { display: none; }
-  #result-mobile-nav   { display: none; }
+  #result-mobile-nav   { display: none !important; }
   #pc-confirm-header   { display: flex; }
-  #pc-result-header    { display: flex; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 32px; box-sizing: border-box; }
+  #pc-result-header    { display: flex; }
 
   /* Tabs */
   .selected-equip-chips {
@@ -5145,6 +5146,15 @@
         </div>
         <span>承認</span>
       </button>
+      <button class="pc-sidebar-btn" id="pcsb-uninspected" onclick="showAdmTab('uninspected')">
+        <div class="pc-sidebar-btn-icon" style="position:relative;">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          <span class="pc-sidebar-badge" id="pcsb-badge-uninspected" style="display:none;">0</span>
+        </div>
+        <span>未点検</span>
+      </button>
       <button class="pc-sidebar-btn" id="pcsb-settings" onclick="showAdmTab('settings')">
         <div class="pc-sidebar-btn-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -5390,30 +5400,7 @@
         </div>
       </div>
 
-      <!-- 新：3カードグリッド -->
-      <div class="today-stat-grid">
-        <div class="today-stat-card">
-          <div class="today-stat-icon today-stat-icon-gray">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          </div>
-          <div class="today-stat-label">未実施</div>
-          <div class="today-stat-count today-stat-count-gray"><span id="sum-pending">0</span><span class="unit">件</span></div>
-        </div>
-        <div class="today-stat-card">
-          <div class="today-stat-icon today-stat-icon-blue">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="8,12 11,15 16,9"/></svg>
-          </div>
-          <div class="today-stat-label">完了</div>
-          <div class="today-stat-count today-stat-count-blue"><span id="sum-done">0</span><span class="unit">件</span></div>
-        </div>
-        <div class="today-stat-card">
-          <div class="today-stat-icon today-stat-icon-red">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--red)"/></svg>
-          </div>
-          <div class="today-stat-label">異常あり</div>
-          <div class="today-stat-count today-stat-count-red"><span id="sum-anomaly">0</span><span class="unit">件</span></div>
-        </div>
-      </div>
+
 
       <!-- 旧リスト（JS互換のため残す、CSSで非表示） -->
       <div class="today-rows" style="display:none">
@@ -5425,13 +5412,6 @@
       <div class="start-btn-wrap" id="today-start-btn" style="padding: 12px 0 18px;">
         <button class="start-btn" onclick="startTodayInspection()">
           <div class="start-btn-left">
-            <div class="start-btn-icon">
-              <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="2" width="6" height="4" rx="1"/>
-                <path d="M5 6h14l-1 13H6L5 6z"/>
-                <polyline points="10,11 12,13 16,9"/>
-              </svg>
-            </div>
             <span>ラインを選んで点検を開始する</span>
           </div>
           <div class="start-btn-arrow">
@@ -5744,13 +5724,8 @@
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-    <div class="nav-bar blue-accent" id="result-mobile-nav">
-      <div class="nav-back" onclick="showScreen('screen-home')">
-        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <span class="nav-title">点検結果</span>
-    </div>
-    <div class="pc-inspect-header" id="pc-result-header" style="display:none;">
+
+    <div class="pc-inspect-header" id="pc-result-header">
       <div class="pc-inspect-header-left">
         <div class="pc-inspect-back" onclick="showScreen('screen-home')">
           <svg viewBox="0 0 24 24" width="18" height="18" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -6263,6 +6238,33 @@
 
     </div>
 
+    <!-- 未点検ライン パネル -->
+    <div id="adm-panel-uninspected" class="adm-panel" style="display:none;">
+      <div class="uinsp-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="adm-section-title" style="margin:0;">未点検ライン</span>
+          <span class="uinsp-total-badge" id="uinsp-total-badge">0件</span>
+        </div>
+      </div>
+      <!-- 検索 -->
+      <div class="uinsp-search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="uinsp-search" class="uinsp-search-input" placeholder="ライン名で検索" oninput="renderUninspPanel()">
+      </div>
+      <!-- フィルタータブ -->
+      <div class="uinsp-filter-tabs">
+        <button class="uinsp-ftab active" id="uinsp-ftab-all"      onclick="setUinspFilter('all')">すべて</button>
+        <button class="uinsp-ftab"        id="uinsp-ftab-overdue"  onclick="setUinspFilter('overdue')">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          期限超過
+        </button>
+        <button class="uinsp-ftab"        id="uinsp-ftab-today"    onclick="setUinspFilter('today')">今日まで</button>
+
+      </div>
+      <!-- ラインカードリスト -->
+      <div id="uinsp-line-list"></div>
+    </div>
+
     <!-- 承認 パネル (v2: 3階層) -->
     <div id="adm-panel-approval" class="adm-panel" style="display:none;">
 
@@ -6342,6 +6344,15 @@
         <span class="adm-btab-badge" id="abtab-badge-approval" style="display:none;">0</span>
       </div>
       <span>承認</span>
+    </button>
+    <button class="adm-btab" id="abtab-uninspected" onclick="showAdmTab('uninspected')">
+      <div class="adm-btab-icon" style="position:relative;">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        <span class="adm-btab-badge" id="abtab-badge-uninspected" style="display:none;">0</span>
+      </div>
+      <span>未点検</span>
     </button>
     <button class="adm-btab" id="abtab-settings" onclick="showAdmTab('settings')">
       <div class="adm-btab-icon">
@@ -6851,13 +6862,6 @@
           startBtn.style.pointerEvents = 'none';
           var btnLeftHol = startBtn.querySelector('.start-btn-left');
           if (btnLeftHol) btnLeftHol.innerHTML =
-            '<div class="start-btn-icon">' +
-              '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
-                '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>' +
-                '<line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' +
-                '<line x1="10" y1="15" x2="14" y2="19"/><line x1="14" y1="15" x2="10" y2="19"/>' +
-              '</svg>' +
-            '</div>' +
             '<div style="display:flex;flex-direction:column;gap:2px;">' +
               '<span style="font-size:15px;font-weight:700;">本日は休日です</span>' +
               '<span style="font-size:11px;font-weight:400;opacity:0.8;">点検はありません</span>' +
@@ -6870,13 +6874,6 @@
           startBtn.style.pointerEvents = '';
           var btnLeftNorm = startBtn.querySelector('.start-btn-left');
           if (btnLeftNorm) btnLeftNorm.innerHTML =
-            '<div class="start-btn-icon">' +
-              '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
-                '<rect x="9" y="2" width="6" height="4" rx="1"/>' +
-                '<path d="M5 6h14l-1 13H6L5 6z"/>' +
-                '<polyline points="10,11 12,13 16,9"/>' +
-              '</svg>' +
-            '</div>' +
             '<span>本日の点検を開始する</span>';
         }
       }
@@ -8468,17 +8465,17 @@ function showAdmTab(tab) {
   var wrap = document.querySelector('.adm-wrap');
   if (wrap) wrap.scrollTop = 0;
   // 下部タブのactive切り替え（モバイル用）
-  ['dashboard','approval','settings'].forEach(function(t) {
+  ['dashboard','approval','uninspected','settings'].forEach(function(t) {
     var b = document.getElementById('abtab-'+t);
     if (b) b.classList.toggle('active', t===tab);
   });
-  // 【修正】PC サイドバーボタンのactive切り替え
-  ['dashboard','approval','settings'].forEach(function(t) {
+  // PC サイドバーボタンのactive切り替え
+  ['dashboard','approval','uninspected','settings'].forEach(function(t) {
     var b = document.getElementById('pcsb-'+t);
     if (b) b.classList.toggle('active', t===tab);
   });
   // hide all panels
-  ['lines','equips','items','assign','users','holidays','monthly-sheet','dashboard','approval'].forEach(function(t) {
+  ['lines','equips','items','assign','users','holidays','monthly-sheet','dashboard','approval','uninspected'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = 'none';
   });
@@ -8487,9 +8484,10 @@ function showAdmTab(tab) {
   if (nav) nav.classList.remove('visible');
   var menu = document.getElementById('adm-settings-menu');
 
-  if (tab==='dashboard') { document.getElementById('adm-panel-dashboard').style.display='block'; if (menu) menu.classList.remove('visible'); renderAdmDashboard(); }
-  if (tab==='approval')  { document.getElementById('adm-panel-approval').style.display='block'; if (menu) menu.classList.remove('visible'); renderAdmApproval(); }
-  if (tab==='settings')  { showAdmSettingsMenu(); initSettingsCardDrag(); }
+  if (tab==='dashboard')    { document.getElementById('adm-panel-dashboard').style.display='block'; if (menu) menu.classList.remove('visible'); renderAdmDashboard(); }
+  if (tab==='approval')     { document.getElementById('adm-panel-approval').style.display='block'; if (menu) menu.classList.remove('visible'); renderAdmApproval(); }
+  if (tab==='uninspected')  { document.getElementById('adm-panel-uninspected').style.display='block'; if (menu) menu.classList.remove('visible'); renderUninspPanel(); }
+  if (tab==='settings')     { showAdmSettingsMenu(); initSettingsCardDrag(); }
 }
 
 function updateSettingsCardCounts() {
@@ -9559,6 +9557,226 @@ function admToast(msg) {
   requestAnimationFrame(function(){ t.style.opacity='1'; });
   setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); },200); },1800);
 }
+
+/* ─── 未点検ライン パネル ─── */
+var _uinspFilter = 'all';
+
+function setUinspFilter(f) {
+  _uinspFilter = f;
+  ['all','overdue','today','fav'].forEach(function(k) {
+    var el = document.getElementById('uinsp-ftab-' + k);
+    if (el) el.classList.toggle('active', k === f);
+  });
+  renderUninspPanel();
+}
+
+function renderUninspPanel() {
+  var now   = new Date();
+  var realY = now.getFullYear(), realM = now.getMonth(), realD = now.getDate();
+  var DOW   = ['日','月','火','水','木','金','土'];
+
+  var lines      = (ADM && ADM.lines)  ? ADM.lines  : [];
+  var allEquips  = (ADM && ADM.equips) ? ADM.equips : [];
+  var inspections = (typeof loadInspections === 'function') ? loadInspections() : [];
+  var favIds     = (typeof loadFavLines === 'function') ? loadFavLines() : [];
+  var searchVal  = (document.getElementById('uinsp-search') || {}).value || '';
+  searchVal = searchVal.trim().toLowerCase();
+
+  // ラインごとに未点検日を収集
+  var lineData = [];
+  lines.forEach(function(ln) {
+    var lineEquipIds = allEquips.filter(function(e){ return e.lineId === ln.id; }).map(function(e){ return e.id; });
+    if (!lineEquipIds.length) return;
+
+    var uninspDates = [];
+    var maxOverdueDays = 0;
+    var hasTodayDue   = false;
+
+    for (var d = 1; d <= realD; d++) {
+      var dateObj = new Date(realY, realM, d);
+      if (typeof isHoliday === 'function' && isHoliday(dateObj)) continue;
+      var dayRecs = inspections.filter(function(r){
+        return r.year === realY && r.month === realM && r.day === d;
+      });
+      var inspected = dayRecs.some(function(r){
+        return (r.equips || []).some(function(eid){ return lineEquipIds.indexOf(eid) >= 0; });
+      });
+      if (!inspected) {
+        var overdueDays = realD - d;
+        if (d === realD) hasTodayDue = true;
+        else maxOverdueDays = Math.max(maxOverdueDays, overdueDays);
+        uninspDates.push({ day: d, dow: DOW[dateObj.getDay()], overdueDays: overdueDays, isToday: (d === realD) });
+      }
+    }
+    // 最終点検日
+    var lineRecs = inspections.filter(function(r){
+      return r.year === realY && r.month === realM &&
+             (r.equips || []).some(function(eid){ return lineEquipIds.indexOf(eid) >= 0; });
+    }).sort(function(a,b){ return b.day - a.day; });
+    var lastDay = lineRecs.length ? lineRecs[0].day : null;
+
+    if (!uninspDates.length) return;
+
+    lineData.push({
+      id: ln.id, name: ln.name,
+      equipCount: lineEquipIds.length,
+      equipIds: lineEquipIds,
+      lastDay: lastDay,
+      uninspDates: uninspDates,
+      maxOverdueDays: maxOverdueDays,
+      hasTodayDue: hasTodayDue,
+      isFav: favIds.indexOf(ln.id) >= 0
+    });
+  });
+
+  // フィルター適用
+  var filtered = lineData.filter(function(ld) {
+    if (searchVal && ld.name.toLowerCase().indexOf(searchVal) < 0) return false;
+    if (_uinspFilter === 'overdue') return ld.maxOverdueDays > 0;
+    if (_uinspFilter === 'today')   return ld.hasTodayDue;
+    if (_uinspFilter === 'fav')     return ld.isFav;
+    return true;
+  });
+
+  // バッジ更新
+  var totalBadge = document.getElementById('uinsp-total-badge');
+  if (totalBadge) totalBadge.textContent = lineData.length + '件';
+  var pcBadge  = document.getElementById('pcsb-badge-uninspected');
+  var mobBadge = document.getElementById('abtab-badge-uninspected');
+  if (pcBadge)  { pcBadge.textContent = lineData.length; pcBadge.style.display = lineData.length ? '' : 'none'; }
+  if (mobBadge) { mobBadge.textContent = lineData.length; mobBadge.style.display = lineData.length ? '' : 'none'; }
+
+  var listEl = document.getElementById('uinsp-line-list');
+  if (!listEl) return;
+
+  if (!filtered.length) {
+    listEl.innerHTML = '<div class="uinsp-empty">未点検のラインはありません</div>';
+    return;
+  }
+
+  // 遅延日数の多い順でソート
+  filtered.sort(function(a,b){ return b.maxOverdueDays - a.maxOverdueDays || (b.hasTodayDue ? 1 : 0) - (a.hasTodayDue ? 1 : 0); });
+
+  listEl.innerHTML = '';
+  filtered.forEach(function(ld) {
+    var card = document.createElement('div');
+    var cardClass = 'uinsp-line-card';
+    if (ld.maxOverdueDays > 0) cardClass += ' overdue';
+    else if (ld.hasTodayDue)  cardClass += ' today-due';
+    card.className = cardClass;
+
+    var lastDayStr = ld.lastDay ? ((realM+1) + '/' + ld.lastDay) : 'なし';
+    var badgesHtml = '';
+    if (ld.maxOverdueDays > 0)
+      badgesHtml += '<span class="uinsp-badge uinsp-badge-overdue">' + ld.maxOverdueDays + '日遅延</span>';
+    if (ld.hasTodayDue)
+      badgesHtml += '<span class="uinsp-badge uinsp-badge-today">本日期限</span>';
+    badgesHtml += '<span class="uinsp-badge uinsp-badge-count">' + ld.uninspDates.length + '日分未点検</span>';
+
+    // 点検者未実施サマリー（本日分）
+    var allInspectorNames = (ADM.inspectors || []).map(function(u){ return u.name; });
+    var todayInspDayRecs  = inspections.filter(function(r){
+      return r.year === realY && r.month === realM && r.day === realD;
+    });
+    var todayDoneNames = todayInspDayRecs
+      .filter(function(r){ return (r.equips||[]).some(function(eid){ return ld.equipIds.indexOf(eid) >= 0; }); })
+      .map(function(r){ return r.inspector; });
+    var todayPendingNames = allInspectorNames.filter(function(n){ return todayDoneNames.indexOf(n) < 0; });
+    if (ld.hasTodayDue && allInspectorNames.length > 0) {
+      badgesHtml += '<span class="uinsp-badge uinsp-badge-insp-pending">未実施 ' + todayPendingNames.length + '名</span>';
+    }
+
+    var iconSvg = ld.maxOverdueDays > 0
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+
+    var header = document.createElement('div');
+    header.className = 'uinsp-line-card-header';
+    header.innerHTML =
+      '<div class="uinsp-line-card-icon">' + iconSvg + '</div>' +
+      '<div class="uinsp-line-card-body">' +
+        '<div class="uinsp-line-name">' + ld.name + '</div>' +
+        '<div class="uinsp-line-meta">' +
+          '<span>設備 ' + ld.equipCount + '台</span>' +
+          '<span>最終点検 ' + lastDayStr + '</span>' +
+        '</div>' +
+        '<div class="uinsp-line-badges">' + badgesHtml + '</div>' +
+      '</div>' +
+      '<div class="uinsp-chevron"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+    header.onclick = function() { card.classList.toggle('open'); };
+
+    var detail = document.createElement('div');
+    detail.className = 'uinsp-detail';
+    detail.innerHTML = '<div class="uinsp-detail-title">未点検日一覧（' + ld.uninspDates.length + '日分）</div>';
+
+    var allInspNames = (ADM.inspectors || []).map(function(u){ return u.name; });
+
+    // 新しい日付順
+    var sorted = ld.uninspDates.slice().sort(function(a,b){ return b.day - a.day; });
+    sorted.forEach(function(di) {
+      var row = document.createElement('div');
+      row.className = 'uinsp-date-row';
+
+      var statusChip, delayLabel;
+      if (di.isToday) {
+        statusChip = '<span class="uinsp-status-chip today">本日期限</span>';
+        delayLabel = '<span class="uinsp-delay-label uinsp-delay-today">本日期限</span>';
+      } else {
+        statusChip = '<span class="uinsp-status-chip uninsp">未実施</span>';
+        delayLabel = '<span class="uinsp-delay-label uinsp-delay-overdue">' + di.overdueDays + '日遅延</span>';
+      }
+
+      // 点検者ごとの完了状況を集計
+      var dayRecsForDate = inspections.filter(function(r){
+        return r.year === realY && r.month === realM && r.day === di.day;
+      });
+      var doneInspNames = dayRecsForDate
+        .filter(function(r){ return (r.equips||[]).some(function(eid){ return ld.equipIds.indexOf(eid) >= 0; }); })
+        .map(function(r){ return r.inspector; });
+      var pendingInspNames = allInspNames.filter(function(n){ return doneInspNames.indexOf(n) < 0; });
+
+      // 点検者チップHTML
+      var inspSectionHtml = '';
+      if (allInspNames.length > 0) {
+        var chips = '';
+        pendingInspNames.forEach(function(n){
+          chips += '<span class="uinsp-insp-chip uinsp-insp-pending">' +
+            '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>' +
+            n + '</span>';
+        });
+        doneInspNames.forEach(function(n){
+          chips += '<span class="uinsp-insp-chip uinsp-insp-done">' +
+            '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+            n + '</span>';
+        });
+        inspSectionHtml =
+          '<div class="uinsp-insp-section">' +
+            '<span class="uinsp-insp-label">' +
+              (pendingInspNames.length > 0
+                ? '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>未実施 ' + pendingInspNames.length + '名'
+                : '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全員完了') +
+            '</span>' +
+            chips +
+          '</div>';
+      }
+
+      row.innerHTML =
+        '<div class="uinsp-date-row-main">' +
+          '<span class="uinsp-date-col">' + (realM+1) + '/' + di.day + '</span>' +
+          '<span class="uinsp-dow-col">' + di.dow + '</span>' +
+          statusChip + delayLabel +
+        '</div>' +
+        inspSectionHtml;
+      detail.appendChild(row);
+    });
+
+    card.appendChild(header);
+    card.appendChild(detail);
+    listEl.appendChild(card);
+  });
+}
+window.renderUninspPanel = renderUninspPanel;
+window.setUinspFilter    = setUinspFilter;
 
 /* ─ init ─ */
 (function(){ admLoad(); })();
@@ -11814,7 +12032,7 @@ function updateUnInspectedPanel(targetYear, targetMonth) {
         '<div class="uninsp-inline-dot"></div>' +
         '<div class="uninsp-inline-line">' + item.lineName + '</div>' +
         dateStr +
-        '<button class="uninsp-inline-btn" onclick="startLineInspection(\'' + item.lineId + '\')">点検する</button>' +
+        '<button class="uninsp-inline-btn" onclick="startLineInspection(\'' + item.lineId + '\',' + item.year + ',' + item.month + ',' + item.day + ')">点検する</button>' +
       '</div>';
     }).join('');
   }
@@ -11846,15 +12064,15 @@ function updateUnInspectedPanel(targetYear, targetMonth) {
 }
 
 /* 指定ラインを事前選択して設備選択画面へ直接ジャンプ */
-function startLineInspection(lineId) {
+function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
   var now = new Date();
   if (typeof _isWeekendOrHoliday === 'function' && _isWeekendOrHoliday(now)) {
     alert('本日は休日のため点検できません。');
     return;
   }
-  calYear       = now.getFullYear();
-  calMonth      = now.getMonth();
-  selectedCalDay = now.getDate();
+  calYear        = (itemYear  !== undefined) ? itemYear  : now.getFullYear();
+  calMonth       = (itemMonth !== undefined) ? itemMonth : now.getMonth();
+  selectedCalDay = (itemDay   !== undefined) ? itemDay   : now.getDate();
 
   /* ライン選択画面を構築してからラインを事前選択 */
   buildLineList(); /* ← selectedLineIds = [] にリセットされる */
@@ -12130,6 +12348,65 @@ function startLineInspection(lineId) {
   transition: opacity 0.15s; font-family: inherit;
 }
 .fav-sheet-apply:active { opacity: 0.85; }
+
+/* ─── 未点検ライン パネル ─── */
+.uinsp-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.uinsp-total-badge { background:#FF6D00; color:#fff; border-radius:20px; padding:2px 10px; font-size:12px; font-weight:700; }
+.uinsp-search-wrap { display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0 12px; height:40px; margin-bottom:12px; }
+.uinsp-search-wrap svg { width:16px; height:16px; stroke:var(--text-sub); flex-shrink:0; }
+.uinsp-search-input { flex:1; border:none; outline:none; font-size:14px; color:var(--text); background:transparent; font-family:inherit; }
+.uinsp-filter-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
+.uinsp-ftab { display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); font-size:12px; font-weight:600; color:var(--text-sub); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.uinsp-ftab svg { stroke:var(--text-sub); }
+.uinsp-ftab:active { opacity:0.75; }
+.uinsp-ftab.active { border-color:var(--blue); background:var(--blue-light); color:var(--blue); }
+.uinsp-ftab#uinsp-ftab-overdue.active { border-color:#E53935; background:#FDECEC; color:#E53935; }
+.uinsp-ftab#uinsp-ftab-overdue.active svg { stroke:#E53935; }
+
+.uinsp-line-card { background:var(--card); border-radius:14px; border:1.5px solid var(--border); box-shadow:var(--shadow-card); margin-bottom:10px; overflow:hidden; }
+.uinsp-line-card.overdue { border-color:var(--red-mid); }
+.uinsp-line-card.today-due { border-color:#FF6D00; }
+.uinsp-line-card-header { display:flex; align-items:center; gap:10px; padding:14px 16px; cursor:pointer; transition:background 0.15s; }
+.uinsp-line-card-header:active { background:var(--bg); }
+.uinsp-line-card-icon { width:36px; height:36px; border-radius:10px; background:var(--red-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.uinsp-line-card-icon svg { width:18px; height:18px; stroke:var(--red); fill:none; }
+.uinsp-line-card.today-due .uinsp-line-card-icon { background:#FFF3E0; }
+.uinsp-line-card.today-due .uinsp-line-card-icon svg { stroke:#FF6D00; }
+.uinsp-line-card-body { flex:1; min-width:0; }
+.uinsp-line-name { font-size:15px; font-weight:700; color:var(--text); }
+.uinsp-line-meta { font-size:11px; color:var(--text-sub); margin-top:2px; display:flex; gap:8px; flex-wrap:wrap; }
+.uinsp-line-badges { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; }
+.uinsp-badge { padding:2px 8px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+.uinsp-badge-overdue { background:#FDECEC; color:#E53935; }
+.uinsp-badge-today   { background:#FFF3E0; color:#FF6D00; }
+.uinsp-badge-count   { background:var(--blue-light); color:var(--blue); }
+.uinsp-badge-insp-pending { background:#F3E5F5; color:#7B1FA2; }
+.uinsp-confirm-btn { padding:7px 14px; border-radius:10px; border:none; background:var(--blue); color:#fff; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0; transition:opacity 0.15s; }
+.uinsp-confirm-btn:active { opacity:0.85; }
+.uinsp-chevron { width:28px; height:28px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform 0.2s; }
+.uinsp-chevron svg { width:16px; height:16px; stroke:var(--text-sub); fill:none; stroke-width:2; }
+.uinsp-line-card.open .uinsp-chevron { transform:rotate(90deg); }
+.uinsp-detail { display:none; border-top:1px solid var(--border); padding:12px 16px 14px; background:#FAFBFC; }
+.uinsp-line-card.open .uinsp-detail { display:block; }
+.uinsp-detail-title { font-size:12px; font-weight:700; color:var(--text-sub); margin-bottom:10px; letter-spacing:0.3px; }
+.uinsp-date-row { padding:8px 0; border-bottom:1px solid var(--border); }
+.uinsp-date-row:last-child { border-bottom:none; }
+.uinsp-date-row-main { display:flex; align-items:center; gap:8px; }
+.uinsp-date-col { width:64px; font-size:13px; font-weight:600; color:var(--text); flex-shrink:0; }
+.uinsp-dow-col { width:24px; font-size:12px; color:var(--text-sub); flex-shrink:0; }
+.uinsp-status-chip { padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; flex-shrink:0; }
+.uinsp-status-chip.uninsp { background:#F3F4F6; color:#888; }
+.uinsp-status-chip.today  { background:#FFF3E0; color:#FF6D00; }
+.uinsp-delay-label { margin-left:auto; font-size:12px; font-weight:700; }
+.uinsp-delay-overdue { color:#E53935; }
+.uinsp-delay-today   { color:#FF6D00; }
+/* 点検者状況セクション */
+.uinsp-insp-section { display:flex; align-items:center; flex-wrap:wrap; gap:5px; margin-top:6px; padding-top:5px; border-top:1px dashed #E8E8E8; }
+.uinsp-insp-label { font-size:11px; font-weight:600; display:flex; align-items:center; gap:3px; margin-right:2px; white-space:nowrap; }
+.uinsp-insp-chip { display:inline-flex; align-items:center; gap:3px; padding:2px 8px 2px 6px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+.uinsp-insp-pending { background:#FDECEC; color:#C62828; border:1px solid #FFCDD2; }
+.uinsp-insp-done { background:#E8F5E9; color:#2E7D32; border:1px solid #C8E6C9; }
+.uinsp-empty { text-align:center; padding:40px 20px; color:var(--text-sub); font-size:14px; }
 </style>
 
 <div class="fav-overlay" id="fav-overlay" onclick="closeFavSheet()"></div>
