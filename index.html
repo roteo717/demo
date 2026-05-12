@@ -61,10 +61,12 @@
     overflow-x: hidden;
   }
   .screen.hidden          { transform: translateX(100%); opacity: 0; pointer-events: none; }
+  .screen.hidden *        { pointer-events: none; }
   .screen.slide-out-left  { transform: translateX(-30%); opacity: 0; pointer-events: none; }
+  .screen.slide-out-left *{ pointer-events: none; }
   .screen.active          { transform: translateX(0);    opacity: 1; pointer-events: auto; }
   /* Active screen: fixed + internal scroll (管理者と同じ構造で余白なし) */
-  .screen.active.settled  { position: fixed; height: 100dvh !important; min-height: unset !important; overflow-y: auto !important; overflow-x: hidden; width: 100%; max-width: 390px; left: 0; }
+  .screen.active.settled  { position: fixed; height: 100dvh !important; min-height: unset !important; overflow-y: auto !important; overflow-x: hidden; width: 100%; max-width: 390px; left: 50%; transform: translateX(-50%); top: 0; }
   /* 横向き時は全幅に拡張（position:fixed は viewport 基準のため個別指定が必要） */
   @media (max-width: 1023px) and (orientation: landscape) {
     .screen.active.settled { max-width: 100vw !important; }
@@ -145,7 +147,11 @@
     border: 1.5px solid transparent;
     transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
     -webkit-user-select: none;
+    width: 100%;
+    align-self: stretch;
+    touch-action: manipulation;
   }
+  .role-card * { pointer-events: none; }
   .role-card:active { transform: scale(0.98); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
 
   .role-card.blue { border-color: var(--blue-mid); }
@@ -306,10 +312,10 @@
   .btn-back-blue:active, .btn-back-red:active { opacity: 0.75; transform: scale(0.97); }
 
   /* ─── TODAY PANEL (Image2 style) ─── */
-  .today-panel { padding: 20px 20px 16px; }
+  .today-panel { padding: 16px 16px 14px; }
   .today-panel-header {
-    display: flex; align-items: flex-start; justify-content: space-between;
-    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
   }
   .today-panel-icon {
     width: 44px; height: 44px; border-radius: 50%;
@@ -317,43 +323,44 @@
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   .today-panel-icon svg { width: 22px; height: 22px; }
-  .today-panel-title { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
-  .today-panel-date { font-size: 13px; color: var(--text-sub); margin-top: 2px; }
+  .today-panel-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; }
+  .today-panel-date { font-size: 13px; color: var(--text-sub); margin-top: 0; margin-left: 4px; }
   .today-panel-detail-btn {
     font-size: 13px; color: var(--text-sub); font-weight: 500;
     display: flex; align-items: center; gap: 2px;
     cursor: pointer; white-space: nowrap; padding-top: 2px;
     background: none; border: 1px solid var(--border); border-radius: 8px;
-    padding: 5px 10px; transition: background 0.12s;
+    padding: 5px 10px; transition: background 0.12s; margin-left: auto;
   }
   .today-panel-detail-btn:active { background: var(--bg); }
   .today-panel-detail-btn svg { width: 14px; height: 14px; stroke: var(--text-sub); fill: none; }
 
-  /* 新：3カードグリッド */
+  /* 統計：横1行テーブル */
   .today-stat-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--card);
+    margin-bottom: 10px;
   }
   .today-stat-card {
-    background: var(--bg); border: 1px solid #EBEBEB;
-    border-radius: 14px; padding: 14px 10px 12px;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    cursor: pointer; transition: box-shadow 0.15s;
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 6px;
+    border-right: 1px solid var(--border);
+    border-radius: 0; background: var(--card); border-top: none; border-bottom: none; border-left: none;
+    gap: 2px; cursor: default;
   }
-  .today-stat-card:active { box-shadow: 0 0 0 2px var(--blue-mid); }
-  .today-stat-icon {
-    width: 38px; height: 38px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .today-stat-icon svg { width: 20px; height: 20px; }
-  .today-stat-icon-gray  { background: #F0F0F0; }
-  .today-stat-icon-blue  { background: var(--blue-light); }
-  .today-stat-icon-red   { background: #FDECEC; }
-  .today-stat-label { font-size: 12px; color: var(--text-sub); font-weight: 500; }
+  .today-stat-card:last-child { border-right: none; }
+  .today-stat-card:active { box-shadow: none; }
+  .today-stat-icon { display: none; }
+  .today-stat-label { font-size: 11px; color: var(--text-sub); font-weight: 500; }
   .today-stat-count {
-    font-size: 22px; font-weight: 700; line-height: 1;
+    font-size: 18px; font-weight: 700; line-height: 1;
     display: flex; align-items: baseline; gap: 2px;
   }
-  .today-stat-count .unit { font-size: 13px; font-weight: 500; }
+  .today-stat-count .unit { font-size: 12px; font-weight: 500; }
   .today-stat-count-gray  { color: var(--text); }
   .today-stat-count-blue  { color: var(--blue); }
   .today-stat-count-red   { color: var(--red); }
@@ -362,14 +369,97 @@
   .today-rows { display: none; }
   .today-row { display: none; }
 
+  /* 通知：1行コンパクト */
   .today-notice {
     margin-top: 0; background: #EEF4FF; border-radius: 10px;
-    padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 12px; display: flex; align-items: center; gap: 8px;
+    margin-bottom: 10px;
   }
-  .today-notice-icon { flex-shrink: 0; margin-top: 1px; }
-  .today-notice-icon svg { width: 18px; height: 18px; }
-  .today-notice-title { font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 3px; }
-  .today-notice-text { font-size: 12px; color: var(--text-sub); line-height: 1.5; }
+  .today-notice-icon { flex-shrink: 0; }
+  .today-notice-icon svg { width: 16px; height: 16px; }
+  .today-notice-title { font-size: 12px; font-weight: 700; color: var(--blue); margin-bottom: 0; }
+  .today-notice-text { display: none; }
+
+  /* 点検未ライン＋開始ボタン横並びラッパー */
+  .today-bottom-row {
+    display: flex; gap: 8px; align-items: stretch;
+  }
+  .today-bottom-row .uninsp-trigger {
+    flex: 1; margin: 0; padding: 11px 12px;
+  }
+  .today-bottom-row .start-btn-wrap {
+    flex: 1; padding: 0 !important;
+  }
+  .today-bottom-row .start-btn {
+    height: 100%; min-height: 48px; border-radius: 12px; padding: 10px 12px;
+  }
+  .today-bottom-row .start-btn-left { gap: 8px; }
+  .today-bottom-row .start-btn-left span { font-size: 13px; }
+
+  /* ─── 点検未ライン インライン表示 ─── */
+  .uninsp-inline-section {
+    margin: 0;
+  }
+  .uninsp-inline-header {
+    display: flex; align-items: center; gap: 7px;
+    padding: 0 0 8px;
+  }
+  .uninsp-inline-title {
+    font-size: 12px; font-weight: 700; color: var(--text-sub);
+    letter-spacing: 0.3px;
+  }
+  .uninsp-inline-badge {
+    background: #FF6D00; color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 1px 7px; border-radius: 20px;
+  }
+  .uninsp-inline-badge.ok {
+    background: var(--green); 
+  }
+  .uninsp-inline-list {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .uninsp-inline-item {
+    background: var(--bg); border-radius: 10px;
+    padding: 9px 10px 9px 12px;
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border);
+  }
+  .uninsp-inline-item.uninsp-today {
+    background: #FFF8F0; border-color: #FFCC80;
+  }
+  .uninsp-inline-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #FF6D00; flex-shrink: 0;
+  }
+  .uninsp-inline-line {
+    font-size: 13px; font-weight: 600; color: var(--text); flex: 1;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .uninsp-inline-date {
+    font-size: 10px; color: var(--text-sub); white-space: nowrap;
+  }
+  .uninsp-inline-btn {
+    background: var(--blue); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 6px 11px; font-size: 11px; font-weight: 700;
+    cursor: pointer; flex-shrink: 0; font-family: inherit;
+    transition: opacity 0.15s, transform 0.12s;
+    -webkit-user-select: none;
+    white-space: nowrap;
+  }
+  .uninsp-inline-btn:active { opacity: 0.85; transform: scale(0.97); }
+  .uninsp-inline-empty {
+    text-align: center; padding: 12px;
+    font-size: 12px; color: var(--green); font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    background: var(--green-light); border-radius: 10px;
+  }
+  .uninsp-inline-empty svg { width: 16px; height: 16px; stroke: var(--green); fill: none; }
+  .uninsp-inline-more {
+    text-align: center; font-size: 12px; color: var(--blue);
+    padding: 6px 0 2px; cursor: pointer; font-weight: 500;
+  }
 
   /* Calendar footer hint */
   .cal-footer-hint {
@@ -1371,6 +1461,142 @@
   .cf-ok-detail { border-top: 1px solid #F0F0F0; background: #FAFAFA; }
   .confirm-summary-bar,
   .confirm-summary-ok-bar { display: none; }
+
+  /* 確認画面：モバイル result-section の余白 */
+  #confirm-sections .result-section { margin: 12px 16px 0; }
+
+
+  /* ─── RESULT SCREEN ─── */
+  #screen-result { background: var(--bg); }
+  #screen-result .bottom-action { background: transparent; border-top: none; margin-top: auto; }
+
+  @media (min-width: 1024px) {
+    /* PC: screen-result はスクロールコンテナとして独立させない */
+    #screen-result.active.settled {
+      overflow-y: auto !important;
+    }
+
+    /* PC: バナー・ボタンを中央寄せ */
+    #screen-result > #result-banner,
+    #screen-result > #result-content,
+    #screen-result > .bottom-action {
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 32px;
+      padding-right: 32px;
+      box-sizing: border-box;
+    }
+    #screen-result > #result-banner {
+      margin-top: 20px;
+    }
+
+    /* PC: 設備カードを3列グリッド */
+    #screen-result > #result-sections {
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 32px 0;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+    /* グリッド内のカードはマージン不要（gap で制御） */
+    #screen-result > #result-sections .result-section {
+      margin: 0;
+    }
+    /* 末尾スペーサーはグリッド全幅に広げない */
+    #screen-result > #result-sections > div[style*="height"] {
+      grid-column: 1 / -1;
+    }
+
+    /* バナーを横長デザインに */
+    #screen-result > #result-banner {
+      gap: 20px;
+    }
+    #screen-result > #result-banner .result-banner-body {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    #screen-result > #result-banner .result-banner-meta {
+      flex: 1;
+    }
+    #screen-result > #result-banner .result-banner-counts {
+      margin-top: 0;
+      gap: 24px;
+    }
+    #screen-result > #result-banner .result-count-num {
+      font-size: 28px;
+    }
+
+    /* ボトムアクション */
+    #screen-result > .bottom-action {
+      width: 100%;
+    }
+  }
+
+  .result-banner {
+    margin: 12px 16px 0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .result-banner.rb-ok  { background: #F0FAF1; border: 1.5px solid #A5D6A7; }
+  .result-banner.rb-ng  { background: #FFF3F3; border: 1.5px solid #FFCDD2; }
+  .result-banner-icon {
+    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .result-banner.rb-ok .result-banner-icon { background: #C8F0CB; }
+  .result-banner.rb-ng .result-banner-icon { background: #FFCDD2; }
+  .result-banner-icon svg { width: 24px; height: 24px; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .result-banner.rb-ok .result-banner-icon svg { stroke: #2E7D32; }
+  .result-banner.rb-ng .result-banner-icon svg { stroke: var(--red); }
+  .result-banner-body { flex: 1; min-width: 0; }
+  .result-banner-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .result-banner.rb-ok .result-banner-title { color: #2E7D32; }
+  .result-banner.rb-ng .result-banner-title { color: var(--red); }
+  .result-banner-meta { font-size: 12px; color: var(--text-sub); line-height: 1.7; }
+  .result-banner-counts { display: flex; gap: 14px; margin-top: 6px; }
+  .result-count-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .result-count-num  { font-size: 20px; font-weight: 800; line-height: 1; }
+  .result-count-lbl  { font-size: 10px; font-weight: 500; color: var(--text-sub); }
+  .result-banner.rb-ok .result-count-num { color: #2E7D32; }
+  .result-banner.rb-ng .result-count-item:first-child .result-count-num { color: #2E7D32; }
+  .result-banner.rb-ng .result-count-item:last-child  .result-count-num { color: var(--red); }
+
+  .result-section { margin: 12px 16px 0; background: var(--card); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-card); border: 1.5px solid var(--border); }
+  .result-section.rs-ng { border-color: var(--red-mid); }
+  .result-section-header { padding: 12px 14px; display: flex; align-items: center; gap: 12px; background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer; }
+  .result-section.rs-ng .result-section-header { background: #FFF5F5; }
+  .result-section-icon { width: 38px; height: 38px; border-radius: 10px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .result-section.rs-ng .result-section-icon { background: var(--red-light); }
+  .result-section-icon svg { width: 18px; height: 18px; stroke: var(--blue); fill: none; }
+  .result-section.rs-ng .result-section-icon svg { stroke: var(--red); }
+  .result-section-info { flex: 1; min-width: 0; }
+  .result-section-id   { font-size: 11px; color: var(--text-sub); font-weight: 600; letter-spacing: 0.4px; }
+  .result-section-name { font-size: 15px; font-weight: 700; color: var(--text); }
+  .result-status-chip  { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px; flex-shrink: 0; }
+  .rs-chip-ok  { background: var(--green-light); color: var(--green); }
+  .rs-chip-ng  { background: var(--red-light); color: var(--red); }
+  .result-chevron { margin-left: 4px; transition: transform 0.2s; flex-shrink: 0; }
+  .result-chevron svg { width: 16px; height: 16px; stroke: var(--text-sub); fill: none; }
+  .result-section.open .result-chevron { transform: rotate(90deg); }
+  .result-section-body { display: none; }
+  .result-section.open .result-section-body { display: block; }
+  .result-type-divider { display: flex; align-items: center; gap: 8px; padding: 10px 14px 6px; }
+  .result-type-rule    { flex: 1; height: 1px; background: var(--border); }
+  .result-item-row { display: flex; align-items: center; padding: 9px 14px; gap: 10px; border-bottom: 1px solid #F5F5F5; }
+  .result-item-row:last-child { border-bottom: none; }
+  .result-item-name { flex: 1; font-size: 13px; color: var(--text); }
+  .result-chip { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .rchip-ok   { background: #E3F2FD; color: var(--blue); }
+  .rchip-ng   { background: var(--red-light); color: var(--red); }
+  .rchip-na   { background: #F5F5F5; color: #888; }
+  .rchip-none { background: #F5F5F5; color: #CCC; }
 
   /* ─── COMPLETE SCREEN ─── */
   #screen-complete {
@@ -2439,6 +2665,7 @@
   .role-card {
     flex-direction: column; align-items: center;
     text-align: center; padding: 32px 24px; gap: 14px;
+    width: 100%; height: 100%;
   }
   .role-card-arrow { display: none; }
   .role-footer { max-width: 640px; width: 100%; padding: 24px 0 12px; }
@@ -2576,6 +2803,9 @@
   .today-row { padding: 14px 12px; }
   .today-row-label { font-size: 15px; }
   .today-row-count span { font-size: 22px; }
+  /* PC内のuninspトリガーはsummary-card内に収める */
+  .summary-card .uninsp-trigger { margin: 16px 0 0; }
+  .summary-card .start-btn-wrap { padding: 16px 0 0 !important; }
   #screen-home .cal-dow { font-size: 13px; padding: 10px 0; }
   #screen-home .cal-month { font-size: 18px; }
   #screen-home .cal-header { margin-bottom: 16px; }
@@ -2627,7 +2857,9 @@
   #inspect-mobile-nav { display: none; }
   #inspect-mobile-bulk { display: none; }
   #confirm-mobile-nav  { display: none; }
+  #result-mobile-nav   { display: none; }
   #pc-confirm-header   { display: flex; }
+  #pc-result-header    { display: flex; max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 32px; box-sizing: border-box; }
 
   /* Tabs */
   .selected-equip-chips {
@@ -2686,17 +2918,22 @@
   }
   #screen-inspect .check-row { padding: 0 20px; min-height: 54px; }
   #screen-inspect .check-row-name { font-size: 14px; }
-  /* 確認画面：PC サマリーカード */
-  #screen-confirm .cf-summary-card { margin: 16px 32px 8px; }
-  /* 確認画面：PC グリッドレイアウト */
+  /* 確認画面：PC バナー */
+  #screen-confirm #confirm-content { max-width: 1200px; margin: 20px auto 0; padding: 0 32px; box-sizing: border-box; }
+  #screen-confirm #confirm-content .result-banner { margin: 0; }
+  /* 確認画面：PC グリッドレイアウト（result-sections と同スタイル） */
   #confirm-sections {
-    padding: 0 32px 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px 0;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    align-items: start;
   }
-  #confirm-sections .cf-cards-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 14px; padding: 0;
-  }
-  #screen-confirm .cf-card { margin: 0; }
+  #confirm-sections .result-section { margin: 0; }
+  #confirm-sections > div[style*="height"] { grid-column: 1 / -1; }
 
   /* ─── 完了 ─── */
   #screen-complete { background: #F4F6F9; min-height: calc(100vh - 40px); }
@@ -3241,9 +3478,17 @@
   .screen.active.settled {
     max-width: none !important;
     width: 100% !important;
-    left: auto !important;
+    left: 0 !important;
+    transform: none !important;
+    top: 0 !important;
     box-sizing: border-box !important;
   }
+
+  /* PC: hidden screens と子要素のクリック完全遮断 */
+  .phone-wrapper .screen.hidden,
+  .phone-wrapper .screen.hidden * { pointer-events: none !important; }
+  .phone-wrapper .screen.slide-out-left,
+  .phone-wrapper .screen.slide-out-left * { pointer-events: none !important; }
 
   /* 個別スクリーンの max-width 解除 */
   #screen-role,
@@ -3751,6 +3996,176 @@
     text-align: center; font-size: 11px; color: var(--text-small);
     padding: 8px 0 4px;
   }
+
+  /* ============================================
+     UNINSPECTED PANEL (点検未ライン)
+     ============================================ */
+
+  /* ── トリガーボタン（サマリーカード内） ── */
+  .uninsp-trigger {
+    display: flex; align-items: center; gap: 10px;
+    margin: 14px 0 0;
+    padding: 12px 14px;
+    background: #FFF8F0;
+    border: 1.5px solid #FFE0B2;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+    transition: background 0.15s;
+  }
+  .uninsp-trigger:active { background: #FFE0B2; }
+  .uninsp-trigger.uninsp-all-ok { background: var(--green-light); border-color: #A5D6A7; }
+  .uninsp-trigger-icon {
+    width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+    background: #FFF3E0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .uninsp-trigger-icon svg { width: 18px; height: 18px; stroke: #F57C00; fill: none; }
+  .uninsp-trigger.uninsp-all-ok .uninsp-trigger-icon { background: var(--green-light); }
+  .uninsp-trigger.uninsp-all-ok .uninsp-trigger-icon svg { stroke: var(--green); }
+  .uninsp-trigger-title { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
+  .uninsp-trigger-badge {
+    font-size: 12px; font-weight: 800;
+    background: #F57C00; color: #fff;
+    border-radius: 99px; min-width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center; padding: 0 6px;
+    flex-shrink: 0;
+  }
+  .uninsp-trigger.uninsp-all-ok .uninsp-trigger-badge { background: var(--green); }
+  .uninsp-trigger-arrow svg { width: 16px; height: 16px; stroke: var(--text-sub); fill: none; }
+
+  /* ── オーバーレイ ── */
+  .uninsp-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 900;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .uninsp-overlay.open { display: block; }
+  .uninsp-overlay.visible { opacity: 1; }
+
+  /* ── ボトムシート（モバイル） ── */
+  .uninsp-sheet {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: var(--card);
+    border-radius: 20px 20px 0 0;
+    z-index: 901;
+    max-height: 75dvh;
+    display: flex; flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+  }
+  .uninsp-sheet.open { transform: translateY(0); }
+  .uninsp-sheet-handle {
+    width: 36px; height: 4px; background: #DDD; border-radius: 2px;
+    margin: 12px auto 0; flex-shrink: 0;
+  }
+  .uninsp-sheet-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .uninsp-sheet-icon {
+    width: 32px; height: 32px; border-radius: 8px; background: #FFF3E0;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .uninsp-sheet-icon svg { width: 16px; height: 16px; stroke: #F57C00; fill: none; }
+  .uninsp-sheet-title { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .uninsp-sheet-badge {
+    font-size: 12px; font-weight: 800; background: #F57C00; color: #fff;
+    border-radius: 99px; min-width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center; padding: 0 6px;
+  }
+  .uninsp-sheet-close {
+    width: 30px; height: 30px; border-radius: 50%; background: #F0F0F0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0; border: none; transition: background 0.15s;
+  }
+  .uninsp-sheet-close:active { background: #E0E0E0; }
+  .uninsp-sheet-close svg { width: 16px; height: 16px; stroke: var(--text-sub); fill: none; }
+  .uninsp-sheet-body { overflow-y: auto; flex: 1; min-height: 120px; padding-bottom: env(safe-area-inset-bottom, 16px); }
+
+  /* ── リスト共通 ── */
+  .uninsp-list { display: flex; flex-direction: column; }
+  .uninsp-item {
+    display: grid;
+    grid-template-columns: 12px 160px 1fr;
+    align-items: center;
+    padding: 11px 18px; border-bottom: 1px solid #F5F5F5;
+  }
+  .uninsp-item:last-child { border-bottom: none; }
+  .uninsp-item-dot { width: 8px; height: 8px; border-radius: 50%; background: #F57C00; justify-self: center; }
+  .uninsp-item.uninsp-today .uninsp-item-dot { background: var(--red); }
+  .uninsp-item-date {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+    padding-left: 10px;
+  }
+  .uninsp-today-tag {
+    font-size: 10px; font-weight: 700; padding: 1px 6px;
+    background: var(--red-light); color: var(--red); border-radius: 99px; flex-shrink: 0;
+  }
+  .uninsp-item-line {
+    font-size: 13px; color: var(--text-sub); font-weight: 500;
+    padding-left: 12px;
+    white-space: nowrap;
+  }
+  .uninsp-item-sep { display: none; }
+  .uninsp-empty {
+    display: flex; align-items: center; gap: 8px;
+    padding: 20px 18px; font-size: 13px; color: var(--green); font-weight: 600;
+  }
+  .uninsp-empty svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  /* ── PC：モーダル ── */
+  @media (min-width: 1024px) {
+    .uninsp-sheet {
+      position: fixed;
+      left: 50%; top: 50%;
+      right: auto; bottom: auto;
+      transform: translate(-50%, -48%) scale(0.96);
+      width: 480px;
+      border-radius: 16px;
+      max-height: 70vh;
+      opacity: 0;
+      pointer-events: none; /* 非表示時はクリックを通過させる */
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1), opacity 0.22s;
+    }
+    .uninsp-sheet.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto; /* 表示時はクリックを有効にする */
+    }
+    .uninsp-sheet-handle { display: none; }
+  }
+
+  /* ── ダッシュボード：点検未カード ── */
+  .da-uninsp-card {
+    background: var(--card); border-radius: 12px;
+    box-shadow: var(--shadow-card); overflow: hidden; margin-bottom: 20px;
+  }
+  .da-uninsp-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px; border-bottom: 1px solid #F5F5F5;
+  }
+  .da-uninsp-row:last-child { border-bottom: none; }
+  .da-uninsp-dot { width: 8px; height: 8px; border-radius: 50%; background: #F57C00; flex-shrink: 0; }
+  .da-uninsp-row.da-uninsp-today .da-uninsp-dot { background: var(--red); }
+  .da-uninsp-date {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    min-width: 130px; display: flex; align-items: center; gap: 6px;
+  }
+  .da-uninsp-tag { font-size: 10px; font-weight: 700; padding: 1px 6px; background: var(--red-light); color: var(--red); border-radius: 99px; }
+  .da-uninsp-line { font-size: 13px; color: var(--text-sub); flex: 1; }
+  .da-uninsp-ok {
+    text-align: center; padding: 20px; font-size: 13px; color: var(--green); font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .da-uninsp-ok svg { width: 18px; height: 18px; stroke: var(--green); fill: none; }
 
   /* ============================================
      APPROVAL SCREEN
@@ -4975,8 +5390,7 @@
     <div class="summary-card today-panel">
       <div class="today-panel-header">
         <div>
-          <div class="today-panel-title">今月の点検</div>
-          <div class="today-panel-date" id="today-panel-date"></div>
+          <div class="today-panel-title">今月の点検<span class="today-panel-date" id="today-panel-date" style="font-size:13px;font-weight:400;color:var(--text-sub);margin-left:8px;"></span></div>
         </div>
       </div>
 
@@ -5009,18 +5423,10 @@
       <div class="today-rows" style="display:none">
         <div class="today-row today-row-pending" id="today-row-pending"></div>
       </div>
-      <div class="today-notice" id="today-notice">
-        <div class="today-notice-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><circle cx="12" cy="16" r="0.5" fill="var(--blue)"/></svg>
-        </div>
-        <div>
-          <div class="today-notice-title">未実施の点検があります</div>
-          <div class="today-notice-text">今月の未実施の点検を確認して、早めに対応しましょう。</div>
-        </div>
-      </div>
 
-      <!-- Start button inside panel -->
-      <div class="start-btn-wrap" id="today-start-btn" style="padding: 14px 0 0;">
+
+      <!-- 本日の点検を開始ボタン -->
+      <div class="start-btn-wrap" id="today-start-btn" style="padding: 4px 0 14px;">
         <button class="start-btn" onclick="startTodayInspection()">
           <div class="start-btn-left">
             <div class="start-btn-icon">
@@ -5030,13 +5436,32 @@
                 <polyline points="10,11 12,13 16,9"/>
               </svg>
             </div>
-            <span>点検を開始する</span>
+            <span>ラインを選んで点検を開始する</span>
           </div>
           <div class="start-btn-arrow">
             <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
           </div>
         </button>
       </div>
+
+      <!-- 点検未ライン インラインリスト -->
+      <div class="uninsp-inline-section">
+        <div class="uninsp-inline-header">
+          <span class="uninsp-inline-title">点検未ライン</span>
+          <span class="uninsp-inline-badge" id="uninsp-home-badge">-</span>
+          <span id="uninsp-fav-label" style="display:none;font-size:10px;color:var(--blue);font-weight:600;background:var(--blue-light);border-radius:20px;padding:1px 8px;margin-left:2px;">お気に入りのみ</span>
+          <button id="uninsp-fav-gear-btn" onclick="openFavSheet()" title="表示ラインを絞り込む" style="margin-left:auto;background:none;border:none;padding:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:background 0.15s;" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='none'">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+        <div id="uninsp-home-list" class="uninsp-inline-list">
+          <!-- Rendered by updateUnInspectedPanel() -->
+        </div>
+      </div>
+
     </div>
 
     <div class="safe-bottom"></div>
@@ -5314,6 +5739,40 @@
     </div>
   </div>
 
+  <!-- ===== SCREEN 10: RESULT (点検結果閲覧) ===== -->
+  <div class="screen hidden screen-flex" id="screen-result">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+    <div class="nav-bar blue-accent" id="result-mobile-nav">
+      <div class="nav-back" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-title">点検結果</span>
+    </div>
+    <div class="pc-inspect-header" id="pc-result-header" style="display:none;">
+      <div class="pc-inspect-header-left">
+        <div class="pc-inspect-back" onclick="showScreen('screen-home')">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </div>
+        <h1 class="pc-inspect-title">点検結果</h1>
+      </div>
+    </div>
+    <div id="result-banner"></div>
+    <div id="result-content"></div>
+    <div id="result-sections"></div>
+    <div class="bottom-action">
+      <div class="btn-row">
+        <button class="btn-bottom-sub" onclick="showScreen('screen-home')">ホームに戻る</button>
+        <button class="btn-bottom-main" style="flex:2;" id="result-reinspect-btn" onclick="startReinspection()">再点検する</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== UNENTERED DIALOG ===== -->
   <div class="dialog-overlay" id="unentered-dialog">
     <div class="dialog-sheet">
@@ -5373,6 +5832,18 @@
         <span id="dash-lines-month-label" style="font-size:11px;font-weight:500;color:var(--text-sub);margin-left:6px;background:#F0F2F5;padding:2px 8px;border-radius:20px;"></span>
       </div>
       <div class="da-lines-card" id="dash-lines-card">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Uninspected Lines -->
+      <div class="da-section-title">
+        <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+        点検未ライン
+        <span id="dash-uninsp-badge" style="font-size:11px;font-weight:700;color:#fff;background:#F57C00;padding:2px 9px;border-radius:99px;margin-left:6px;"></span>
+      </div>
+      <div class="da-uninsp-card" id="dash-uninsp-card">
         <!-- Rendered by JS -->
       </div>
 
@@ -6021,15 +6492,33 @@
   let currentScreen = 'screen-role';
 
   function showScreen(id) {
+    /* 画面遷移時に開いているシートを全て閉じる */
+    ['uninsp-overlay','fav-overlay'].forEach(function(oid) {
+      var o = document.getElementById(oid);
+      if (o) { o.classList.remove('visible'); o.classList.remove('open'); }
+    });
+    ['uninsp-sheet','fav-sheet'].forEach(function(sid) {
+      var s = document.getElementById(sid);
+      if (s) s.classList.remove('open');
+    });
+
     const prev = document.getElementById(currentScreen);
     const next = document.getElementById(id);
+
+    if (!prev || !next) {
+      console.warn('showScreen: element not found', currentScreen, id);
+      if (next) { next.classList.remove('hidden','slide-out-left','settled'); next.classList.add('active'); currentScreen = id; }
+      return;
+    }
 
     const isBack =
       (id === 'screen-role') ||
       (id === 'screen-home') ||
       (id === 'screen-inspect' && currentScreen === 'screen-confirm') ||
       (id === 'screen-equip' && currentScreen === 'screen-inspect') ||
-      (id === 'screen-line' && currentScreen === 'screen-equip');
+      (id === 'screen-line' && currentScreen === 'screen-equip') ||
+      (id === 'screen-line' && currentScreen === 'screen-result') ||
+      (id === 'screen-home' && currentScreen === 'screen-result');
 
     // Un-settle prev so it's absolute again for animation
     prev.classList.remove('settled');
@@ -6055,10 +6544,16 @@
   function gotoManager()   { showScreen('screen-manager'); }
   function goBack()        { showScreen('screen-role'); }
 
+  // onclick属性から呼び出される全関数を明示的にグローバル公開
+  window.gotoInspector   = gotoInspector;
+  window.gotoManager     = gotoManager;
+  window.goBack          = goBack;
+
   function selectUser(btn) {
     document.querySelectorAll('#screen-inspector .user-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
   }
+  window.selectUser = selectUser;
 
   function updateHomeDateDisplay() {
     const now = new Date();
@@ -6141,6 +6636,7 @@
     document.querySelectorAll('#screen-manager .mgr-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
   }
+  window.selectAdminUser = selectAdminUser;
 
   function doLogin() {
     if (currentScreen === 'screen-inspector') {
@@ -6168,18 +6664,20 @@
       openAdminScreen(displayName);
     }
   }
+  window.doLogin = doLogin;
 
   function togglePw() {
     const input = document.getElementById('pw-input');
     const icon  = document.getElementById('eye-icon');
-    if (input.type === 'password') {
+    if (input && input.type === 'password') {
       input.type = 'text';
       icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
-    } else {
+    } else if (input) {
       input.type = 'password';
       icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
     }
   }
+  window.togglePw = togglePw;
 
   /* ─── CALENDAR ─── */
   const _today = new Date();
@@ -6215,6 +6713,8 @@
   function buildCalendar() {
     const grid = document.getElementById('cal-grid');
     if (!grid) return;
+    window._calYear  = calYear;
+    window._calMonth = calMonth;
     const key = `${calYear}-${calMonth}`;
     const totalDays = new Date(calYear, calMonth + 1, 0).getDate();
     const firstDow  = new Date(calYear, calMonth, 1).getDay();
@@ -6386,21 +6886,207 @@
       }
       startBtnWrap.style.display = '';
     }
+
+    // 点検未ラインパネルを更新
+    if (typeof updateUnInspectedPanel === 'function') updateUnInspectedPanel(calYear, calMonth);
   }
 
   function selectCalDay(el, d) {
     document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected-day'));
     el.classList.add('selected-day');
     selectedCalDay = d;
+
+    // 現在のユーザーの、この日の完了済み点検レコードを検索
+    const currentUser = localStorage.getItem('loggedInUser') || '';
+    const existingRecord = ALL_INSPECTION_RECORDS.find(function(r) {
+      return r.year === calYear && r.month === calMonth &&
+             r.day === d && (currentUser === '' || r.inspector === currentUser);
+    });
+
     const toast = document.createElement('div');
     toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.2s;white-space:nowrap;';
-    toast.textContent = `${calYear}年${MONTHS_JP[calMonth]}${d}日の点検`;
-    document.body.appendChild(toast);
-    requestAnimationFrame(() => { toast.style.opacity = '1'; });
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => { toast.remove(); buildLineList(); showScreen('screen-line'); }, 200);
-    }, 700);
+
+    if (existingRecord) {
+      // 点検済み → 結果を表示
+      toast.textContent = `${calYear}年${MONTHS_JP[calMonth]}${d}日の点検結果`;
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => { toast.style.opacity = '1'; });
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => { toast.remove(); showInspectionResult(existingRecord); }, 200);
+      }, 700);
+    } else {
+      // 未点検 → 通常フロー
+      toast.textContent = `${calYear}年${MONTHS_JP[calMonth]}${d}日の点検`;
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => { toast.style.opacity = '1'; });
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => { toast.remove(); buildLineList(); showScreen('screen-line'); }, 200);
+      }, 700);
+    }
+  }
+
+  /* ─── 点検結果表示 ─── */
+  function showInspectionResult(record) {
+    // banner
+    var banner = document.getElementById('result-banner');
+    if (banner) {
+      var typeNames = ['毎日点検'];
+      if (record.inspectionTypes && record.inspectionTypes.is10Day)   typeNames.push('10日毎点検');
+      if (record.inspectionTypes && record.inspectionTypes.isMonthly) typeNames.push('1ヶ月点検');
+
+      var totalOk = 0, totalNg = 0;
+      (record.equips || []).forEach(function(eqId) {
+        var s = (record.state || {})[eqId];
+        if (!s) return;
+        ['daily','10days','monthly'].forEach(function(t) {
+          (s[t] || []).forEach(function(v) {
+            if (v === 'ok' || v === 'na') totalOk++;
+            else if (v === 'ng') totalNg++;
+          });
+        });
+      });
+
+      var hasNg = totalNg > 0;
+      var completedAt = record.completedAt ? new Date(record.completedAt) : null;
+      var completedStr = completedAt
+        ? (completedAt.getFullYear() + '年' +
+           (completedAt.getMonth()+1) + '月' +
+           completedAt.getDate() + '日　' +
+           String(completedAt.getHours()).padStart(2,'0') + ':' +
+           String(completedAt.getMinutes()).padStart(2,'0') + ' 完了')
+        : '';
+
+      banner.className = 'result-banner ' + (hasNg ? 'rb-ng' : 'rb-ok');
+      banner.innerHTML =
+        '<div class="result-banner-icon">' +
+          (hasNg
+            ? '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+            : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>'
+          ) +
+        '</div>' +
+        '<div class="result-banner-body">' +
+          '<div class="result-banner-title">' + (hasNg ? '異常が ' + totalNg + '件 あります' : '異常はありませんでした') + '</div>' +
+          '<div class="result-banner-meta">' +
+            record.inspector + '　' + calYear + '年' + MONTHS_JP[calMonth] + record.day + '日<br>' +
+            typeNames.join(' / ') + (completedStr ? '　' + completedStr : '') +
+          '</div>' +
+          '<div class="result-banner-counts">' +
+            '<div class="result-count-item"><div class="result-count-num">' + totalOk + '</div><div class="result-count-lbl">正常</div></div>' +
+            '<div class="result-count-item"><div class="result-count-num">' + totalNg + '</div><div class="result-count-lbl">異常</div></div>' +
+          '</div>' +
+        '</div>';
+    }
+
+    // sections
+    var content = document.getElementById('result-content');
+    if (content) content.innerHTML = '';
+    var sections = document.getElementById('result-sections');
+    if (!sections) { showScreen('screen-result'); return; }
+    sections.innerHTML = '';
+
+    (record.equips || []).forEach(function(eqId) {
+      var eqData = EQUIP_DATA.find(function(e){ return e.id === eqId; });
+      var admEq  = (ADM.equips || []).find(function(e){ return e.id === eqId; });
+      var eqName = (eqData && eqData.name) || (admEq && admEq.name) || eqId;
+
+      var s = (record.state || {})[eqId] || {};
+      var types = record.inspectionTypes || {};
+
+      // グループ構成
+      var groups = [];
+      if (eqData) {
+        var effectiveDailyItems = eqData.itemsDaily.length > 0
+          ? eqData.itemsDaily
+          : (types.is10Day ? [] : eqData.items10);
+        if (effectiveDailyItems.length)
+          groups.push({ key:'daily',   label:'毎日点検',   items: effectiveDailyItems });
+        if (types.is10Day && eqData.items10.length)
+          groups.push({ key:'10days',  label:'10日毎点検', items: eqData.items10 });
+        if (types.isMonthly && eqData.itemsMonthly.length)
+          groups.push({ key:'monthly', label:'1ヶ月点検',  items: eqData.itemsMonthly });
+      } else {
+        // EQUIP_DATAにない場合は保存済み値をそのまま表示
+        ['daily','10days','monthly'].forEach(function(t) {
+          if (s[t] && s[t].length) groups.push({ key:t, label:t==='daily'?'毎日点検':t==='10days'?'10日毎点検':'1ヶ月点検', items: s[t].map(function(_,i){ return '項目'+(i+1); }) });
+        });
+      }
+
+      var hasNgEq = groups.some(function(g){ return (s[g.key]||[]).some(function(v){ return v==='ng'; }); });
+
+      var sec = document.createElement('div');
+      sec.className = 'result-section' + (hasNgEq ? ' rs-ng' : '') + ' open';
+
+      var equipIconSvg = '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+
+      var header = document.createElement('div');
+      header.className = 'result-section-header';
+      header.innerHTML =
+        '<div class="result-section-icon">' + equipIconSvg + '</div>' +
+        '<div class="result-section-info">' +
+          '<div class="result-section-id">' + eqId + '</div>' +
+          '<div class="result-section-name">' + eqName + '</div>' +
+        '</div>' +
+        '<span class="result-status-chip ' + (hasNgEq ? 'rs-chip-ng' : 'rs-chip-ok') + '">' + (hasNgEq ? '⚠ 異常' : '✓ 正常') + '</span>' +
+        '<div class="result-chevron"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>';
+      header.onclick = function() { sec.classList.toggle('open'); };
+      sec.appendChild(header);
+
+      var body = document.createElement('div');
+      body.className = 'result-section-body';
+
+      groups.forEach(function(g) {
+        var vals = s[g.key] || [];
+        var divider = document.createElement('div');
+        divider.className = 'result-type-divider';
+        divider.innerHTML = '<span class="insp-type-badge ' + (g.key==='daily'?'daily':g.key==='10days'?'days10':'monthly') + '">' + g.label + '</span><div class="result-type-rule"></div>';
+        body.appendChild(divider);
+
+        g.items.forEach(function(itemName, i) {
+          var v = vals[i];
+          var chipClass = v==='ok' ? 'rchip-ok' : v==='ng' ? 'rchip-ng' : v==='na' ? 'rchip-na' : 'rchip-none';
+          var chipText  = v==='ok' ? '○' : v==='ng' ? '✕' : v==='na' ? 'ー' : '未';
+          var row = document.createElement('div');
+          row.className = 'result-item-row' + (v==='ng' ? ' cf-item-ng' : '');
+          row.innerHTML = '<span class="result-item-name">' + itemName + '</span><span class="result-chip ' + chipClass + '">' + chipText + '</span>';
+          body.appendChild(row);
+        });
+      });
+
+      sec.appendChild(body);
+
+      // 最後のカードにボトム余白
+      var spacer = document.createElement('div');
+      spacer.style.height = '4px';
+      sec.appendChild(spacer);
+
+      sections.appendChild(sec);
+    });
+
+    // 末尾にスペーサー
+    var endSpacer = document.createElement('div');
+    endSpacer.style.height = '16px';
+    sections.appendChild(endSpacer);
+
+    // PC ヘッダー表示制御
+    var pcHdr = document.getElementById('pc-result-header');
+    if (pcHdr) pcHdr.style.display = window.innerWidth >= 1024 ? 'flex' : 'none';
+
+    showScreen('screen-result');
+  }
+
+  /* 再点検：同じ日付で通常フローを開始 */
+  function startReinspection() {
+    // 結果画面のコンテンツをクリアしてレイアウト残留を防ぐ
+    var rb = document.getElementById('result-banner');
+    var rc = document.getElementById('result-content');
+    var rs = document.getElementById('result-sections');
+    if (rb) rb.innerHTML = '';
+    if (rc) rc.innerHTML = '';
+    if (rs) rs.innerHTML = '';
+    buildLineList();
+    showScreen('screen-line');
   }
 
   /* ─── LINE SELECT ─── */
@@ -7164,7 +7850,6 @@
 
     let totalNg = 0;
     let totalOk = 0;
-    const anomalyEquips = []; // { id, name, ngItems: [{label, item}] }
 
     // ── データ集計 ──
     selectedEquips.forEach(id => {
@@ -7196,228 +7881,84 @@
       totalNg += equipNg;
       totalOk += equipOk;
 
-      if (equipNg > 0) {
-        anomalyEquips.push({ eq, groups, ngItems, equipNg, equipOk });
-      }
-
-      // カードデータを別オブジェクトで保持（EQUIP_DATAを汚染しない）
       eq.__confirmGroups  = groups;
       eq.__confirmNg      = equipNg;
       eq.__confirmOk      = equipOk;
       eq.__confirmNgItems = ngItems;
     });
 
-    // ── サマリーカード ──
-    const summaryCard = document.createElement('div');
-    if (totalNg > 0) {
-      summaryCard.className = 'cf-summary-card cf-summary-ng';
-      const anomalyRows = anomalyEquips.map(({ eq, ngItems }) => {
-        const desc = ngItems.map(n => n.item).join('・');
-        return `<div class="cf-summary-anomaly-row">
-          <span class="cf-summary-anomaly-equip">${eq.id} ${eq.name}</span>
-          <span class="cf-summary-anomaly-desc">　${desc}</span>
-        </div>`;
-      }).join('');
-      summaryCard.innerHTML = `
-        <div class="cf-summary-top">
-          <div class="cf-summary-alert-icon">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-          </div>
-          <div class="cf-summary-main">
-            <div class="cf-summary-headline">異常が ${totalNg}件 あります</div>
-            <div class="cf-summary-counts">
-              <div class="cf-summary-count-item cf-count-ok">
-                <span class="cf-summary-count-label">正常</span>
-                <span><span class="cf-summary-count-num">${totalOk}</span><span class="cf-summary-count-unit">件</span></span>
-              </div>
-              <div class="cf-summary-count-item cf-count-ng">
-                <span class="cf-summary-count-label">異常</span>
-                <span><span class="cf-summary-count-num">${totalNg}</span><span class="cf-summary-count-unit">件</span></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="cf-summary-anomaly-list">
-          <div class="cf-summary-anomaly-title">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-            </svg>
-            異常一覧
-          </div>
-          ${anomalyRows}
-        </div>
-      `;
-    } else {
-      summaryCard.className = 'cf-summary-card cf-summary-ok';
-      summaryCard.innerHTML = `
-        <div class="cf-summary-top">
-          <div class="cf-summary-ok-icon">
-            <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
-          <div class="cf-summary-main">
-            <div class="cf-summary-headline">異常はありませんでした</div>
-            <div class="cf-summary-counts">
-              <div class="cf-summary-count-item cf-count-ok">
-                <span class="cf-summary-count-label">正常</span>
-                <span><span class="cf-summary-count-num">${totalOk}</span><span class="cf-summary-count-unit">件</span></span>
-              </div>
-              <div class="cf-summary-count-item cf-count-ng">
-                <span class="cf-summary-count-label">異常</span>
-                <span><span class="cf-summary-count-num">0</span><span class="cf-summary-count-unit">件</span></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-    content.appendChild(summaryCard);
+    // ── バナー（result-banner と同デザイン）──
+    const banner = document.createElement('div');
+    const hasNg = totalNg > 0;
+    banner.className = 'result-banner ' + (hasNg ? 'rb-ng' : 'rb-ok');
+    banner.style.margin = '12px 16px 0';
+    banner.innerHTML =
+      '<div class="result-banner-icon">' +
+        (hasNg
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>'
+        ) +
+      '</div>' +
+      '<div class="result-banner-body">' +
+        '<div class="result-banner-title">' + (hasNg ? '異常が ' + totalNg + '件 あります' : '異常はありませんでした') + '</div>' +
+        '<div class="result-banner-counts">' +
+          '<div class="result-count-item"><div class="result-count-num">' + totalOk + '</div><div class="result-count-lbl">正常</div></div>' +
+          '<div class="result-count-item"><div class="result-count-num">' + totalNg + '</div><div class="result-count-lbl">異常</div></div>' +
+        '</div>' +
+      '</div>';
+    content.appendChild(banner);
 
-    // ── 設備カードグリッド ──
-    const grid = document.createElement('div');
-    grid.className = 'cf-cards-grid';
+    // ── 設備カード（result-section と同デザイン）──
+    const equipIconSvg = '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
 
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
       const groups  = eq.__confirmGroups;
       const equipNg = eq.__confirmNg;
-      const ngItems = eq.__confirmNgItems;
 
-      // 全点検項目数
-      const totalItems = groups.reduce((sum, g) => sum + g.items.length, 0);
+      const sec = document.createElement('div');
+      sec.className = 'result-section' + (equipNg > 0 ? ' rs-ng' : '') + ' open';
 
-      const card = document.createElement('div');
-      card.className = 'cf-card' + (equipNg > 0 ? ' cf-anomaly' : '');
+      // ヘッダー
+      const header = document.createElement('div');
+      header.className = 'result-section-header';
+      header.innerHTML =
+        '<div class="result-section-icon">' + equipIconSvg + '</div>' +
+        '<div class="result-section-info">' +
+          '<div class="result-section-id">' + eq.id + '</div>' +
+          '<div class="result-section-name">' + eq.name + '</div>' +
+        '</div>' +
+        '<span class="result-status-chip ' + (equipNg > 0 ? 'rs-chip-ng' : 'rs-chip-ok') + '">' + (equipNg > 0 ? '⚠ 異常' : '✓ 正常') + '</span>' +
+        '<div class="result-chevron"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>';
+      header.onclick = function() { sec.classList.toggle('open'); };
+      sec.appendChild(header);
 
-      // カードヘッダー
-      const head = document.createElement('div');
-      head.className = 'cf-card-head';
-      head.innerHTML = `
-        <div class="cf-card-head-left">
-          <div class="cf-equip-id">${eq.id}</div>
-          <div class="cf-equip-name">${eq.name}</div>
-        </div>
-        <span class="${equipNg > 0 ? 'cf-badge-ng' : 'cf-badge-ok'}">
-          ${equipNg > 0 ? '⚠ 異常' : '✓ 正常'}
-        </span>
-      `;
-      card.appendChild(head);
+      // ボディ
+      const body = document.createElement('div');
+      body.className = 'result-section-body';
 
-      if (equipNg === 0) {
-        // 正常カード：フッター（タップで詳細展開）
-        const toggleId = 'cf-detail-' + id;
-        const footer = document.createElement('div');
-        footer.className = 'cf-card-footer cf-ok-toggle';
-        footer.innerHTML = `
-          <span class="cf-card-footer-label">点検項目：${totalItems}項目</span>
-          <div class="cf-card-footer-arrow">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
-        `;
-        footer.onclick = function() {
-          this.classList.toggle('open');
-          const detail = document.getElementById(toggleId);
-          if (detail) detail.classList.toggle('open');
-          const arrow = this.querySelector('svg');
-          if (arrow) arrow.style.transform = this.classList.contains('open') ? 'rotate(180deg)' : '';
-        };
-        card.appendChild(footer);
+      groups.forEach(group => {
+        const vals = state[id][group.key] || [];
+        const divider = document.createElement('div');
+        divider.className = 'result-type-divider';
+        const badgeKey = group.key === 'daily' ? 'daily' : group.key === '10days' ? 'days10' : 'monthly';
+        divider.innerHTML = '<span class="insp-type-badge ' + badgeKey + '">' + group.label + '</span><div class="result-type-rule"></div>';
+        body.appendChild(divider);
 
-        // 詳細コンテンツ（アコーディオン）
-        const detailDiv = document.createElement('div');
-        detailDiv.className = 'cf-detail-content cf-ok-detail';
-        detailDiv.id = toggleId;
-        groups.forEach(group => {
-          const vals = state[id][group.key] || [];
-          const lbl = document.createElement('div');
-          lbl.className = 'cf-group-label';
-          lbl.textContent = group.label;
-          detailDiv.appendChild(lbl);
-          group.items.forEach((item, i) => {
-            const v = vals[i];
-            const row = document.createElement('div');
-            row.className = 'cf-item-row';
-            let chipClass = 'cf-result-none', chipText = '未';
-            if (v === 'ok') { chipClass = 'cf-result-ok'; chipText = '○'; }
-            else if (v === 'na') { chipClass = 'cf-result-na'; chipText = 'ー'; }
-            row.innerHTML = `
-              <span class="cf-item-name">${item}</span>
-              <span class="cf-result-chip ${chipClass}">${chipText}</span>
-            `;
-            detailDiv.appendChild(row);
-          });
+        group.items.forEach((item, i) => {
+          const v = vals[i];
+          const chipClass = v === 'ok' ? 'rchip-ok' : v === 'ng' ? 'rchip-ng' : v === 'na' ? 'rchip-na' : 'rchip-none';
+          const chipText  = v === 'ok' ? '○' : v === 'ng' ? '✕' : v === 'na' ? 'ー' : '未';
+          const row = document.createElement('div');
+          row.className = 'result-item-row' + (v === 'ng' ? ' cf-item-ng' : '');
+          row.innerHTML = '<span class="result-item-name">' + item + '</span><span class="result-chip ' + chipClass + '">' + chipText + '</span>';
+          body.appendChild(row);
         });
-        card.appendChild(detailDiv);
-      } else {
-        // 異常カード：異常内容 + 詳細アコーディオン
-        const anomalyBody = document.createElement('div');
-        anomalyBody.className = 'cf-anomaly-body';
-        anomalyBody.innerHTML = `
-          <div class="cf-anomaly-body-label">異常内容：</div>
-          ${ngItems.map(n => `<div class="cf-anomaly-item">${n.item}</div>`).join('')}
-        `;
-        card.appendChild(anomalyBody);
+      });
 
-        // 詳細トグル
-        const toggleBtn = document.createElement('div');
-        const toggleId = 'cf-detail-' + id;
-        toggleBtn.className = 'cf-detail-toggle';
-        toggleBtn.innerHTML = `詳細を開く
-          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
-        toggleBtn.onclick = function() {
-          this.classList.toggle('open');
-          const detail = document.getElementById(toggleId);
-          if (detail) detail.classList.toggle('open');
-          this.querySelector('span') && (this.querySelector('span').textContent = this.classList.contains('open') ? '詳細を閉じる' : '詳細を開く');
-          // テキスト更新
-          const txt = this.childNodes[0];
-          if (txt && txt.nodeType === 3) {
-            txt.textContent = this.classList.contains('open') ? '詳細を閉じる\n          ' : '詳細を開く\n          ';
-          }
-        };
-        card.appendChild(toggleBtn);
-
-        // 詳細コンテンツ（アコーディオン）
-        const detailDiv = document.createElement('div');
-        detailDiv.className = 'cf-detail-content';
-        detailDiv.id = toggleId;
-
-        groups.forEach(group => {
-          const vals = state[id][group.key] || [];
-          const lbl = document.createElement('div');
-          lbl.className = 'cf-group-label';
-          lbl.textContent = group.label;
-          detailDiv.appendChild(lbl);
-
-          group.items.forEach((item, i) => {
-            const v = vals[i];
-            const row = document.createElement('div');
-            row.className = 'cf-item-row' + (v === 'ng' ? ' cf-item-ng' : '');
-            let chipClass = 'cf-result-none', chipText = '未';
-            if (v === 'ok') { chipClass = 'cf-result-ok'; chipText = '○'; }
-            else if (v === 'ng') { chipClass = 'cf-result-ng'; chipText = '✕'; }
-            else if (v === 'na') { chipClass = 'cf-result-na'; chipText = 'ー'; }
-            row.innerHTML = `
-              <span class="cf-item-name">${item}</span>
-              <span class="cf-result-chip ${chipClass}">${chipText}</span>
-            `;
-            detailDiv.appendChild(row);
-          });
-        });
-        card.appendChild(detailDiv);
-      }
-
-      grid.appendChild(card);
+      sec.appendChild(body);
+      sections.appendChild(sec);
     });
-
-    const wrapper = document.createElement('div');
-    wrapper.style.padding = '6px 0 4px';
-    wrapper.appendChild(grid);
-    sections.appendChild(wrapper);
 
     const spacer = document.createElement('div');
     spacer.style.height = '16px';
@@ -7529,6 +8070,7 @@
     ALL_INSPECTION_RECORDS = []; // Firestoreから全件再構築
     records.forEach(applyInspectionRecord);
     if (typeof buildCalendar === 'function') buildCalendar();
+    // buildCalendar 内で updateUnInspectedPanel が呼ばれるため重複呼び出し不要
   };
   // Firebase Integration End
 
@@ -7607,6 +8149,35 @@
       currentScreen = 'screen-home';
     }
   })();
+
+  // すべてのonclick参照関数をwindowに明示的に公開（スコープ問題防止）
+  window.showScreen         = showScreen;
+  window.changeMonth        = changeMonth;
+  window.selectCalDay       = selectCalDay;
+  window.startTodayInspection = startTodayInspection;
+  window.selectAllLines     = selectAllLines;
+  window.clearAllLines      = clearAllLines;
+  window.selectLine         = selectLine;
+  window.goHome             = goHome;
+  window.logout             = logout;
+  window.pcToggleFavLine    = pcToggleFavLine;
+  window.pcSelectLine       = pcSelectLine;
+  window.pcToggleEquip      = pcToggleEquip;
+  window.pcSelectAllEquip   = pcSelectAllEquip;
+  window.pcClearEquip       = pcClearEquip;
+  window.pcFilterLines      = pcFilterLines;
+  window.pcFilterEquips     = pcFilterEquips;
+  window.pcStartInspection  = pcStartInspection;
+  window.pcShowHelp         = pcShowHelp;
+  window.goToEquipScreen    = goToEquipScreen;
+  window.startInspection    = startInspection;
+  window.setVal             = setVal;
+  window.bulkSetUnenteredOk = bulkSetUnenteredOk;
+  window.goToConfirm        = goToConfirm;
+  window.hideUnenteredDialog= hideUnenteredDialog;
+  window.proceedToConfirm   = proceedToConfirm;
+  window.saveAndComplete    = saveAndComplete;
+  window.startReinspection  = startReinspection;
 </script>
 
 <script>
@@ -7842,9 +8413,11 @@ function toggleHomeUserMenu(e) {
   e.stopPropagation();
   _showUserPopup('_home-logout-popup', 'logout', 'ログアウト');
 }
+window.toggleHomeUserMenu = toggleHomeUserMenu;
+window.toggleAdmUserMenu  = toggleAdmUserMenu;
 
 /* ─ open/close admin ─ */function openAdminScreen(adminName) {
-  admLoad();
+  // admLoad() は起動時に呼ばれるので再呼び出し不要
   var nameEl = document.getElementById('adm-hdr-name');
   if (nameEl && adminName) nameEl.textContent = adminName + ' さん';
   var popoverNameEl = document.getElementById('adm-popover-name');
@@ -7891,6 +8464,7 @@ function adminLogout() {
   mgrBtns.forEach(function(b, i) { b.classList.toggle('selected', i === 0); });
   showScreen('screen-role');
 }
+window.adminLogout = adminLogout;
 
 /* ─ tabs ─ */
 function showAdmTab(tab) {
@@ -8992,6 +9566,18 @@ function admToast(msg) {
 
 /* ─ init ─ */
 (function(){ admLoad(); })();
+
+// 管理者画面のonclick参照関数をwindowに明示的に公開
+window.openAdminScreen  = openAdminScreen;
+window.showAdmTab       = showAdmTab;
+window.showAdmSubTab    = showAdmSubTab;
+window.admOpenUserModal = admOpenUserModal;
+window.admSaveUser      = admSaveUser;
+window.admDeleteUser    = admDeleteUser;
+window.admOverlayClick  = admOverlayClick;
+window.admCloseModal    = admCloseModal;
+window.renderLoginUsers = renderLoginUsers;
+window.admRenderUsers   = admRenderUsers;
 </script>
 
 <!-- ===== DASHBOARD & APPROVAL: SCRIPTS ===== -->
@@ -9246,6 +9832,7 @@ function closeApproval() {
 function renderDashboard() {
   renderDashSummary();
   renderDashLines();
+  renderDashUninspected();
   renderDashAnomalies();
   var now = new Date();
   var hh = now.getHours().toString().padStart(2,'0');
@@ -9301,6 +9888,32 @@ function renderDashLines() {
       '</div>' +
       '<div class="da-line-bar-wrap"><div class="da-line-bar-fill ' + fillClass + '" style="width:' + pct + '%"></div></div>' +
       '<div class="da-line-pct">' + pct + '%</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderDashUninspected() {
+  var card = document.getElementById('dash-uninsp-card');
+  var badge = document.getElementById('dash-uninsp-badge');
+  if (!card) return;
+
+  var items = (typeof computeUnInspectedLines === 'function') ? computeUnInspectedLines() : [];
+
+  if (badge) {
+    badge.textContent = items.length ? items.length + '件' : '';
+    badge.style.display = items.length ? '' : 'none';
+  }
+
+  if (!items.length) {
+    card.innerHTML = '<div class="da-uninsp-ok"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>本日までの点検は全て完了しています</div>';
+    return;
+  }
+
+  card.innerHTML = items.map(function(item) {
+    return '<div class="da-uninsp-row' + (item.isToday ? ' da-uninsp-today' : '') + '">' +
+      '<div class="da-uninsp-dot"></div>' +
+      '<div class="da-uninsp-date">' + item.dateLabel + (item.isToday ? '<span class="da-uninsp-tag">今日</span>' : '') + '</div>' +
+      '<div class="da-uninsp-line">' + item.lineName + '</div>' +
     '</div>';
   }).join('');
 }
@@ -11078,6 +11691,193 @@ function isHoliday(dateObj) {
 }
 
 /* ──────────────────────────────────────────
+   点検未ライン計算・表示
+   ────────────────────────────────────────── */
+
+/* 今月1日〜今日の間で、休日を除いて点検が実施されていない
+   日付×ラインの組み合わせを返す（新しい日付順） */
+function computeUnInspectedLines(targetYear, targetMonth) {
+  var now    = new Date();
+  var realY  = now.getFullYear(), realM = now.getMonth(), realD = now.getDate();
+  /* 引数 → window変数 → 実日付 の優先順で年月を決定 */
+  var todayY = (targetYear  !== undefined) ? targetYear  :
+               (window._calYear  !== undefined) ? window._calYear  : realY;
+  var todayM = (targetMonth !== undefined) ? targetMonth :
+               (window._calMonth !== undefined) ? window._calMonth : realM;
+
+  /* 対象月が未来なら未点検なし */
+  var isFuture = (todayY > realY) || (todayY === realY && todayM > realM);
+  if (isFuture) return [];
+
+  /* 現在月なら昨日まで、過去月なら月末まで */
+  var isCurrentMonth = (todayY === realY && todayM === realM);
+  var lastDay = isCurrentMonth
+    ? realD - 1
+    : new Date(todayY, todayM + 1, 0).getDate();
+
+  var inspections = (typeof loadInspections === 'function') ? loadInspections() : [];
+  var allEquips   = (typeof ADM !== 'undefined' && ADM.equips) ? ADM.equips : [];
+  var lines       = (typeof ADM !== 'undefined' && ADM.lines)  ? ADM.lines  : [];
+  var DOW         = ['日','月','火','水','木','金','土'];
+
+  var uninspected = [];
+
+  for (var d = 1; d <= lastDay; d++) {
+    var dateObj = new Date(todayY, todayM, d);
+    if (isHoliday(dateObj)) continue;
+
+    /* その日の点検レコードを取得 */
+    var dayRecs = inspections.filter(function(r) {
+      return r.year === todayY && r.month === todayM && r.day === d;
+    });
+
+    lines.forEach(function(ln) {
+      var lineEquipIds = allEquips
+        .filter(function(e) { return e.lineId === ln.id; })
+        .map(function(e) { return e.id; });
+
+      if (!lineEquipIds.length) return; /* ラインに設備がない場合はスキップ */
+
+      var inspected = dayRecs.some(function(r) {
+        return (r.equips || []).some(function(eid) {
+          return lineEquipIds.indexOf(eid) >= 0;
+        });
+      });
+
+      if (!inspected) {
+        var dow = DOW[dateObj.getDay()];
+        uninspected.push({
+          year: todayY, month: todayM, day: d,
+          lineId: ln.id, lineName: ln.name,
+          dateLabel: (todayM + 1) + '月' + d + '日（' + dow + '）',
+          isToday: isCurrentMonth && (d === realD)
+        });
+      }
+    });
+  }
+
+  /* 新しい日付順 → 同日内はラインID順 */
+  uninspected.sort(function(a, b) {
+    if (b.day !== a.day) return b.day - a.day;
+    return a.lineId < b.lineId ? -1 : a.lineId > b.lineId ? 1 : 0;
+  });
+  return uninspected;
+}
+
+/* 点検者ホーム画面のパネルを更新（インラインリスト形式） */
+function updateUnInspectedPanel(targetYear, targetMonth) {
+  var list       = document.getElementById('uninsp-home-list');
+  var badge      = document.getElementById('uninsp-home-badge');
+  var sheetBadge = document.getElementById('uninsp-sheet-badge');
+  var sheetList  = document.getElementById('uninsp-sheet-list');
+  if (!list) return;
+
+  /* 年月を明示的に渡して確実にカレンダーと同期 */
+  var allItems   = computeUnInspectedLines(targetYear, targetMonth);
+
+  /* お気に入りフィルター */
+  var favLines = (typeof loadFavLines === 'function') ? loadFavLines() : [];
+  var displayItems = (favLines.length > 0)
+    ? allItems.filter(function(item) { return favLines.indexOf(item.lineId) >= 0; })
+    : allItems;
+
+  /* お気に入りラベル更新 */
+  if (typeof updateFavLabel === 'function') updateFavLabel();
+
+  if (badge) {
+    badge.textContent = displayItems.length;
+    if (!displayItems.length) badge.classList.add('ok');
+    else                      badge.classList.remove('ok');
+  }
+  if (sheetBadge) sheetBadge.textContent = allItems.length;
+
+  /* 今日未点検のカウント（統計カード互換） */
+  var todayItems = displayItems.filter(function(item) { return item.isToday; });
+  var todayCount = todayItems.length;
+
+  /* ── ホームのインラインリスト（日付×ライン全件表示） ── */
+  var emptyMsg = (favLines.length > 0)
+    ? 'お気に入りラインの未点検はありません'
+    : '今月の点検は全て完了しています';
+
+  if (!displayItems.length) {
+    list.innerHTML =
+      '<div class="uninsp-inline-empty">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+          '<circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/>' +
+        '</svg>' +
+        '<span>' + emptyMsg + '</span>' +
+      '</div>';
+  } else {
+    list.innerHTML = displayItems.map(function(item) {
+      var isToday = item.isToday;
+      var dateStr = isToday
+        ? '<span style="font-size:10px;background:#FF6D00;color:#fff;border-radius:20px;padding:1px 7px;font-weight:700;">今日</span>'
+        : '<span class="uninsp-inline-date">' + (item.month + 1) + '/' + item.day + '</span>';
+      return '<div class="uninsp-inline-item' + (isToday ? ' uninsp-today' : '') + '">' +
+        '<div class="uninsp-inline-dot"></div>' +
+        '<div class="uninsp-inline-line">' + item.lineName + '</div>' +
+        dateStr +
+        '<button class="uninsp-inline-btn" onclick="startLineInspection(\'' + item.lineId + '\')">点検する</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* ── ボトムシートのリスト（互換のため残す） ── */
+  if (sheetList) {
+    if (!allItems.length) {
+      sheetList.innerHTML =
+        '<div class="uninsp-empty">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+            '<circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/>' +
+          '</svg>' +
+          '<span>本日までの点検は全て完了しています</span>' +
+        '</div>';
+    } else {
+      sheetList.innerHTML = allItems.map(function(item) {
+        return '<div class="uninsp-item' + (item.isToday ? ' uninsp-today' : '') + '">' +
+          '<div class="uninsp-item-dot"></div>' +
+          '<div class="uninsp-item-date">' +
+            item.dateLabel +
+            (item.isToday ? '<span class="uninsp-today-tag">今日</span>' : '') +
+          '</div>' +
+          '<span class="uninsp-item-sep">—</span>' +
+          '<div class="uninsp-item-line">' + item.lineName + '</div>' +
+        '</div>';
+      }).join('');
+    }
+  }
+}
+
+/* 指定ラインを事前選択して設備選択画面へ直接ジャンプ */
+function startLineInspection(lineId) {
+  var now = new Date();
+  if (typeof _isWeekendOrHoliday === 'function' && _isWeekendOrHoliday(now)) {
+    alert('本日は休日のため点検できません。');
+    return;
+  }
+  calYear       = now.getFullYear();
+  calMonth      = now.getMonth();
+  selectedCalDay = now.getDate();
+
+  /* ライン選択画面を構築してからラインを事前選択 */
+  buildLineList(); /* ← selectedLineIds = [] にリセットされる */
+  selectedLineIds = [lineId];
+
+  /* ライン選択画面のUIを更新 */
+  var nextBtn = document.getElementById('line-next-btn');
+  if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = '次へ（1ライン選択中）'; }
+  var selLabel = document.getElementById('line-select-label');
+  if (selLabel) selLabel.textContent = '1件選択中';
+  document.querySelectorAll('.radio-card[data-line-id="' + lineId + '"]').forEach(function(c) {
+    c.classList.add('selected');
+  });
+
+  /* 設備選択画面へ */
+  goToEquipScreen();
+}
+
+/* ──────────────────────────────────────────
    INJECT DASHBOARD BUTTON INTO HOME SCREEN
    ────────────────────────────────────────── */
 /* ダッシュボード・承認ボタンは点検者画面には表示しない */
@@ -11242,6 +12042,261 @@ function isHoliday(dateObj) {
   window.saveInspectionToFirestore  = saveInspectionToFirestore;
 </script>
 <!-- Firebase Integration End -->
+
+<!-- ─── お気に入りライン設定シート ─── -->
+<style>
+.fav-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1100;
+  background: rgba(0,0,0,0.45); opacity: 0; transition: opacity 0.25s;
+}
+.fav-overlay.open    { display: block; }
+.fav-overlay.visible { opacity: 1; }
+
+.fav-sheet {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%) translateY(100%);
+  width: 100%; max-width: 390px; z-index: 1101;
+  background: var(--card); border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.13);
+  transition: transform 0.32s cubic-bezier(.4,0,.2,1);
+  max-height: 80dvh; display: flex; flex-direction: column;
+}
+.fav-sheet.open { transform: translateX(-50%) translateY(0); }
+
+.fav-sheet-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--border); margin: 10px auto 0; flex-shrink: 0;
+}
+.fav-sheet-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px 10px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+.fav-sheet-icon {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--blue-light);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.fav-sheet-icon svg { width: 17px; height: 17px; stroke: var(--blue); fill: none; stroke-width: 2; }
+.fav-sheet-title { font-size: 16px; font-weight: 700; flex: 1; }
+.fav-sheet-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--bg); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.fav-sheet-close svg { width: 16px; height: 16px; stroke: var(--text-sub); fill: none; stroke-width: 2.5; }
+
+.fav-sheet-note {
+  font-size: 11.5px; color: var(--text-sub); padding: 8px 16px 0;
+  line-height: 1.5; flex-shrink: 0;
+}
+
+.fav-sheet-body { padding: 8px 12px 8px; overflow-y: auto; flex: 1; }
+
+.fav-line-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 8px; border-bottom: 1px solid var(--border);
+  cursor: pointer; border-radius: 10px; transition: background 0.12s;
+  -webkit-user-select: none;
+}
+.fav-line-row:last-child { border-bottom: none; }
+.fav-line-row:active { background: var(--bg); }
+.fav-line-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--blue); flex-shrink: 0;
+}
+.fav-line-name { font-size: 14px; font-weight: 600; flex: 1; color: var(--text); }
+.fav-star-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: none; background: none;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  flex-shrink: 0; transition: transform 0.15s;
+  -webkit-user-select: none;
+}
+.fav-star-btn:active { transform: scale(0.88); }
+.fav-star-btn svg { width: 22px; height: 22px; transition: fill 0.15s, stroke 0.15s; }
+.fav-star-btn.starred svg { fill: #FFB300; stroke: #FFB300; }
+.fav-star-btn:not(.starred) svg { fill: none; stroke: var(--text-small); }
+
+.fav-sheet-actions {
+  padding: 10px 16px max(16px, env(safe-area-inset-bottom, 16px));
+  flex-shrink: 0; display: flex; gap: 8px;
+}
+.fav-sheet-reset {
+  flex: 1; height: 46px; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--card);
+  font-size: 14px; font-weight: 600; color: var(--text-sub); cursor: pointer;
+  transition: background 0.12s; font-family: inherit;
+}
+.fav-sheet-reset:active { background: var(--bg); }
+.fav-sheet-apply {
+  flex: 2; height: 46px; border-radius: 12px;
+  border: none; background: var(--blue);
+  font-size: 14px; font-weight: 700; color: #fff; cursor: pointer;
+  transition: opacity 0.15s; font-family: inherit;
+}
+.fav-sheet-apply:active { opacity: 0.85; }
+</style>
+
+<div class="fav-overlay" id="fav-overlay" onclick="closeFavSheet()"></div>
+<div class="fav-sheet" id="fav-sheet">
+  <div class="fav-sheet-handle"></div>
+  <div class="fav-sheet-header">
+    <div class="fav-sheet-icon">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </div>
+    <div class="fav-sheet-title">表示ラインを絞り込む</div>
+    <button class="fav-sheet-close" onclick="closeFavSheet()">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="fav-sheet-note">
+    ⭐ をタップしたラインのみ「点検未ライン」に表示されます。未選択の場合は全ラインを表示します。
+  </div>
+  <div class="fav-sheet-body">
+    <div id="fav-line-list"></div>
+  </div>
+  <div class="fav-sheet-actions">
+    <button class="fav-sheet-reset" onclick="resetFavLines()">すべて表示</button>
+    <button class="fav-sheet-apply" onclick="applyFavLines()">この設定で絞り込む</button>
+  </div>
+</div>
+
+<script>
+/* ── お気に入りライン設定 ── */
+var _favDraft = [];
+
+function loadFavLines() {
+  try { return JSON.parse(localStorage.getItem('favLines') || '[]'); } catch(e) { return []; }
+}
+function saveFavLines(ids) {
+  localStorage.setItem('favLines', JSON.stringify(ids));
+}
+
+function openFavSheet() {
+  var allLines = (typeof ADM !== 'undefined' && ADM.lines) ? ADM.lines : [];
+  var saved    = loadFavLines();
+  _favDraft    = saved.slice();
+
+  var listEl = document.getElementById('fav-line-list');
+  if (!listEl) return;
+
+  if (!allLines.length) {
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;font-size:13px;color:var(--text-sub);">ラインが登録されていません</div>';
+  } else {
+    listEl.innerHTML = allLines.map(function(ln) {
+      var starred = _favDraft.indexOf(ln.id) >= 0;
+      return '<div class="fav-line-row" onclick="toggleFavLine(\'' + ln.id + '\')">' +
+        '<div class="fav-line-dot"></div>' +
+        '<div class="fav-line-name">' + (ln.name || ln.id) + '</div>' +
+        '<button class="fav-star-btn' + (starred ? ' starred' : '') + '" id="fav-star-' + ln.id + '" onclick="event.stopPropagation();toggleFavLine(\'' + ln.id + '\')">' +
+          '<svg viewBox="0 0 24 24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+            '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>' +
+          '</svg>' +
+        '</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  var overlay = document.getElementById('fav-overlay');
+  var sheet   = document.getElementById('fav-sheet');
+  overlay.classList.add('open');
+  sheet.classList.add('open');
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() { overlay.classList.add('visible'); });
+  });
+}
+
+function closeFavSheet() {
+  var overlay = document.getElementById('fav-overlay');
+  var sheet   = document.getElementById('fav-sheet');
+  overlay.classList.remove('visible');
+  sheet.classList.remove('open');
+  setTimeout(function() { overlay.classList.remove('open'); }, 300);
+}
+
+function toggleFavLine(lineId) {
+  var idx = _favDraft.indexOf(lineId);
+  if (idx >= 0) _favDraft.splice(idx, 1);
+  else          _favDraft.push(lineId);
+  var btn = document.getElementById('fav-star-' + lineId);
+  if (btn) {
+    if (_favDraft.indexOf(lineId) >= 0) btn.classList.add('starred');
+    else                                btn.classList.remove('starred');
+  }
+}
+
+function resetFavLines() {
+  saveFavLines([]);
+  closeFavSheet();
+  updateFavLabel();
+  if (typeof updateUnInspectedPanel === 'function') updateUnInspectedPanel(window._calYear, window._calMonth);
+}
+
+function applyFavLines() {
+  saveFavLines(_favDraft);
+  closeFavSheet();
+  updateFavLabel();
+  if (typeof updateUnInspectedPanel === 'function') updateUnInspectedPanel(window._calYear, window._calMonth);
+}
+
+function updateFavLabel() {
+  var favs  = loadFavLines();
+  var label = document.getElementById('uninsp-fav-label');
+  if (!label) return;
+  if (favs.length > 0) label.style.display = '';
+  else                 label.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function() { updateFavLabel(); });
+</script>
+
+<!-- 点検未ライン ボトムシート / モーダル -->
+<div class="uninsp-overlay" id="uninsp-overlay" onclick="closeUnInspSheet()"></div>
+<div class="uninsp-sheet" id="uninsp-sheet">
+  <div class="uninsp-sheet-handle"></div>
+  <div class="uninsp-sheet-header">
+    <div class="uninsp-sheet-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+    </div>
+    <div class="uninsp-sheet-title">点検未ライン</div>
+    <div class="uninsp-sheet-badge" id="uninsp-sheet-badge">-</div>
+    <button class="uninsp-sheet-close" onclick="closeUnInspSheet()">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="uninsp-sheet-body">
+    <div class="uninsp-list" id="uninsp-sheet-list"></div>
+  </div>
+</div>
+
+<script>
+function openUnInspSheet() {
+  var overlay = document.getElementById('uninsp-overlay');
+  var sheet   = document.getElementById('uninsp-sheet');
+  if (typeof updateUnInspectedPanel === 'function') updateUnInspectedPanel(window._calYear, window._calMonth);
+  overlay.classList.add('open');
+  sheet.classList.add('open');
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      overlay.classList.add('visible');
+    });
+  });
+}
+function closeUnInspSheet() {
+  var overlay = document.getElementById('uninsp-overlay');
+  var sheet   = document.getElementById('uninsp-sheet');
+  overlay.classList.remove('visible');
+  sheet.classList.remove('open');
+  setTimeout(function() { overlay.classList.remove('open'); }, 300);
+}
+/* Escキーで全シートを閉じる（重複防止のため1か所に集約） */
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Escape') return;
+  closeUnInspSheet();
+  if (typeof closeFavSheet === 'function') closeFavSheet();
+});
+</script>
 
 </body>
 </html>
