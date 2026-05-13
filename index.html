@@ -395,10 +395,11 @@
   /* ─── 点検未ライン インライン表示 ─── */
   .uninsp-inline-section {
     margin: 0;
+    margin-top: 10px;
   }
   .uninsp-inline-header {
     display: flex; align-items: center; gap: 7px;
-    padding: 6px 0 10px;
+    padding: 10px 0 10px;
   }
   .uninsp-inline-title {
     font-size: 13px; font-weight: 700; color: var(--text-sub);
@@ -1159,9 +1160,28 @@
 
   .equip-section-header {
     padding: 16px 16px 14px;
-    display: flex; flex-direction: column; gap: 12px;
+    display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;
     border-bottom: 1px solid var(--border);
+    gap: 10px;
   }
+  .equip-header-main { flex: 1; min-width: 0; }
+  .equip-bulk-na-btn {
+    flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1px;
+    width: 46px; height: 46px;
+    border-radius: 10px;
+    border: 1.5px solid #D0D5DD;
+    background: #F8F9FA;
+    color: var(--text-sub);
+    font-size: 15px; font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    -webkit-user-select: none; user-select: none;
+  }
+  .equip-bulk-na-btn span { font-size: 9px; font-weight: 600; color: #9EA6B2; line-height: 1; }
+  .equip-bulk-na-btn:hover { background: #EAECF0; border-color: #B0B8C5; }
+  .equip-bulk-na-btn:active { background: #DDE2EA; transform: scale(0.95); }
   .equip-section-left { display: flex; align-items: center; gap: 12px; }
   .equip-icon-sm {
     display: none;
@@ -1193,6 +1213,7 @@
     padding: 0 14px;
     display: flex; align-items: center;
     min-height: 48px;
+    border-bottom: 1px solid var(--border);
   }
   .check-row:last-child { border-bottom: none; }
   .check-row-name { flex: 1; font-size: 14px; color: var(--text); }
@@ -1488,15 +1509,16 @@
       margin-top: 20px;
     }
 
-    /* PC: 設備カードを3列グリッド */
+    /* PC: 設備カードを全幅グリッド */
     #screen-result > #result-sections {
       max-width: none;
+      width: 100%;
       margin-left: unset;
       margin-right: unset;
       padding: 16px 32px 16px;
       box-sizing: border-box;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
       gap: 16px;
       align-items: start;
     }
@@ -2892,7 +2914,7 @@
 
   /* Sections grid */
   #inspect-sections {
-    display: grid; grid-template-columns: repeat(3, 1fr);
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 16px; padding: 16px 32px 16px;
     align-items: stretch;
   }
@@ -2901,6 +2923,7 @@
   /* Card header: remove icon, restyle */
   #screen-inspect .equip-icon-lg { display: none; }
   #screen-inspect .equip-section-header { padding: 20px 20px 16px; }
+  #screen-inspect .equip-bulk-na-btn { width: 54px; height: 54px; border-radius: 12px; font-size: 18px; }
   #screen-inspect .equip-id-label { font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 2px; }
   #screen-inspect .equip-name-only { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
   #screen-inspect .equip-header-main { gap: 0; flex-direction: column; align-items: flex-start; }
@@ -2916,21 +2939,75 @@
   #screen-inspect .check-row { padding: 0 20px; min-height: 54px; }
   #screen-inspect .check-row-name { font-size: 14px; }
   /* 確認画面：PC バナー */
-  #screen-confirm #confirm-content { max-width: 1200px; margin: 20px auto 0; padding: 0 32px; box-sizing: border-box; }
+  #screen-confirm #confirm-content { max-width: none; width: 100%; margin: 20px 0 0; padding: 0 32px; box-sizing: border-box; }
   #screen-confirm #confirm-content .result-banner { margin: 0; }
   /* 確認画面：PC グリッドレイアウト（result-sections と同スタイル） */
   #confirm-sections {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: none;
+    width: 100%;
+    margin: 0;
     padding: 0 32px 0;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 16px;
     align-items: start;
   }
   #confirm-sections .result-section { margin: 0; }
   #confirm-sections > div[style*="height"] { grid-column: 1 / -1; }
+
+  /* ─ 確認画面カードを点検入力カードと同サイズ・余白に統一 ─ */
+  #confirm-sections .result-section-header,
+  #result-sections  .result-section-header {
+    padding: 20px 20px 16px;
+    gap: 14px;
+  }
+  #confirm-sections .result-section-icon,
+  #result-sections  .result-section-icon {
+    display: none;
+  }
+  #confirm-sections .result-section-info,
+  #result-sections  .result-section-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  #confirm-sections .result-section-id,
+  #result-sections  .result-section-id {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+  #confirm-sections .result-section-name,
+  #result-sections  .result-section-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+  }
+  #confirm-sections .result-item-row,
+  #result-sections  .result-item-row {
+    padding: 0 20px;
+    min-height: 54px;
+    gap: 12px;
+  }
+  #confirm-sections .result-item-name,
+  #result-sections  .result-item-name,
+  #confirm-sections .cf-item-name,
+  #result-sections  .cf-item-name {
+    font-size: 14px;
+  }
+  #confirm-sections .result-status-chip,
+  #result-sections  .result-status-chip {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+  #confirm-sections .insp-type-divider,
+  #result-sections  .insp-type-divider {
+    padding: 8px 20px 4px;
+  }
+  /* 確認画面：上部余白 */
+  #confirm-sections { padding-top: 16px; }
+  #result-sections  { padding-top: 16px; }
 
   /* ─── 完了 ─── */
   #screen-complete { background: #F4F6F9; min-height: calc(100vh - 40px); }
@@ -3617,6 +3694,7 @@
     font-size: 11px;
     width: 100%;
     background: #fff;
+    table-layout: fixed;
   }
   .ms-table th, .ms-table td {
     border: 1px solid #999;
@@ -3639,12 +3717,13 @@
   .ms-section-label {
     font-size: 10px; font-weight: 800;
     padding: 0;
-    width: 18px; min-width: 18px;
+    width: 18px; min-width: 18px; max-width: 18px;
     position: sticky; left: 0; z-index: 2;
     border-left: none !important;
     vertical-align: middle;
     text-align: center;
     overflow: hidden;
+    box-sizing: border-box;
   }
   .ms-section-label-inner {
     writing-mode: vertical-rl;
@@ -3661,14 +3740,17 @@
   tbody tr:not(:last-child)  .ms-section-label.monthly-lbl { border-bottom: none !important; }
 
   /* NO column */
-  .ms-no-col { width: 20px; min-width: 20px; font-weight: 700; font-size: 10px; padding: 3px 2px; }
+  .ms-no-col { width: 24px; min-width: 24px; max-width: 24px; font-weight: 700; font-size: 10px; padding: 3px 2px; }
+  .ms-item-name-hdr { width: 140px; min-width: 140px; max-width: 140px; box-sizing: border-box; }
 
   /* Item name column */
   .ms-item-name {
     text-align: left !important;
     padding: 5px 8px;
     font-size: 10px;
-    min-width: 110px;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -6245,6 +6327,16 @@
           <span class="adm-section-title" style="margin:0;">未点検ライン</span>
           <span class="uinsp-total-badge" id="uinsp-total-badge">0件</span>
         </div>
+        <!-- 月ナビゲーター -->
+        <div class="uinsp-month-nav">
+          <button class="uinsp-month-btn" onclick="uinspChangeMonth(-1)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span class="uinsp-month-label" id="uinsp-month-label">2025年5月</span>
+          <button class="uinsp-month-btn" id="uinsp-month-next" onclick="uinspChangeMonth(1)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
       </div>
       <!-- 検索 -->
       <div class="uinsp-search-wrap">
@@ -7684,6 +7776,7 @@
             <span class="equip-status-badge badge-pending" id="badge-${eq.id}" style="display:none">未入力</span>
           </div>
         </div>
+        <button class="equip-bulk-na-btn" onclick="setBulkNa('${eq.id}')" title="全項目をーに設定">ー<span>一括</span></button>
       </div>
     `;
 
@@ -7740,6 +7833,33 @@
 
     const tab = tabType || activeTab[equipId] || '10days';
     state[equipId][tab][itemIdx] = val;
+    updateSectionStatus(equipId);
+  }
+
+  function setBulkNa(equipId) {
+    const eq = EQUIP_DATA.find(e => e.id === equipId);
+    if (!eq) return;
+    const effectiveDailyItems = eq.itemsDaily.length > 0
+      ? eq.itemsDaily
+      : (inspectionTypes.is10Day ? [] : eq.items10);
+    const groups = [];
+    if (inspectionTypes.isDaily && effectiveDailyItems.length)
+      groups.push({ key:'daily', items: effectiveDailyItems });
+    if (inspectionTypes.is10Day)
+      groups.push({ key:'10days', items: eq.items10 });
+    if (inspectionTypes.isMonthly)
+      groups.push({ key:'monthly', items: eq.itemsMonthly });
+
+    groups.forEach(group => {
+      group.items.forEach((_, i) => { state[equipId][group.key][i] = 'na'; });
+    });
+
+    // カードを再描画
+    const oldSection = document.getElementById('section-' + equipId);
+    if (oldSection) {
+      const newSection = buildSection(eq);
+      if (newSection) oldSection.replaceWith(newSection);
+    }
     updateSectionStatus(equipId);
   }
 
@@ -9560,6 +9680,15 @@ function admToast(msg) {
 
 /* ─── 未点検ライン パネル ─── */
 var _uinspFilter = 'all';
+var _uinspYear  = new Date().getFullYear();
+var _uinspMonth = new Date().getMonth();
+
+function uinspChangeMonth(delta) {
+  _uinspMonth += delta;
+  if (_uinspMonth < 0)  { _uinspMonth = 11; _uinspYear--; }
+  if (_uinspMonth > 11) { _uinspMonth = 0;  _uinspYear++; }
+  renderUninspPanel();
+}
 
 function setUinspFilter(f) {
   _uinspFilter = f;
@@ -9574,6 +9703,20 @@ function renderUninspPanel() {
   var now   = new Date();
   var realY = now.getFullYear(), realM = now.getMonth(), realD = now.getDate();
   var DOW   = ['日','月','火','水','木','金','土'];
+  var MONTHS_LABEL = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+  // 表示月（デフォルト：当月）
+  var selY = _uinspYear, selM = _uinspMonth;
+  var isCurrentMonth = (selY === realY && selM === realM);
+  var isPastMonth    = (selY < realY) || (selY === realY && selM < realM);
+  var isFutureMonth  = !isCurrentMonth && !isPastMonth;
+
+  // 月ラベル更新
+  var monthLabel = document.getElementById('uinsp-month-label');
+  if (monthLabel) monthLabel.textContent = selY + '年' + MONTHS_LABEL[selM];
+  // 未来月は「次へ」ボタン無効
+  var nextBtn = document.getElementById('uinsp-month-next');
+  if (nextBtn) nextBtn.disabled = isFutureMonth;
 
   var lines      = (ADM && ADM.lines)  ? ADM.lines  : [];
   var allEquips  = (ADM && ADM.equips) ? ADM.equips : [];
@@ -9581,6 +9724,10 @@ function renderUninspPanel() {
   var favIds     = (typeof loadFavLines === 'function') ? loadFavLines() : [];
   var searchVal  = (document.getElementById('uinsp-search') || {}).value || '';
   searchVal = searchVal.trim().toLowerCase();
+
+  // 対象月の最終日（過去月は月末まで、当月は昨日まで）
+  var monthEndDay = new Date(selY, selM + 1, 0).getDate();
+  var loopEnd = isCurrentMonth ? realD : monthEndDay;
 
   // ラインごとに未点検日を収集
   var lineData = [];
@@ -9592,25 +9739,26 @@ function renderUninspPanel() {
     var maxOverdueDays = 0;
     var hasTodayDue   = false;
 
-    for (var d = 1; d <= realD; d++) {
-      var dateObj = new Date(realY, realM, d);
+    for (var d = 1; d <= loopEnd; d++) {
+      var dateObj = new Date(selY, selM, d);
       if (typeof isHoliday === 'function' && isHoliday(dateObj)) continue;
       var dayRecs = inspections.filter(function(r){
-        return r.year === realY && r.month === realM && r.day === d;
+        return r.year === selY && r.month === selM && r.day === d;
       });
       var inspected = dayRecs.some(function(r){
         return (r.equips || []).some(function(eid){ return lineEquipIds.indexOf(eid) >= 0; });
       });
       if (!inspected) {
-        var overdueDays = realD - d;
-        if (d === realD) hasTodayDue = true;
+        var overdueDays = isCurrentMonth ? (realD - d) : (monthEndDay - d + 1);
+        var isToday = isCurrentMonth && (d === realD);
+        if (isToday) hasTodayDue = true;
         else maxOverdueDays = Math.max(maxOverdueDays, overdueDays);
-        uninspDates.push({ day: d, dow: DOW[dateObj.getDay()], overdueDays: overdueDays, isToday: (d === realD) });
+        uninspDates.push({ day: d, dow: DOW[dateObj.getDay()], overdueDays: overdueDays, isToday: isToday });
       }
     }
     // 最終点検日
     var lineRecs = inspections.filter(function(r){
-      return r.year === realY && r.month === realM &&
+      return r.year === selY && r.month === selM &&
              (r.equips || []).some(function(eid){ return lineEquipIds.indexOf(eid) >= 0; });
     }).sort(function(a,b){ return b.day - a.day; });
     var lastDay = lineRecs.length ? lineRecs[0].day : null;
@@ -9665,7 +9813,7 @@ function renderUninspPanel() {
     else if (ld.hasTodayDue)  cardClass += ' today-due';
     card.className = cardClass;
 
-    var lastDayStr = ld.lastDay ? ((realM+1) + '/' + ld.lastDay) : 'なし';
+    var lastDayStr = ld.lastDay ? ((selM+1) + '/' + ld.lastDay) : 'なし';
     var badgesHtml = '';
     if (ld.maxOverdueDays > 0)
       badgesHtml += '<span class="uinsp-badge uinsp-badge-overdue">' + ld.maxOverdueDays + '日遅延</span>';
@@ -9673,16 +9821,16 @@ function renderUninspPanel() {
       badgesHtml += '<span class="uinsp-badge uinsp-badge-today">本日期限</span>';
     badgesHtml += '<span class="uinsp-badge uinsp-badge-count">' + ld.uninspDates.length + '日分未点検</span>';
 
-    // 点検者未実施サマリー（本日分）
+    // 点検者未実施サマリー（本日分・当月のみ）
     var allInspectorNames = (ADM.inspectors || []).map(function(u){ return u.name; });
-    var todayInspDayRecs  = inspections.filter(function(r){
-      return r.year === realY && r.month === realM && r.day === realD;
-    });
-    var todayDoneNames = todayInspDayRecs
-      .filter(function(r){ return (r.equips||[]).some(function(eid){ return ld.equipIds.indexOf(eid) >= 0; }); })
-      .map(function(r){ return r.inspector; });
-    var todayPendingNames = allInspectorNames.filter(function(n){ return todayDoneNames.indexOf(n) < 0; });
-    if (ld.hasTodayDue && allInspectorNames.length > 0) {
+    if (ld.hasTodayDue && isCurrentMonth && allInspectorNames.length > 0) {
+      var todayInspDayRecs  = inspections.filter(function(r){
+        return r.year === selY && r.month === selM && r.day === realD;
+      });
+      var todayDoneNames = todayInspDayRecs
+        .filter(function(r){ return (r.equips||[]).some(function(eid){ return ld.equipIds.indexOf(eid) >= 0; }); })
+        .map(function(r){ return r.inspector; });
+      var todayPendingNames = allInspectorNames.filter(function(n){ return todayDoneNames.indexOf(n) < 0; });
       badgesHtml += '<span class="uinsp-badge uinsp-badge-insp-pending">未実施 ' + todayPendingNames.length + '名</span>';
     }
 
@@ -9728,7 +9876,7 @@ function renderUninspPanel() {
 
       // 点検者ごとの完了状況を集計
       var dayRecsForDate = inspections.filter(function(r){
-        return r.year === realY && r.month === realM && r.day === di.day;
+        return r.year === selY && r.month === selM && r.day === di.day;
       });
       var doneInspNames = dayRecsForDate
         .filter(function(r){ return (r.equips||[]).some(function(eid){ return ld.equipIds.indexOf(eid) >= 0; }); })
@@ -9762,7 +9910,7 @@ function renderUninspPanel() {
 
       row.innerHTML =
         '<div class="uinsp-date-row-main">' +
-          '<span class="uinsp-date-col">' + (realM+1) + '/' + di.day + '</span>' +
+          '<span class="uinsp-date-col">' + (selM+1) + '/' + di.day + '</span>' +
           '<span class="uinsp-dow-col">' + di.dow + '</span>' +
           statusChip + delayLabel +
         '</div>' +
@@ -11304,6 +11452,11 @@ function renderMonthlySheet() {
   // ═══════════════════════════════
   if (dailyItems.length > 0) {
     html += '<table class="ms-table">';
+    html += '<colgroup>';
+    html += '<col style="width:18px;min-width:18px;">';
+    html += '<col style="width:24px;min-width:24px;">';
+    html += '<col style="width:140px;min-width:140px;">';
+    html += '</colgroup>';
     // Column header row
     html += '<thead><tr>';
     html += '<th style="width:18px;min-width:18px;position:sticky;left:0;z-index:3;background:#ECEFF1;"></th>';   // section label placeholder
@@ -11330,12 +11483,11 @@ function renderMonthlySheet() {
       }
       html += '<td class="ms-no-col">' + (idx+1) + '</td>';
       html += '<td class="ms-item-name">' + esc(item.name) + '</td>';
-      var iIdx = dailyAssignsList.findIndex(function(a){ return a.itemId === item.id; });
       for (var d = 1; d <= daysInMonth; d++) {
         var hol = isDayHoliday(d);
         var st = getStateForDay(d);
         var vals = st['daily'] || [];
-        var val = vals[iIdx] || '';
+        var val = vals[idx] || '';
         html += '<td class="ms-cell' + (hol?' holiday':'') + (isToday(d)?' today':'') + '">' + sym(val) + '</td>';
       }
       html += '</tr>';
@@ -11366,6 +11518,11 @@ function renderMonthlySheet() {
     });
 
     html += '<table class="ms-table">';
+    html += '<colgroup>';
+    html += '<col style="width:18px;min-width:18px;">';
+    html += '<col style="width:24px;min-width:24px;">';
+    html += '<col style="width:140px;min-width:140px;">';
+    html += '</colgroup>';
     html += '<thead>';
     html += '<tr>';
     html += '<th rowspan="2" style="width:18px;min-width:18px;position:sticky;left:0;z-index:3;background:#ECEFF1;border-bottom:1px solid #999!important;"></th>';
@@ -11392,14 +11549,13 @@ function renderMonthlySheet() {
       }
       html += '<td class="ms-no-col">' + globalNo + '</td>';
       html += '<td class="ms-item-name" style="position:sticky;left:18px;z-index:2;">' + esc(item.name) + '</td>';
-      var iIdx = tenDayAssigns.findIndex(function(a){ return a.itemId === item.id; });
       periodDates.forEach(function(pd) {
         var result = '', inspector = '';
         var aprId10 = 'apr10-' + year + '-' + month + '-' + (pd.eff || 'x') + '-' + equipId;
         if (pd.eff) {
           var st = getStateForDay(pd.eff);
           var vals = st['10days'] || [];
-          result = vals[iIdx] || '';
+          result = vals[idx] || '';
           inspector = getInspectorForDay(pd.eff);
         }
         // 結果：点検項目の○✕
@@ -11429,6 +11585,11 @@ function renderMonthlySheet() {
     });
 
     html += '<table class="ms-table">';
+    html += '<colgroup>';
+    html += '<col style="width:18px;min-width:18px;">';
+    html += '<col style="width:24px;min-width:24px;">';
+    html += '<col style="width:140px;min-width:140px;">';
+    html += '</colgroup>';
     html += '<thead>';
     html += '<tr>';
     html += '<th rowspan="2" style="width:18px;min-width:18px;position:sticky;left:0;z-index:3;background:#ECEFF1;border-bottom:1px solid #999!important;"></th>';
@@ -11443,13 +11604,12 @@ function renderMonthlySheet() {
 
     monthlyItems.forEach(function(item, idx) {
       var globalNo = dailyItems.length + tenDayItems.length + idx + 1;
-      var iIdx = monthlyAssigns.findIndex(function(a){ return a.itemId === item.id; });
       var result = '', inspector = '';
       var aprIdM = 'aprM-' + year + '-' + month + '-' + (monthlyDay || 'x') + '-' + equipId;
       if (monthlyDay) {
         var st = getStateForDay(monthlyDay);
         var vals = st['monthly'] || [];
-        result = vals[iIdx] || '';
+        result = vals[idx] || '';
         inspector = getInspectorForDay(monthlyDay);
       }
       var isFirst = idx === 0;
@@ -11547,45 +11707,9 @@ function renderMonthlySheet() {
       if (leg) leg.style.marginTop = m;
     }
 
-    /* 日常点検テーブルの点検項目列幅を基準に10日毎・月次テーブルの同列幅を統一 */
-    function syncItemNameWidth() {
-      var tables = doc.querySelectorAll('.ms-table');
-      if (!tables.length) return;
-
-      /* ── STEP1: 点検項目セル幅を日常点検の実測値に揃える ── */
-      var refCell = tables[0].querySelector('.ms-item-name');
-      if (refCell) {
-        var w = refCell.offsetWidth;
-        if (w) {
-          var wPx = w + 'px';
-          /* 全テーブルのms-item-nameデータセル幅を統一 */
-          doc.querySelectorAll('.ms-item-name').forEach(function(c) {
-            c.style.width    = wPx;
-            c.style.minWidth = wPx;
-            c.style.maxWidth = wPx;
-            c.style.boxSizing = 'border-box';
-          });
-          /* 全テーブル（日常点検含む）のms-item-name-hdrヘッダーセル幅を統一 */
-          doc.querySelectorAll('.ms-item-name-hdr').forEach(function(c) {
-            c.style.width    = wPx;
-            c.style.minWidth = wPx;
-            c.style.maxWidth = wPx;
-            c.style.boxSizing = 'border-box';
-          });
-        }
-      }
-
-      /* ── STEP2: 全テーブル（日常点検 tables[0] 含む）に table-layout:fixed を適用 ──
-         table-layout:auto + width:100% では点検項目列が
-         余白分だけ引き伸ばされる。fixed にすることでヘッダーで指定した
-         幅を厳密に守らせ、余白は日付列・期間列側に分配する。
-         ※日常点検テーブルも fixed にすることで items 数に依らず幅が安定する */
-      tables.forEach(function(t) {
-        t.style.tableLayout = 'fixed';
-      });
-    }
-
-    /* 日常点検の点検項目列幅を基準に10日毎・月次の同列幅を確実に統一 */
+    /* 列幅はCSSのcolgroup + table-layout:fixedで固定済み。JSによる動的計測は
+       ウィンドウ幅によって値が変わりズレの原因となるため使用しない */
+    function syncItemNameWidth() { /* noop: CSS固定に統一 */ }
     syncItemNameWidth();
 
     if (window.innerWidth < 1024) {
@@ -11843,6 +11967,9 @@ function holidayToggleDay(key) {
   else data[key] = next;
   holidaySave(data);
   buildHolidayCal();
+  if (typeof buildCalendar      === 'function') buildCalendar();
+  if (typeof renderMonthlySheet === 'function') renderMonthlySheet();
+  if (typeof renderUninspPanel  === 'function') renderUninspPanel();
   admToast(key.slice(5).replace('-','/') + ' → ' + (next === 'holiday' ? '🔴 休日' : next === 'workday' ? '🟢 特別出勤' : '通常'));
 }
 
@@ -11892,6 +12019,9 @@ function holidayRemove(key) {
   delete data[key];
   holidaySave(data);
   buildHolidayCal();
+  if (typeof buildCalendar      === 'function') buildCalendar();
+  if (typeof renderMonthlySheet === 'function') renderMonthlySheet();
+  if (typeof renderUninspPanel  === 'function') renderUninspPanel();
 }
 
 /* ─ expose holiday data for other parts of the app ─ */
@@ -12182,7 +12312,10 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       const d = snap.data();
       const clean = (({ updatedAt, ...rest }) => rest)(d);
       localStorage.setItem('holidaySettings', JSON.stringify(clean));
-      if (typeof buildHolidayCal === 'function') buildHolidayCal();
+      if (typeof buildHolidayCal      === 'function') buildHolidayCal();
+      if (typeof buildCalendar        === 'function') buildCalendar();
+      if (typeof renderMonthlySheet   === 'function') renderMonthlySheet();
+      if (typeof renderUninspPanel    === 'function') renderUninspPanel();
       console.log("Firestore同期: holidaySettings");
     } catch(e) { console.error("holidaySettings同期エラー", e); }
   });
@@ -12350,7 +12483,16 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
 .fav-sheet-apply:active { opacity: 0.85; }
 
 /* ─── 未点検ライン パネル ─── */
-.uinsp-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.uinsp-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+.uinsp-month-nav { display:flex; align-items:center; gap:4px; }
+.uinsp-month-btn {
+  width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border);
+  background:var(--card); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--text-sub); transition:background 0.15s;
+}
+.uinsp-month-btn:hover { background:var(--bg); }
+.uinsp-month-btn:disabled { opacity:0.35; cursor:default; }
+.uinsp-month-label { font-size:14px; font-weight:700; color:var(--text); min-width:84px; text-align:center; }
 .uinsp-total-badge { background:#FF6D00; color:#fff; border-radius:20px; padding:2px 10px; font-size:12px; font-weight:700; }
 .uinsp-search-wrap { display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0 12px; height:40px; margin-bottom:12px; }
 .uinsp-search-wrap svg { width:16px; height:16px; stroke:var(--text-sub); flex-shrink:0; }
