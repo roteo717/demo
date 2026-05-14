@@ -1013,7 +1013,8 @@
       align-items: stretch;
     }
     .pc-equip-card {
-      background: var(--card); border: 2px solid var(--border);
+      background: var(--card); border: 1px solid var(--border);
+      cursor: default;
       border-radius: 12px; padding: 14px 16px;
       display: flex; align-items: center; gap: 12px;
       cursor: pointer; transition: border-color 0.15s, background 0.15s;
@@ -1021,7 +1022,7 @@
       height: 100%;
     }
     .pc-equip-card:hover { border-color: #B0C4FF; background: #F8FBFF; }
-    .pc-equip-card.selected { border-color: var(--blue); background: var(--blue-light); }
+    .pc-equip-card.selected { border-color: var(--border); background: var(--card); }
     .pc-equip-card-icon {
       width: 38px; height: 38px; border-radius: 8px;
       background: var(--bg); display: flex; align-items: center; justify-content: center;
@@ -1035,7 +1036,8 @@
     .pc-equip-card-name { font-size: 15px; font-weight: 600; color: var(--text); }
     .pc-equip-card.selected .pc-equip-card-name { color: var(--blue); }
     .pc-equip-card-line { font-size: 12px; color: var(--text-sub); }
-    .pc-equip-checkbox {
+    .pc-equip-checkbox { display: none !important; }
+  .old-pc-equip-checkbox {
       width: 22px; height: 22px; border-radius: 6px;
       border: 2px solid var(--border); background: #fff;
       display: flex; align-items: center; justify-content: center;
@@ -2824,7 +2826,11 @@
   .today-row-count span { font-size: 22px; }
   /* PC内のuninspトリガーはsummary-card内に収める */
   .summary-card .uninsp-trigger { margin: 16px 0 0; }
-  .summary-card .start-btn-wrap { padding: 16px 0 0 !important; }
+  .summary-card .start-btn-wrap { padding: 16px 0 14px !important; }
+  /* PC: 右パネルの点検ラインセクション */
+  .summary-card .insp-line-section { padding: 0 24px 20px; }
+  .summary-card .insp-line-tabs { gap: 8px; }
+  .summary-card .insp-line-tab { font-size: 13px; padding: 7px 16px; }
   #screen-home .cal-dow { font-size: 13px; padding: 10px 0; }
   #screen-home .cal-month { font-size: 18px; }
   #screen-home .cal-header { margin-bottom: 16px; }
@@ -5491,10 +5497,10 @@
 
 
       <!-- 本日の点検を開始ボタン -->
-      <div class="start-btn-wrap" id="today-start-btn" style="padding: 12px 0 18px;">
+      <div class="start-btn-wrap" id="today-start-btn" style="padding: 12px 0 14px;">
         <button class="start-btn" onclick="startTodayInspection()">
           <div class="start-btn-left">
-            <span>ラインを選んで点検を開始する</span>
+            <span>本日の点検を開始する</span>
           </div>
           <div class="start-btn-arrow">
             <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
@@ -5502,22 +5508,42 @@
         </button>
       </div>
 
-      <!-- 点検未ライン インラインリスト -->
-      <div class="uninsp-inline-section">
-        <div class="uninsp-inline-header">
-          <span class="uninsp-inline-title">点検未ライン</span>
-          <span class="uninsp-inline-badge" id="uninsp-home-badge">-</span>
-          <span id="uninsp-fav-label" style="display:none;font-size:10px;color:var(--blue);font-weight:600;background:var(--blue-light);border-radius:20px;padding:1px 8px;margin-left:2px;">お気に入りのみ</span>
-          <button id="uninsp-fav-gear-btn" onclick="openFavSheet()" title="表示ラインを絞り込む" style="margin-left:auto;background:none;border:none;padding:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:background 0.15s;" onmouseenter="this.style.background='var(--bg)'" onmouseleave="this.style.background='none'">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <!-- 点検ライン フィルタータブ＋リスト -->
+      <div class="insp-line-section">
+        <div class="insp-line-section-header">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="insp-line-section-title">未点検ライン</span>
+            <span class="insp-line-count-badge" id="insp-line-count-badge" style="display:none;"></span>
+          </div>
+          <button class="insp-line-gear-btn" onclick="openFavSheet()" title="表示ラインを絞り込む">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="3"/>
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
             </svg>
           </button>
         </div>
-        <div id="uninsp-home-list" class="uninsp-inline-list">
-          <!-- Rendered by updateUnInspectedPanel() -->
+        <div class="insp-line-tabs" id="insp-line-tabs">
+          <button class="insp-line-tab active" id="insp-tab-all" data-lineid="all" onclick="setInspLineFilter('all')">すべて</button>
+          <button class="insp-line-tab" data-lineid="L1" onclick="setInspLineFilter('L1')">ラインA</button>
+          <button class="insp-line-tab" data-lineid="L2" onclick="setInspLineFilter('L2')">ラインB</button>
+          <button class="insp-line-tab" data-lineid="L3" onclick="setInspLineFilter('L3')">ラインC</button>
+          <button class="insp-line-tab" data-lineid="L4" onclick="setInspLineFilter('L4')">ラインD</button>
         </div>
+        <div id="insp-line-list-wrap">
+          <!-- Rendered by JS; 初期は空状態 -->
+          <div class="insp-line-empty" id="insp-line-empty">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#CCCCCC" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="2" width="6" height="4" rx="1"/><path d="M7 4H4a2 2 0 00-2 2v14a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2h-3"/>
+              <line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/>
+            </svg>
+            <div class="insp-line-empty-title">条件に一致する点検はありません</div>
+            <div class="insp-line-empty-sub">フィルターを変更してご確認ください</div>
+          </div>
+        </div>
+        <!-- 互換用（非表示） -->
+        <span class="uninsp-inline-badge" id="uninsp-home-badge" style="display:none;">-</span>
+        <span id="uninsp-fav-label" style="display:none;"></span>
+        <div id="uninsp-home-list" style="display:none;"></div>
       </div>
 
     </div>
@@ -5601,17 +5627,7 @@
             <div class="pc-equip-hdr">
               <div class="pc-equip-hdr-top">
                 <div class="pc-equip-hdr-title" id="pc-equip-hdr-title">設備を選択</div>
-                <span class="pc-equip-sel-info" id="pc-equip-sel-info">選択中：0件</span>
-                <div class="pc-equip-hdr-btns">
-                  <button class="pc-equip-hdr-btn select-all" onclick="pcSelectAllEquip()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20,6 9,17 4,12"/></svg>
-                    すべて選択
-                  </button>
-                  <button class="pc-equip-hdr-btn" onclick="pcClearEquip()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                    クリア
-                  </button>
-                </div>
+                <!-- 一覧モード: 選択UI非表示 -->
               </div>
               <div class="pc-equip-search-row">
                 <div class="pc-equip-search-wrap">
@@ -5628,9 +5644,8 @@
             <div class="pc-equip-footer">
               <div class="pc-equip-footer-count">
                 <svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
-                選択中：<span id="pc-footer-count">0</span>件
+                <span id="pc-footer-count">0</span>件の設備を点検します
               </div>
-              <span class="pc-equip-footer-hint" id="pc-footer-hint">設備を選択してください</span>
             </div>
             <!-- Start button -->
             <div class="pc-start-btn-wrap">
@@ -5689,7 +5704,7 @@
 
     <!-- Mobile nav bar -->
     <div class="nav-bar blue-accent" id="inspect-mobile-nav">
-      <div class="nav-back" onclick="window.innerWidth>=1024?showScreen('screen-line'):showScreen('screen-equip')">
+      <div class="nav-back" onclick="showScreen('screen-line')">
         <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検入力</span>
@@ -6614,8 +6629,7 @@
       (id === 'screen-role') ||
       (id === 'screen-home') ||
       (id === 'screen-inspect' && currentScreen === 'screen-confirm') ||
-      (id === 'screen-equip' && currentScreen === 'screen-inspect') ||
-      (id === 'screen-line' && currentScreen === 'screen-equip') ||
+      (id === 'screen-line' && currentScreen === 'screen-inspect') ||
       (id === 'screen-line' && currentScreen === 'screen-result') ||
       (id === 'screen-home' && currentScreen === 'screen-result');
 
@@ -6814,6 +6828,8 @@
     if (!grid) return;
     window._calYear  = calYear;
     window._calMonth = calMonth;
+    // 月が変わったら未点検ラインリストも更新
+    if (typeof renderInspLineList === 'function') renderInspLineList();
     const key = `${calYear}-${calMonth}`;
     const totalDays = new Date(calYear, calMonth + 1, 0).getDate();
     const firstDow  = new Date(calYear, calMonth, 1).getDay();
@@ -7187,6 +7203,24 @@
     showScreen('screen-line');
   }
 
+  // スケジュールの「点検する」ボタンから直接点検画面へ遷移
+  window.startInspectionForLine = function(lineId, dateStr) {
+    var d = dateStr ? new Date(dateStr) : new Date();
+    calYear      = d.getFullYear();
+    calMonth     = d.getMonth();
+    selectedCalDay = d.getDate();
+    selectedLineIds = [lineId];
+    buildLineList(); // ライン一覧を初期化（内部状態のため）
+    // 対象ラインのカードを選択済みにする
+    var cards = document.querySelectorAll('#line-list .radio-card');
+    cards.forEach(function(card) {
+      if (card.dataset.lineId === lineId) card.classList.add('selected');
+      else card.classList.remove('selected');
+    });
+    buildEquipList();   // 設備リストを構築
+    startInspection();  // 点検入力画面へ
+  };
+
   const CARD_COLORS = [
     { color: '#2F6BFF', bg: '#EEF4FF', border: '#B8CFFF' },
   ];
@@ -7434,12 +7468,14 @@
     var totalCount = allEquips.length;
     var filtered = filter ? allEquips.filter(e => (e.name + e.id).includes(filter)) : allEquips;
 
+    // 一覧モード: 全設備を常に選択状態にする
+    allEquips.forEach(function(e) { pcEquipSelection[e.id] = true; });
     // Build title
     var title = document.getElementById('pc-equip-hdr-title');
     if (title) {
       var titleText = pcSelectedLines.length === 1
-        ? (ADM.lines.find(l => l.id === pcSelectedLines[0]) || {name:''}).name + 'の設備を選択'
-        : pcSelectedLines.length + 'ラインの設備を選択';
+        ? (ADM.lines.find(l => l.id === pcSelectedLines[0]) || {name:''}).name + 'の設備一覧'
+        : pcSelectedLines.length + 'ラインの設備一覧';
       title.innerHTML = titleText + '&nbsp;<span class="pc-equip-total-badge">' + totalCount + '設備</span>';
     }
 
@@ -7478,7 +7514,7 @@
           '<div class="pc-equip-checkbox">' +
             '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
           '</div>';
-        card.onclick = function() { pcToggleEquip(eq.id); };
+        // 一覧表示のためクリックによる選択/解除は不要
         grid.appendChild(card);
       });
     });
@@ -7525,7 +7561,7 @@
     var hint = document.getElementById('pc-footer-hint');
     if (hint) hint.textContent = selCount > 0 ? '' : '設備を選択してください';
     var btn = document.getElementById('pc-start-btn');
-    if (btn) btn.disabled = selCount === 0;
+    if (btn) btn.disabled = false;  // 一覧モード: 常に有効
   }
 
   function pcStartInspection() {
@@ -7609,8 +7645,8 @@
   }
 
   function goToEquipScreen() {
-    buildEquipList();
-    showScreen('screen-equip');
+    buildEquipList();   // selectedEquips を全設備で初期化
+    startInspection();  // 選択画面をスキップして直接点検開始
   }
 
   /* ─── EQUIP SELECT ─── */
@@ -7921,10 +7957,13 @@
       if (inspectionTypes.isMonthly) unenteredCount += state[id]['monthly'].filter(v => v === null).length;
     });
     if (unenteredCount > 0) {
-      var uc = document.getElementById('unentered-count');
-      if (uc) uc.textContent = unenteredCount;
-      var ud = document.getElementById('unentered-dialog');
-      if (ud) ud.classList.add('open');
+      // 未入力があれば先に進めない
+      var toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#E53935;color:#fff;padding:12px 22px;border-radius:24px;font-size:14px;font-weight:600;z-index:9999;opacity:0;transition:opacity 0.2s;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.18);';
+      toast.textContent = '未入力が ' + unenteredCount + ' 件あります。すべて入力してください。';
+      document.body.appendChild(toast);
+      requestAnimationFrame(function(){ toast.style.opacity = '1'; });
+      setTimeout(function(){ toast.style.opacity = '0'; setTimeout(function(){ toast.remove(); }, 200); }, 2500);
     } else {
       proceedToConfirm();
     }
@@ -8297,7 +8336,17 @@
 /* ═══ ADMIN DATA ═══ */
 var ADM = {
   lines: [
-    {id:'L1',name:'ラインA'},{id:'L2',name:'ラインB'},{id:'L3',name:'ラインC'}
+    {id:'L1',name:'ラインA'},{id:'L2',name:'ラインB'},{id:'L3',name:'ラインC'},{id:'L4',name:'ラインD'}
+  ],
+  schedules: [
+    {id:'S1',lineId:'L4',date:'2026-05-13',status:'pending'},
+    {id:'S2',lineId:'L4',date:'2026-05-12',status:'pending'},
+    {id:'S3',lineId:'L3',date:'2026-05-12',status:'pending'},
+    {id:'S4',lineId:'L3',date:'2026-05-11',status:'pending'},
+    {id:'S5',lineId:'L4',date:'2026-05-08',status:'pending'},
+    {id:'S6',lineId:'L3',date:'2026-05-08',status:'pending'},
+    {id:'S7',lineId:'L4',date:'2026-05-07',status:'pending'},
+    {id:'S8',lineId:'L3',date:'2026-05-07',status:'pending'}
   ],
   inspectors: [
     {id:'U1',name:'佐藤 太郎'},
@@ -8377,6 +8426,47 @@ var ADM_DEFAULT_ITEMS = [
 function admMigrate() {
   // 0. deletedItemIds フィールドがなければ初期化
   if (!ADM.deletedItemIds) ADM.deletedItemIds = [];
+
+  // 0b. ラインD (L4) がなければ追加、名前がIDのままなら修正
+  var l4 = ADM.lines.find(function(l){ return l.id === 'L4'; });
+  if (!l4) {
+    ADM.lines.push({id:'L4', name:'ラインD'});
+  } else if (!l4.name || l4.name === 'L4') {
+    l4.name = 'ラインD';
+  }
+
+  // 0c. スケジュールがなければ、または旧バージョン（8件以下=1ヶ月分のみ）なら再生成
+  if (!ADM.schedules || ADM.schedules.length <= 56) {
+    var now = new Date();
+    var baseYr = now.getFullYear();
+    var baseMo = now.getMonth(); // 0-indexed
+    var schedules = [];
+    var sidx = 1;
+    // 全ラインの日程パターン（月の前半・後半に2回ずつ）
+    var dayPatterns = [7, 8, 11, 12, 13, 20, 21, 24, 25];
+    // 現在月の前後3ヶ月分を生成
+    for (var offset = -3; offset <= 3; offset++) {
+      var mo = baseMo + offset;
+      var yr = baseYr;
+      while (mo < 0)  { mo += 12; yr--; }
+      while (mo > 11) { mo -= 12; yr++; }
+      var mm = String(mo+1).padStart(2,'0');
+      var maxDay = new Date(yr, mo+1, 0).getDate();
+      ADM.lines.forEach(function(ln) {
+        dayPatterns.forEach(function(day) {
+          if (day <= maxDay) {
+            schedules.push({
+              id: 'S' + sidx++,
+              lineId: ln.id,
+              date: yr + '-' + mm + '-' + String(day).padStart(2,'0'),
+              status: 'pending'
+            });
+          }
+        });
+      });
+    }
+    ADM.schedules = schedules;
+  }
 
   // 1. typeフィールドが未設定の既存項目にデフォルト値を付与
   ADM.items.forEach(function(item) {
@@ -10563,9 +10653,22 @@ function renderAnomalyListPanel(filterEquipId) {
     var groups2 = {};
     typeOrder2.forEach(function(t){ groups2[t] = []; });
     list.forEach(function(a){
-      var key = (a.ngItems && a.ngItems.length && a.ngItems[0].type) ? a.ngItems[0].type : 'daily';
-      if (!groups2[key]) groups2[key] = [];
-      groups2[key].push(a);
+      /* ngItemsが複数タイプにまたがる場合、タイプごとに分割して表示 */
+      var typesSeen = {};
+      (a.ngItems || []).forEach(function(ng) {
+        if (!typesSeen[ng.type]) typesSeen[ng.type] = { equipId: a.equipId, equipName: a.equipName, date: a.date, inspector: a.inspector, ngItems: [] };
+        typesSeen[ng.type].ngItems.push(ng);
+      });
+      var types = Object.keys(typesSeen);
+      if (types.length === 0) {
+        /* ngItemsが空でもhasNgなら毎日点検として表示 */
+        groups2['daily'].push(a);
+      } else {
+        types.forEach(function(t) {
+          if (!groups2[t]) groups2[t] = [];
+          groups2[t].push(typesSeen[t]);
+        });
+      }
     });
     var html2 = '<div style="background:transparent;padding:0;">';
     var anyGroup2 = false;
@@ -10619,6 +10722,17 @@ var apr2LineState   = {};      // lineKey → true(展開) / false(折りたた�
 var apr2EquipState  = {};      // equipId → true / false
 var apr2LineFilter  = [];      // [] = すべて, または選択中のlineId配列
 var apr2TempLineFilter = [];   // ポップアップ操作中の一時選択
+
+function apr2LineFilterKey() {
+  var user = localStorage.getItem('loggedInUser') || 'default';
+  return 'apr2LineFilter_' + user;
+}
+function apr2SaveLineFilter() {
+  try { localStorage.setItem(apr2LineFilterKey(), JSON.stringify(apr2LineFilter)); } catch(e) {}
+}
+function apr2LoadLineFilter() {
+  try { apr2LineFilter = JSON.parse(localStorage.getItem(apr2LineFilterKey()) || '[]'); } catch(e) { apr2LineFilter = []; }
+}
 
 /* ── ダミーデータ（実データがない場合に使用） ── */
 var APR2_DUMMY = (function() {
@@ -10866,6 +10980,7 @@ function apr2ToggleRow(rowId) {
 /* ── メインレンダラー ── */
 function renderAdmApproval() {
   injectAdmProgressCss();
+  apr2LoadLineFilter();  // ユーザーごとのフィルター設定を読み込む
 
   var allItems    = apr2GetData();
   var filtered    = apr2ApplyFilters(allItems);
@@ -11184,6 +11299,7 @@ function apr2SelectAllLines(e) {
 
 function apr2ApplyLineFilter() {
   apr2LineFilter = apr2TempLineFilter.slice();
+  apr2SaveLineFilter();
   apr2Page = 1;
   apr2CloseLinePopup();
   apr2UpdateLineFilterBtn();
@@ -12549,6 +12665,108 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
 .uinsp-insp-pending { background:#FDECEC; color:#C62828; border:1px solid #FFCDD2; }
 .uinsp-insp-done { background:#E8F5E9; color:#2E7D32; border:1px solid #C8E6C9; }
 .uinsp-empty { text-align:center; padding:40px 20px; color:var(--text-sub); font-size:14px; }
+
+/* ─── 点検ライン フィルタータブ（点検者ホーム右パネル） ─── */
+.insp-line-section { margin:0; padding:0 0 16px; }
+.insp-line-section-header { display:flex; align-items:center; justify-content:space-between; padding:6px 0 10px; }
+.insp-line-section-title { font-size:13px; font-weight:700; color:var(--text); letter-spacing:0.2px; }
+.insp-line-gear-btn { background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:4px; border-radius:8px; transition:background 0.15s; }
+.insp-line-gear-btn:hover { background:var(--bg); }
+.insp-line-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+.insp-line-tab { padding:6px 14px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); color:var(--text-sub); font-size:13px; font-weight:500; cursor:pointer; transition:all 0.15s; font-family:inherit; -webkit-user-select:none; }
+.insp-line-tab:active { opacity:0.75; }
+.insp-line-tab.active { background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600; }
+.insp-line-empty { display:flex; flex-direction:column; align-items:center; padding:36px 20px 24px; gap:8px; }
+.insp-line-empty-title { font-size:13px; font-weight:600; color:var(--text-sub); margin-top:6px; }
+.insp-line-empty-sub { font-size:12px; color:var(--text-small); text-align:center; }
+
+/* 点検ライン テーブル */
+.insp-line-count-badge {
+  display:inline-flex; align-items:center; justify-content:center;
+  background: var(--blue); color:#fff;
+  font-size:11px; font-weight:700;
+  min-width:20px; height:20px; padding:0 6px;
+  border-radius:10px; margin-left:6px;
+}
+.insp-sched-table {
+  width:100%; border-collapse:collapse; font-size:13px;
+}
+.insp-sched-table thead th {
+  font-size:11px; font-weight:600; color:var(--text-sub);
+  padding:7px 4px 7px 0; border-bottom:1px solid var(--border);
+  text-align:left; white-space:nowrap;
+}
+.insp-sched-table thead th.col-date {
+  cursor:pointer; user-select:none;
+}
+.insp-sched-table thead th.col-date svg {
+  display:inline-block; vertical-align:middle; margin-left:2px;
+  width:11px; height:11px; stroke:var(--text-sub); fill:none;
+}
+.insp-sched-table thead th.col-action { text-align:right; }
+.insp-sched-table tbody tr {
+  border-bottom:1px solid var(--border);
+}
+.insp-sched-table tbody tr:last-child { border-bottom:none; }
+.insp-sched-table tbody td {
+  padding:10px 4px 10px 0; vertical-align:middle;
+}
+.insp-sched-table td.col-action { text-align:right; }
+.insp-status-dot {
+  display:inline-block; width:8px; height:8px; border-radius:50%;
+  background:#FF8F00; margin-right:5px; flex-shrink:0;
+  vertical-align:middle; margin-top:-1px;
+}
+.insp-status-label {
+  font-size:12px; color:var(--text-sub); white-space:nowrap;
+  vertical-align:middle;
+}
+.insp-sched-line { font-size:13px; font-weight:500; color:var(--text); white-space:nowrap; }
+.insp-sched-date { font-size:13px; color:var(--text); white-space:nowrap; }
+.insp-sched-btn {
+  background:var(--blue); color:#fff;
+  border:none; border-radius:8px;
+  padding:6px 13px; font-size:12px; font-weight:600;
+  cursor:pointer; white-space:nowrap; font-family:inherit;
+  transition:opacity 0.15s, transform 0.12s;
+  -webkit-user-select:none;
+}
+.insp-sched-btn:active { opacity:0.85; transform:scale(0.97); }
+.insp-sched-pagination {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 0 2px; font-size:12px; color:var(--text-sub);
+  border-top:1px solid var(--border); margin-top:2px;
+}
+.insp-sched-page-info { white-space:nowrap; }
+.insp-sched-page-ctrl {
+  display:flex; align-items:center; gap:4px;
+}
+.insp-sched-page-btn {
+  width:26px; height:26px; border:1px solid var(--border);
+  border-radius:6px; background:var(--card); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; color:var(--text-sub); font-family:inherit;
+  transition:background 0.12s;
+}
+.insp-sched-page-btn:active { background:var(--bg); }
+.insp-sched-page-btn:disabled { opacity:0.35; cursor:default; }
+.insp-sched-page-num {
+  width:26px; height:26px; border:1.5px solid var(--blue);
+  border-radius:6px; background:var(--blue); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700;
+}
+.insp-sched-per-page {
+  display:flex; align-items:center; gap:4px;
+}
+.insp-sched-per-page select {
+  border:1px solid var(--border); border-radius:6px;
+  font-size:11px; padding:3px 20px 3px 6px; color:var(--text);
+  background:var(--card); font-family:inherit; cursor:pointer;
+  -webkit-appearance:none; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 5px center;
+}
 </style>
 
 <div class="fav-overlay" id="fav-overlay" onclick="closeFavSheet()"></div>
@@ -12579,11 +12797,15 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
 /* ── お気に入りライン設定 ── */
 var _favDraft = [];
 
+function getFavLinesKey() {
+  var user = localStorage.getItem('loggedInUser') || 'default';
+  return 'favLines_' + user;
+}
 function loadFavLines() {
-  try { return JSON.parse(localStorage.getItem('favLines') || '[]'); } catch(e) { return []; }
+  try { return JSON.parse(localStorage.getItem(getFavLinesKey()) || '[]'); } catch(e) { return []; }
 }
 function saveFavLines(ids) {
-  localStorage.setItem('favLines', JSON.stringify(ids));
+  localStorage.setItem(getFavLinesKey(), JSON.stringify(ids));
 }
 
 function openFavSheet() {
@@ -12644,6 +12866,7 @@ function resetFavLines() {
   closeFavSheet();
   updateFavLabel();
   if (typeof updateUnInspectedPanel === 'function') updateUnInspectedPanel(window._calYear, window._calMonth);
+  initInspLineTabs(); // タブを全ライン表示にリセット
 }
 
 function applyFavLines() {
@@ -12651,6 +12874,7 @@ function applyFavLines() {
   closeFavSheet();
   updateFavLabel();
   if (typeof updateUnInspectedPanel === 'function') updateUnInspectedPanel(window._calYear, window._calMonth);
+  initInspLineTabs(); // タブをお気に入りに合わせて再構築
 }
 
 function updateFavLabel() {
@@ -12661,7 +12885,212 @@ function updateFavLabel() {
   else                 label.style.display = 'none';
 }
 
-document.addEventListener('DOMContentLoaded', function() { updateFavLabel(); });
+document.addEventListener('DOMContentLoaded', function() { updateFavLabel(); initInspLineTabs(); });
+
+/* ── 点検ライン タブ初期化 ── */
+var _inspLineFilter = 'all';
+
+function initInspLineTabs() {
+  var allLines = (typeof ADM !== 'undefined' && ADM && ADM.lines) ? ADM.lines : [];
+  var favIds   = loadFavLines();
+  // お気に入りが設定されていればそのラインだけ表示、なければ全ライン
+  var lines = favIds.length > 0
+    ? allLines.filter(function(l){ return favIds.indexOf(l.id) >= 0; })
+    : allLines;
+
+  var tabsEl = document.getElementById('insp-line-tabs');
+  if (!tabsEl || !allLines.length) return;
+
+  // フィルターを 'all' にリセット（表示ライン変更後はすべてを初期表示）
+  _inspLineFilter = 'all';
+
+  // タブを作り直す
+  tabsEl.innerHTML =
+    '<button class="insp-line-tab active" id="insp-tab-all" data-lineid="all" onclick="setInspLineFilter(\'all\')">すべて</button>';
+  lines.forEach(function(ln) {
+    var btn = document.createElement('button');
+    btn.className = 'insp-line-tab';
+    btn.textContent = ln.name || ln.id;
+    btn.setAttribute('data-lineid', ln.id);
+    btn.onclick = function() { setInspLineFilter(ln.id); };
+    tabsEl.appendChild(btn);
+  });
+  renderInspLineList();
+}
+
+function setInspLineFilter(filterId) {
+  _inspLineFilter = filterId;
+  var tabs = document.querySelectorAll('.insp-line-tab');
+  tabs.forEach(function(t) {
+    var lid = t.getAttribute('data-lineid') || 'all';
+    t.classList.toggle('active', lid === filterId);
+  });
+  // 'all' タブ
+  var allTab = document.getElementById('insp-tab-all');
+  if (allTab) allTab.classList.toggle('active', filterId === 'all');
+  renderInspLineList();
+}
+
+var _inspSchedPage = 1;
+var _inspSchedPerPage = 20;
+var _inspSchedSort = 'desc'; // 'asc' or 'desc'
+
+function renderInspLineList() {
+  var wrap = document.getElementById('insp-line-list-wrap');
+  var emptyEl = document.getElementById('insp-line-empty');
+  var badgeEl = document.getElementById('insp-line-count-badge');
+  if (!wrap) return;
+
+  var schedules = (typeof ADM !== 'undefined' && ADM && ADM.schedules) ? ADM.schedules : [];
+  var lines = (typeof ADM !== 'undefined' && ADM && ADM.lines) ? ADM.lines : [];
+
+  // フィルター適用
+  var filtered = schedules.filter(function(s) {
+    if (_inspLineFilter !== 'all' && s.lineId !== _inspLineFilter) return false;
+    // 現在表示月に合わせてフィルタ
+    var yr = window._calYear || new Date().getFullYear();
+    var mo = (window._calMonth !== undefined ? window._calMonth : new Date().getMonth());
+    var d = new Date(s.date);
+    return d.getFullYear() === yr && d.getMonth() === mo;
+  });
+
+  // ソート（点検予定日）
+  filtered.sort(function(a, b) {
+    var da = new Date(a.date), db = new Date(b.date);
+    return _inspSchedSort === 'asc' ? da - db : db - da;
+  });
+
+  // バッジ更新
+  if (badgeEl) {
+    if (filtered.length > 0) {
+      badgeEl.textContent = filtered.length;
+      badgeEl.style.display = 'inline-flex';
+    } else {
+      badgeEl.style.display = 'none';
+    }
+  }
+
+  // 空状態
+  if (emptyEl) emptyEl.style.display = filtered.length ? 'none' : '';
+  if (!filtered.length) {
+    // 既存テーブルを削除
+    var old = wrap.querySelector('.insp-sched-table-wrap');
+    if (old) old.remove();
+    return;
+  }
+
+  // ページネーション
+  var total = filtered.length;
+  var pageCount = Math.ceil(total / _inspSchedPerPage);
+  if (_inspSchedPage > pageCount) _inspSchedPage = 1;
+  var start = (_inspSchedPage - 1) * _inspSchedPerPage;
+  var pageItems = filtered.slice(start, start + _inspSchedPerPage);
+
+  // テーブル組み立て
+  var rows = pageItems.map(function(s) {
+    // タブのDOM要素からライン名を取得（最新の表示名を使う）
+    var tabEl = document.querySelector('.insp-line-tab[data-lineid="' + s.lineId + '"]');
+    var lineName = tabEl ? tabEl.textContent.trim() : '';
+    if (!lineName) {
+      var ln = lines.find(function(l){ return l.id === s.lineId; });
+      lineName = ln ? (ln.name || s.lineId) : s.lineId;
+    }
+    var d = new Date(s.date);
+    var dateStr = (d.getMonth()+1) + '/' + d.getDate();
+    var btnHtml = '<button class="insp-sched-btn" onclick="startScheduledInspection(\'' + s.id + '\')">点検する</button>';
+    return '<tr>' +
+      '<td><span class="insp-status-dot"></span><span class="insp-status-label">未点検</span></td>' +
+      '<td class="insp-sched-line">' + lineName + '</td>' +
+      '<td class="insp-sched-date">' + dateStr + '</td>' +
+      '<td class="col-action">' + btnHtml + '</td>' +
+    '</tr>';
+  }).join('');
+
+  var sortIcon = _inspSchedSort === 'asc'
+    ? '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l-7 7h14L12 5z" fill="currentColor" stroke="none"/></svg>'
+    : '<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7H5l7 7z" fill="currentColor" stroke="none"/></svg>';
+
+  var prevDisabled = _inspSchedPage <= 1 ? 'disabled' : '';
+  var nextDisabled = _inspSchedPage >= pageCount ? 'disabled' : '';
+  var pageInfo = (start+1) + '〜' + Math.min(start+_inspSchedPerPage, total) + '件 / 全' + total + '件';
+
+  var html = '<div class="insp-sched-table-wrap">' +
+    '<table class="insp-sched-table">' +
+      '<thead><tr>' +
+        '<th style="width:70px">ステータス</th>' +
+        '<th style="width:72px">ライン</th>' +
+        '<th class="col-date" onclick="toggleInspSchedSort()" style="width:80px">点検予定日 <span style="color:var(--blue);font-size:10px;">' + sortIcon + '</span></th>' +
+        '<th class="col-action">操作</th>' +
+      '</tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    '</table>' +
+    '<div class="insp-sched-pagination">' +
+      '<div class="insp-sched-page-info">' + pageInfo + '</div>' +
+      '<div class="insp-sched-page-ctrl">' +
+        '<button class="insp-sched-page-btn" onclick="changeInspSchedPage(-1)" ' + prevDisabled + '>' +
+          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>' +
+        '</button>' +
+        '<div class="insp-sched-page-num">' + _inspSchedPage + '</div>' +
+        '<button class="insp-sched-page-btn" onclick="changeInspSchedPage(1)" ' + nextDisabled + '>' +
+          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>' +
+        '</button>' +
+      '</div>' +
+      '<div class="insp-sched-per-page">' +
+        '<select onchange="changeInspSchedPerPage(this.value)">' +
+          '<option value="20"' + (_inspSchedPerPage===20?' selected':'') + '>20件表示</option>' +
+          '<option value="50"' + (_inspSchedPerPage===50?' selected':'') + '>50件表示</option>' +
+          '<option value="100"' + (_inspSchedPerPage===100?' selected':'') + '>100件表示</option>' +
+        '</select>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+
+  var old = wrap.querySelector('.insp-sched-table-wrap');
+  if (old) {
+    old.outerHTML = html;
+  } else {
+    // emptyElの後に挿入
+    if (emptyEl && emptyEl.parentNode === wrap) {
+      emptyEl.insertAdjacentHTML('afterend', html);
+    } else {
+      wrap.insertAdjacentHTML('beforeend', html);
+    }
+  }
+}
+
+function toggleInspSchedSort() {
+  _inspSchedSort = _inspSchedSort === 'asc' ? 'desc' : 'asc';
+  _inspSchedPage = 1;
+  renderInspLineList();
+}
+
+function changeInspSchedPage(delta) {
+  var schedules = (typeof ADM !== 'undefined' && ADM && ADM.schedules) ? ADM.schedules : [];
+  var total = schedules.filter(function(s){ return _inspLineFilter==='all' || s.lineId===_inspLineFilter; }).length;
+  var pageCount = Math.ceil(total / _inspSchedPerPage);
+  _inspSchedPage = Math.max(1, Math.min(pageCount, _inspSchedPage + delta));
+  renderInspLineList();
+}
+
+function changeInspSchedPerPage(val) {
+  _inspSchedPerPage = parseInt(val, 10) || 20;
+  _inspSchedPage = 1;
+  renderInspLineList();
+}
+
+function startScheduledInspection(schedId) {
+  var schedules = (typeof ADM !== 'undefined' && ADM && ADM.schedules) ? ADM.schedules : [];
+  var sched = schedules.find(function(s){ return s.id === schedId; });
+  if (!sched) return;
+  if (typeof window.startInspectionForLine === 'function') {
+    window.startInspectionForLine(sched.lineId, sched.date);
+  }
+}
+
+/* ADMデータ読み込み後にタブを再初期化するためのフック */
+document.addEventListener('admDataReady', function() {
+  initInspLineTabs();
+});
 </script>
 
 <!-- 点検未ライン ボトムシート / モーダル -->
