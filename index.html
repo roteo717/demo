@@ -1490,73 +1490,333 @@
   #screen-result { background: var(--bg); }
   #screen-result .bottom-action { background: transparent; border-top: none; margin-top: auto; }
 
-  @media (min-width: 1024px) {
-    /* PC: screen-result はスクロールコンテナとして独立させない */
-    #screen-result.active.settled {
-      overflow-y: auto !important;
-    }
+  /* ── PC用 結果ダッシュボード ── */
+  .pc-result-wrapper {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+  }
+  .pc-result-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 0;
+    flex-shrink: 0;
+    background: transparent;
+  }
+  .pc-result-nav-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+  .pc-result-nav-back {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #E0E0E0;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .pc-result-nav-back:hover { background: var(--bg); }
+  .pc-result-nav-back svg { width: 18px; height: 18px; stroke: var(--text); fill: none; }
+  .pc-result-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 32px 100px;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  /* Summary Banner */
+  .pc-res-summary-card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1.5px solid #A5D6A7;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: nowrap;
+  }
+  .pc-res-summary-card.has-ng {
+    border-color: var(--red-mid);
+    background: #FFF9F9;
+  }
+  .pc-res-summary-icon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: #C8F0CB;
+  }
+  .pc-res-summary-card.has-ng .pc-res-summary-icon { background: #FFCDD2; }
+  .pc-res-summary-icon svg { width: 26px; height: 26px; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke: #2E7D32; }
+  .pc-res-summary-card.has-ng .pc-res-summary-icon svg { stroke: var(--red); }
+  .pc-res-summary-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .pc-res-summary-left {
+    flex: 1;
+  }
+  .pc-res-summary-status {
+    font-size: 15px;
+    font-weight: 800;
+    color: #2E7D32;
+    white-space: nowrap;
+  }
+  .pc-res-summary-card.has-ng .pc-res-summary-status { color: var(--red); }
+  .pc-res-summary-sub {
+    font-size: 12px;
+    color: var(--text-sub);
+    white-space: nowrap;
+  }
+  .pc-res-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+  }
+  .pc-res-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .pc-res-stat-num {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+    color: #2E7D32;
+  }
+  .pc-res-stat-num.ng { color: var(--red); }
+  .pc-res-stat-num.neutral { color: var(--text); }
+  .pc-res-stat-lbl {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .pc-res-stat-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .pc-res-summary-right {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 16px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-sub);
+    background: #F8F9FA;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    flex-shrink: 0;
+    min-width: 200px;
+  }
+  .pc-res-info-label {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .pc-res-info-val {
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 500;
+  }
+  /* Line Summary Section */
+  .pc-res-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pc-res-line-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .pc-res-line-card {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-card);
+  }
+  .pc-res-line-card.has-ng { border-color: var(--red-mid); }
+  .pc-res-line-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .pc-res-line-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .pc-res-line-chip {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .pc-res-line-chip.ok { background: var(--green-light); color: var(--green); }
+  .pc-res-line-chip.ng { background: var(--red-light); color: var(--red); }
+  .pc-res-line-meta {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-bottom: 10px;
+  }
+  .pc-res-line-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .pc-res-line-stat { color: var(--text-sub); }
+  .pc-res-line-stat b.ok { color: #2E7D32; font-weight: 700; }
+  .pc-res-line-stat b.ng { color: var(--red); font-weight: 700; }
+  .pc-res-line-stat b.neutral { color: var(--text); font-weight: 700; }
+  .pc-res-line-bar {
+    height: 5px;
+    border-radius: 99px;
+    background: #E8E8E8;
+    overflow: hidden;
+  }
+  .pc-res-line-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: #2E7D32;
+    transition: width 0.5s;
+  }
+  .pc-res-line-bar-fill.ng { background: var(--red); }
+  /* Line Detail Tables */
+  .pc-res-detail-accordion {
+    background: var(--card);
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  .pc-res-detail-accordion.has-ng { border-color: var(--red-mid); }
+  .pc-res-detail-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+    background: var(--card);
+  }
+  .pc-res-detail-header:hover { background: #FAFAFA; }
+  .pc-res-detail-acc-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+  .pc-res-detail-acc-meta {
+    font-size: 12px;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .pc-res-detail-acc-meta span {
+    padding: 0 12px;
+    border-left: 1px solid var(--border);
+  }
+  .pc-res-detail-acc-meta span:first-child { border-left: none; padding-left: 0; }
+  .pc-res-detail-acc-meta span b { font-weight: 700; }
+  .pc-res-detail-acc-meta span b.ok { color: #2E7D32; }
+  .pc-res-detail-acc-meta span b.ng { color: var(--red); }
+  .pc-res-detail-chevron {
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .pc-res-detail-chevron svg { width: 16px; height: 16px; stroke: var(--text-sub); fill: none; }
+  .pc-res-detail-accordion.open .pc-res-detail-chevron { transform: rotate(180deg); }
+  .pc-res-detail-body { display: none; }
+  .pc-res-detail-accordion.open .pc-res-detail-body { display: block; }
+  .pc-res-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .pc-res-detail-table thead tr {
+    background: #F8F9FA;
+    border-top: 1px solid var(--border);
+  }
+  .pc-res-detail-table th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub);
+  }
+  .pc-res-detail-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #F0F0F0;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .pc-res-detail-table tr:last-child td { border-bottom: none; }
+  .pc-res-detail-table td.eq-num { color: var(--text-sub); font-size: 12px; }
+  .pc-res-detail-table td.eq-count { font-size: 13px; color: var(--text-sub); }
+  .pc-res-tbl-ok { color: #2E7D32; font-weight: 700; }
+  .pc-res-tbl-ng { color: var(--red); font-weight: 700; }
+  .pc-res-tbl-chip {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+  .pc-res-tbl-chip.ok { background: var(--green-light); color: var(--green); }
+  .pc-res-tbl-chip.ng { background: var(--red-light); color: var(--red); }
+  .pc-res-ellipsis {
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text-sub);
+    border-top: 1px solid #F0F0F0;
+  }
 
-    /* PC: バナー・ボタンを中央寄せ */
+
+  @media (min-width: 1024px) {
+    #screen-result.active.settled { overflow-y: auto !important; }
+
+    /* PC ではデフォルトのモバイル要素を非表示 */
     #screen-result > #result-banner,
     #screen-result > #result-content,
-    #screen-result > .bottom-action {
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-      padding-left: 32px;
-      padding-right: 32px;
-      box-sizing: border-box;
+    #screen-result > #result-sections,
+    #screen-result > .bottom-action,
+    #screen-result > .pc-inspect-header,
+    #screen-result > .status-bar {
+      display: none !important;
     }
-    #screen-result > #result-banner {
-      margin-top: 20px;
-    }
-
-    /* PC: 設備カードを全幅グリッド */
-    #screen-result > #result-sections {
-      max-width: none;
-      width: 100%;
-      margin-left: unset;
-      margin-right: unset;
-      padding: 16px 32px 16px;
-      box-sizing: border-box;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-      gap: 16px;
-      align-items: start;
-    }
-    /* グリッド内のカードはマージン不要（gap で制御） */
-    #screen-result > #result-sections .result-section {
-      margin: 0;
-    }
-    /* 末尾スペーサーはグリッド全幅に広げない */
-    #screen-result > #result-sections > div[style*="height"] {
-      grid-column: 1 / -1;
-    }
-
-    /* バナーを横長デザインに */
-    #screen-result > #result-banner {
-      gap: 20px;
-    }
-    #screen-result > #result-banner .result-banner-body {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-    }
-    #screen-result > #result-banner .result-banner-meta {
-      flex: 1;
-    }
-    #screen-result > #result-banner .result-banner-counts {
-      margin-top: 0;
-      gap: 24px;
-    }
-    #screen-result > #result-banner .result-count-num {
-      font-size: 28px;
-    }
-
-    /* ボトムアクション */
-    #screen-result > .bottom-action {
-      width: 100%;
-    }
+    #screen-result > .pc-result-wrapper { display: flex; }
   }
 
   .result-banner {
@@ -2868,6 +3128,9 @@
   }
   .pc-inspect-back:hover { background: var(--bg); }
   .pc-inspect-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: var(--text); }
+  .pc-result-nav { padding: 24px 32px 0; gap: 12px; }
+  .pc-result-nav-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .pc-result-nav-back { width: 34px; height: 34px; }
   .pc-inspect-bulk-btn {
     display: flex; align-items: center; gap: 6px;
     background: #fff; border: 1.5px solid var(--blue); color: var(--blue);
@@ -5496,18 +5759,6 @@
       </div>
 
 
-      <!-- 本日の点検を開始ボタン -->
-      <div class="start-btn-wrap" id="today-start-btn" style="padding: 12px 0 14px;">
-        <button class="start-btn" onclick="startTodayInspection()">
-          <div class="start-btn-left">
-            <span>本日の点検を開始する</span>
-          </div>
-          <div class="start-btn-arrow">
-            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-        </button>
-      </div>
-
       <!-- 点検ライン フィルタータブ＋リスト -->
       <div class="insp-line-section">
         <div class="insp-line-section-header">
@@ -5523,7 +5774,6 @@
           </button>
         </div>
         <div class="insp-line-tabs" id="insp-line-tabs">
-          <button class="insp-line-tab active" id="insp-tab-all" data-lineid="all" onclick="setInspLineFilter('all')">すべて</button>
           <button class="insp-line-tab" data-lineid="L1" onclick="setInspLineFilter('L1')">ラインA</button>
           <button class="insp-line-tab" data-lineid="L2" onclick="setInspLineFilter('L2')">ラインB</button>
           <button class="insp-line-tab" data-lineid="L3" onclick="setInspLineFilter('L3')">ラインC</button>
@@ -5839,7 +6089,20 @@
         <button class="btn-bottom-main" style="flex:2;" id="result-reinspect-btn" onclick="startReinspection()">再点検する</button>
       </div>
     </div>
+    <!-- PC専用ダッシュボード結果 -->
+    <div class="pc-result-wrapper" id="pc-result-wrapper">
+      <div class="pc-result-nav">
+        <div class="pc-result-nav-back" onclick="showScreen('screen-home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </div>
+        <div class="pc-result-nav-title">点検結果</div>
+      </div>
+      <div class="pc-result-body" id="pc-result-body">
+        <!-- JSで描画 -->
+      </div>
+    </div>
   </div>
+
 
   <!-- ===== UNENTERED DIALOG ===== -->
   <div class="dialog-overlay" id="unentered-dialog">
@@ -6958,35 +7221,6 @@
     var summaryTitle = document.querySelector('.summary-title');
     if (summaryTitle) summaryTitle.textContent = `点検サマリー（${calYear}年${MONTHS_JP[calMonth]}）`;
 
-    // 今日が休日なら「本日の点検を開始する」ボタンをグレーアウト
-    const startBtnWrap = document.getElementById('today-start-btn');
-    if (startBtnWrap && isCurrentMonth) {
-      const todayIsHoliday = holidays.includes(_today.getDate());
-      const startBtn = startBtnWrap.querySelector('.start-btn');
-      if (todayIsHoliday) {
-        if (startBtn) {
-          startBtn.style.opacity = '0.5';
-          startBtn.style.cursor = 'default';
-          startBtn.style.pointerEvents = 'none';
-          var btnLeftHol = startBtn.querySelector('.start-btn-left');
-          if (btnLeftHol) btnLeftHol.innerHTML =
-            '<div style="display:flex;flex-direction:column;gap:2px;">' +
-              '<span style="font-size:15px;font-weight:700;">本日は休日です</span>' +
-              '<span style="font-size:11px;font-weight:400;opacity:0.8;">点検はありません</span>' +
-            '</div>';
-        }
-      } else {
-        if (startBtn) {
-          startBtn.style.opacity = '';
-          startBtn.style.cursor = '';
-          startBtn.style.pointerEvents = '';
-          var btnLeftNorm = startBtn.querySelector('.start-btn-left');
-          if (btnLeftNorm) btnLeftNorm.innerHTML =
-            '<span>本日の点検を開始する</span>';
-        }
-      }
-      startBtnWrap.style.display = '';
-    }
 
     // 点検未ラインパネルを更新
     if (typeof updateUnInspectedPanel === 'function') updateUnInspectedPanel(calYear, calMonth);
@@ -7030,35 +7264,45 @@
 
   /* ─── 点検結果表示 ─── */
   function showInspectionResult(record) {
-    // banner
-    var banner = document.getElementById('result-banner');
-    if (banner) {
-      var typeNames = ['毎日点検'];
-      if (record.inspectionTypes && record.inspectionTypes.is10Day)   typeNames.push('10日毎点検');
-      if (record.inspectionTypes && record.inspectionTypes.isMonthly) typeNames.push('1ヶ月点検');
+    var typeNames = ['毎日点検'];
+    if (record.inspectionTypes && record.inspectionTypes.is10Day)   typeNames.push('10日毎点検');
+    if (record.inspectionTypes && record.inspectionTypes.isMonthly) typeNames.push('1ヶ月点検');
 
-      var totalOk = 0, totalNg = 0;
-      (record.equips || []).forEach(function(eqId) {
-        var s = (record.state || {})[eqId];
-        if (!s) return;
-        ['daily','10days','monthly'].forEach(function(t) {
-          (s[t] || []).forEach(function(v) {
-            if (v === 'ok' || v === 'na') totalOk++;
-            else if (v === 'ng') totalNg++;
-          });
+    var totalOk = 0, totalNg = 0, totalItems = 0;
+    (record.equips || []).forEach(function(eqId) {
+      var s = (record.state || {})[eqId];
+      if (!s) return;
+      ['daily','10days','monthly'].forEach(function(t) {
+        (s[t] || []).forEach(function(v) {
+          totalItems++;
+          if (v === 'ok' || v === 'na') totalOk++;
+          else if (v === 'ng') totalNg++;
         });
       });
+    });
 
-      var hasNg = totalNg > 0;
-      var completedAt = record.completedAt ? new Date(record.completedAt) : null;
-      var completedStr = completedAt
-        ? (completedAt.getFullYear() + '年' +
-           (completedAt.getMonth()+1) + '月' +
-           completedAt.getDate() + '日　' +
-           String(completedAt.getHours()).padStart(2,'0') + ':' +
-           String(completedAt.getMinutes()).padStart(2,'0') + ' 完了')
-        : '';
+    var hasNg = totalNg > 0;
+    var completedAt = record.completedAt ? new Date(record.completedAt) : null;
+    var completedStr = completedAt
+      ? (completedAt.getFullYear() + '年' +
+         (completedAt.getMonth()+1) + '月' +
+         completedAt.getDate() + '日　' +
+         String(completedAt.getHours()).padStart(2,'0') + ':' +
+         String(completedAt.getMinutes()).padStart(2,'0') + ' 完了')
+      : '';
 
+    // 所要時間の計算
+    var elapsedStr = '';
+    if (record.startedAt && record.completedAt) {
+      var elapsed = Math.round((record.completedAt - record.startedAt) / 1000);
+      var mm = Math.floor(elapsed / 60);
+      var ss = elapsed % 60;
+      elapsedStr = mm + '分' + String(ss).padStart(2,'0') + '秒';
+    }
+
+    // モバイル用バナー描画
+    var banner = document.getElementById('result-banner');
+    if (banner) {
       banner.className = 'result-banner ' + (hasNg ? 'rb-ng' : 'rb-ok');
       banner.innerHTML =
         '<div class="result-banner-icon">' +
@@ -7080,101 +7324,215 @@
         '</div>';
     }
 
-    // sections
+    // モバイル用設備カード描画
     var content = document.getElementById('result-content');
     if (content) content.innerHTML = '';
     var sections = document.getElementById('result-sections');
-    if (!sections) { showScreen('screen-result'); return; }
-    sections.innerHTML = '';
+    if (sections) {
+      sections.innerHTML = '';
+      (record.equips || []).forEach(function(eqId) {
+        var eqData = EQUIP_DATA.find(function(e){ return e.id === eqId; });
+        var admEq  = (ADM.equips || []).find(function(e){ return e.id === eqId; });
+        var eqName = (eqData && eqData.name) || (admEq && admEq.name) || eqId;
+        var s = (record.state || {})[eqId] || {};
+        var types = record.inspectionTypes || {};
+        var groups = [];
+        if (eqData) {
+          var effectiveDailyItems = eqData.itemsDaily && eqData.itemsDaily.length > 0
+            ? eqData.itemsDaily
+            : (types.is10Day ? [] : (eqData.items10 || []));
+          if (effectiveDailyItems.length)
+            groups.push({ key:'daily', label:'毎日点検', items: effectiveDailyItems });
+          if (types.is10Day && eqData.items10 && eqData.items10.length)
+            groups.push({ key:'10days', label:'10日毎点検', items: eqData.items10 });
+          if (types.isMonthly && eqData.itemsMonthly && eqData.itemsMonthly.length)
+            groups.push({ key:'monthly', label:'1ヶ月点検', items: eqData.itemsMonthly });
+        } else {
+          ['daily','10days','monthly'].forEach(function(t) {
+            if (s[t] && s[t].length) groups.push({ key:t, label:t==='daily'?'毎日点検':t==='10days'?'10日毎点検':'1ヶ月点検', items: s[t].map(function(_,i){ return '項目'+(i+1); }) });
+          });
+        }
+        var hasNgEq = groups.some(function(g){ return (s[g.key]||[]).some(function(v){ return v==='ng'; }); });
+        var sec = document.createElement('div');
+        sec.className = 'result-section' + (hasNgEq ? ' rs-ng' : '') + ' open';
+        var equipIconSvg = '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+        var hdr = document.createElement('div');
+        hdr.className = 'result-section-header';
+        hdr.innerHTML =
+          '<div class="result-section-icon">' + equipIconSvg + '</div>' +
+          '<div class="result-section-info"><div class="result-section-id">' + eqId + '</div><div class="result-section-name">' + eqName + '</div></div>' +
+          '<span class="result-status-chip ' + (hasNgEq ? 'rs-chip-ng' : 'rs-chip-ok') + '">' + (hasNgEq ? '⚠ 異常' : '✓ 正常') + '</span>' +
+          '<div class="result-chevron"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>';
+        hdr.onclick = function() { sec.classList.toggle('open'); };
+        sec.appendChild(hdr);
+        var body = document.createElement('div');
+        body.className = 'result-section-body';
+        groups.forEach(function(g) {
+          var vals = s[g.key] || [];
+          var divider = document.createElement('div');
+          divider.className = 'result-type-divider';
+          divider.innerHTML = '<span class="insp-type-badge ' + (g.key==='daily'?'daily':g.key==='10days'?'days10':'monthly') + '">' + g.label + '</span><div class="result-type-rule"></div>';
+          body.appendChild(divider);
+          g.items.forEach(function(itemName, i) {
+            var v = vals[i];
+            var chipClass = v==='ok' ? 'rchip-ok' : v==='ng' ? 'rchip-ng' : v==='na' ? 'rchip-na' : 'rchip-none';
+            var chipText  = v==='ok' ? '○' : v==='ng' ? '✕' : v==='na' ? 'ー' : '未';
+            var row = document.createElement('div');
+            row.className = 'result-item-row' + (v==='ng' ? ' cf-item-ng' : '');
+            row.innerHTML = '<span class="result-item-name">' + itemName + '</span><span class="result-chip ' + chipClass + '">' + chipText + '</span>';
+            body.appendChild(row);
+          });
+        });
+        sec.appendChild(body);
+        sections.appendChild(sec);
+      });
+      var endSpacer = document.createElement('div');
+      endSpacer.style.height = '16px';
+      sections.appendChild(endSpacer);
+    }
 
-    (record.equips || []).forEach(function(eqId) {
-      var eqData = EQUIP_DATA.find(function(e){ return e.id === eqId; });
-      var admEq  = (ADM.equips || []).find(function(e){ return e.id === eqId; });
-      var eqName = (eqData && eqData.name) || (admEq && admEq.name) || eqId;
-
-      var s = (record.state || {})[eqId] || {};
-      var types = record.inspectionTypes || {};
-
-      // グループ構成
-      var groups = [];
-      if (eqData) {
-        var effectiveDailyItems = eqData.itemsDaily.length > 0
-          ? eqData.itemsDaily
-          : (types.is10Day ? [] : eqData.items10);
-        if (effectiveDailyItems.length)
-          groups.push({ key:'daily',   label:'毎日点検',   items: effectiveDailyItems });
-        if (types.is10Day && eqData.items10.length)
-          groups.push({ key:'10days',  label:'10日毎点検', items: eqData.items10 });
-        if (types.isMonthly && eqData.itemsMonthly.length)
-          groups.push({ key:'monthly', label:'1ヶ月点検',  items: eqData.itemsMonthly });
-      } else {
-        // EQUIP_DATAにない場合は保存済み値をそのまま表示
+    // ── PC用ダッシュボード描画 ──
+    var pcBody = document.getElementById('pc-result-body');
+    if (pcBody) {
+      // ライン別に設備をグループ化
+      var lineGroups = {};   // lineId -> [{eqId, eqName, ok, ng, itemCount}]
+      var lineOrder  = [];
+      (record.equips || []).forEach(function(eqId) {
+        var admEq  = (ADM.equips || []).find(function(e){ return e.id === eqId; });
+        var eqData = EQUIP_DATA.find(function(e){ return e.id === eqId; });
+        var eqName = (eqData && eqData.name) || (admEq && admEq.name) || eqId;
+        var lineId = (admEq && admEq.lineId) || '__none__';
+        if (!lineGroups[lineId]) { lineGroups[lineId] = []; lineOrder.push(lineId); }
+        var s = (record.state || {})[eqId] || {};
+        var eqOk = 0, eqNg = 0, eqItems = 0;
         ['daily','10days','monthly'].forEach(function(t) {
-          if (s[t] && s[t].length) groups.push({ key:t, label:t==='daily'?'毎日点検':t==='10days'?'10日毎点検':'1ヶ月点検', items: s[t].map(function(_,i){ return '項目'+(i+1); }) });
+          (s[t] || []).forEach(function(v) {
+            eqItems++;
+            if (v === 'ok' || v === 'na') eqOk++;
+            else if (v === 'ng') eqNg++;
+          });
         });
-      }
-
-      var hasNgEq = groups.some(function(g){ return (s[g.key]||[]).some(function(v){ return v==='ng'; }); });
-
-      var sec = document.createElement('div');
-      sec.className = 'result-section' + (hasNgEq ? ' rs-ng' : '') + ' open';
-
-      var equipIconSvg = '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
-
-      var header = document.createElement('div');
-      header.className = 'result-section-header';
-      header.innerHTML =
-        '<div class="result-section-icon">' + equipIconSvg + '</div>' +
-        '<div class="result-section-info">' +
-          '<div class="result-section-id">' + eqId + '</div>' +
-          '<div class="result-section-name">' + eqName + '</div>' +
-        '</div>' +
-        '<span class="result-status-chip ' + (hasNgEq ? 'rs-chip-ng' : 'rs-chip-ok') + '">' + (hasNgEq ? '⚠ 異常' : '✓ 正常') + '</span>' +
-        '<div class="result-chevron"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>';
-      header.onclick = function() { sec.classList.toggle('open'); };
-      sec.appendChild(header);
-
-      var body = document.createElement('div');
-      body.className = 'result-section-body';
-
-      groups.forEach(function(g) {
-        var vals = s[g.key] || [];
-        var divider = document.createElement('div');
-        divider.className = 'result-type-divider';
-        divider.innerHTML = '<span class="insp-type-badge ' + (g.key==='daily'?'daily':g.key==='10days'?'days10':'monthly') + '">' + g.label + '</span><div class="result-type-rule"></div>';
-        body.appendChild(divider);
-
-        g.items.forEach(function(itemName, i) {
-          var v = vals[i];
-          var chipClass = v==='ok' ? 'rchip-ok' : v==='ng' ? 'rchip-ng' : v==='na' ? 'rchip-na' : 'rchip-none';
-          var chipText  = v==='ok' ? '○' : v==='ng' ? '✕' : v==='na' ? 'ー' : '未';
-          var row = document.createElement('div');
-          row.className = 'result-item-row' + (v==='ng' ? ' cf-item-ng' : '');
-          row.innerHTML = '<span class="result-item-name">' + itemName + '</span><span class="result-chip ' + chipClass + '">' + chipText + '</span>';
-          body.appendChild(row);
-        });
+        lineGroups[lineId].push({ eqId: eqId, eqName: eqName, ok: eqOk, ng: eqNg, items: eqItems });
       });
 
-      sec.appendChild(body);
+      // ライン名マップ
+      function getLineName(lineId) {
+        var ln = (ADM.lines || []).find(function(l){ return l.id === lineId; });
+        return ln ? (ln.name || lineId) : lineId;
+      }
 
-      // 最後のカードにボトム余白
-      var spacer = document.createElement('div');
-      spacer.style.height = '4px';
-      sec.appendChild(spacer);
+      var lineCount = lineOrder.length;
+      var equipCount = (record.equips || []).length;
 
-      sections.appendChild(sec);
-    });
+      // ─ サマリーバナー ─
+      var summaryHtml =
+        '<div class="pc-res-summary-card' + (hasNg ? ' has-ng' : '') + '">' +
+          '<div class="pc-res-summary-icon">' +
+            (hasNg
+              ? '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+              : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>'
+            ) +
+          '</div>' +
+          '<div class="pc-res-summary-title-block">' +
+            '<div class="pc-res-summary-status">' + 'すべての点検が完了しました' + '</div>' +
+            '<div class="pc-res-summary-sub">' + (hasNg ? '異常が ' + totalNg + ' 件あります' : '異常はありませんでした') + '</div>' +
+          '</div>' +
+          '<div class="pc-res-stats-row">' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num">' + totalOk + '</div><div class="pc-res-stat-lbl">正常 件</div></div>' +
+            '<div class="pc-res-stat-divider"></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num' + (totalNg > 0 ? ' ng' : '') + '">' + totalNg + '</div><div class="pc-res-stat-lbl">異常 件</div></div>' +
+            '<div class="pc-res-stat-divider"></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + lineCount + '</div><div class="pc-res-stat-lbl">ライン</div></div>' +
+            '<div class="pc-res-stat-divider"></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + equipCount + '</div><div class="pc-res-stat-lbl">設備数</div></div>' +
+            '<div class="pc-res-stat-divider"></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + totalItems + '</div><div class="pc-res-stat-lbl">点検項目数</div></div>' +
+          '</div>' +
+          '<div class="pc-res-summary-right">' +
+            '<div class="pc-res-info-label">検査者</div><div class="pc-res-info-val">' + (record.inspector || '—') + '</div>' +
+            '<div class="pc-res-info-label">完了日時</div><div class="pc-res-info-val">' + (completedStr || '—') + '</div>' +
+            '<div class="pc-res-info-label">点検方法</div><div class="pc-res-info-val">' + typeNames.join(' / ') + '</div>' +
+            (elapsedStr ? '<div class="pc-res-info-label">所要時間</div><div class="pc-res-info-val">' + elapsedStr + '</div>' : '') +
+          '</div>' +
+        '</div>';
 
-    // 末尾にスペーサー
-    var endSpacer = document.createElement('div');
-    endSpacer.style.height = '16px';
-    sections.appendChild(endSpacer);
+      // ─ ライン別サマリーカード ─
+      var lineSummaryHtml = '<div class="pc-res-section-title">ライン別サマリー</div><div class="pc-res-line-grid">';
+      lineOrder.forEach(function(lineId) {
+        var equips = lineGroups[lineId];
+        var lOk = 0, lNg = 0, lItems = 0;
+        equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
+        var lHasNg = lNg > 0;
+        var pct = lItems > 0 ? Math.round((lOk / lItems) * 100) : 100;
+        var lineName = lineId === '__none__' ? '未分類' : getLineName(lineId);
+        lineSummaryHtml +=
+          '<div class="pc-res-line-card' + (lHasNg ? ' has-ng' : '') + '">' +
+            '<div class="pc-res-line-card-top">' +
+              '<div class="pc-res-line-name">' + lineName + '</div>' +
+              '<div class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</div>' +
+            '</div>' +
+            '<div class="pc-res-line-meta">設備数：' + equips.length + '台　|　点検項目数：' + lItems + '項目</div>' +
+            '<div class="pc-res-line-stats">' +
+              '<span class="pc-res-line-stat">正常 <b class="ok">' + lOk + '</b> 件</span>' +
+              '<span class="pc-res-line-stat">異常 <b class="' + (lNg > 0 ? 'ng' : 'neutral') + '">' + lNg + '</b> 件</span>' +
+            '</div>' +
+          '</div>';
+      });
+      lineSummaryHtml += '</div>';
 
-    // PC ヘッダー表示制御
-    var pcHdr = document.getElementById('pc-result-header');
-    if (pcHdr) pcHdr.style.display = window.innerWidth >= 1024 ? 'flex' : 'none';
+      // ─ ライン別詳細アコーディオン ─
+      var lineDetailHtml = '<div class="pc-res-section-title">ライン別の詳細</div>';
+      lineOrder.forEach(function(lineId, idx) {
+        var equips = lineGroups[lineId];
+        var lOk = 0, lNg = 0, lItems = 0;
+        equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
+        var lHasNg = lNg > 0;
+        var lineName = lineId === '__none__' ? '未分類' : getLineName(lineId);
+        var accId = 'pc-res-acc-' + idx;
+        // 最初のラインだけ開く
+        var isOpen = '';
+        lineDetailHtml +=
+          '<div class="pc-res-detail-accordion' + (lHasNg ? ' has-ng' : '') + isOpen + '" id="' + accId + '">' +
+            '<div class="pc-res-detail-header" onclick="togglePcResAcc(\'' + accId + '\')">' +
+              '<div class="pc-res-detail-acc-name">' + lineName + '&nbsp;&nbsp;<span class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '" style="font-size:11px;">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span></div>' +
+              '<div class="pc-res-detail-acc-meta">' +
+                '<span>設備数：' + equips.length + '台</span>' +
+                '<span>点検項目数：' + lItems + '項目</span>' +
+                '<span>正常：<b class="ok">' + lOk + '</b> 件</span>' +
+                '<span>異常：<b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> 件</span>' +
+              '</div>' +
+              '<div class="pc-res-detail-chevron"><svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></div>' +
+            '</div>' +
+            '<div class="pc-res-detail-body">' +
+              '<table class="pc-res-detail-table">' +
+                '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:80px"><col style="width:80px"><col style="width:100px"></colgroup>' +
+                '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th></tr></thead>' +
+                '<tbody>' +
+                  equips.map(function(e) {
+                    return '<tr>' +
+                      '<td class="eq-num">' + e.eqId + '</td>' +
+                      '<td><strong>' + e.eqName + '</strong></td>' +
+                      '<td class="eq-count" style="text-align:center">' + e.items + '項目</td>' +
+                      '<td class="pc-res-tbl-ok" style="text-align:center">' + e.ok + '</td>' +
+                      '<td class="' + (e.ng > 0 ? 'pc-res-tbl-ng' : '') + '" style="text-align:center">' + e.ng + '</td>' +
+                      '<td style="text-align:center"><span class="pc-res-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '⚠ 異常' : '✓ 正常') + '</span></td>' +
+                    '</tr>';
+                  }).join('') +
+                '</tbody>' +
+              '</table>' +
+            '</div>' +
+          '</div>';
+      });
+
+      pcBody.innerHTML = summaryHtml + lineSummaryHtml + lineDetailHtml;
+    }
 
     showScreen('screen-result');
+  }
+
+  function togglePcResAcc(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
   }
 
   /* 再点検：同じ日付で通常フローを開始 */
@@ -8339,14 +8697,18 @@ var ADM = {
     {id:'L1',name:'ラインA'},{id:'L2',name:'ラインB'},{id:'L3',name:'ラインC'},{id:'L4',name:'ラインD'}
   ],
   schedules: [
-    {id:'S1',lineId:'L4',date:'2026-05-13',status:'pending'},
-    {id:'S2',lineId:'L4',date:'2026-05-12',status:'pending'},
-    {id:'S3',lineId:'L3',date:'2026-05-12',status:'pending'},
-    {id:'S4',lineId:'L3',date:'2026-05-11',status:'pending'},
-    {id:'S5',lineId:'L4',date:'2026-05-08',status:'pending'},
-    {id:'S6',lineId:'L3',date:'2026-05-08',status:'pending'},
-    {id:'S7',lineId:'L4',date:'2026-05-07',status:'pending'},
-    {id:'S8',lineId:'L3',date:'2026-05-07',status:'pending'}
+    {id:'S1',lineId:'L4',date:'2026-05-15',status:'pending'},
+    {id:'S2',lineId:'L3',date:'2026-05-15',status:'pending'},
+    {id:'S3',lineId:'L2',date:'2026-05-15',status:'pending'},
+    {id:'S4',lineId:'L1',date:'2026-05-15',status:'pending'},
+    {id:'S5',lineId:'L4',date:'2026-05-13',status:'pending'},
+    {id:'S6',lineId:'L4',date:'2026-05-12',status:'pending'},
+    {id:'S7',lineId:'L3',date:'2026-05-12',status:'pending'},
+    {id:'S8',lineId:'L3',date:'2026-05-11',status:'pending'},
+    {id:'S9',lineId:'L4',date:'2026-05-08',status:'pending'},
+    {id:'S10',lineId:'L3',date:'2026-05-08',status:'pending'},
+    {id:'S11',lineId:'L4',date:'2026-05-07',status:'pending'},
+    {id:'S12',lineId:'L3',date:'2026-05-07',status:'pending'}
   ],
   inspectors: [
     {id:'U1',name:'佐藤 太郎'},
@@ -8435,15 +8797,23 @@ function admMigrate() {
     l4.name = 'ラインD';
   }
 
+  // 0b-2. ライン重複排除（同一IDが複数ある場合、最初の1件を残す）
+  var seenLineIds = {};
+  ADM.lines = ADM.lines.filter(function(l) {
+    if (seenLineIds[l.id]) return false;
+    seenLineIds[l.id] = true;
+    return true;
+  });
+
   // 0c. スケジュールがなければ、または旧バージョン（8件以下=1ヶ月分のみ）なら再生成
-  if (!ADM.schedules || ADM.schedules.length <= 56) {
+  if (!ADM.schedules || ADM.schedules.length <= 12) {
     var now = new Date();
     var baseYr = now.getFullYear();
     var baseMo = now.getMonth(); // 0-indexed
     var schedules = [];
     var sidx = 1;
     // 全ラインの日程パターン（月の前半・後半に2回ずつ）
-    var dayPatterns = [7, 8, 11, 12, 13, 20, 21, 24, 25];
+    var dayPatterns = [7, 8, 11, 12, 13, 15, 20, 21, 24, 25];
     // 現在月の前後3ヶ月分を生成
     for (var offset = -3; offset <= 3; offset++) {
       var mo = baseMo + offset;
@@ -9921,7 +10291,7 @@ function renderUninspPanel() {
         .filter(function(r){ return (r.equips||[]).some(function(eid){ return ld.equipIds.indexOf(eid) >= 0; }); })
         .map(function(r){ return r.inspector; });
       var todayPendingNames = allInspectorNames.filter(function(n){ return todayDoneNames.indexOf(n) < 0; });
-      badgesHtml += '<span class="uinsp-badge uinsp-badge-insp-pending">未実施 ' + todayPendingNames.length + '名</span>';
+
     }
 
     var iconSvg = ld.maxOverdueDays > 0
@@ -9948,6 +10318,14 @@ function renderUninspPanel() {
     detail.innerHTML = '<div class="uinsp-detail-title">未点検日一覧（' + ld.uninspDates.length + '日分）</div>';
 
     var allInspNames = (ADM.inspectors || []).map(function(u){ return u.name; });
+
+    // このラインの点検者ごとの累計点検回数を集計
+    var inspCountMap = {};
+    inspections.forEach(function(r) {
+      if ((r.equips||[]).some(function(eid){ return ld.equipIds.indexOf(eid) >= 0; })) {
+        inspCountMap[r.inspector] = (inspCountMap[r.inspector] || 0) + 1;
+      }
+    });
 
     // 新しい日付順
     var sorted = ld.uninspDates.slice().sort(function(a,b){ return b.day - a.day; });
@@ -9976,8 +10354,12 @@ function renderUninspPanel() {
       // 点検者チップHTML
       var inspSectionHtml = '';
       if (allInspNames.length > 0) {
+        // 未実施者を点検回数の多い順にソートして上位2名を表示
+        var topPending = pendingInspNames.slice().sort(function(a, b) {
+          return (inspCountMap[b] || 0) - (inspCountMap[a] || 0);
+        }).slice(0, 2);
         var chips = '';
-        pendingInspNames.forEach(function(n){
+        topPending.forEach(function(n){
           chips += '<span class="uinsp-insp-chip uinsp-insp-pending">' +
             '<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>' +
             n + '</span>';
@@ -9991,7 +10373,7 @@ function renderUninspPanel() {
           '<div class="uinsp-insp-section">' +
             '<span class="uinsp-insp-label">' +
               (pendingInspNames.length > 0
-                ? '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>未実施 ' + pendingInspNames.length + '名'
+                ? '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#E53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>担当者 ' + topPending.length + '名'
                 : '<svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#2E7D32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>全員完了') +
             '</span>' +
             chips +
@@ -12901,15 +13283,14 @@ function initInspLineTabs() {
   var tabsEl = document.getElementById('insp-line-tabs');
   if (!tabsEl || !allLines.length) return;
 
-  // フィルターを 'all' にリセット（表示ライン変更後はすべてを初期表示）
-  _inspLineFilter = 'all';
+  // フィルターを最初のラインにリセット
+  _inspLineFilter = lines.length > 0 ? lines[0].id : 'all';
 
-  // タブを作り直す
-  tabsEl.innerHTML =
-    '<button class="insp-line-tab active" id="insp-tab-all" data-lineid="all" onclick="setInspLineFilter(\'all\')">すべて</button>';
+  // タブを作り直す（「すべて」ボタンなし）
+  tabsEl.innerHTML = '';
   lines.forEach(function(ln) {
     var btn = document.createElement('button');
-    btn.className = 'insp-line-tab';
+    btn.className = 'insp-line-tab' + (ln.id === _inspLineFilter ? ' active' : '');
     btn.textContent = ln.name || ln.id;
     btn.setAttribute('data-lineid', ln.id);
     btn.onclick = function() { setInspLineFilter(ln.id); };
@@ -12925,7 +13306,7 @@ function setInspLineFilter(filterId) {
     var lid = t.getAttribute('data-lineid') || 'all';
     t.classList.toggle('active', lid === filterId);
   });
-  // 'all' タブ
+  // 'all' タブ（存在しない場合はスキップ）
   var allTab = document.getElementById('insp-tab-all');
   if (allTab) allTab.classList.toggle('active', filterId === 'all');
   renderInspLineList();
@@ -12945,13 +13326,19 @@ function renderInspLineList() {
   var lines = (typeof ADM !== 'undefined' && ADM && ADM.lines) ? ADM.lines : [];
 
   // フィルター適用
+  var _todayStart = new Date(); _todayStart.setHours(23,59,59,999);
   var filtered = schedules.filter(function(s) {
     if (_inspLineFilter !== 'all' && s.lineId !== _inspLineFilter) return false;
     // 現在表示月に合わせてフィルタ
     var yr = window._calYear || new Date().getFullYear();
     var mo = (window._calMonth !== undefined ? window._calMonth : new Date().getMonth());
-    var d = new Date(s.date);
-    return d.getFullYear() === yr && d.getMonth() === mo;
+    var parts = s.date ? s.date.split('-') : [];
+    var d = parts.length === 3
+      ? new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]))
+      : new Date(s.date);
+    if (!(d.getFullYear() === yr && d.getMonth() === mo)) return false;
+    // 今日以前のみ表示（今日を含む）
+    return d <= _todayStart;
   });
 
   // ソート（点検予定日）
