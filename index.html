@@ -510,10 +510,16 @@
   }
 
   .pw-wrap { position: relative; }
+  .login-input-row.pw-wrap { position: static; }
   .pw-toggle {
     position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
     background: none; border: none; cursor: pointer; padding: 4px;
     display: flex; align-items: center; color: var(--text-sub);
+  }
+  /* Inside card login row, pw-toggle is just flex-end, not absolute */
+  .login-input-row .pw-toggle {
+    position: static; transform: none; right: auto; top: auto;
+    flex-shrink: 0;
   }
   .pw-toggle svg { width: 20px; height: 20px; }
 
@@ -551,6 +557,155 @@
 
   /* ─── SAFE AREA PAD ─── */
   .safe-bottom { height: max(32px, env(safe-area-inset-bottom, 32px)); }
+
+  /* ─── SCREEN LOGIN (Firebase Auth) — Card Floating Design ─── */
+  #screen-login .safe-bottom { display: none; }
+  #screen-login {
+    background: linear-gradient(145deg, #e8edf4 0%, #d6dde8 50%, #c9d3e0 100%);
+    max-width: 390px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+  .login-screen-body {
+    width: calc(100% - 48px);
+    max-width: 340px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.13),
+      0 6px 20px rgba(0,0,0,0.08),
+      0 1px 4px rgba(0,0,0,0.04);
+    padding: 36px 28px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .login-screen-body .role-hero-icon {
+    margin-bottom: 10px;
+  }
+  .login-screen-title {
+    font-size: 20px; font-weight: 700; letter-spacing: -0.3px;
+    color: var(--text); margin-bottom: 24px; text-align: center;
+  }
+  .login-screen-subtitle {
+    font-size: 13px; color: var(--text-sub); margin-bottom: 20px; text-align: center;
+    display: none;
+  }
+  .login-form-group { width: 100%; margin-bottom: 20px; }
+  .login-form-label { display: none; }
+
+  /* Icon + input row */
+  .login-input-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: none;
+    border-bottom: 1.5px solid #D8DEE8;
+    padding: 10px 0;
+    gap: 12px;
+    transition: border-color 0.2s;
+    background: transparent;
+  }
+  .login-input-row:focus-within {
+    border-bottom-color: #1ABFAA;
+  }
+  .login-input-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #A0A8B4;
+    transition: color 0.2s;
+  }
+  .login-input-row:focus-within .login-input-icon { color: #1ABFAA; }
+  .login-input-icon svg { width: 20px; height: 20px; }
+
+  .login-form-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 2px 0;
+    font-size: 15px; color: var(--text);
+    outline: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+  }
+  .login-form-input::placeholder { color: #B8BEC8; }
+
+  /* Remember me + Forgot row */
+  .login-options-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    margin-top: -4px;
+  }
+  .login-remember {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-sub);
+    cursor: pointer;
+    -webkit-user-select: none;
+  }
+  .login-remember input[type="checkbox"] {
+    width: 15px; height: 15px;
+    accent-color: #1ABFAA;
+    cursor: pointer;
+  }
+  .login-forgot {
+    font-size: 13px; color: var(--text-sub);
+    cursor: pointer;
+    background: none; border: none; padding: 0;
+    font-family: inherit;
+  }
+  .login-forgot:hover { color: #1ABFAA; }
+
+  .login-error-msg {
+    width: 100%;
+    background: var(--red-light);
+    border: 1px solid var(--red-mid);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 16px;
+    display: none;
+    line-height: 1.5;
+  }
+
+  /* Override login submit button to teal */
+  #login-submit-btn {
+    background: #1ABFAA !important;
+    border-radius: 10px !important;
+    height: 48px !important;
+    letter-spacing: 0.3px;
+    font-size: 15px !important;
+  }
+  #login-submit-btn:active { opacity: 0.88; transform: scale(0.99); }
+  /* ─── AUTH LOADING OVERLAY ─── */
+  #auth-loading-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 99999;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+  }
+  .auth-spinner {
+    width: 38px; height: 38px;
+    border: 3px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: authSpin 0.75s linear infinite;
+  }
+  .auth-loading-text { font-size: 13px; color: var(--text-sub); }
+  @keyframes authSpin { to { transform: rotate(360deg); } }
+  /* ─── ROLE CARD (both user) — visible only for 'both' role ─── */
+  #screen-role.auth-controlled { display: flex !important; }
 
   /* ======================================
      POST-LOGIN SCREENS
@@ -3020,6 +3175,13 @@
   .role-card-arrow { display: none; }
   .role-footer { max-width: 640px; width: 100%; padding: 24px 0 12px; }
   .role-section-label { max-width: 640px; width: 100%; padding: 0; align-self: center; }
+
+  /* ─── Firebaseログイン画面 ─── */
+  #screen-login {
+    max-width: 100%;
+    width: 100%;
+    min-height: calc(100vh - 40px);
+  }
 
   /* ─── ログイン画面（点検者 / 管理者）─── */
   #screen-inspector,
@@ -5605,10 +5767,85 @@
   <!-- ===== PC MAIN ===== -->
   <main class="pc-main" id="pc-main">
 
+<!-- ===== AUTH LOADING OVERLAY ===== -->
+<div id="auth-loading-overlay">
+  <div class="auth-spinner"></div>
+  <div class="auth-loading-text">読み込み中...</div>
+</div>
+
 <div class="phone-wrapper">
 
+  <!-- ===== SCREEN LOGIN (Firebase Auth) ===== -->
+  <div class="screen hidden" id="screen-login">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="status-icons">
+        <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+    <div class="login-screen-body">
+      <div class="login-screen-title">担当者ログイン</div>
+
+      <div class="login-form-group">
+        <label class="login-form-label" for="login-id-input">担当者ID</label>
+        <div class="login-input-row">
+          <span class="login-input-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <input
+            class="login-form-input"
+            id="login-id-input"
+            type="text"
+            placeholder="担当者ID（例：A001）"
+            autocomplete="username"
+            autocapitalize="none"
+          />
+        </div>
+      </div>
+
+      <div class="login-form-group">
+        <label class="login-form-label" for="login-pw-input">パスワード</label>
+        <div class="login-input-row pw-wrap">
+          <span class="login-input-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+          <input
+            class="login-form-input"
+            id="login-pw-input"
+            type="password"
+            placeholder="パスワードを入力"
+            autocomplete="current-password"
+          />
+          <button class="pw-toggle" type="button" onclick="toggleLoginPw()" tabindex="-1">
+            <svg id="login-eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+
+
+      <div class="login-error-msg" id="login-error-msg"></div>
+
+      <button class="btn-primary-blue" id="login-submit-btn" onclick="doFirebaseLogin()" style="width:100%;margin-top:0;">
+        ログイン
+      </button>
+
+
+    </div>
+    <div class="safe-bottom"></div>
+  </div>
+
   <!-- ===== SCREEN 1: ROLE SELECT ===== -->
-  <div class="screen active" id="screen-role">
+  <div class="screen hidden" id="screen-role">
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
@@ -6935,7 +7172,7 @@
   let selectedEquips = EQUIP_DATA.slice(0, 6).map(e => e.id); // default first 6
 
   /* ─── SCREEN NAVIGATION ─── */
-  let currentScreen = 'screen-role';
+  let currentScreen = 'screen-login';
 
   function showScreen(id) {
     /* 画面遷移時に開いているシートを全て閉じる */
@@ -6958,6 +7195,7 @@
     }
 
     const isBack =
+      (id === 'screen-login') ||
       (id === 'screen-role') ||
       (id === 'screen-home') ||
       (id === 'screen-inspect' && currentScreen === 'screen-confirm') ||
@@ -6985,9 +7223,29 @@
   }
 
   /* ─── LOGIN SCREENS ─── */
-  function gotoInspector() { showScreen('screen-inspector'); }
-  function gotoManager()   { showScreen('screen-manager'); }
-  function goBack()        { showScreen('screen-role'); }
+  function gotoInspector() {
+    // Firebase認証済みの場合はユーザー選択をスキップしてホーム画面へ
+    if (window._fbCurrentUserRole) {
+      var displayName = window._fbCurrentUserName || '点検者';
+      localStorage.setItem('loggedInUser', displayName);
+      var homeNameEl = document.querySelector('.home-user-name');
+      if (homeNameEl) homeNameEl.textContent = displayName + ' さん';
+      updateHomeDateDisplay();
+      buildCalendar();
+      showScreen('screen-home');
+    } else {
+      showScreen('screen-inspector');
+    }
+  }
+  function gotoManager() {
+    // Firebase認証済みの場合はユーザー選択をスキップして管理者画面へ
+    if (window._fbCurrentUserRole) {
+      openAdminScreen(window._fbCurrentUserName || '管理者');
+    } else {
+      showScreen('screen-manager');
+    }
+  }
+  function goBack() { showScreen('screen-role'); }
 
   // onclick属性から呼び出される全関数を明示的にグローバル公開
   window.gotoInspector   = gotoInspector;
@@ -8730,7 +8988,16 @@
     if (popover) popover.classList.remove('open');
     if (chip)    chip.classList.remove('open');
     localStorage.removeItem('loggedInUser');
-    showScreen('screen-role');
+    // Firebase Auth ログアウト
+    if (typeof window._fbSignOut === 'function') {
+      window._fbSignOut();
+    } else {
+      showScreen('screen-login');
+    }
+    // グローバルロール情報をクリア
+    window._fbCurrentUserRole = null;
+    window._fbCurrentUserName = null;
+    window._fbCurrentUserId   = null;
   }
 
   /* ─── INIT ─── */
@@ -8768,24 +9035,9 @@
       if (typeof renderLoginUsers === 'function') renderLoginUsers();
     }
     setTimeout(_doAdmInit, 0);
-    const savedUser = localStorage.getItem('loggedInUser');
-    if (savedUser) {
-      var homeNameEl = document.querySelector('.home-user-name');
-      if (homeNameEl) homeNameEl.textContent = savedUser + ' さん';
-      document.querySelectorAll('#screen-inspector .user-btn').forEach(b => {
-        b.classList.remove('selected');
-        if (b.textContent.trim() === savedUser) b.classList.add('selected');
-      });
-      buildCalendar();
-      const role = document.getElementById('screen-role');
-      const home = document.getElementById('screen-home');
-      role.classList.remove('active');
-      role.classList.add('hidden');
-      home.classList.remove('hidden', 'slide-out-left');
-      home.classList.add('active');
-      setTimeout(() => home.classList.add('settled'), 350);
-      currentScreen = 'screen-home';
-    }
+    // 注: Firebase onAuthStateChanged がセッション復元を担当するため、
+    //     ここではlocalStorageによる自動ログインは行わない。
+    // screen-login が初期画面として表示される（onAuthStateChangedが画面を切り替える）
   })();
 
   // すべてのonclick参照関数をwindowに明示的に公開（スコープ問題防止）
@@ -8798,6 +9050,24 @@
   window.selectLine         = selectLine;
   window.goHome             = goHome;
   window.logout             = logout;
+  window.toggleLoginPw      = function() {
+    var input = document.getElementById('login-pw-input');
+    var icon  = document.getElementById('login-eye-icon');
+    if (!input) return;
+    if (input.type === 'password') {
+      input.type = 'text';
+      if (icon) icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    } else {
+      input.type = 'password';
+      if (icon) icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    }
+  };
+  window.doFirebaseLogin    = function() {
+    // Firebase Authログイン処理（モジュールスクリプト側に委譲）
+    if (typeof window._doFirebaseLoginImpl === 'function') {
+      window._doFirebaseLoginImpl();
+    }
+  };
   window.pcToggleFavLine    = pcToggleFavLine;
   window.pcSelectLine       = pcSelectLine;
   window.pcToggleEquip      = pcToggleEquip;
@@ -9112,8 +9382,52 @@ function toggleAdmUserMenu(e) {
 
 function toggleHomeUserMenu(e) {
   e.stopPropagation();
+  // "both" ユーザーは「管理者画面へ」ボタンも表示
+  if (window._fbCurrentUserRole === 'both') {
+    var id = '_home-logout-popup';
+    var existing = document.getElementById(id);
+    if (existing) { existing.remove(); return; }
+    var chip = document.getElementById('home-user-chip');
+    if (!chip) return;
+    var rect = chip.getBoundingClientRect();
+    var rightEdge = window.innerWidth - rect.right;
+    var popup = document.createElement('div');
+    popup.id = id;
+    popup.style.cssText = 'position:fixed;top:'+(rect.bottom+6)+'px;right:'+Math.max(8,rightEdge)+'px;'
+      +'background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.18);'
+      +'min-width:180px;z-index:999999;overflow:hidden;'
+      +'animation:popoverIn 0.15s cubic-bezier(.4,0,.2,1);';
+    popup.innerHTML =
+      '<button onclick="switchToAdminFromHome()" style="width:100%;padding:13px 16px;'
+      +'display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;'
+      +'font-size:14px;font-weight:600;color:#2F6BFF;font-family:inherit;text-align:left;">'
+      +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="13" y2="12"/></svg>'
+      +'管理者画面へ</button>'
+      +'<div style="height:1px;background:#eee;margin:0 12px;"></div>'
+      +'<button onclick="logout()" style="width:100%;padding:13px 16px;'
+      +'display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;'
+      +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:left;">'
+      +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
+      +'ログアウト</button>';
+    document.body.appendChild(popup);
+    setTimeout(function() {
+      document.addEventListener('click', function _close() {
+        var p = document.getElementById(id);
+        if (p) p.remove();
+        document.removeEventListener('click', _close);
+      });
+    }, 0);
+    return;
+  }
   _showUserPopup('_home-logout-popup', 'logout', 'ログアウト');
 }
+
+function switchToAdminFromHome() {
+  var p = document.getElementById('_home-logout-popup');
+  if (p) p.remove();
+  openAdminScreen(window._fbCurrentUserName || '管理者');
+}
+window.switchToAdminFromHome = switchToAdminFromHome;
 window.toggleHomeUserMenu = toggleHomeUserMenu;
 window.toggleAdmUserMenu  = toggleAdmUserMenu;
 
@@ -9163,7 +9477,24 @@ function adminLogout() {
   // ログイン画面の選択状態をリセット
   var mgrBtns = document.querySelectorAll('#manager-user-grid .mgr-btn');
   mgrBtns.forEach(function(b, i) { b.classList.toggle('selected', i === 0); });
-  showScreen('screen-role');
+  // "both" ユーザーはログアウトせずロール選択画面へ戻る
+  if (window._fbCurrentUserRole === 'both') {
+    document.getElementById('screen-admin').style.display = 'none';
+    var pw2 = document.querySelector('.phone-wrapper');
+    if (pw2) pw2.style.removeProperty('display');
+    showScreen('screen-role');
+    return;
+  }
+  // Firebase Auth ログアウト
+  if (typeof window._fbSignOut === 'function') {
+    window._fbSignOut();
+  } else {
+    showScreen('screen-login');
+  }
+  // グローバルロール情報をクリア
+  window._fbCurrentUserRole = null;
+  window._fbCurrentUserName = null;
+  window._fbCurrentUserId   = null;
 }
 window.adminLogout = adminLogout;
 
@@ -12870,8 +13201,14 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
   import {
     getFirestore, collection, doc,
     addDoc, setDoc, onSnapshot,
-    query, orderBy, serverTimestamp
+    getDoc, query, orderBy, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey:            "AIzaSyA6fxlaWUULIMT3bC-Ahul-izBUHziY6FI",
@@ -12882,8 +13219,220 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
     appId:             "1:914637653048:web:a04541807ca83439a152cd"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+  const app  = initializeApp(firebaseConfig);
+  const db   = getFirestore(app);
+  const auth = getAuth(app);
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Firebase Auth ヘルパー
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+  // ─── ローディングオーバーレイ制御 ───
+  function showAuthLoading(text) {
+    var ov = document.getElementById('auth-loading-overlay');
+    if (!ov) return;
+    var t = ov.querySelector('.auth-loading-text');
+    if (t && text) t.textContent = text;
+    ov.style.display = 'flex';
+  }
+  function hideAuthLoading() {
+    var ov = document.getElementById('auth-loading-overlay');
+    if (ov) ov.style.display = 'none';
+  }
+
+  // ─── ログインエラーメッセージ表示 ───
+  function showLoginError(msg) {
+    var el = document.getElementById('login-error-msg');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+  function clearLoginError() {
+    var el = document.getElementById('login-error-msg');
+    if (el) { el.textContent = ''; el.style.display = 'none'; }
+  }
+
+  // ─── Firestoreからユーザーロール取得 ───
+  async function fetchUserRole(userId) {
+    try {
+      const snap = await getDoc(doc(db, 'users', userId));
+      if (snap.exists()) {
+        return snap.data(); // { name, role }
+      }
+    } catch(e) {
+      console.error('usersドキュメント取得エラー:', e);
+    }
+    return null;
+  }
+
+  // ─── ロールに応じた画面遷移 ───
+  function navigateByRole(role, name) {
+    // グローバルにロール情報を保持
+    window._fbCurrentUserRole = role;
+    window._fbCurrentUserName = name;
+
+    if (role === 'worker') {
+      // 点検者のみ → ホーム画面へ
+      localStorage.setItem('loggedInUser', name);
+      var homeNameEl = document.querySelector('.home-user-name');
+      if (homeNameEl) homeNameEl.textContent = name + ' さん';
+      if (typeof updateHomeDateDisplay === 'function') updateHomeDateDisplay();
+      if (typeof buildCalendar === 'function') buildCalendar();
+      if (typeof showScreen === 'function') showScreen('screen-home');
+    } else if (role === 'manager') {
+      // 管理者のみ → 管理画面へ
+      if (typeof openAdminScreen === 'function') openAdminScreen(name);
+    } else if (role === 'both') {
+      // 両方利用可能 → ロール選択画面へ
+      if (typeof showScreen === 'function') showScreen('screen-role');
+    } else {
+      console.warn('不明なロール:', role);
+      showLoginError('アカウントのロール設定が正しくありません。管理者にお問い合わせください。');
+      if (typeof showScreen === 'function') showScreen('screen-login');
+    }
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     ⑤ セッション管理: onAuthStateChanged
+     ページ再読み込みでもログイン状態を維持する
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      // ── ログイン済み: ユーザーIDを抽出してFirestoreからロール取得 ──
+      const userId = user.email.replace('@factory.local', '');
+      window._fbCurrentUserId = userId;
+
+      showAuthLoading('ユーザー情報を確認中...');
+      const userData = await fetchUserRole(userId);
+      hideAuthLoading();
+
+      if (userData && userData.role) {
+        navigateByRole(userData.role, userData.name || userId);
+      } else {
+        // usersドキュメントが存在しない場合
+        console.warn('Firestoreにユーザーデータが見つかりません:', userId);
+        // localStorageのloggedInUserがあれば既存互換動作
+        var savedName = localStorage.getItem('loggedInUser');
+        if (savedName) {
+          window._fbCurrentUserName = savedName;
+          window._fbCurrentUserRole = 'worker'; // デフォルトはworker
+          var homeNameEl = document.querySelector('.home-user-name');
+          if (homeNameEl) homeNameEl.textContent = savedName + ' さん';
+          if (typeof updateHomeDateDisplay === 'function') updateHomeDateDisplay();
+          if (typeof buildCalendar === 'function') buildCalendar();
+          if (typeof showScreen === 'function') showScreen('screen-home');
+        } else {
+          if (typeof showScreen === 'function') showScreen('screen-login');
+        }
+      }
+    } else {
+      // ── 未ログイン ──
+      hideAuthLoading();
+      window._fbCurrentUserRole = null;
+      window._fbCurrentUserName = null;
+      window._fbCurrentUserId   = null;
+      localStorage.removeItem('loggedInUser');
+      if (typeof showScreen === 'function') showScreen('screen-login');
+    }
+  });
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     ① ログイン処理: signInWithEmailAndPassword
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  window._doFirebaseLoginImpl = async function() {
+    clearLoginError();
+
+    var idInput = document.getElementById('login-id-input');
+    var pwInput = document.getElementById('login-pw-input');
+    var btn     = document.getElementById('login-submit-btn');
+
+    if (!idInput || !pwInput) return;
+
+    var inputId = (idInput.value || '').trim();
+    var inputPw = (pwInput.value || '');
+
+    if (!inputId) {
+      showLoginError('担当者IDを入力してください。');
+      idInput.focus();
+      return;
+    }
+    if (!inputPw) {
+      showLoginError('パスワードを入力してください。');
+      pwInput.focus();
+      return;
+    }
+
+    // IDからメールアドレスを生成
+    const email = inputId + '@factory.local';
+
+    // ボタンを無効化（二重送信防止）
+    if (btn) { btn.disabled = true; btn.textContent = 'ログイン中...'; }
+
+    try {
+      // Firebase Authentication でログイン
+      const userCredential = await signInWithEmailAndPassword(auth, email, inputPw);
+      const user = userCredential.user;
+
+      // ② Firestoreからnameとroleを取得
+      const userData = await fetchUserRole(inputId);
+
+      if (!userData) {
+        showLoginError('ユーザー情報が見つかりません。管理者にお問い合わせください。');
+        if (btn) { btn.disabled = false; btn.textContent = 'ログイン'; }
+        return;
+      }
+
+      // ③ roleによる自動画面分岐（navigateByRole内でグローバル変数も設定）
+      window._fbCurrentUserId = inputId;
+      navigateByRole(userData.role, userData.name || inputId);
+
+      // ログイン成功後にパスワード欄をクリア
+      if (pwInput) pwInput.value = '';
+
+    } catch(e) {
+      console.error('ログインエラー:', e);
+      var msg = 'ログインに失敗しました。';
+      switch(e.code) {
+        case 'auth/user-not-found':
+        case 'auth/invalid-email':
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential':
+          msg = 'IDまたはパスワードが正しくありません。'; break;
+        case 'auth/too-many-requests':
+          msg = 'ログイン試行が多すぎます。しばらく待ってから再試行してください。'; break;
+        case 'auth/network-request-failed':
+          msg = 'ネットワークエラーが発生しました。接続を確認してください。'; break;
+      }
+      showLoginError(msg);
+      if (btn) { btn.disabled = false; btn.textContent = 'ログイン'; }
+    }
+  };
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     ⑥ ログアウト処理: signOut
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  window._fbSignOut = async function() {
+    try {
+      await signOut(auth);
+      // onAuthStateChanged が未ログイン状態を検知して screen-login へ遷移
+    } catch(e) {
+      console.error('ログアウトエラー:', e);
+      if (typeof showScreen === 'function') showScreen('screen-login');
+    }
+  };
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     Enterキーでログイン
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
+    var loginScreen = document.getElementById('screen-login');
+    if (loginScreen && loginScreen.classList.contains('active')) {
+      if (typeof window._doFirebaseLoginImpl === 'function') {
+        window._doFirebaseLoginImpl();
+      }
+    }
+  });
 
   // ── 汎用保存（appData コレクションに docId で上書き保存）──
   async function firestoreSave(docId, data) {
