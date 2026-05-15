@@ -124,11 +124,12 @@
   }
 
   .role-section-label {
-    font-size: 13px; color: var(--text-sub);
-    align-self: flex-start;
+    font-size: 16px; color: var(--text-sub);
+    align-self: center;
     padding: 0 24px;
     margin-bottom: 12px;
-    margin-top: 4px;
+    margin-top: -20px;
+    text-align: center;
   }
 
   .role-cards { width: 100%; padding: 0 20px; display: flex; flex-direction: column; gap: 14px; }
@@ -568,6 +569,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100dvh;
+    height: 100%;
     overflow-y: auto;
   }
   .login-screen-body {
@@ -3123,7 +3125,8 @@
    ============================================================ */
 @media (min-width: 1024px) {
 
-  body { background: var(--pc-bg); align-items: flex-start; }
+  body { background: var(--pc-bg); align-items: flex-start; height: auto; min-height: 100vh; }
+  html { background: var(--pc-bg); min-height: 100%; }
 
   /* phone-wrapper → 中央カード */
   .phone-wrapper {
@@ -3136,6 +3139,7 @@
     overflow: hidden;
     box-shadow: var(--pc-shadow);
     position: relative;
+    background: #c9d3e0;
   }
 
   .screen {
@@ -3178,9 +3182,9 @@
 
   /* ─── Firebaseログイン画面 ─── */
   #screen-login {
-    max-width: 100%;
-    width: 100%;
-    min-height: calc(100vh - 40px);
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: calc(100vh - 40px) !important;
   }
 
   /* ─── ログイン画面（点検者 / 管理者）─── */
@@ -3813,6 +3817,12 @@
     position: relative !important;
     overflow-x: hidden !important;
     background: var(--bg) !important;
+  }
+
+  /* ログイン画面：phone-wrapper の背景が透けないよう 100vh で完全に覆う */
+  #screen-login {
+    min-height: 100vh !important;
+    height: 100vh !important;
   }
 
   /* 【修正⑤】pc-layout を2カラム グリッドに */
@@ -5751,15 +5761,13 @@
     <!-- ユーザー情報（下部） -->
     <div class="pc-sidebar-footer" id="pc-sidebar-footer">
       <div style="display:flex;align-items:center;gap:6px;padding:4px 4px;">
-        <div class="pc-sidebar-user" style="flex:1;margin:0;" onclick="">
+        <div class="pc-sidebar-user" style="flex:1;margin:0;cursor:pointer;" onclick="togglePcSidebarUserMenu(event)" id="pc-sidebar-user-btn">
           <div class="pc-sidebar-avatar">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           </div>
           <span class="pc-sidebar-username" id="pc-sidebar-username">管理者</span>
+          <svg style="width:14px;height:14px;flex-shrink:0;margin-left:auto;" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="1.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
         </div>
-        <button onclick="adminLogout()" title="ログアウト" style="flex-shrink:0;width:34px;height:34px;border-radius:8px;border:1px solid #E4E7EC;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;" onmouseover="this.style.background='#FFF0F0'" onmouseout="this.style.background='#fff'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        </button>
       </div>
     </div>
   </aside>
@@ -5852,19 +5860,6 @@
         <svg viewBox="0 0 24 24"><path d="M1.42 9a15.91 15.91 0 0 1 21.16 0M5 12.55a10.94 10.94 0 0 1 14 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
-    </div>
-    <div class="role-hero">
-      <div class="role-hero-icon">
-        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-          <rect width="80" height="80" rx="20" fill="#EEF4FF"/>
-          <rect x="20" y="22" width="34" height="42" rx="4" stroke="#2F6BFF" stroke-width="1.5" fill="none"/>
-          <rect x="29" y="16" width="16" height="11" rx="3.5" stroke="#2F6BFF" stroke-width="1.5" fill="none"/>
-          <polyline points="27,43 33,50 47,35" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <line x1="27" y1="56" x2="47" y2="56" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <h1>設備点検アプリ</h1>
-      <p>ログインしてください</p>
     </div>
     <p class="role-section-label">あなたの役割を選択してください</p>
     <div class="role-cards">
@@ -7224,26 +7219,16 @@
 
   /* ─── LOGIN SCREENS ─── */
   function gotoInspector() {
-    // Firebase認証済みの場合はユーザー選択をスキップしてホーム画面へ
-    if (window._fbCurrentUserRole) {
-      var displayName = window._fbCurrentUserName || '点検者';
-      localStorage.setItem('loggedInUser', displayName);
-      var homeNameEl = document.querySelector('.home-user-name');
-      if (homeNameEl) homeNameEl.textContent = displayName + ' さん';
-      updateHomeDateDisplay();
-      buildCalendar();
-      showScreen('screen-home');
-    } else {
-      showScreen('screen-inspector');
-    }
+    var displayName = window._fbCurrentUserName || '点検者';
+    localStorage.setItem('loggedInUser', displayName);
+    var homeNameEl = document.querySelector('.home-user-name');
+    if (homeNameEl) homeNameEl.textContent = displayName + ' さん';
+    updateHomeDateDisplay();
+    buildCalendar();
+    showScreen('screen-home');
   }
   function gotoManager() {
-    // Firebase認証済みの場合はユーザー選択をスキップして管理者画面へ
-    if (window._fbCurrentUserRole) {
-      openAdminScreen(window._fbCurrentUserName || '管理者');
-    } else {
-      showScreen('screen-manager');
-    }
+    openAdminScreen(window._fbCurrentUserName || '管理者');
   }
   function goBack() { showScreen('screen-role'); }
 
@@ -9361,9 +9346,8 @@ function _showUserPopup(id, onClickFn, labelHtml) {
     +'min-width:160px;z-index:999999;overflow:hidden;'
     +'animation:popoverIn 0.15s cubic-bezier(.4,0,.2,1);';
   popup.innerHTML = '<button onclick="'+onClickFn+'()" style="width:100%;padding:13px 16px;'
-    +'display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;'
-    +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:left;">'
-    +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
+    +'display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;'
+    +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:center;">'
     +labelHtml+'</button>';
   document.body.appendChild(popup);
   setTimeout(function() {
@@ -9377,6 +9361,40 @@ function _showUserPopup(id, onClickFn, labelHtml) {
 
 function toggleAdmUserMenu(e) {
   e.stopPropagation();
+  // "both" ユーザーは「点検者画面へ」ボタンも表示
+  if (window._fbCurrentUserRole === 'both') {
+    var id = '_adm-logout-popup';
+    var existing = document.getElementById(id);
+    if (existing) { existing.remove(); return; }
+    var chip = document.getElementById('adm-user-chip') || e.currentTarget;
+    var rect = chip.getBoundingClientRect();
+    var rightEdge = window.innerWidth - rect.right;
+    var popup = document.createElement('div');
+    popup.id = id;
+    popup.style.cssText = 'position:fixed;top:'+(rect.bottom+6)+'px;right:'+Math.max(8,rightEdge)+'px;'
+      +'background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.18);'
+      +'min-width:180px;z-index:999999;overflow:hidden;'
+      +'animation:popoverIn 0.15s cubic-bezier(.4,0,.2,1);';
+    popup.innerHTML =
+      '<button onclick="switchToInspectorFromAdmin()" style="width:100%;padding:13px 16px;'
+      +'display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;'
+      +'font-size:14px;font-weight:600;color:#2F6BFF;font-family:inherit;text-align:center;">'
+      +'点検者画面へ</button>'
+      +'<div style="height:1px;background:#eee;margin:0 12px;"></div>'
+      +'<button onclick="adminLogout()" style="width:100%;padding:13px 16px;'
+      +'display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;'
+      +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:center;">'
+      +'ログアウト</button>';
+    document.body.appendChild(popup);
+    setTimeout(function() {
+      document.addEventListener('click', function _close() {
+        var p = document.getElementById(id);
+        if (p) p.remove();
+        document.removeEventListener('click', _close);
+      });
+    }, 0);
+    return;
+  }
   _showUserPopup('_adm-logout-popup', 'adminLogout', 'ログアウト');
 }
 
@@ -9399,15 +9417,13 @@ function toggleHomeUserMenu(e) {
       +'animation:popoverIn 0.15s cubic-bezier(.4,0,.2,1);';
     popup.innerHTML =
       '<button onclick="switchToAdminFromHome()" style="width:100%;padding:13px 16px;'
-      +'display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;'
-      +'font-size:14px;font-weight:600;color:#2F6BFF;font-family:inherit;text-align:left;">'
-      +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="13" y2="12"/></svg>'
+      +'display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;'
+      +'font-size:14px;font-weight:600;color:#2F6BFF;font-family:inherit;text-align:center;">'
       +'管理者画面へ</button>'
       +'<div style="height:1px;background:#eee;margin:0 12px;"></div>'
       +'<button onclick="logout()" style="width:100%;padding:13px 16px;'
-      +'display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;'
-      +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:left;">'
-      +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'
+      +'display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;'
+      +'font-size:14px;font-weight:600;color:#E53935;font-family:inherit;text-align:center;">'
       +'ログアウト</button>';
     document.body.appendChild(popup);
     setTimeout(function() {
@@ -9427,7 +9443,85 @@ function switchToAdminFromHome() {
   if (p) p.remove();
   openAdminScreen(window._fbCurrentUserName || '管理者');
 }
+function switchToInspectorFromAdmin() {
+  var p = document.getElementById('_adm-logout-popup');
+  if (p) p.remove();
+
+  // 管理者画面を非表示にする
+  var admScreen = document.getElementById('screen-admin');
+  if (admScreen) admScreen.style.display = 'none';
+  document.body.style.overflow = '';
+
+  // phone-wrapper を再表示する
+  var pw = document.querySelector('.phone-wrapper');
+  if (pw) pw.style.removeProperty('display');
+
+  // PC サイドバーを非表示にし、pc-layout を1カラムに
+  var pcSidebar = document.getElementById('pc-sidebar');
+  var pcLayout  = document.querySelector('.pc-layout');
+  if (pcSidebar) pcSidebar.classList.add('hidden-sidebar');
+  if (pcLayout)  pcLayout.classList.add('no-sidebar');
+  var displayName = window._fbCurrentUserName || '点検者';
+  localStorage.setItem('loggedInUser', displayName);
+  var homeNameEl = document.querySelector('.home-user-name');
+  if (homeNameEl) homeNameEl.textContent = displayName + ' さん';
+  if (typeof updateHomeDateDisplay === 'function') updateHomeDateDisplay();
+  if (typeof buildCalendar === 'function') buildCalendar();
+  showScreen('screen-home');
+}
+function togglePcSidebarUserMenu(e) {
+  e.stopPropagation();
+  var existing = document.getElementById('_pc-sidebar-user-popup');
+  if (existing) { existing.remove(); return; }
+  var btn = document.getElementById('pc-sidebar-user-btn');
+  if (!btn) return;
+  var rect = btn.getBoundingClientRect();
+  var popup = document.createElement('div');
+  popup.id = '_pc-sidebar-user-popup';
+  popup.style.cssText = 'position:fixed;bottom:' + (window.innerHeight - rect.top + 6) + 'px;left:' + rect.left + 'px;'
+    + 'background:#fff;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.18);'
+    + 'min-width:180px;z-index:999999;overflow:hidden;animation:popoverIn 0.15s cubic-bezier(.4,0,.2,1);';
+  function makeBtn(label, svgPath, color, hoverColor, onClickFn) {
+    var b = document.createElement('button');
+    b.style.cssText = 'width:100%;padding:13px 16px;display:flex;align-items:center;justify-content:center;'
+      + 'background:none;border:none;cursor:pointer;font-size:14px;font-weight:600;'
+      + 'color:' + color + ';font-family:inherit;text-align:center;transition:background 0.12s;';
+    b.addEventListener('mouseover', function() { b.style.background = hoverColor; });
+    b.addEventListener('mouseout',  function() { b.style.background = 'none'; });
+    b.addEventListener('click', function(ev) { ev.stopPropagation(); onClickFn(); });
+    b.textContent = label;
+    return b;
+  }
+  if (window._fbCurrentUserRole === 'both') {
+    var svgSwitch = '';
+    popup.appendChild(makeBtn('点検者画面へ', svgSwitch, 'var(--blue)', '#EEF4FF', function() {
+      var p = document.getElementById('_pc-sidebar-user-popup');
+      if (p) p.remove();
+      switchToInspectorFromAdmin();
+    }));
+    var sep = document.createElement('div');
+    sep.style.cssText = 'height:1px;background:#eee;margin:0 12px;';
+    popup.appendChild(sep);
+  }
+  var svgLogout = '';
+  popup.appendChild(makeBtn('ログアウト', svgLogout, '#E53935', '#FFF0F0', function() {
+    var p = document.getElementById('_pc-sidebar-user-popup');
+    if (p) p.remove();
+    adminLogout();
+  }));
+  document.body.appendChild(popup);
+  setTimeout(function() {
+    document.addEventListener('click', function _close() {
+      var p = document.getElementById('_pc-sidebar-user-popup');
+      if (p) p.remove();
+      document.removeEventListener('click', _close);
+    });
+  }, 0);
+}
+window.togglePcSidebarUserMenu = togglePcSidebarUserMenu;
+
 window.switchToAdminFromHome = switchToAdminFromHome;
+window.switchToInspectorFromAdmin = switchToInspectorFromAdmin;
 window.toggleHomeUserMenu = toggleHomeUserMenu;
 window.toggleAdmUserMenu  = toggleAdmUserMenu;
 
@@ -9477,24 +9571,15 @@ function adminLogout() {
   // ログイン画面の選択状態をリセット
   var mgrBtns = document.querySelectorAll('#manager-user-grid .mgr-btn');
   mgrBtns.forEach(function(b, i) { b.classList.toggle('selected', i === 0); });
-  // "both" ユーザーはログアウトせずロール選択画面へ戻る
-  if (window._fbCurrentUserRole === 'both') {
-    document.getElementById('screen-admin').style.display = 'none';
-    var pw2 = document.querySelector('.phone-wrapper');
-    if (pw2) pw2.style.removeProperty('display');
-    showScreen('screen-role');
-    return;
-  }
-  // Firebase Auth ログアウト
+  // Firebase Auth ログアウト（both ユーザーも含む）
+  window._fbCurrentUserRole = null;
+  window._fbCurrentUserName = null;
+  window._fbCurrentUserId   = null;
   if (typeof window._fbSignOut === 'function') {
     window._fbSignOut();
   } else {
     showScreen('screen-login');
   }
-  // グローバルロール情報をクリア
-  window._fbCurrentUserRole = null;
-  window._fbCurrentUserName = null;
-  window._fbCurrentUserId   = null;
 }
 window.adminLogout = adminLogout;
 
@@ -13332,6 +13417,11 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       window._fbCurrentUserName = null;
       window._fbCurrentUserId   = null;
       localStorage.removeItem('loggedInUser');
+      // ログインボタンを必ずリセット
+      var loginBtn = document.getElementById('login-submit-btn');
+      if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'ログイン'; }
+      var loginPw = document.getElementById('login-pw-input');
+      if (loginPw) loginPw.value = '';
       if (typeof showScreen === 'function') showScreen('screen-login');
     }
   });
