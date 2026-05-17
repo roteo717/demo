@@ -3343,10 +3343,8 @@
   /* ─── 点検入力 / 確認 ─── */
   #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: calc(100vh - 40px); padding-bottom: 0; }
   #screen-inspect > .bottom-action {
-    position: sticky !important;
-    bottom: 0 !important;
-    left: auto !important;
-    width: auto !important;
+    margin-top: auto;
+    position: static !important;
     box-shadow: none !important;
   }
 
@@ -7350,9 +7348,15 @@
   }
 
   function changeMonth(dir) {
-    calMonth += dir;
-    if (calMonth > 11) { calMonth = 0; calYear++; }
-    if (calMonth < 0)  { calMonth = 11; calYear--; }
+    var newMonth = calMonth + dir;
+    var newYear  = calYear;
+    if (newMonth > 11) { newMonth = 0;  newYear++; }
+    if (newMonth < 0)  { newMonth = 11; newYear--; }
+    // 2026年1月より前には戻れない
+    if (newYear < 2026 || (newYear === 2026 && newMonth < 0)) return;
+    if (newYear < 2026) return;
+    calMonth = newMonth;
+    calYear  = newYear;
     selectedCalDay = null;
     buildCalendar();
   }
@@ -7476,6 +7480,14 @@
 
     var calLbl = document.getElementById('cal-month-label');
     if (calLbl) calLbl.textContent = `${calYear}年${MONTHS_JP[calMonth]}`;
+
+    // 2026年1月が下限：前月ボタンの活性／非活性を切り替え
+    var prevNavBtns = document.querySelectorAll('.cal-nav[onclick="changeMonth(-1)"]');
+    var atLowerBound = (calYear === 2026 && calMonth === 0);
+    prevNavBtns.forEach(function(btn) {
+      btn.style.opacity = atLowerBound ? '0.3' : '';
+      btn.style.pointerEvents = atLowerBound ? 'none' : '';
+    });
 
     // 今月の点検ラベルをカレンダーと同期
     var panelDateEl = document.getElementById('today-panel-date');
@@ -7897,15 +7909,15 @@
     calYear      = d.getFullYear();
     calMonth     = d.getMonth();
     selectedCalDay = d.getDate();
-    selectedLineIds = [lineId];
-    buildLineList(); // ライン一覧を初期化（内部状態のため）
+    buildLineList(); // ライン一覧を初期化（この中で selectedLineIds がリセットされる）
+    selectedLineIds = [lineId]; // buildLineList() の後にセット（上書きされないよう）
     // 対象ラインのカードを選択済みにする
     var cards = document.querySelectorAll('#line-list .radio-card');
     cards.forEach(function(card) {
       if (card.dataset.lineId === lineId) card.classList.add('selected');
       else card.classList.remove('selected');
     });
-    buildEquipList();   // 設備リストを構築
+    buildEquipList();   // 設備リストを構築（selectedLineIds が正しく設定済み）
     startInspection();  // 点検入力画面へ
   };
 
@@ -8487,13 +8499,7 @@
     section.innerHTML = `
       <div class="equip-section-header">
         <div class="equip-header-main">
-          <div class="equip-icon-lg">
-            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="20" height="14" rx="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/>
-              <line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-          </div>
+
           <div class="equip-header-info">
             <div class="equip-id-label">${eq.id}</div>
             <div class="equip-name-only">${eq.name}</div>
@@ -8910,7 +8916,8 @@
     ALL_INSPECTION_RECORDS = []; // Firestoreから全件再構築
     records.forEach(applyInspectionRecord);
     if (typeof buildCalendar === 'function') buildCalendar();
-    // buildCalendar 内で updateUnInspectedPanel が呼ばれるため重複呼び出し不要
+    // Firestore同期後に未点検リストも再描画
+    if (typeof renderInspLineList === 'function') renderInspLineList();
   };
   // Firebase Integration End
 
@@ -8923,6 +8930,7 @@
     pcEquipSelection = {};
     pcActiveLine = null;
     buildCalendar(); // Refresh calendar with latest data
+    if (typeof renderInspLineList === 'function') renderInspLineList();
     showScreen('screen-home');
   }
 
@@ -9141,11 +9149,16 @@ function admMigrate() {
 
   // 0b-2. ライン重複排除（同一IDが複数ある場合、最初の1件を残す）
   var seenLineIds = {};
+  var beforeDedup = ADM.lines.length;
   ADM.lines = ADM.lines.filter(function(l) {
     if (seenLineIds[l.id]) return false;
     seenLineIds[l.id] = true;
     return true;
   });
+  // 重複があった場合はlocalStorageにも反映して次回以降も再発しないようにする
+  if (ADM.lines.length < beforeDedup) {
+    try { localStorage.setItem('admData', JSON.stringify(ADM)); } catch(e) {}
+  }
 
   // 0c. スケジュールがなければ、または旧バージョン（8件以下=1ヶ月分のみ）なら再生成
   if (!ADM.schedules || ADM.schedules.length <= 12) {
@@ -13900,7 +13913,14 @@ document.addEventListener('DOMContentLoaded', function() { updateFavLabel(); ini
 var _inspLineFilter = 'all';
 
 function initInspLineTabs() {
-  var allLines = (typeof ADM !== 'undefined' && ADM && ADM.lines) ? ADM.lines : [];
+  var _rawLines = (typeof ADM !== 'undefined' && ADM && ADM.lines) ? ADM.lines : [];
+  // 重複ライン除外（ID単位で最初の1件のみ残す）
+  var _seenIds = {};
+  var allLines = _rawLines.filter(function(l) {
+    if (_seenIds[l.id]) return false;
+    _seenIds[l.id] = true;
+    return true;
+  });
   var favIds   = loadFavLines();
   // お気に入りが設定されていればそのラインだけ表示、なければ全ライン
   var lines = favIds.length > 0
@@ -13949,23 +13969,70 @@ function renderInspLineList() {
   var badgeEl = document.getElementById('insp-line-count-badge');
   if (!wrap) return;
 
-  var schedules = (typeof ADM !== 'undefined' && ADM && ADM.schedules) ? ADM.schedules : [];
   var lines = (typeof ADM !== 'undefined' && ADM && ADM.lines) ? ADM.lines : [];
+
+  // 表示中の年月を取得
+  var _yr = window._calYear  || new Date().getFullYear();
+  var _mo = (window._calMonth !== undefined) ? window._calMonth : new Date().getMonth();
+
+  // スケジュールを表示月に応じて動的生成（ADM.schedulesの月数制限を撤廃）
+  var _dayPatterns = [7, 8, 11, 12, 13, 15, 20, 21, 24, 25];
+  var _mm = String(_mo + 1).padStart(2, '0');
+  var _maxDay = new Date(_yr, _mo + 1, 0).getDate();
+  var schedules = [];
+  var _sidx = 0;
+  lines.forEach(function(ln) {
+    _dayPatterns.forEach(function(day) {
+      if (day <= _maxDay) {
+        schedules.push({
+          id: 'DYN-' + ln.id + '-' + _sidx++,
+          lineId: ln.id,
+          date: _yr + '-' + _mm + '-' + String(day).padStart(2, '0'),
+          status: 'pending'
+        });
+      }
+    });
+  });
 
   // フィルター適用
   var _todayStart = new Date(); _todayStart.setHours(23,59,59,999);
+
+  // 点検済みチェック用データ
+  var _inspections = [];
+  try { _inspections = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
+  var _allEquips = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
+
+  function _isScheduleCompleted(s) {
+    var parts = s.date ? s.date.split('-') : [];
+    if (parts.length !== 3) return false;
+    var yr = parseInt(parts[0]);
+    var mo0 = parseInt(parts[1]) - 1; // 0始まりに変換（calMonth と合わせる）
+    var dy = parseInt(parts[2]);
+    var lineEquipIds = _allEquips
+      .filter(function(e) { return e.lineId === s.lineId; })
+      .map(function(e) { return e.id; });
+    if (!lineEquipIds.length) return false;
+    var dayRecs = _inspections.filter(function(r) {
+      return r.year === yr && r.month === mo0 && r.day === dy;
+    });
+    return dayRecs.some(function(r) {
+      return (r.equips || []).some(function(eid) {
+        return lineEquipIds.indexOf(eid) >= 0;
+      });
+    });
+  }
+
   var filtered = schedules.filter(function(s) {
     if (_inspLineFilter !== 'all' && s.lineId !== _inspLineFilter) return false;
-    // 現在表示月に合わせてフィルタ
-    var yr = window._calYear || new Date().getFullYear();
-    var mo = (window._calMonth !== undefined ? window._calMonth : new Date().getMonth());
+    // 今日以前のみ表示（今日を含む）
     var parts = s.date ? s.date.split('-') : [];
     var d = parts.length === 3
       ? new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]))
       : new Date(s.date);
-    if (!(d.getFullYear() === yr && d.getMonth() === mo)) return false;
-    // 今日以前のみ表示（今日を含む）
-    return d <= _todayStart;
+    if (d > _todayStart) return false;
+    // 点検済みのスケジュールは除外
+    if (_isScheduleCompleted(s)) return false;
+    return true;
   });
 
   // ソート（点検予定日）
@@ -14079,10 +14146,8 @@ function toggleInspSchedSort() {
 }
 
 function changeInspSchedPage(delta) {
-  var schedules = (typeof ADM !== 'undefined' && ADM && ADM.schedules) ? ADM.schedules : [];
-  var total = schedules.filter(function(s){ return _inspLineFilter==='all' || s.lineId===_inspLineFilter; }).length;
-  var pageCount = Math.ceil(total / _inspSchedPerPage);
-  _inspSchedPage = Math.max(1, Math.min(pageCount, _inspSchedPage + delta));
+  // renderInspLineList に移譲してページ数を正しく計算させる
+  _inspSchedPage = Math.max(1, _inspSchedPage + delta);
   renderInspLineList();
 }
 
