@@ -6658,28 +6658,6 @@
           </div>
         </div>
 
-        <div class="adm-settings-card" data-card-id="users" onclick="showAdmSubTab('users')">
-          <div class="scard-drag-handle" onclick="event.stopPropagation()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-small)" stroke-width="2" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
-          </div>
-          <div class="adm-settings-card-top">
-            <div class="adm-settings-card-icon" style="background:#FDECEC;">
-              <svg viewBox="0 0 24 24" stroke="var(--red)"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
-            </div>
-            <div class="adm-settings-card-label">ユーザー管理</div>
-          </div>
-          <div class="adm-settings-card-desc">ユーザーの追加・編集や<br>権限設定を行います。</div>
-          <div class="adm-settings-card-divider"></div>
-          <div class="adm-settings-card-footer">
-            <div class="adm-settings-card-footer-icon">
-              <svg viewBox="0 0 24 24" stroke="var(--red)"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
-            </div>
-            <div class="adm-settings-card-footer-text">
-              <span class="adm-settings-card-footer-count" id="scard-users-count">16</span>ユーザー登録済み
-            </div>
-            <div class="adm-settings-card-footer-arrow"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></div>
-          </div>
-        </div>
 
         <div class="adm-settings-card" data-card-id="holidays" onclick="showAdmSubTab('holidays')">
           <div class="scard-drag-handle" onclick="event.stopPropagation()">
@@ -6762,33 +6740,6 @@
       </div>
     </div>
 
-    <!-- ユーザー管理 パネル -->
-    <div id="adm-panel-users" class="adm-panel" style="display:none">
-      <div class="adm-users-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
-        <!-- 左：点検者 -->
-        <div>
-          <div class="adm-section-hdr">
-            <span class="adm-section-title">点検者一覧</span>
-            <button class="adm-add-btn" onclick="admOpenUserModal('inspector')">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              点検者を追加
-            </button>
-          </div>
-          <div id="adm-inspectors-list" class="adm-list-card"></div>
-        </div>
-        <!-- 右：担当者（管理者） -->
-        <div>
-          <div class="adm-section-hdr">
-            <span class="adm-section-title">担当者（管理者）一覧</span>
-            <button class="adm-add-btn" onclick="admOpenUserModal('manager')">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              担当者を追加
-            </button>
-          </div>
-          <div id="adm-managers-list" class="adm-list-card"></div>
-        </div>
-      </div>
-    </div>
 
     <!-- 休日・出勤設定 パネル -->
     <div id="adm-panel-holidays" class="adm-panel" style="display:none;">
@@ -9635,17 +9586,12 @@ function updateSettingsCardCounts() {
     assignEl.textContent = total;
   }
 
-  // ユーザー数（点検者 + 管理者）
-  var usersEl = document.getElementById('scard-users-count');
-  if (usersEl) {
-    var uCount = (ADM.inspectors || []).length + (ADM.managers || []).length;
-    usersEl.textContent = uCount;
-  }
 }
+
 
 function showAdmSettingsMenu() {
   // すべてのパネルを隠す
-  ['lines','equips','items','assign','users','holidays','monthly-sheet','dashboard','approval'].forEach(function(t) {
+  ['lines','equips','items','assign','holidays','monthly-sheet','dashboard','approval'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = 'none';
   });
@@ -9820,7 +9766,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 var ADM_PANEL_LABELS = {
   lines: 'ライン管理', equips: '設備管理',
-  items: '点検項目', assign: '割当設定', users: 'ユーザー管理',
+  items: '点検項目', assign: '割当設定',
   holidays: '休日・出勤設定', 'monthly-sheet': '月次点検表'
 };
 
@@ -9830,7 +9776,7 @@ function showAdmSubTab(sub) {
   var menu = document.getElementById('adm-settings-menu');
   if (menu) menu.classList.remove('visible');
   // すべてのパネルを隠してから対象だけ表示
-  ['lines','equips','items','assign','users','holidays','monthly-sheet'].forEach(function(t) {
+  ['lines','equips','items','assign','holidays','monthly-sheet'].forEach(function(t) {
     var p = document.getElementById('adm-panel-'+t);
     if (p) p.style.display = (t===sub) ? 'block' : 'none';
   });
@@ -9844,7 +9790,6 @@ function showAdmSubTab(sub) {
   if (sub==='equips')   renderEquipsInit();
   if (sub==='items')    renderItems();
   if (sub==='assign')   renderAssignInit();
-  if (sub==='users')    admRenderUsers();
   if (sub==='holidays') renderHolidayPanel();
   if (sub==='monthly-sheet') { initMonthlySheetSelectors(); renderMonthlySheet(); }
 }
@@ -9903,101 +9848,6 @@ function renderLoginUsers() {
     otherMgr.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="var(--red)"><path d="M7 2v10M2 7h10"/></svg> その他';
     mgrGrid.appendChild(otherMgr);
   }
-}
-
-/* ユーザー管理パネルのレンダリング */
-function admRenderUsers() {
-  _renderUserList('inspector');
-  _renderUserList('manager');
-}
-
-function _renderUserList(type) {
-  var elId = type==='inspector' ? 'adm-inspectors-list' : 'adm-managers-list';
-  var el = document.getElementById(elId);
-  if (!el) return;
-  var arr = type==='inspector' ? ADM.inspectors : ADM.managers;
-  if (!arr || !arr.length) {
-    el.innerHTML = '<div class="adm-list-row"><span class="adm-list-sub">登録されていません</span></div>';
-    return;
-  }
-  el.innerHTML = '';
-  arr.forEach(function(u) {
-    var row = document.createElement('div');
-    row.className = 'adm-list-row';
-    row.dataset.itemId = u.id;
-    row.innerHTML =
-      DRAG_HDL +
-      '<div style="flex:1">' +
-        '<div class="adm-list-name">' + esc(u.name) + '</div>' +
-        '<div class="adm-list-sub">ID: ' + esc(u.id) + '</div>' +
-      '</div>' +
-      '<div class="adm-row-actions">' +
-        '<button class="adm-btn-del" onclick="admDeleteUser(\'' + type + '\',\'' + esc(u.id) + '\')">' + SVG_DEL + '</button>' +
-      '</div>';
-    el.appendChild(row);
-  });
-  /* 再描画のたびに再初期化 */
-  el._listDragInited = false;
-  initListDrag(elId,
-    function(){ return type==='inspector' ? ADM.inspectors : ADM.managers; },
-    function(arr){
-      if (type==='inspector') ADM.inspectors = arr;
-      else                    ADM.managers   = arr;
-    },
-    function(){ admRenderUsers(); renderLoginUsers(); }
-  );
-}
-
-function admOpenUserModal(type) {
-  var label = type==='inspector' ? '点検者' : '担当者（管理者）';
-  var color = type==='inspector' ? 'var(--blue)' : 'var(--red)';
-  var overlay = document.getElementById('adm-modal-overlay');
-  var body    = document.getElementById('adm-modal-body');
-  if (!overlay || !body) return;
-  body.innerHTML =
-    '<div class="adm-modal-title">新しい' + label + 'を追加</div>' +
-    '<label class="adm-modal-label">名前</label>' +
-    '<input class="adm-modal-input" id="user-modal-name" placeholder="例：山田 太郎" />' +
-    '<div class="adm-modal-btn-row">' +
-      '<button class="adm-modal-cancel" onclick="admCloseModal()">キャンセル</button>' +
-      '<button class="adm-modal-save" style="background:' + color + ';" onclick="admSaveUser(\'' + type + '\')">追加する</button>' +
-    '</div>';
-  overlay.classList.add('open');
-  setTimeout(function(){ var i=document.getElementById('user-modal-name'); if(i)i.focus(); }, 100);
-}
-
-function admSaveUser(type) {
-  var nameEl = document.getElementById('user-modal-name');
-  var name = nameEl ? nameEl.value.trim() : '';
-  if (!name) { if (nameEl) nameEl.style.borderColor='var(--red)'; return; }
-
-  var arr = type==='inspector' ? ADM.inspectors : ADM.managers;
-  var prefix = type==='inspector' ? 'U' : 'M';
-  // ID生成
-  var maxNum = 0;
-  arr.forEach(function(u) {
-    var n = parseInt(u.id.replace(prefix,''),10);
-    if (!isNaN(n) && n>maxNum) maxNum=n;
-  });
-  arr.push({ id: prefix+(maxNum+1), name: name });
-  admSave();
-  admCloseModal();
-  admRenderUsers();
-  renderLoginUsers();
-  admToast('✓ ' + name + ' を追加しました');
-}
-
-function admDeleteUser(type, id) {
-  var arr = type==='inspector' ? ADM.inspectors : ADM.managers;
-  var idx = arr.findIndex(function(u){ return u.id===id; });
-  if (idx<0) return;
-  var name = arr[idx].name;
-  if (!confirm(name + ' を削除しますか？')) return;
-  arr.splice(idx,1);
-  admSave();
-  admRenderUsers();
-  renderLoginUsers();
-  admToast(name + ' を削除しました');
 }
 
 /* ─ icon SVG strings ─ */
@@ -10949,13 +10799,9 @@ window.setUinspFilter    = setUinspFilter;
 window.openAdminScreen  = openAdminScreen;
 window.showAdmTab       = showAdmTab;
 window.showAdmSubTab    = showAdmSubTab;
-window.admOpenUserModal = admOpenUserModal;
-window.admSaveUser      = admSaveUser;
-window.admDeleteUser    = admDeleteUser;
 window.admOverlayClick  = admOverlayClick;
 window.admCloseModal    = admCloseModal;
 window.renderLoginUsers = renderLoginUsers;
-window.admRenderUsers   = admRenderUsers;
 </script>
 
 <!-- ===== DASHBOARD & APPROVAL: SCRIPTS ===== -->
