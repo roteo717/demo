@@ -1343,7 +1343,7 @@
   .equip-bulk-na-btn:active { background: #DDE2EA; transform: scale(0.95); }
   .equip-section-left { display: flex; align-items: center; gap: 12px; }
   .equip-icon-sm {
-    display: none;
+    display: none !important;
   }
   .equip-icon-sm svg { stroke: var(--blue); fill: none; width: 22px; height: 22px; }
   .equip-name { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.25; }
@@ -2563,9 +2563,7 @@
     color: var(--text);
   }
   .equip-icon-lg {
-    width: 50px; height: 50px; border-radius: 13px;
-    background: var(--blue-light);
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    display: none !important;
   }
   .equip-icon-lg svg { stroke: var(--blue); fill: none; width: 26px; height: 26px; }
 
