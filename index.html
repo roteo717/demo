@@ -7160,6 +7160,14 @@
     window.scrollTo(0, 0);
     currentScreen = id;
 
+    // ログイン画面に戻る際はボタンを必ずリセット（ログイン中のまま固まるのを防ぐ）
+    if (id === 'screen-login') {
+      var loginBtn = document.getElementById('login-submit-btn');
+      if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = 'ログイン'; }
+      var loginPw = document.getElementById('login-pw-input');
+      if (loginPw) loginPw.value = '';
+    }
+
     // After transition, add settled for fixed+scroll behavior
     clearTimeout(window._settleTimer);
     window._settleTimer = setTimeout(() => {
@@ -13341,6 +13349,12 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       }
       showLoginError(msg);
       if (btn) { btn.disabled = false; btn.textContent = 'ログイン'; }
+    } finally {
+      // どんな場合でもボタンが「ログイン中...」のまま固まらないようにリセット
+      if (btn && btn.textContent === 'ログイン中...') {
+        btn.disabled = false;
+        btn.textContent = 'ログイン';
+      }
     }
   };
 
