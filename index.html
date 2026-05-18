@@ -2073,7 +2073,7 @@
     display: flex; align-items: center; gap: 10px; padding: 12px 14px;
     background: #FFF5F5; border-bottom: 1px solid var(--red-mid); cursor: pointer;
   }
-  .mob-res-ng-icon { width: 34px; height: 34px; border-radius: 8px; background: #FFCDD2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .mob-res-ng-icon { display: none; }
   .mob-res-ng-icon svg { width: 16px; height: 16px; stroke: var(--red); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .mob-res-ng-info { flex: 1; }
   .mob-res-ng-id { font-size: 11px; color: var(--text-sub); }
@@ -8884,7 +8884,7 @@
     if (pcConfBody) {
       var lineGroups = {};
       var lineOrder = [];
-      var totalItems = 0;
+      var pcTotalItems = 0;
 
       selectedEquips.forEach(function(id) {
         var admEq  = (ADM.equips || []).find(function(e){ return e.id === id; });
@@ -8899,7 +8899,7 @@
           var vals = s[group.key] || [];
           group.items.forEach(function(item, i) {
             var v = vals[i];
-            eqItems++; totalItems++;
+            eqItems++; pcTotalItems++;
             if (v === 'ok' || v === 'na') eqOk++;
             else if (v === 'ng') eqNg++;
           });
@@ -8945,7 +8945,7 @@
             '<div class="pc-res-stat-divider"></div>' +
             '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcEquipCount + '</div><div class="pc-res-stat-lbl">\u8a2d\u5099\u6570</div></div>' +
             '<div class="pc-res-stat-divider"></div>' +
-            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + totalItems + '</div><div class="pc-res-stat-lbl">\u70b9\u691c\u9805\u76ee\u6570</div></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcTotalItems + '</div><div class="pc-res-stat-lbl">\u70b9\u691c\u9805\u76ee\u6570</div></div>' +
           '</div>' +
           '<div class="pc-res-summary-right">' +
             '<div class="pc-res-info-label">\u691c\u67fb\u8005</div><div class="pc-res-info-val">' + pcInspector + '</div>' +
@@ -13653,6 +13653,11 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
         if (typeof renderLines      === 'function') renderLines();
         if (typeof renderItems      === 'function') renderItems();
         if (typeof updateSettingsCardCounts === 'function') updateSettingsCardCounts();
+        // タブとスケジュールリストを再初期化
+        if (typeof initInspLineTabs  === 'function') initInspLineTabs();
+        if (typeof renderInspLineList === 'function') renderInspLineList();
+        // admDataReady イベントを発火（リスナーへ通知）
+        document.dispatchEvent(new CustomEvent('admDataReady'));
       }
       console.log("Firestore同期: admData");
     } catch(e) { console.error("admData同期エラー", e); }
@@ -13732,6 +13737,9 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       if (typeof renderDashboard    === 'function') renderDashboard();
       if (typeof renderApproval     === 'function') renderApproval();
       if (typeof renderMonthlySheet === 'function') renderMonthlySheet();
+      // 点検者ホームの未点検スケジュールリストを更新
+      if (typeof renderInspLineList === 'function') renderInspLineList();
+      if (typeof updateUnInspectedPanel === 'function') updateUnInspectedPanel(window._calYear, window._calMonth);
 
       console.log("Firestore同期: inspections", records.length + "件");
     } catch(e) { console.error("inspections同期エラー", e); }
@@ -14196,7 +14204,11 @@ function renderInspLineList() {
   var _maxDay = new Date(_yr, _mo + 1, 0).getDate();
   var schedules = [];
   var _sidx = 0;
+  var _allEquipsForSched = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
   lines.forEach(function(ln) {
+    // 設備が割り当てられていないラインはスケジュール対象外（computeUnInspectedLinesと統一）
+    var hasEquip = _allEquipsForSched.some(function(e) { return e.lineId === ln.id; });
+    if (!hasEquip) return;
     _dayPatterns.forEach(function(day) {
       if (day <= _maxDay) {
         schedules.push({
