@@ -1673,10 +1673,11 @@
     box-sizing: border-box;
     overflow-x: hidden;
   }
-  /* モバイル: 旧確認コンテンツを非表示 */
-  #confirm-content,
-  #confirm-sections,
+  /* モバイル: 確認コンテンツをモバイル用に表示（mob-res-summaryスタイル使用） */
+  #confirm-content { display: block; }
+  #confirm-sections { display: block; }
   #confirm-chips { display: none !important; }
+  #screen-confirm > .pc-confirm-wrapper { display: none !important; }
   /* モバイル: サマリーカードを折り返し対応 */
   .pc-res-summary-card { flex-wrap: wrap; gap: 10px; padding: 14px 16px; }
   .pc-res-summary-title-block { flex-shrink: 1; min-width: 0; }
@@ -3480,12 +3481,12 @@
   /* 確認画面：PCでモバイル要素を非表示にしてPCラッパーを表示 */
   #screen-confirm > #confirm-content,
   #screen-confirm > #confirm-sections,
-  #screen-confirm > .pc-inspect-header,
   #screen-confirm > #confirm-chips,
   #screen-confirm > #confirm-mobile-nav {
     display: none !important;
   }
-  #screen-confirm > .pc-confirm-wrapper { display: flex; }
+  #screen-confirm > #pc-confirm-header { display: flex !important; }
+  #screen-confirm > .pc-confirm-wrapper { display: flex !important; }
   /* PC: サマリーカードを1行レイアウトに戻す */
   .pc-res-summary-card { flex-wrap: nowrap; gap: 16px; }
   .pc-res-summary-right { min-width: 200px; width: auto; }
@@ -3493,6 +3494,7 @@
   .pc-res-detail-acc-meta { display: flex; }
   .pc-res-line-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
   .pc-confirm-body { padding: 16px 32px 24px; }
+  #screen-confirm > #pc-confirm-header { border-bottom: 1px solid var(--border); padding-bottom: 16px; }
   #screen-confirm > .bottom-action {
     flex-shrink: 0;
     position: static !important;
@@ -5919,7 +5921,6 @@
         <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2" ry="2"/><path d="M22 11V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       </div>
     </div>
-    <p class="role-section-label">あなたの役割を選択してください</p>
     <div class="role-cards">
       <div class="role-card blue" onclick="gotoInspector()">
         <div class="role-icon-wrap blue">
@@ -8763,6 +8764,7 @@
 
     let totalNg = 0;
     let totalOk = 0;
+    let totalItems = 0;
 
     // ── データ集計 ──
     selectedEquips.forEach(id => {
@@ -8785,6 +8787,7 @@
       groups.forEach(({ key, label, items }) => {
         const vals = state[id][key] || [];
         items.forEach((item, i) => {
+          totalItems++;
           const v = vals[i];
           if (v === 'ng') { equipNg++; ngItems.push({ label, item }); }
           else if (v === 'ok' || v === 'na') { equipOk++; }
@@ -8800,77 +8803,76 @@
       eq.__confirmNgItems = ngItems;
     });
 
-    // ── バナー（result-banner と同デザイン）──
-    const banner = document.createElement('div');
     const hasNg = totalNg > 0;
-    banner.className = 'result-banner ' + (hasNg ? 'rb-ng' : 'rb-ok');
-    banner.style.margin = '12px 16px 0';
-    banner.innerHTML =
-      '<div class="result-banner-icon">' +
-        (hasNg
-          ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
-          : '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>'
-        ) +
+
+    // ── ライン別グループ化 ──
+    var cfLineGroups = {}, cfLineOrder = [];
+    selectedEquips.forEach(function(id) {
+      var admEq = (ADM.equips || []).find(function(e){ return e.id === id; });
+      var lineId = (admEq && admEq.lineId) || '__none__';
+      if (!cfLineGroups[lineId]) { cfLineGroups[lineId] = []; cfLineOrder.push(lineId); }
+      cfLineGroups[lineId].push(id);
+    });
+
+    function getCfLineName(lineId) {
+      if (lineId === '__none__') return '未分類';
+      var ln = (ADM.lines || []).find(function(l){ return l.id === lineId; });
+      return ln ? (ln.name || lineId) : lineId;
+    }
+
+    // ── モバイル：mob-res-summary スタイルのサマリーカード ──
+    var iconSvg = hasNg
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>';
+
+    var summaryEl = document.createElement('div');
+    summaryEl.className = 'mob-res-summary' + (hasNg ? ' has-ng' : '');
+    summaryEl.innerHTML =
+      '<div class="mob-res-summary-top">' +
+        '<div class="mob-res-summary-icon">' + iconSvg + '</div>' +
+        '<div>' +
+          '<div class="mob-res-summary-title">すべての点検が完了しました</div>' +
+          '<div class="mob-res-summary-sub">' + (hasNg ? '異常が ' + totalNg + ' 件あります' : '異常はありませんでした') + '</div>' +
+        '</div>' +
       '</div>' +
-      '<div class="result-banner-body">' +
-        '<div class="result-banner-title">' + (hasNg ? '異常が ' + totalNg + '件 あります' : '異常はありませんでした') + '</div>' +
-        '<div class="result-banner-counts">' +
-          '<div class="result-count-item"><div class="result-count-num">' + totalOk + '</div><div class="result-count-lbl">正常</div></div>' +
-          '<div class="result-count-item"><div class="result-count-num">' + totalNg + '</div><div class="result-count-lbl">異常</div></div>' +
-        '</div>' +
+      '<div class="mob-res-stats-row">' +
+        '<div class="mob-res-stat-item"><div class="mob-res-stat-num">' + totalOk + '</div><div class="mob-res-stat-lbl">正常 件</div></div>' +
+        '<div class="mob-res-stat-item"><div class="mob-res-stat-num' + (totalNg > 0 ? ' ng' : '') + '">' + totalNg + '</div><div class="mob-res-stat-lbl">異常 件</div></div>' +
+        '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + cfLineOrder.length + '</div><div class="mob-res-stat-lbl">ライン</div></div>' +
+        '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + selectedEquips.length + '</div><div class="mob-res-stat-lbl">設備数</div></div>' +
+        '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + totalItems + '</div><div class="mob-res-stat-lbl">点検項目数</div></div>' +
       '</div>';
-    content.appendChild(banner);
+    content.appendChild(summaryEl);
 
-    // ── 設備カード（result-section と同デザイン）──
-    const equipIconSvg = '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+    // ── ライン別サマリー ──
+    var lineSumTitle = document.createElement('div');
+    lineSumTitle.className = 'mob-res-section-title';
+    lineSumTitle.textContent = 'ライン別サマリー';
+    sections.appendChild(lineSumTitle);
 
-    selectedEquips.forEach(id => {
-      const eq = EQUIP_DATA.find(e => e.id === id);
-      const groups  = eq.__confirmGroups;
-      const equipNg = eq.__confirmNg;
-
-      const sec = document.createElement('div');
-      sec.className = 'result-section' + (equipNg > 0 ? ' rs-ng' : '') + ' open';
-
-      // ヘッダー
-      const header = document.createElement('div');
-      header.className = 'result-section-header';
-      header.innerHTML =
-        '<div class="result-section-icon">' + equipIconSvg + '</div>' +
-        '<div class="result-section-info">' +
-          '<div class="result-section-id">' + eq.id + '</div>' +
-          '<div class="result-section-name">' + eq.name + '</div>' +
-        '</div>' +
-        '<span class="result-status-chip ' + (equipNg > 0 ? 'rs-chip-ng' : 'rs-chip-ok') + '">' + (equipNg > 0 ? '⚠ 異常' : '✓ 正常') + '</span>' +
-        '<div class="result-chevron"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></div>';
-      header.onclick = function() { sec.classList.toggle('open'); };
-      sec.appendChild(header);
-
-      // ボディ
-      const body = document.createElement('div');
-      body.className = 'result-section-body';
-
-      groups.forEach(group => {
-        const vals = state[id][group.key] || [];
-        const divider = document.createElement('div');
-        divider.className = 'result-type-divider';
-        const badgeKey = group.key === 'daily' ? 'daily' : group.key === '10days' ? 'days10' : 'monthly';
-        divider.innerHTML = '<span class="insp-type-badge ' + badgeKey + '">' + group.label + '</span><div class="result-type-rule"></div>';
-        body.appendChild(divider);
-
-        group.items.forEach((item, i) => {
-          const v = vals[i];
-          const chipClass = v === 'ok' ? 'rchip-ok' : v === 'ng' ? 'rchip-ng' : v === 'na' ? 'rchip-na' : 'rchip-none';
-          const chipText  = v === 'ok' ? '○' : v === 'ng' ? '✕' : v === 'na' ? 'ー' : '未';
-          const row = document.createElement('div');
-          row.className = 'result-item-row' + (v === 'ng' ? ' cf-item-ng' : '');
-          row.innerHTML = '<span class="result-item-name">' + item + '</span><span class="result-chip ' + chipClass + '">' + chipText + '</span>';
-          body.appendChild(row);
-        });
+    cfLineOrder.forEach(function(lineId) {
+      var eqIds = cfLineGroups[lineId];
+      var lOk = 0, lNg = 0, lItems = 0;
+      eqIds.forEach(function(id) {
+        var eq = EQUIP_DATA.find(function(e){ return e.id === id; });
+        if (!eq) return;
+        lOk += eq.__confirmOk || 0;
+        lNg += eq.__confirmNg || 0;
+        (eq.__confirmGroups || []).forEach(function(g){ lItems += g.items.length; });
       });
+      var lHasNg = lNg > 0;
+      var lineName = getCfLineName(lineId);
 
-      sec.appendChild(body);
-      sections.appendChild(sec);
+      var card = document.createElement('div');
+      card.className = 'mob-res-line-card' + (lHasNg ? ' has-ng' : '');
+      card.innerHTML =
+        '<div class="mob-res-line-card-top">' +
+          '<span class="mob-res-line-name">' + lineName + '</span>' +
+          '<span class="result-status-chip ' + (lHasNg ? 'rs-chip-ng' : 'rs-chip-ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span>' +
+        '</div>' +
+        '<div class="mob-res-line-meta">設備数：' + eqIds.length + '台　|　点検項目数：' + lItems + '項目</div>' +
+        '<div class="mob-res-line-stats">正常 <b class="ok">' + lOk + '</b> 件　異常 <b class="' + (lHasNg ? 'ng' : '') + '">' + lNg + '</b> 件</div>';
+      sections.appendChild(card);
     });
 
     const spacer = document.createElement('div');
