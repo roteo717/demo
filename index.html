@@ -1654,6 +1654,23 @@
     width: 100%;
     min-height: 100%;
   }
+  .pc-confirm-wrapper {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    width: 100%;
+  }
+  .pc-confirm-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 32px 24px;
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
   .pc-result-nav {
     display: flex;
     align-items: center;
@@ -3438,6 +3455,22 @@
   }
   #screen-inspect .check-row { padding: 0 20px; min-height: 54px; }
   #screen-inspect .check-row-name { font-size: 14px; }
+  /* 確認画面：PCでモバイル要素を非表示にしてPCラッパーを表示 */
+  #screen-confirm > #confirm-content,
+  #screen-confirm > #confirm-sections,
+  #screen-confirm > .pc-inspect-header,
+  #screen-confirm > #confirm-chips,
+  #screen-confirm > #confirm-mobile-nav {
+    display: none !important;
+  }
+  #screen-confirm > .pc-confirm-wrapper { display: flex; }
+  #screen-confirm > .bottom-action {
+    flex-shrink: 0;
+    position: static !important;
+    box-shadow: 0 -1px 0 #E0E0E0 !important;
+    background: #fff !important;
+    padding: 12px 32px !important;
+  }
   /* 確認画面：PC バナー */
   #screen-confirm #confirm-content { max-width: none; width: 100%; margin: 20px 0 0; padding: 0 32px; box-sizing: border-box; }
   #screen-confirm #confirm-content .result-banner { margin: 0; }
@@ -6334,6 +6367,13 @@
     </div>
     <div id="confirm-sections"></div>
 
+    <!-- PC専用確認ビュー（点検結果と同レイアウト） -->
+    <div class="pc-confirm-wrapper" id="pc-confirm-wrapper">
+      <div class="pc-confirm-body" id="pc-confirm-body">
+        <!-- JSで描画 -->
+      </div>
+    </div>
+
     <div class="bottom-action">
       <div class="btn-row">
         <button class="btn-bottom-sub" onclick="showScreen('screen-inspect')">修正する</button>
@@ -8807,6 +8847,152 @@
     const spacer = document.createElement('div');
     spacer.style.height = '16px';
     sections.appendChild(spacer);
+
+    // ── PC用ビュー描画（点検結果と同レイアウト）──
+    var pcConfBody = document.getElementById('pc-confirm-body');
+    if (pcConfBody) {
+      var lineGroups = {};
+      var lineOrder = [];
+      var totalItems = 0;
+
+      selectedEquips.forEach(function(id) {
+        var admEq  = (ADM.equips || []).find(function(e){ return e.id === id; });
+        var eqData = EQUIP_DATA.find(function(e){ return e.id === id; });
+        var eqName = (eqData && eqData.name) || (admEq && admEq.name) || id;
+        var lineId = (admEq && admEq.lineId) || '__none__';
+        if (!lineGroups[lineId]) { lineGroups[lineId] = []; lineOrder.push(lineId); }
+        var s = state[id] || {};
+        var eqOk = 0, eqNg = 0, eqItems = 0;
+        var groups = eqData ? (eqData.__confirmGroups || []) : [];
+        groups.forEach(function(group) {
+          var vals = s[group.key] || [];
+          group.items.forEach(function(item, i) {
+            var v = vals[i];
+            eqItems++; totalItems++;
+            if (v === 'ok' || v === 'na') eqOk++;
+            else if (v === 'ng') eqNg++;
+          });
+        });
+        lineGroups[lineId].push({ eqId: id, eqName: eqName, ok: eqOk, ng: eqNg, items: eqItems });
+      });
+
+      function getConfLineName(lineId) {
+        var ln = (ADM.lines || []).find(function(l){ return l.id === lineId; });
+        return ln ? (ln.name || lineId) : lineId;
+      }
+
+      var pcHasNg = totalNg > 0;
+      var pcLineCount = lineOrder.length;
+      var pcInspector = localStorage.getItem('loggedInUser') || '\u2014';
+      var pcTypeNames = [];
+      if (inspectionTypes.isDaily)   pcTypeNames.push('\u6bce\u65e5\u70b9\u691c');
+      if (inspectionTypes.is10Day)   pcTypeNames.push('10\u65e5\u6bce\u70b9\u691c');
+      if (inspectionTypes.isMonthly) pcTypeNames.push('1\u30f6\u6708\u70b9\u691c');
+      var pcEquipCount = selectedEquips.length;
+      var pcNow = new Date();
+      var pcM0 = calMonth != null ? calMonth : pcNow.getMonth();
+      var pcDateStr = (calYear || pcNow.getFullYear()) + '\u5e74' + (pcM0 + 1) + '\u6708' + (selectedCalDay || pcNow.getDate()) + '\u65e5';
+
+      var summaryHtml =
+        '<div class="pc-res-summary-card' + (pcHasNg ? ' has-ng' : '') + '">' +
+          '<div class="pc-res-summary-icon">' +
+            (pcHasNg
+              ? '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+              : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>'
+            ) +
+          '</div>' +
+          '<div class="pc-res-summary-title-block">' +
+            '<div class="pc-res-summary-status">' + (pcHasNg ? '\u7570\u5e38\u304c\u3042\u308a\u307e\u3059' : '\u3059\u3079\u3066\u306e\u70b9\u691c\u304c\u5b8c\u4e86\u3057\u307e\u3057\u305f') + '</div>' +
+            '<div class="pc-res-summary-sub">' + (pcHasNg ? '\u7570\u5e38\u304c ' + totalNg + ' \u4ef6\u3042\u308a\u307e\u3059' : '\u7570\u5e38\u306f\u3042\u308a\u307e\u305b\u3093\u3067\u3057\u305f') + '</div>' +
+          '</div>' +
+          '<div class="pc-res-stats-row">' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num">' + totalOk + '</div><div class="pc-res-stat-lbl">\u6b63\u5e38 \u4ef6</div></div>' +
+            '<div class="pc-res-stat-divider"></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num' + (totalNg > 0 ? ' ng' : '') + '">' + totalNg + '</div><div class="pc-res-stat-lbl">\u7570\u5e38 \u4ef6</div></div>' +
+            '<div class="pc-res-stat-divider"></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcLineCount + '</div><div class="pc-res-stat-lbl">\u30e9\u30a4\u30f3</div></div>' +
+            '<div class="pc-res-stat-divider"></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcEquipCount + '</div><div class="pc-res-stat-lbl">\u8a2d\u5099\u6570</div></div>' +
+            '<div class="pc-res-stat-divider"></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + totalItems + '</div><div class="pc-res-stat-lbl">\u70b9\u691c\u9805\u76ee\u6570</div></div>' +
+          '</div>' +
+          '<div class="pc-res-summary-right">' +
+            '<div class="pc-res-info-label">\u691c\u67fb\u8005</div><div class="pc-res-info-val">' + pcInspector + '</div>' +
+            '<div class="pc-res-info-label">\u70b9\u691c\u65e5</div><div class="pc-res-info-val">' + pcDateStr + '</div>' +
+            '<div class="pc-res-info-label">\u70b9\u691c\u65b9\u6cd5</div><div class="pc-res-info-val">' + pcTypeNames.join(' / ') + '</div>' +
+          '</div>' +
+        '</div>';
+
+      var lineSummaryHtml = '<div class="pc-res-section-title">\u30e9\u30a4\u30f3\u5225\u30b5\u30de\u30ea\u30fc</div><div class="pc-res-line-grid">';
+      lineOrder.forEach(function(lineId) {
+        var equips = lineGroups[lineId];
+        var lOk = 0, lNg = 0, lItems = 0;
+        equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
+        var lHasNg = lNg > 0;
+        var lineName = lineId === '__none__' ? '\u672a\u5206\u985e' : getConfLineName(lineId);
+        lineSummaryHtml +=
+          '<div class="pc-res-line-card' + (lHasNg ? ' has-ng' : '') + '">' +
+            '<div class="pc-res-line-card-top">' +
+              '<div class="pc-res-line-name">' + lineName + '</div>' +
+              '<div class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? '\u26a0 \u7570\u5e38' : '\u2713 \u6b63\u5e38') + '</div>' +
+            '</div>' +
+            '<div class="pc-res-line-meta">\u8a2d\u5099\u6570\uff1a' + equips.length + '\u53f0\u3000|\u3000\u70b9\u691c\u9805\u76ee\u6570\uff1a' + lItems + '\u9805\u76ee</div>' +
+            '<div class="pc-res-line-stats">' +
+              '<span class="pc-res-line-stat">\u6b63\u5e38 <b class="ok">' + lOk + '</b> \u4ef6</span>' +
+              '<span class="pc-res-line-stat">\u7570\u5e38 <b class="' + (lNg > 0 ? 'ng' : 'neutral') + '">' + lNg + '</b> \u4ef6</span>' +
+            '</div>' +
+          '</div>';
+      });
+      lineSummaryHtml += '</div>';
+
+      var lineDetailHtml = '<div class="pc-res-section-title">\u30e9\u30a4\u30f3\u5225\u306e\u8a73\u7d30</div>';
+      lineOrder.forEach(function(lineId, idx) {
+        var equips = lineGroups[lineId];
+        var lOk = 0, lNg = 0, lItems = 0;
+        equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
+        var lHasNg = lNg > 0;
+        var lineName = lineId === '__none__' ? '\u672a\u5206\u985e' : getConfLineName(lineId);
+        var accId = 'pc-conf-acc-' + idx;
+        lineDetailHtml +=
+          '<div class="pc-res-detail-accordion' + (lHasNg ? ' has-ng' : '') + '" id="' + accId + '">' +
+            '<div class="pc-res-detail-header" onclick="togglePcConfAcc(\'' + accId + '\')">' +
+              '<div class="pc-res-detail-acc-name">' + lineName + '&nbsp;&nbsp;<span class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '" style="font-size:11px;">' + (lHasNg ? '\u26a0 \u7570\u5e38' : '\u2713 \u6b63\u5e38') + '</span></div>' +
+              '<div class="pc-res-detail-acc-meta">' +
+                '<span>\u8a2d\u5099\u6570\uff1a' + equips.length + '\u53f0</span>' +
+                '<span>\u70b9\u691c\u9805\u76ee\u6570\uff1a' + lItems + '\u9805\u76ee</span>' +
+                '<span>\u6b63\u5e38\uff1a<b class="ok">' + lOk + '</b> \u4ef6</span>' +
+                '<span>\u7570\u5e38\uff1a<b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> \u4ef6</span>' +
+              '</div>' +
+              '<div class="pc-res-detail-chevron"><svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></div>' +
+            '</div>' +
+            '<div class="pc-res-detail-body">' +
+              '<table class="pc-res-detail-table">' +
+                '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:80px"><col style="width:80px"><col style="width:100px"></colgroup>' +
+                '<thead><tr><th>\u8a2d\u5099\u756a\u53f7</th><th>\u8a2d\u5099\u540d</th><th style="text-align:center">\u70b9\u691c\u9805\u76ee\u6570</th><th style="text-align:center">\u6b63\u5e38</th><th style="text-align:center">\u7570\u5e38</th><th style="text-align:center">\u30b9\u30c6\u30fc\u30bf\u30b9</th></tr></thead>' +
+                '<tbody>' +
+                  equips.map(function(e) {
+                    return '<tr>' +
+                      '<td class="eq-num">' + e.eqId + '</td>' +
+                      '<td><strong>' + e.eqName + '</strong></td>' +
+                      '<td class="eq-count" style="text-align:center">' + e.items + '\u9805\u76ee</td>' +
+                      '<td class="pc-res-tbl-ok" style="text-align:center">' + e.ok + '</td>' +
+                      '<td class="' + (e.ng > 0 ? 'pc-res-tbl-ng' : '') + '" style="text-align:center">' + e.ng + '</td>' +
+                      '<td style="text-align:center"><span class="pc-res-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '\u26a0 \u7570\u5e38' : '\u2713 \u6b63\u5e38') + '</span></td>' +
+                    '</tr>';
+                  }).join('') +
+                '</tbody>' +
+              '</table>' +
+            '</div>' +
+          '</div>';
+      });
+
+      pcConfBody.innerHTML = summaryHtml + lineSummaryHtml + lineDetailHtml;
+    }
+  }
+
+  function togglePcConfAcc(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
   }
 
   /* ─── SAVE & COMPLETE ─── */
