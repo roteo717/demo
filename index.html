@@ -1660,6 +1660,7 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    overflow-x: hidden;
     width: 100%;
   }
   .pc-confirm-body {
@@ -1670,15 +1671,22 @@
     width: 100%;
     margin: 0 auto;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
   /* モバイル: 旧確認コンテンツを非表示 */
   #confirm-content,
   #confirm-sections,
   #confirm-chips { display: none !important; }
   /* モバイル: サマリーカードを折り返し対応 */
-  .pc-res-summary-card { flex-wrap: wrap; gap: 12px; }
-  .pc-res-stats-row { gap: 8px; }
+  .pc-res-summary-card { flex-wrap: wrap; gap: 10px; padding: 14px 16px; }
+  .pc-res-summary-title-block { flex-shrink: 1; min-width: 0; }
+  .pc-res-summary-status { white-space: normal; font-size: 14px; }
+  .pc-res-summary-sub { white-space: normal; font-size: 11px; }
+  .pc-res-stats-row { gap: 0; flex: unset; width: 100%; justify-content: space-around; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 8px 0; }
   .pc-res-stat-num { font-size: 18px; }
+  .pc-res-stat-lbl { font-size: 10px; }
+  .pc-res-stat-divider { display: none; }
+  .pc-res-stat-item { flex: 1; }
   .pc-res-summary-right { min-width: unset; width: 100%; box-sizing: border-box; }
   /* モバイル: アコーディオンのメタ情報は非表示 */
   .pc-res-detail-acc-meta { display: none; }
@@ -2031,8 +2039,9 @@
     display: flex; align-items: center; gap: 0;
     border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     padding: 10px 0; margin-bottom: 12px;
+    flex-wrap: wrap;
   }
-  .mob-res-stat-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .mob-res-stat-item { flex: 1; min-width: 60px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .mob-res-stat-item + .mob-res-stat-item { border-left: 1px solid var(--border); }
   .mob-res-stat-num { font-size: 20px; font-weight: 800; line-height: 1; color: #2E7D32; }
   .mob-res-stat-num.ng { color: var(--red); }
