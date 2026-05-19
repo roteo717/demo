@@ -9721,8 +9721,6 @@ window.toggleAdmUserMenu  = toggleAdmUserMenu;
   if (pcSidebar) pcSidebar.classList.remove('hidden-sidebar');
   if (pcLayout)  pcLayout.classList.remove('no-sidebar');
   showAdmTab('dashboard');
-  /* 管理者ログイン直後にも承認バッジを即時反映 */
-  setTimeout(updateApprovalBadge, 0);
 }
 
 function adminLogout() {
@@ -11622,9 +11620,6 @@ function renderAdmDashboard() {
   /* — Anomaly List — */
   renderAnomalyListPanel(null);
   setTimeout(syncAnomalyListHeight, 0);
-
-  /* — 承認バッジを承認画面を開かなくても更新 — */
-  updateApprovalBadge();
 }
 
 /* 異常一覧パネルを描画。filterEquipId が非nullの場合その設備のみ表示 */
@@ -11701,6 +11696,7 @@ function renderAnomalyListPanel(filterEquipId) {
           '<div style="flex:1;min-width:0;">' +
             '<div style="font-size:14px;font-weight:700;color:#333;letter-spacing:0.2px;">' + a.equipId + '\u3000' + a.equipName + '</div>' +
             '<div style="font-size:12px;color:#888;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + detail2 + '</div>' +
+            (a.inspector ? '<div style="font-size:11px;color:#AAAAAA;margin-top:3px;">点検者：' + a.inspector + '</div>' : '') +
           '</div>' +
           '<div style="width:30px;height:30px;border-radius:50%;background:#F0F0F0;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:12px;">' +
             '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
@@ -11978,22 +11974,6 @@ function apr2ToggleRow(rowId) {
   } else {
     row.classList.remove('row-expanded');
     panel.classList.remove('open');
-  }
-}
-
-/* ── 承認バッジ更新（承認画面を開かなくても呼べる軽量版） ── */
-function updateApprovalBadge() {
-  var allItems = apr2GetData();
-  var totalPending = allItems.filter(function(i){ return i.status === 'pending'; }).length;
-  var btabBadge = document.getElementById('abtab-badge-approval');
-  if (btabBadge) {
-    btabBadge.textContent = totalPending;
-    btabBadge.style.display = totalPending > 0 ? 'flex' : 'none';
-  }
-  var pcBadge = document.getElementById('pcsb-badge-approval');
-  if (pcBadge) {
-    pcBadge.textContent = totalPending;
-    pcBadge.style.display = totalPending > 0 ? 'flex' : 'none';
   }
 }
 
