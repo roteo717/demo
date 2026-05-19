@@ -807,49 +807,49 @@
   .cal-nav:active { background: var(--bg); }
   .cal-nav svg { stroke: var(--text-sub); fill: none; width: 16px; height: 16px; stroke-width: 2; }
   .cal-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; text-align: center;
+    border-top: 1px solid #E0E0E0;
+    border-left: 1px solid #E0E0E0;
   }
-  .cal-dow { font-size: 11px; color: var(--text-sub); font-weight: 600; padding: 4px 0 6px; letter-spacing: 0.2px; }
+  .cal-dow { font-size: 11px; color: var(--text-sub); font-weight: 600; padding: 4px 0 6px; letter-spacing: 0.2px; border-right: 1px solid #E0E0E0; border-bottom: 1px solid #E0E0E0; }
   .cal-dow:first-child { color: #E53935; }
   .cal-dow:nth-child(7) { color: var(--blue); }
   .cal-day {
-    background: #F8F9FB;
-    border: 1px solid #EBEBEB;
-    border-radius: 10px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid #E0E0E0;
+    border-bottom: 1px solid #E0E0E0;
+    border-radius: 0;
     padding: 7px 2px 6px;
     cursor: pointer;
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     min-height: 52px;
-    transition: all 0.15s;
+    transition: background 0.15s;
     -webkit-user-select: none; user-select: none;
     position: relative;
   }
-  .cal-day:active { opacity: 0.7; }
+  .cal-day:active { background: #F0F2F5; }
   .cal-day-num { font-size: 15px; font-weight: 600; line-height: 1.1; }
   .cal-day-status { font-size: 13px; line-height: 1; font-weight: 500; }
   .cal-day.sun .cal-day-num { color: #E53935; }
   .cal-day.sat .cal-day-num { color: var(--blue); }
-  .cal-day.other-month { background: transparent; border-color: transparent; cursor: default; }
-  .cal-day.other-month .cal-day-num { color: #BBBBBB; }
-  .cal-day.other-month .cal-day-status { color: #CCCCCC; }
-  .cal-day.holiday { background: transparent; border-color: transparent; cursor: default; }
-  .cal-day.holiday .cal-day-num { color: #BBBBBB; }
-  .cal-day.holiday .cal-day-status { color: #CCCCCC; }
-  .cal-day.done .cal-day-status { color: var(--blue); }
-  .cal-day.anomaly .cal-day-status { color: var(--red); }
-  .cal-day.pending .cal-day-status { color: #AAAAAA; }
-  .cal-day.today {
-    background: var(--blue-light);
-    border: 2px solid var(--blue);
-    cursor: pointer;
-  }
-  .cal-day.today .cal-day-num { color: var(--blue); font-weight: 700; }
-  .cal-day.today.sun .cal-day-num { color: var(--blue); }
+  .cal-day.other-month { background: #FAFAFA; cursor: default; }
+  .cal-day.other-month .cal-day-num { color: #CCCCCC; }
+  .cal-day.other-month .cal-day-status { color: #DDDDDD; }
+  .cal-day.holiday { background: #FAFAFA; cursor: default; }
+  .cal-day.holiday .cal-day-num { color: #CCCCCC; }
+  .cal-day.holiday .cal-day-status { color: #DDDDDD; }
+  .cal-day.pending .cal-day-num { color: #999; font-weight: 500; }
+  .cal-day.done .cal-day-num { color: var(--text); font-weight: 600; }
+  .cal-day.done .cal-day-status { color: #AAAAAA; }
+  .cal-day.anomaly .cal-day-num { color: var(--text); font-weight: 600; }
+  .cal-day.anomaly .cal-day-status { color: #AAAAAA; }
+  .cal-day.today { background: transparent; cursor: pointer; }
+  .cal-day.today .cal-day-num { color: var(--text); font-weight: 600; }
+  .cal-day.today.sun .cal-day-num { color: #E53935; }
   .cal-day.today.sat .cal-day-num { color: var(--blue); }
-  .cal-day.selected-day {
-    background: var(--blue-mid); border-color: var(--blue);
-  }
-  .cal-day.selected-day .cal-day-num { color: var(--blue); }
+  .cal-day.selected-day { background: #cbd5e1; }
+  .cal-day.selected-day .cal-day-num { color: #1e293b; }
   .cal-legend {
     display: flex; gap: 16px; justify-content: center;
     margin-top: 14px; padding-top: 12px;
@@ -857,8 +857,8 @@
   }
   .cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-sub); font-weight: 500; }
   .cal-legend-sym { font-size: 13px; font-weight: 700; }
-  .cal-legend-sym.done { color: var(--blue); }
-  .cal-legend-sym.anomaly { color: var(--red); }
+  .cal-legend-sym.done { color: #334155; }
+  .cal-legend-sym.anomaly { color: #d97706; }
   .cal-legend-sym.pending { color: #AAAAAA; }
 
   /* Big start button */
@@ -3322,9 +3322,10 @@
   #screen-home .cal-day.today {
     padding: 6px 2px 2px;
     width: auto; height: auto; min-height: 48px; margin: 0;
+    background: transparent;
   }
   #screen-home .cal-day.today::before {
-    width: 34px; height: 34px; top: 2px;
+    display: none;
   }
   /* 休日セルの背景をセル全体に広げない */
   #screen-home .cal-day.holiday {
@@ -3333,7 +3334,7 @@
   #screen-home .cal-day.sun { color: #E53935; }
   #screen-home .cal-day.sat { color: var(--blue); }
   #screen-home .cal-day.today.sun,
-  #screen-home .cal-day.today.sat { color: #fff; }
+  #screen-home .cal-day.today.sat { color: inherit; }
   #screen-home .cal-day.other-month.sun { color: #f5b0ae; }
   #screen-home .cal-day.other-month.sat { color: #aabfef; }
   .summary-card {
@@ -4338,7 +4339,7 @@
     min-width: 25px; width: 25px; padding: 2px 1px;
   }
   .ms-th-day.holiday { background: #FFEBEE; color: #C62828; }
-  .ms-th-day.today   { background: #BBDEFB; color: #0D47A1; box-shadow: inset 0 0 0 2px #1565C0; }
+  .ms-th-day.today   { background: inherit; color: inherit; box-shadow: none; }
 
   /* Day cell */
   .ms-cell {
@@ -4346,7 +4347,7 @@
     height: 28px; max-height: 28px; padding: 2px 1px;
   }
   .ms-cell.holiday { background: repeating-linear-gradient(45deg,#FFEBEE,#FFEBEE 3px,#FFCDD2 3px,#FFCDD2 6px); }
-  .ms-cell.today   { background: #E3F2FD; }
+  .ms-cell.today   { background: inherit; }
 
   /* Result symbols */
   .ms-val-ok    { color: #1565C0; font-size: 13px; font-weight: 700; }
@@ -6096,11 +6097,7 @@
         <div class="cal-nav" onclick="changeMonth(1)"><svg viewBox="0 0 16 16" stroke-width="1.5"><path d="M6 4l4 4-4 4"/></svg></div>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
-      <div class="cal-legend">
-        <div class="cal-legend-item"><span class="cal-legend-sym done">○</span>完了</div>
-        <div class="cal-legend-item"><span class="cal-legend-sym anomaly">×</span>異常あり</div>
-        <div class="cal-legend-item"><span class="cal-legend-sym pending">—</span>未点検</div>
-      </div>
+
     </div>
 
     <!-- Today's Inspection Panel -->
@@ -6134,6 +6131,7 @@
           </button>
         </div>
         <div class="insp-line-tabs" id="insp-line-tabs">
+          <button class="insp-line-tab active" data-lineid="all" onclick="setInspLineFilter('all')">すべて</button>
           <button class="insp-line-tab" data-lineid="L1" onclick="setInspLineFilter('L1')">ラインA</button>
           <button class="insp-line-tab" data-lineid="L2" onclick="setInspLineFilter('L2')">ラインB</button>
           <button class="insp-line-tab" data-lineid="L3" onclick="setInspLineFilter('L3')">ラインC</button>
@@ -6198,18 +6196,7 @@
         </div>
 
       </div>
-      <!-- Stepper -->
-      <div class="pc-lsel-stepper" id="pc-step-bar">
-        <div class="pc-lsel-step active" id="pc-step1">
-          <span class="pc-step-num">1</span>
-          <span>ライン選択</span>
-        </div>
-        <div class="pc-lsel-step-line"></div>
-        <div class="pc-lsel-step" id="pc-step2">
-          <span class="pc-step-num">2</span>
-          <span>設備選択</span>
-        </div>
-      </div>
+
       <p class="pc-lsel-subtitle">点検するラインと設備を選択してください</p>
       <!-- Two panels -->
       <div class="pc-lsel-panels">
@@ -7444,11 +7431,20 @@
     const isCurrentMonth = now.getFullYear() === calYear && now.getMonth() === calMonth;
     const todayDay = isCurrentMonth ? now.getDate() : -1;
 
-    // ログイン中の担当者でフィルタ（担当者ごとのカレンダー表示）
+    // ログイン中の担当者でフィルタ（選択中ラインで絞り込み）
     const currentUser = localStorage.getItem('loggedInUser') || '';
+    const _calLineFilter = (typeof _inspLineFilter !== 'undefined') ? _inspLineFilter : 'all';
     const userRecs = ALL_INSPECTION_RECORDS.filter(function(r) {
-      return r.year === calYear && r.month === calMonth &&
-             (currentUser === '' || r.inspector === currentUser);
+      if (r.year !== calYear || r.month !== calMonth) return false;
+      if (_calLineFilter !== 'all') {
+        var admEquips = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
+        var lineEquipIds = admEquips.filter(function(e){ return e.lineId === _calLineFilter; }).map(function(e){ return e.id; });
+        if (lineEquipIds.length > 0) {
+          var hasLineEquip = (r.equips || []).some(function(eid){ return lineEquipIds.indexOf(eid) >= 0; });
+          if (!hasLineEquip) return false;
+        }
+      }
+      return true;
     });
     const done    = userRecs.filter(function(r){ return !r.anomaly; }).map(function(r){ return r.day; });
     const anomaly = userRecs.filter(function(r){ return  r.anomaly; }).map(function(r){ return r.day; });
@@ -7487,7 +7483,7 @@
       if (i === 0) el.classList.add('sun');
       if (i === 6) el.classList.add('sat');
       const prevDay = prevMonthDays - (firstDow - 1 - i);
-      el.innerHTML = `<div class="cal-day-num">${prevDay}</div><div class="cal-day-status" style="color:#CCCCCC">—</div>`;
+      el.innerHTML = `<div class="cal-day-num">${prevDay}</div>`;
       grid.appendChild(el);
     }
 
@@ -7514,7 +7510,7 @@
       else if (isDone)    { statusSym = '○'; statusClass = 'done'; }
       else                { statusSym = '—'; statusClass = 'pending'; }
 
-      el.innerHTML = `<div class="cal-day-num">${d}</div><div class="cal-day-status">${statusSym}</div>`;
+      el.innerHTML = `<div class="cal-day-num">${d}</div>`;
 
       if (d === todayDay) {
         el.className = 'cal-day today';
@@ -7582,34 +7578,34 @@
     el.classList.add('selected-day');
     selectedCalDay = d;
 
-    // 現在のユーザーの、この日の完了済み点検レコードを検索
     const currentUser = localStorage.getItem('loggedInUser') || '';
+    const _calLineFilter2 = (typeof _inspLineFilter !== 'undefined') ? _inspLineFilter : 'all';
     const existingRecord = ALL_INSPECTION_RECORDS.find(function(r) {
-      return r.year === calYear && r.month === calMonth &&
-             r.day === d && (currentUser === '' || r.inspector === currentUser);
+      if (r.year !== calYear || r.month !== calMonth || r.day !== d) return false;
+      if (_calLineFilter2 !== 'all') {
+        var admEquips2 = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
+        var lineEquipIds2 = admEquips2.filter(function(e){ return e.lineId === _calLineFilter2; }).map(function(e){ return e.id; });
+        if (lineEquipIds2.length > 0) {
+          return (r.equips || []).some(function(eid){ return lineEquipIds2.indexOf(eid) >= 0; });
+        }
+      }
+      return true;
     });
-
-    const toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.2s;white-space:nowrap;';
 
     if (existingRecord) {
       // 点検済み → 結果を表示
-      toast.textContent = `${calYear}年${MONTHS_JP[calMonth]}${d}日の点検結果`;
-      document.body.appendChild(toast);
-      requestAnimationFrame(() => { toast.style.opacity = '1'; });
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => { toast.remove(); showInspectionResult(existingRecord); }, 200);
-      }, 700);
+      showInspectionResult(existingRecord);
     } else {
-      // 未点検 → 通常フロー
-      toast.textContent = `${calYear}年${MONTHS_JP[calMonth]}${d}日の点検`;
+      // 未点検 → トーストのみ（画面遷移しない）
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#555;color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.2s;white-space:nowrap;';
+      toast.textContent = `${calYear}年${MONTHS_JP[calMonth]}${d}日の点検記録はありません`;
       document.body.appendChild(toast);
       requestAnimationFrame(() => { toast.style.opacity = '1'; });
       setTimeout(() => {
         toast.style.opacity = '0';
-        setTimeout(() => { toast.remove(); buildLineList(); showScreen('screen-line'); }, 200);
-      }, 700);
+        setTimeout(() => toast.remove(), 300);
+      }, 1800);
     }
   }
 
@@ -7858,12 +7854,6 @@
             '<div class="pc-res-stat-divider"></div>' +
             '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + totalItems + '</div><div class="pc-res-stat-lbl">点検項目数</div></div>' +
           '</div>' +
-          '<div class="pc-res-summary-right">' +
-            '<div class="pc-res-info-label">検査者</div><div class="pc-res-info-val">' + (record.inspector || '—') + '</div>' +
-            '<div class="pc-res-info-label">完了日時</div><div class="pc-res-info-val">' + (completedStr || '—') + '</div>' +
-            '<div class="pc-res-info-label">点検方法</div><div class="pc-res-info-val">' + typeNames.join(' / ') + '</div>' +
-            (elapsedStr ? '<div class="pc-res-info-label">所要時間</div><div class="pc-res-info-val">' + elapsedStr + '</div>' : '') +
-          '</div>' +
         '</div>';
 
       // ─ ライン別サマリーカード ─
@@ -7899,8 +7889,8 @@
         var lHasNg = lNg > 0;
         var lineName = lineId === '__none__' ? '未分類' : getLineName(lineId);
         var accId = 'pc-res-acc-' + idx;
-        // 最初のラインだけ開く
-        var isOpen = '';
+        // 常に展開
+        var isOpen = ' open';
         lineDetailHtml +=
           '<div class="pc-res-detail-accordion' + (lHasNg ? ' has-ng' : '') + isOpen + '" id="' + accId + '">' +
             '<div class="pc-res-detail-header" onclick="togglePcResAcc(\'' + accId + '\')">' +
@@ -7910,6 +7900,7 @@
                 '<span>点検項目数：' + lItems + '項目</span>' +
                 '<span>正常：<b class="ok">' + lOk + '</b> 件</span>' +
                 '<span>異常：<b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> 件</span>' +
+                '<span>担当者：<b style="color:var(--text)">' + (record.inspector || '—') + '</b></span>' +
               '</div>' +
               '<div class="pc-res-detail-chevron"><svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></div>' +
             '</div>' +
@@ -7967,8 +7958,10 @@
     calYear  = now.getFullYear();
     calMonth = now.getMonth();
     selectedCalDay = now.getDate();
-    buildLineList();
-    showScreen('screen-line');
+    // ライン・設備選択画面をスキップして直接点検入力へ
+    selectedLineIds = [];
+    buildEquipList();
+    startInspection();
   }
 
   // スケジュールの「点検する」ボタンから直接点検画面へ遷移
@@ -8423,12 +8416,14 @@
     if (!list) return;
     list.innerHTML = '';
     // Show only equipment belonging to the selected lines
-    const filtered = selectedLineIds.length > 0
+    let filtered = selectedLineIds.length > 0
       ? EQUIP_DATA.filter(eq => {
           const admEq = ADM.equips.find(e => e.id === eq.id);
           return admEq && selectedLineIds.includes(admEq.lineId);
         })
       : EQUIP_DATA;
+    // 選択ラインに設備マッピングがない場合は全設備にフォールバック
+    if (filtered.length === 0) filtered = EQUIP_DATA;
     // Pre-select all filtered equipment
     selectedEquips = filtered.map(e => e.id);
     // Group by line (only when ADM is available)
@@ -8947,11 +8942,6 @@
             '<div class="pc-res-stat-divider"></div>' +
             '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcTotalItems + '</div><div class="pc-res-stat-lbl">\u70b9\u691c\u9805\u76ee\u6570</div></div>' +
           '</div>' +
-          '<div class="pc-res-summary-right">' +
-            '<div class="pc-res-info-label">\u691c\u67fb\u8005</div><div class="pc-res-info-val">' + pcInspector + '</div>' +
-            '<div class="pc-res-info-label">\u70b9\u691c\u65e5</div><div class="pc-res-info-val">' + pcDateStr + '</div>' +
-            '<div class="pc-res-info-label">\u70b9\u691c\u65b9\u6cd5</div><div class="pc-res-info-val">' + pcTypeNames.join(' / ') + '</div>' +
-          '</div>' +
         '</div>';
 
       var lineSummaryHtml = '<div class="pc-res-section-title">\u30e9\u30a4\u30f3\u5225\u30b5\u30de\u30ea\u30fc</div><div class="pc-res-line-grid">';
@@ -8985,7 +8975,7 @@
         var lineName = lineId === '__none__' ? '\u672a\u5206\u985e' : getConfLineName(lineId);
         var accId = 'pc-conf-acc-' + idx;
         lineDetailHtml +=
-          '<div class="pc-res-detail-accordion' + (lHasNg ? ' has-ng' : '') + '" id="' + accId + '">' +
+          '<div class="pc-res-detail-accordion' + (lHasNg ? ' has-ng' : '') + ' open" id="' + accId + '">' +
             '<div class="pc-res-detail-header" onclick="togglePcConfAcc(\'' + accId + '\')">' +
               '<div class="pc-res-detail-acc-name">' + lineName + '&nbsp;&nbsp;<span class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '" style="font-size:11px;">' + (lHasNg ? '\u26a0 \u7570\u5e38' : '\u2713 \u6b63\u5e38') + '</span></div>' +
               '<div class="pc-res-detail-acc-meta">' +
@@ -8993,6 +8983,7 @@
                 '<span>\u70b9\u691c\u9805\u76ee\u6570\uff1a' + lItems + '\u9805\u76ee</span>' +
                 '<span>\u6b63\u5e38\uff1a<b class="ok">' + lOk + '</b> \u4ef6</span>' +
                 '<span>\u7570\u5e38\uff1a<b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> \u4ef6</span>' +
+                '<span>\u62c5\u5f53\u8005\uff1a<b style="color:var(--text)">' + (pcInspector || '\u2014') + '</b></span>' +
               '</div>' +
               '<div class="pc-res-detail-chevron"><svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></div>' +
             '</div>' +
@@ -9730,6 +9721,8 @@ window.toggleAdmUserMenu  = toggleAdmUserMenu;
   if (pcSidebar) pcSidebar.classList.remove('hidden-sidebar');
   if (pcLayout)  pcLayout.classList.remove('no-sidebar');
   showAdmTab('dashboard');
+  /* 管理者ログイン直後にも承認バッジを即時反映 */
+  setTimeout(updateApprovalBadge, 0);
 }
 
 function adminLogout() {
@@ -11629,6 +11622,9 @@ function renderAdmDashboard() {
   /* — Anomaly List — */
   renderAnomalyListPanel(null);
   setTimeout(syncAnomalyListHeight, 0);
+
+  /* — 承認バッジを承認画面を開かなくても更新 — */
+  updateApprovalBadge();
 }
 
 /* 異常一覧パネルを描画。filterEquipId が非nullの場合その設備のみ表示 */
@@ -11725,7 +11721,7 @@ function renderAnomalyListPanel(filterEquipId) {
 var apr2Filter      = 'all';   // 'all' | 'pending' | 'approved'
 var apr2DateFilter  = 'all'; // 'today' | 'all'
 var apr2Page        = 1;
-var apr2PerPage     = 10;
+var apr2PerPage     = 9999;
 var apr2LineState   = {};      // lineKey → true(展開) / false(折りたたみ)
 var apr2EquipState  = {};      // equipId → true / false
 var apr2LineFilter  = [];      // [] = すべて, または選択中のlineId配列
@@ -11982,6 +11978,22 @@ function apr2ToggleRow(rowId) {
   } else {
     row.classList.remove('row-expanded');
     panel.classList.remove('open');
+  }
+}
+
+/* ── 承認バッジ更新（承認画面を開かなくても呼べる軽量版） ── */
+function updateApprovalBadge() {
+  var allItems = apr2GetData();
+  var totalPending = allItems.filter(function(i){ return i.status === 'pending'; }).length;
+  var btabBadge = document.getElementById('abtab-badge-approval');
+  if (btabBadge) {
+    btabBadge.textContent = totalPending;
+    btabBadge.style.display = totalPending > 0 ? 'flex' : 'none';
+  }
+  var pcBadge = document.getElementById('pcsb-badge-approval');
+  if (pcBadge) {
+    pcBadge.textContent = totalPending;
+    pcBadge.style.display = totalPending > 0 ? 'flex' : 'none';
   }
 }
 
@@ -14153,14 +14165,21 @@ function initInspLineTabs() {
   var tabsEl = document.getElementById('insp-line-tabs');
   if (!tabsEl || !allLines.length) return;
 
-  // フィルターを最初のラインにリセット
-  _inspLineFilter = lines.length > 0 ? lines[0].id : 'all';
+  // フィルターを「すべて」にリセット
+  _inspLineFilter = 'all';
 
-  // タブを作り直す（「すべて」ボタンなし）
+  // タブを作り直す（「すべて」ボタンを先頭に追加）
   tabsEl.innerHTML = '';
+  var allBtn = document.createElement('button');
+  allBtn.id = 'insp-tab-all';
+  allBtn.className = 'insp-line-tab active';
+  allBtn.textContent = 'すべて';
+  allBtn.setAttribute('data-lineid', 'all');
+  allBtn.onclick = function() { setInspLineFilter('all'); };
+  tabsEl.appendChild(allBtn);
   lines.forEach(function(ln) {
     var btn = document.createElement('button');
-    btn.className = 'insp-line-tab' + (ln.id === _inspLineFilter ? ' active' : '');
+    btn.className = 'insp-line-tab';
     btn.textContent = ln.name || ln.id;
     btn.setAttribute('data-lineid', ln.id);
     btn.onclick = function() { setInspLineFilter(ln.id); };
@@ -14180,6 +14199,7 @@ function setInspLineFilter(filterId) {
   var allTab = document.getElementById('insp-tab-all');
   if (allTab) allTab.classList.toggle('active', filterId === 'all');
   renderInspLineList();
+  if (typeof buildCalendar === 'function') buildCalendar();
 }
 
 var _inspSchedPage = 1;
@@ -14212,7 +14232,7 @@ function renderInspLineList() {
     _dayPatterns.forEach(function(day) {
       if (day <= _maxDay) {
         schedules.push({
-          id: 'DYN-' + ln.id + '-' + _sidx++,
+          id: 'DYN__' + ln.id + '__' + _yr + '-' + _mm + '-' + String(day).padStart(2, '0'),
           lineId: ln.id,
           date: _yr + '-' + _mm + '-' + String(day).padStart(2, '0'),
           status: 'pending'
@@ -14224,9 +14244,16 @@ function renderInspLineList() {
   // フィルター適用
   var _todayStart = new Date(); _todayStart.setHours(23,59,59,999);
 
-  // 点検済みチェック用データ
+  // 点検済みチェック用データ（ALL_INSPECTION_RECORDSとlocalStorageを同期）
   var _inspections = [];
   try { _inspections = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
+  // カレンダー表示用レコードもlocalStorageと同期（担当者フィルタなし）
+  if (typeof loadSavedInspections === 'function') {
+    if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
+      ALL_INSPECTION_RECORDS = [];
+      _inspections.forEach(function(r) { if (typeof applyInspectionRecord === 'function') applyInspectionRecord(r); });
+    }
+  }
   var _allEquips = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
 
   function _isScheduleCompleted(s) {
@@ -14385,6 +14412,15 @@ function changeInspSchedPerPage(val) {
 }
 
 function startScheduledInspection(schedId) {
+  // DYN__{lineId}__{date} 形式の動的IDを直接解析
+  if (schedId && schedId.indexOf('DYN__') === 0) {
+    var parts = schedId.slice(5).split('__');
+    if (parts.length === 2 && typeof window.startInspectionForLine === 'function') {
+      window.startInspectionForLine(parts[0], parts[1]);
+    }
+    return;
+  }
+  // 静的スケジュール（ADM.schedules）から検索
   var schedules = (typeof ADM !== 'undefined' && ADM && ADM.schedules) ? ADM.schedules : [];
   var sched = schedules.find(function(s){ return s.id === schedId; });
   if (!sched) return;
