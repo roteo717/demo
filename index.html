@@ -8499,8 +8499,8 @@
     EQUIP_DATA.forEach(eq => {
       if (selectedEquips.includes(eq.id)) {
         // itemsDaily が未設定の設備は、10日毎でない日に items10 を代替使用する
-        const dailyCount = eq.itemsDaily.length > 0
-          ? eq.itemsDaily.length
+        const dailyCount = (eq.itemsDaily || []).length > 0
+          ? (eq.itemsDaily || []).length
           : (inspectionTypes.is10Day ? 0 : eq.items10.length);
         state[eq.id] = {
           'daily':   new Array(dailyCount).fill(null),
@@ -8581,8 +8581,8 @@
     // Build applicable type groups
     // itemsDaily が空の設備では、10日毎でない日に items10 を毎日点検として代用する
     const groups = [];
-    const effectiveDailyItems = eq.itemsDaily.length > 0
-      ? eq.itemsDaily
+    const effectiveDailyItems = (eq.itemsDaily || []).length > 0
+      ? (eq.itemsDaily || [])
       : (inspectionTypes.is10Day ? [] : eq.items10);
     if (inspectionTypes.isDaily && effectiveDailyItems.length)
       groups.push({ key:'daily',   label:'毎日点検',  badgeClass:'daily',   items: effectiveDailyItems });
@@ -8637,8 +8637,8 @@
   function setBulkNa(equipId) {
     const eq = EQUIP_DATA.find(e => e.id === equipId);
     if (!eq) return;
-    const effectiveDailyItems = eq.itemsDaily.length > 0
-      ? eq.itemsDaily
+    const effectiveDailyItems = (eq.itemsDaily || []).length > 0
+      ? (eq.itemsDaily || [])
       : (inspectionTypes.is10Day ? [] : eq.items10);
     const groups = [];
     if (inspectionTypes.isDaily && effectiveDailyItems.length)
@@ -8769,8 +8769,8 @@
     // ── データ集計 ──
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
-      const effectiveDailyItems = eq.itemsDaily.length > 0
-        ? eq.itemsDaily
+      const effectiveDailyItems = (eq.itemsDaily || []).length > 0
+        ? (eq.itemsDaily || [])
         : (inspectionTypes.is10Day ? [] : eq.items10);
       const groups = [];
       if (inspectionTypes.isDaily && effectiveDailyItems.length)
