@@ -5757,6 +5757,9 @@
     }
   }
 </style>
+  <!-- html2canvas + jsPDF for PDF direct download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <!-- =====================================================
@@ -7510,14 +7513,19 @@
       else if (isDone)    { statusSym = '○'; statusClass = 'done'; }
       else                { statusSym = '—'; statusClass = 'pending'; }
 
-      el.innerHTML = `<div class="cal-day-num">${d}</div>`;
+      // ステータスアイコン（○×—）を常にDOMに追加
+      el.innerHTML = `<div class="cal-day-num">${d}</div><div class="cal-day-status">${statusSym}</div>`;
 
       if (d === todayDay) {
         el.className = 'cal-day today';
         if (dayDow === 0) el.classList.add('sun');
         if (dayDow === 6) el.classList.add('sat');
         if (isHoliday) el.classList.add('holiday');
-        else el.onclick = () => selectCalDay(el, d);
+        else {
+          // 【修正】今日のセルにも点検結果クラス（done/anomaly/pending）を付与
+          el.classList.add(statusClass);
+          el.onclick = () => selectCalDay(el, d);
+        }
       } else {
         el.className = 'cal-day';
         if (dayDow === 0) el.classList.add('sun');
@@ -9721,6 +9729,8 @@ window.toggleAdmUserMenu  = toggleAdmUserMenu;
   if (pcSidebar) pcSidebar.classList.remove('hidden-sidebar');
   if (pcLayout)  pcLayout.classList.remove('no-sidebar');
   showAdmTab('dashboard');
+  /* 管理者ログイン直後にも承認バッジを即時反映 */
+  setTimeout(updateApprovalBadge, 0);
 }
 
 function adminLogout() {
@@ -11204,6 +11214,8 @@ function msResetApproval(aprId) {
   saveAprStatusToStorage(aprId, 'pending');
   renderMonthlySheet();
   if (typeof renderApproval === 'function') renderApproval();
+  if (typeof renderAdmApproval === 'function') renderAdmApproval();
+  updateApprovalBadge();
   admToast('承認を取り消しました');
 }
 
@@ -11515,6 +11527,7 @@ function aprApprove(id) {
   saveAprStatusToStorage(id, 'approved');
   renderApproval();
   if (typeof renderMonthlySheet === 'function') renderMonthlySheet();
+  if (typeof updateApprovalBadge === 'function') updateApprovalBadge();
   daToast('✓ 承認しました');
 }
 
@@ -11522,6 +11535,7 @@ function aprReturn(id) {
   saveAprStatusToStorage(id, 'returned');
   renderApproval();
   if (typeof renderMonthlySheet === 'function') renderMonthlySheet();
+  if (typeof updateApprovalBadge === 'function') updateApprovalBadge();
   daToast('差し戻しました');
 }
 
@@ -11620,6 +11634,9 @@ function renderAdmDashboard() {
   /* — Anomaly List — */
   renderAnomalyListPanel(null);
   setTimeout(syncAnomalyListHeight, 0);
+
+  /* — 承認バッジを承認画面を開かなくても更新 — */
+  updateApprovalBadge();
 }
 
 /* 異常一覧パネルを描画。filterEquipId が非nullの場合その設備のみ表示 */
@@ -11974,6 +11991,22 @@ function apr2ToggleRow(rowId) {
   } else {
     row.classList.remove('row-expanded');
     panel.classList.remove('open');
+  }
+}
+
+/* ── 承認バッジ更新（承認画面を開かなくても呼べる軽量版） ── */
+function updateApprovalBadge() {
+  var allItems = apr2GetData();
+  var totalPending = allItems.filter(function(i){ return i.status === 'pending'; }).length;
+  var btabBadge = document.getElementById('abtab-badge-approval');
+  if (btabBadge) {
+    btabBadge.textContent = totalPending;
+    btabBadge.style.display = totalPending > 0 ? 'flex' : 'none';
+  }
+  var pcBadge = document.getElementById('pcsb-badge-approval');
+  if (pcBadge) {
+    pcBadge.textContent = totalPending;
+    pcBadge.style.display = totalPending > 0 ? 'flex' : 'none';
   }
 }
 
@@ -12344,17 +12377,16 @@ function apr2SetPerPage(v) {
 function apr2Approve(id) {
   saveAprStatusToStorage(id, 'approved');
   renderAdmApproval();
+  updateApprovalBadge();
   admToast('✓ 承認しました');
 }
 
-function admAprApprove(id) {
-  saveAprStatusToStorage(id, 'approved');
-  renderAdmApproval();
-  admToast('✓ 承認しました');
-}
+/* admAprApprove は apr2Approve の別名（重複解消） */
+function admAprApprove(id) { apr2Approve(id); }
 function admAprReturn(id) {
   saveAprStatusToStorage(id, 'returned');
   renderAdmApproval();
+  updateApprovalBadge();
   admToast('差し戻しました');
 }
 
@@ -12487,8 +12519,15 @@ function renderMonthlySheet() {
     return merged;
   }
   function getInspectorForDay(d) {
-    var rec = monthRecs.find(function(r){ return r.day === d; });
-    return rec ? (rec.inspector || '') : '';
+    var recs = monthRecs.filter(function(r){ return r.day === d; });
+    if (!recs.length) return '';
+    // 同日複数担当者がいる場合は全員を「／」区切りで表示
+    var names = [];
+    recs.forEach(function(r) {
+      var name = r.inspector || '';
+      if (name && names.indexOf(name) < 0) names.push(name);
+    });
+    return names.join('／');
   }
 
   var periodDates = [10, 20, 30].map(function(nom) {
@@ -12888,82 +12927,140 @@ function renderMonthlySheet() {
   syncAnomalyListHeight();
 }
 
-/* ─── PDF出力：月次点検表を印刷ダイアログで出力 ─── */
+/* ─── PDF出力：月次点検表を直接PDFダウンロード（印刷ダイアログなし） ─── */
 function printMonthlySheet() {
   var equipSel = document.getElementById('ms-equip-sel');
-  if (!equipSel || !equipSel.value) {
-    alert('設備を選択してください');
-    return;
-  }
-
+  if (!equipSel || !equipSel.value) { alert('設備を選択してください'); return; }
   var tableWrap = document.getElementById('ms-table-wrap');
-  if (!tableWrap || !tableWrap.innerHTML.trim()) {
-    alert('点検表を表示してから出力してください');
-    return;
+  if (!tableWrap || !tableWrap.innerHTML.trim()) { alert('点検表を表示してから出力してください'); return; }
+  if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+    alert('PDFライブラリの読み込みに失敗しました。\nページを再読み込みしてお試しください。'); return;
   }
 
-  // 全<style>タグを収集
-  var allStyles = '';
-  document.querySelectorAll('style').forEach(function(s) { allStyles += s.innerHTML + '\n'; });
+  var btn = document.querySelector('.ms-pdf-btn');
+  var origHtml = btn ? btn.innerHTML : '';
+  if (btn) { btn.innerHTML = '⏳ 生成中...'; btn.disabled = true; }
 
-  var docContent = tableWrap.querySelector('.ms-doc') || tableWrap;
+  var docEl = tableWrap.querySelector('.ms-doc') || tableWrap;
 
-  // 印刷専用CSS：sticky/zoom/overflow を完全解除（Edgeの印刷レンダラーが詰まる原因）
-  var printOverride = [
-    '@page { size: A4 landscape; margin: 8mm; }',
-    'html, body { margin: 0 !important; padding: 4mm !important; background: #fff !important; }',
-    /* zoom を確実にリセット */
-    '* { zoom: 1 !important; }',
-    /* sticky → static（印刷レンダラーで固まる主因） */
-    '*, *::before, *::after { position: static !important; }',
-    /* overflow を全て解除 */
-    '.ms-doc, #ms-table-wrap, .ms-doc-titlebar { overflow: visible !important; }',
-    '.ms-doc { box-shadow: none !important; border: 1px solid #999 !important; min-width: 0 !important; width: 100% !important; border-radius: 0 !important; }',
-    '.ms-table { width: 100% !important; }',
-    /* margin-top の重なり調整（印刷では不要） */
-    '.ms-doc .ms-table + .ms-table, .ms-doc-equiprow + .ms-table, .ms-recovery-table, .ms-legend-block { margin-top: 0 !important; border-top: 1px solid #999 !important; }',
-  ].join('\n');
+  // ── クローンをオフスクリーンに配置してキャプチャ（元DOMを一切変更しない）──
+  var clone = docEl.cloneNode(true);
+  var wrapper = document.createElement('div');
+  wrapper.style.cssText = [
+    'position:fixed',
+    'top:0', 'left:0',
+    'width:' + docEl.scrollWidth + 'px',
+    'height:' + docEl.scrollHeight + 'px',
+    'overflow:visible',
+    'background:#fff',
+    'z-index:-9999',
+    'pointer-events:none',
+    'opacity:0'           // 画面に見えないが html2canvas はキャプチャできる
+  ].join(';');
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
 
-  // ロード後に自動印刷するスクリプト（Blob URL方式ではonloadが確実に動く）
-  var autoprint = [
-    '<script>',
-    'window.addEventListener("load", function() {',
-    '  setTimeout(function() {',
-    '    window.focus();',
-    '    window.print();',
-    '  }, 400);',
-    '});<\/script>'
-  ].join('\n');
-
-  var html = [
-    '<!DOCTYPE html>',
-    '<html lang="ja">',
-    '<head>',
-    '<meta charset="UTF-8">',
-    autoprint,
-    '<style>', allStyles, printOverride, '</style>',
-    '</head>',
-    '<body>',
-    docContent.outerHTML,
-    '</body>',
-    '</html>'
-  ].join('\n');
-
-  // ★ Blob URL方式：document.write不使用でEdgeでも確実にレンダリングされる
-  try {
-    var blob = new Blob([html], { type: 'text/html; charset=utf-8' });
-    var blobUrl = URL.createObjectURL(blob);
-    var win = window.open(blobUrl, '_blank');
-    if (!win) {
-      URL.revokeObjectURL(blobUrl);
-      alert('ポップアップがブロックされています。\nブラウザのアドレスバー右端の「ポップアップブロック」を許可してください。');
-      return;
+  // クローン内の問題スタイルをすべてリセット
+  // 1) sticky → static（二重描画防止）
+  Array.from(clone.querySelectorAll('*')).forEach(function(el) {
+    var cs = window.getComputedStyle(el);
+    if (cs.position === 'sticky') {
+      el.style.position = 'static';
+      el.style.left = '';
+      el.style.top  = '';
+      el.style.zIndex = '';
     }
-    // 1分後にBlobを解放
-    setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 60000);
-  } catch(e) {
-    alert('PDF出力に失敗しました: ' + e.message);
-  }
+    // 2) overflow:hidden → visible（テキスト切れ防止）
+    if (cs.overflow === 'hidden' || cs.overflowX === 'hidden' || cs.overflowY === 'hidden') {
+      el.style.overflow = 'visible';
+    }
+    // 3) transform をリセット（ズレ防止）
+    if (cs.transform && cs.transform !== 'none') {
+      el.style.transform = 'none';
+    }
+    // 4) maxHeight 解除
+    if (cs.maxHeight && cs.maxHeight !== 'none') {
+      el.style.maxHeight = 'none';
+    }
+  });
+
+  // 5) テーブルの border-collapse 強制（二重線防止）
+  clone.querySelectorAll('table').forEach(function(t) {
+    t.style.borderCollapse = 'collapse';
+    t.style.borderSpacing  = '0';
+  });
+
+  // 6) クローン自身のスタイル整頓
+  clone.style.overflow     = 'visible';
+  clone.style.maxHeight    = 'none';
+  clone.style.boxShadow    = 'none';
+  clone.style.borderRadius = '0';
+  clone.style.width        = docEl.scrollWidth + 'px';
+
+  var captureW = docEl.scrollWidth;
+  var captureH = docEl.scrollHeight;
+
+  html2canvas(clone, {
+    scale: 3,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    scrollX: 0,
+    scrollY: 0,
+    x: 0,
+    y: 0,
+    width:  captureW,
+    height: captureH,
+    windowWidth:  captureW,
+    windowHeight: captureH,
+    imageTimeout: 0,
+    logging: false
+  }).then(function(canvas) {
+    document.body.removeChild(wrapper);  // クローン除去
+
+    var jsPDF   = window.jspdf.jsPDF;
+    var imgData = canvas.toDataURL('image/png');
+    var imgW    = canvas.width;   // px（scale:3 適用済み）
+    var imgH    = canvas.height;
+
+    // ── 画面表示と完全一致させる ──
+    // scale:3 でキャプチャしているので実ピクセルに戻す
+    var SCALE    = 3;
+    var SCREEN_DPI = 96;           // ブラウザ標準
+    var MM_PER_INCH = 25.4;
+    // キャンバスピクセル → 実際の画面ピクセル → mm
+    var pageW_mm = (imgW / SCALE) / SCREEN_DPI * MM_PER_INCH;
+    var pageH_mm = (imgH / SCALE) / SCREEN_DPI * MM_PER_INCH;
+
+    // 表のサイズぴったりのカスタムページを作成（縮小なし）
+    var orient = pageW_mm >= pageH_mm ? 'landscape' : 'portrait';
+    var pdf = new jsPDF({
+      orientation: orient,
+      unit: 'mm',
+      format: [pageW_mm, pageH_mm]
+    });
+    // マージン付きで中央寄せ（表サイズ＋余白をページサイズに）
+    var MARGIN   = 8;  // mm
+    var totalW   = pageW_mm + MARGIN * 2;
+    var totalH   = pageH_mm + MARGIN * 2;
+    var orient2  = totalW >= totalH ? 'landscape' : 'portrait';
+    // ページサイズを表＋余白に拡張して再作成
+    pdf = new jsPDF({ orientation: orient2, unit: 'mm', format: [totalW, totalH] });
+    pdf.addImage(imgData, 'PNG', MARGIN, MARGIN, pageW_mm, pageH_mm, '', 'FAST');
+
+    var equipName = (equipSel.options[equipSel.selectedIndex]
+      ? equipSel.options[equipSel.selectedIndex].text.trim()
+      : 'inspection').replace(/\s+/g, '_');
+    var monthSel = document.getElementById('ms-month-sel');
+    var monthStr = monthSel ? monthSel.value.replace('-', '') : '';
+    pdf.save(equipName + '_' + monthStr + '.pdf');
+
+    if (btn) { btn.innerHTML = origHtml; btn.disabled = false; }
+
+  }).catch(function(e) {
+    if (wrapper.parentNode) document.body.removeChild(wrapper);
+    if (btn) { btn.innerHTML = origHtml; btn.disabled = false; }
+    alert('PDF生成に失敗しました: ' + e.message);
+  });
 }
 
 /* 異常一覧の高さを月次点検表カードに合わせる */
