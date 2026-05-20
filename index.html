@@ -833,11 +833,11 @@
   .cal-day-status { font-size: 13px; line-height: 1; font-weight: 500; }
   .cal-day.sun .cal-day-num { color: #E53935; }
   .cal-day.sat .cal-day-num { color: var(--blue); }
-  .cal-day.other-month { background: #FAFAFA; cursor: default; }
+  .cal-day.other-month { background: #FFFFFF; cursor: default; }
   .cal-day.other-month .cal-day-num { color: #CCCCCC; }
   .cal-day.other-month .cal-day-status { color: #DDDDDD; }
-  .cal-day.holiday { background: #FAFAFA; cursor: default; }
-  .cal-day.holiday .cal-day-num { color: #CCCCCC; }
+  .cal-day.holiday { background: #F5F5F5; cursor: default; }
+  .cal-day.holiday .cal-day-num { color: #BBBBBB; }
   .cal-day.holiday .cal-day-status { color: #DDDDDD; }
   .cal-day.pending .cal-day-num { color: #999; font-weight: 500; }
   .cal-day.done .cal-day-num { color: var(--text); font-weight: 600; }
@@ -6276,7 +6276,7 @@
       </div>
     </div>
     <div class="nav-bar blue-accent">
-      <div class="nav-back" onclick="showScreen('screen-line')">
+      <div class="nav-back" onclick="showScreen('screen-home')">
         <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">設備選択</span>
@@ -6305,7 +6305,7 @@
 
     <!-- Mobile nav bar -->
     <div class="nav-bar blue-accent" id="inspect-mobile-nav">
-      <div class="nav-back" onclick="showScreen('screen-line')">
+      <div class="nav-back" onclick="showScreen('screen-home')">
         <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="nav-title">点検入力</span>
@@ -6314,7 +6314,7 @@
     <!-- PC header (hidden on mobile) -->
     <div class="pc-inspect-header" id="pc-inspect-header">
       <div class="pc-inspect-header-left">
-        <div class="pc-inspect-back" onclick="showScreen('screen-line')">
+        <div class="pc-inspect-back" onclick="showScreen('screen-home')">
           <svg viewBox="0 0 24 24" width="18" height="18" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </div>
         <h1 class="pc-inspect-title">点検入力</h1>
@@ -7488,19 +7488,8 @@
       }
       return true;
     });
-    // 【修正】管理者の未点検ラインと同じロジックで「未点検の日」を算出し、
-    // 1ラインでも未点検が残る日は ○/× ではなく — 表示にしてリンクを統一する
-    var _uninspItemsCal = (typeof computeUnInspectedLines === 'function')
-      ? computeUnInspectedLines(calYear, calMonth) : [];
-    // ラインフィルターが選択中の場合はそのラインだけを対象にする
-    if (_calLineFilter !== 'all') {
-      _uninspItemsCal = _uninspItemsCal.filter(function(item){ return item.lineId === _calLineFilter; });
-    }
-    var _uninspDaysCal = new Set(_uninspItemsCal.map(function(item){ return item.day; }));
-
-    // 未点検ラインが残っている日はdone/anomaly対象外（— 表示）
-    const done    = userRecs.filter(function(r){ return !r.anomaly && !_uninspDaysCal.has(r.day); }).map(function(r){ return r.day; });
-    const anomaly = userRecs.filter(function(r){ return  r.anomaly && !_uninspDaysCal.has(r.day); }).map(function(r){ return r.day; });
+    const done    = userRecs.filter(function(r){ return !r.anomaly; }).map(function(r){ return r.day; });
+    const anomaly = userRecs.filter(function(r){ return  r.anomaly; }).map(function(r){ return r.day; });
     const pubHols = PUBLIC_HOLIDAYS[key] || [];
     const weekends = getWeekends(calYear, calMonth);
 
@@ -7524,6 +7513,14 @@
     const holidays = [...new Set([...baseHolidays, ...pubHols, ...adminHolidays])]
       .filter(d => !adminWorkdays.includes(d));
 
+    // ★ スケジュール対象日セット（SCHED_DAY_PATTERNS × 祝日・土日除外）
+    const _pat = (typeof SCHED_DAY_PATTERNS !== 'undefined') ? SCHED_DAY_PATTERNS : [7,8,11,12,13,14,15,20,21,24,25];
+    const schedDays = new Set(_pat.filter(function(day) {
+      if (day > totalDays) return false;
+      const _dow = (firstDow + day - 1) % 7;
+      return !holidays.includes(day) && _dow !== 0 && _dow !== 6;
+    }));
+
     grid.innerHTML = '';
     DOW_JP.forEach(d => {
       const el = document.createElement('div');
@@ -7536,7 +7533,7 @@
       if (i === 0) el.classList.add('sun');
       if (i === 6) el.classList.add('sat');
       const prevDay = prevMonthDays - (firstDow - 1 - i);
-      el.innerHTML = `<div class="cal-day-num">${prevDay}</div>`;
+      el.innerHTML = `<div class="cal-day-num"></div>`;
       grid.appendChild(el);
     }
 
@@ -7546,24 +7543,19 @@
       const isHoliday   = holidays.includes(d);
       const isAdminHol  = adminHolidays.includes(d);
       const isAdminWork = adminWorkdays.includes(d);
-
-      const days10  = get10DayDatesForMonth(calYear, calMonth);
-      const dayM    = getMonthlyDateForMonth(calYear, calMonth);
-      const is10    = days10.has(d);
-      const isMon   = dayM === d;
+      const isSchedDay  = schedDays.has(d); // ★ スケジュール対象日のみ○×を表示
 
       const dayDow = (firstDow + d - 1) % 7;
       const isDone    = done.includes(d);
       const isAnomaly = anomaly.includes(d);
 
-      // ステータスアイコン決定
+      // ステータスアイコン決定（スケジュール日のみ○×、それ以外は—）
       let statusSym = '—', statusClass = 'pending';
-      if (isHoliday) { statusSym = '—'; statusClass = 'pending'; }
+      if (isHoliday || !isSchedDay) { statusSym = '—'; statusClass = 'pending'; }
       else if (isAnomaly) { statusSym = '×'; statusClass = 'anomaly'; }
       else if (isDone)    { statusSym = '○'; statusClass = 'done'; }
       else                { statusSym = '—'; statusClass = 'pending'; }
 
-      // ステータスアイコン（○×—）を常にDOMに追加
       el.innerHTML = `<div class="cal-day-num">${d}</div><div class="cal-day-status">${statusSym}</div>`;
 
       if (d === todayDay) {
@@ -7572,8 +7564,7 @@
         if (dayDow === 6) el.classList.add('sat');
         if (isHoliday) el.classList.add('holiday');
         else {
-          // 【修正】今日のセルにも点検結果クラス（done/anomaly/pending）を付与
-          el.classList.add(statusClass);
+          if (isSchedDay) el.classList.add(statusClass);
           el.onclick = () => selectCalDay(el, d);
         }
       } else {
@@ -7582,18 +7573,18 @@
         if (dayDow === 6) el.classList.add('sat');
         if (isHoliday) el.classList.add('holiday');
         else {
-          el.classList.add(statusClass);
+          if (isSchedDay) el.classList.add(statusClass);
           el.onclick = () => selectCalDay(el, d);
         }
       }
 
-      // ステータスアイコン色をクラスで制御
+      // ステータスアイコン色
       const statusEl = el.querySelector('.cal-day-status');
       if (statusEl) {
-        if (statusClass === 'done')    statusEl.style.color = 'var(--blue)';
+        if (isHoliday || !isSchedDay) statusEl.style.color = '#CCCCCC';
+        else if (statusClass === 'done')    statusEl.style.color = 'var(--blue)';
         else if (statusClass === 'anomaly') statusEl.style.color = 'var(--red)';
         else statusEl.style.color = '#AAAAAA';
-        if (isHoliday) statusEl.style.color = '#CCCCCC';
       }
 
       if (d === selectedCalDay) el.classList.add('selected-day');
@@ -8028,7 +8019,7 @@
     if (rc) rc.innerHTML = '';
     if (rs) rs.innerHTML = '';
     buildLineList();
-    showScreen('screen-line');
+    showScreen('screen-home');
   }
 
   /* ─── LINE SELECT ─── */
@@ -13387,9 +13378,16 @@ function computeUnInspectedLines(targetYear, targetMonth) {
 
   var uninspected = [];
 
-  for (var d = 1; d <= lastDay; d++) {
+  // ★ SCHED_DAY_PATTERNS に含まれる日のみ対象（管理者パネルと統一）
+  var _schedPat = (typeof SCHED_DAY_PATTERNS !== 'undefined')
+    ? SCHED_DAY_PATTERNS : [7,8,11,12,13,14,15,20,21,24,25];
+  var _maxDay = new Date(todayY, todayM + 1, 0).getDate();
+
+  _schedPat.forEach(function(d) {
+    if (d > _maxDay) return;       // 月をまたがない
+    if (d > lastDay) return;       // 今日より先はスキップ
     var dateObj = new Date(todayY, todayM, d);
-    if (isHoliday(dateObj)) continue;
+    if (isHoliday(dateObj)) return; // 休日・土日はスキップ
 
     /* その日の点検レコードを取得 */
     var dayRecs = inspections.filter(function(r) {
@@ -13419,7 +13417,7 @@ function computeUnInspectedLines(targetYear, targetMonth) {
         });
       }
     });
-  }
+  });
 
   /* 新しい日付順 → 同日内はラインID順 */
   uninspected.sort(function(a, b) {
@@ -14302,6 +14300,10 @@ document.addEventListener('DOMContentLoaded', function() { updateFavLabel(); ini
 /* ── 点検ライン タブ初期化 ── */
 var _inspLineFilter = 'all';
 
+/* ═══ スケジュール点検日パターン（全画面共通） ═══
+ * この配列に含まれる日のみ点検対象。カレンダー・未点検リスト・管理者パネルすべてここを参照。 */
+var SCHED_DAY_PATTERNS = [7, 8, 11, 12, 13, 14, 15, 20, 21, 24, 25];
+
 function initInspLineTabs() {
   var _rawLines = (typeof ADM !== 'undefined' && ADM && ADM.lines) ? ADM.lines : [];
   // 重複ライン除外（ID単位で最初の1件のみ残す）
@@ -14373,9 +14375,9 @@ function renderInspLineList() {
   var _yr = window._calYear  || new Date().getFullYear();
   var _mo = (window._calMonth !== undefined) ? window._calMonth : new Date().getMonth();
 
-  // スケジュールを表示月に応じて動的生成（ADM.schedulesの月数制限を撤廃）
-  // 【修正】14を追加（欠落していた木曜スケジュール日）
-  var _dayPatterns = [7, 8, 11, 12, 13, 14, 15, 20, 21, 24, 25];
+  // ★ グローバル定数 SCHED_DAY_PATTERNS を使用（全画面共通）
+  var _dayPatterns = (typeof SCHED_DAY_PATTERNS !== 'undefined')
+    ? SCHED_DAY_PATTERNS : [7, 8, 11, 12, 13, 14, 15, 20, 21, 24, 25];
   var _mm = String(_mo + 1).padStart(2, '0');
   var _maxDay = new Date(_yr, _mo + 1, 0).getDate();
   var schedules = [];
