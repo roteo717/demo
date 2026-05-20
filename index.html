@@ -839,11 +839,13 @@
   .cal-day.holiday { background: #F5F5F5; cursor: default; }
   .cal-day.holiday .cal-day-num { color: #BBBBBB; }
   .cal-day.holiday .cal-day-status { color: #DDDDDD; }
-  .cal-day.pending .cal-day-num { color: #999; font-weight: 500; }
-  .cal-day.done .cal-day-num { color: var(--text); font-weight: 600; }
+  .cal-day.pending .cal-day-num { color: #000000; font-weight: 700; }  /* 未点検スケジュール日は目立たせる */
+  .cal-day.done .cal-day-num { color: #000000; font-weight: 700; }
   .cal-day.done .cal-day-status { color: #AAAAAA; }
-  .cal-day.anomaly .cal-day-num { color: var(--text); font-weight: 600; }
+  .cal-day.anomaly .cal-day-num { color: #000000; font-weight: 700; }
   .cal-day.anomaly .cal-day-status { color: #AAAAAA; }
+  .cal-day.no-sched .cal-day-num { color: #C0C0C0; font-weight: 400; }  /* スケジュール外の平日は薄く */
+  .cal-day.no-sched .cal-day-status { color: #DDDDDD; }
   .cal-day.today { background: transparent; cursor: pointer; }
   .cal-day.today .cal-day-num { color: var(--text); font-weight: 600; }
   .cal-day.today.sun .cal-day-num { color: #E53935; }
@@ -7563,28 +7565,25 @@
         if (dayDow === 0) el.classList.add('sun');
         if (dayDow === 6) el.classList.add('sat');
         if (isHoliday) el.classList.add('holiday');
-        else {
-          if (isSchedDay) el.classList.add(statusClass);
-          el.onclick = () => selectCalDay(el, d);
-        }
+        else if (isSchedDay) { el.classList.add(statusClass); el.onclick = () => selectCalDay(el, d); }
+        else { el.classList.add('no-sched'); el.onclick = () => selectCalDay(el, d); }
       } else {
         el.className = 'cal-day';
         if (dayDow === 0) el.classList.add('sun');
         if (dayDow === 6) el.classList.add('sat');
         if (isHoliday) el.classList.add('holiday');
-        else {
-          if (isSchedDay) el.classList.add(statusClass);
-          el.onclick = () => selectCalDay(el, d);
-        }
+        else if (isSchedDay) { el.classList.add(statusClass); el.onclick = () => selectCalDay(el, d); }
+        else { el.classList.add('no-sched'); el.onclick = () => selectCalDay(el, d); }
       }
 
       // ステータスアイコン色
       const statusEl = el.querySelector('.cal-day-status');
       if (statusEl) {
-        if (isHoliday || !isSchedDay) statusEl.style.color = '#CCCCCC';
+        if (isHoliday)                      statusEl.style.color = '#DDDDDD';
+        else if (!isSchedDay)               statusEl.style.color = '#DDDDDD';  // スケジュール外
         else if (statusClass === 'done')    statusEl.style.color = 'var(--blue)';
         else if (statusClass === 'anomaly') statusEl.style.color = 'var(--red)';
-        else statusEl.style.color = '#AAAAAA';
+        else                                statusEl.style.color = '#BBBBBB';  // 未点検スケジュール日
       }
 
       if (d === selectedCalDay) el.classList.add('selected-day');
