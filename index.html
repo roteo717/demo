@@ -831,10 +831,10 @@
   .cal-day:active { background: #F0F2F5; }
   .cal-day-num { font-size: 15px; font-weight: 600; line-height: 1.1; }
   .cal-day-status { font-size: 13px; line-height: 1; font-weight: 500; }
-  .cal-day.sun .cal-day-num { color: #E53935; }
-  .cal-day.sat .cal-day-num { color: var(--blue); }
+  .cal-day.sun .cal-day-num { color: #000000; }
+  .cal-day.sat .cal-day-num { color: #000000; }
   .cal-day.other-month { background: #FFFFFF; cursor: default; }
-  .cal-day.other-month .cal-day-num { color: #CCCCCC; }
+  .cal-day.other-month .cal-day-num { color: #000000; }
   .cal-day.other-month .cal-day-status { color: #DDDDDD; }
   .cal-day.holiday { background: #F5F5F5; cursor: default; }
   .cal-day.holiday .cal-day-num { color: #BBBBBB; }
@@ -844,14 +844,14 @@
   .cal-day.done .cal-day-status { color: #AAAAAA; }
   .cal-day.anomaly .cal-day-num { color: #000000; font-weight: 700; }
   .cal-day.anomaly .cal-day-status { color: #AAAAAA; }
-  .cal-day.no-sched .cal-day-num { color: #C0C0C0; font-weight: 400; }  /* スケジュール外の平日は薄く */
+  .cal-day.no-sched .cal-day-num { color: #000000; font-weight: 400; }
   .cal-day.no-sched .cal-day-status { color: #DDDDDD; }
   .cal-day.today { background: transparent; cursor: pointer; }
-  .cal-day.today .cal-day-num { color: var(--text); font-weight: 600; }
-  .cal-day.today.sun .cal-day-num { color: #E53935; }
-  .cal-day.today.sat .cal-day-num { color: var(--blue); }
+  .cal-day.today .cal-day-num { color: #000000; font-weight: 600; }
+  .cal-day.today.sun .cal-day-num { color: #000000; }
+  .cal-day.today.sat .cal-day-num { color: #000000; }
   .cal-day.selected-day { background: #cbd5e1; }
-  .cal-day.selected-day .cal-day-num { color: #1e293b; }
+  .cal-day.selected-day .cal-day-num { color: #000000; }
   .cal-legend {
     display: flex; gap: 16px; justify-content: center;
     margin-top: 14px; padding-top: 12px;
@@ -6101,6 +6101,20 @@
         <div class="cal-month" id="cal-month-label">2024年5月</div>
         <div class="cal-nav" onclick="changeMonth(1)"><svg viewBox="0 0 16 16" stroke-width="1.5"><path d="M6 4l4 4-4 4"/></svg></div>
       </div>
+      <div style="display:flex;align-items:center;gap:16px;padding:6px 16px 2px;font-size:12px;color:var(--text-sub);">
+        <span style="display:flex;align-items:center;gap:4px;">
+          <span style="color:var(--blue);font-size:14px;font-weight:700;">○</span>正常
+          <span id="legend-done-count" style="background:var(--blue);color:#fff;border-radius:10px;padding:0 6px;font-size:11px;font-weight:700;min-width:18px;text-align:center;">0</span>
+        </span>
+        <span style="display:flex;align-items:center;gap:4px;">
+          <span style="color:var(--red);font-size:14px;font-weight:700;">×</span>異常あり
+          <span id="legend-anomaly-count" style="background:var(--red);color:#fff;border-radius:10px;padding:0 6px;font-size:11px;font-weight:700;min-width:18px;text-align:center;">0</span>
+        </span>
+        <span style="display:flex;align-items:center;gap:4px;">
+          <span style="color:#AAAAAA;font-size:14px;font-weight:700;">—</span>未点検
+          <span id="legend-pending-count" style="background:#AAAAAA;color:#fff;border-radius:10px;padding:0 6px;font-size:11px;font-weight:700;min-width:18px;text-align:center;">0</span>
+        </span>
+      </div>
       <div class="cal-grid" id="cal-grid"></div>
 
     </div>
@@ -7515,13 +7529,13 @@
     const holidays = [...new Set([...baseHolidays, ...pubHols, ...adminHolidays])]
       .filter(d => !adminWorkdays.includes(d));
 
-    // ★ スケジュール対象日セット（SCHED_DAY_PATTERNS × 祝日・土日除外）
-    const _pat = (typeof SCHED_DAY_PATTERNS !== 'undefined') ? SCHED_DAY_PATTERNS : [7,8,11,12,13,14,15,20,21,24,25];
-    const schedDays = new Set(_pat.filter(function(day) {
-      if (day > totalDays) return false;
-      const _dow = (firstDow + day - 1) % 7;
-      return !holidays.includes(day) && _dow !== 0 && _dow !== 6;
-    }));
+    // ★ スケジュール対象日セット = 全平日（土日・祝日除外）
+    const schedDays = new Set(
+      Array.from({length: totalDays}, (_, i) => i + 1).filter(function(day) {
+        const _dow = (firstDow + day - 1) % 7;
+        return !holidays.includes(day) && _dow !== 0 && _dow !== 6;
+      })
+    );
 
     grid.innerHTML = '';
     DOW_JP.forEach(d => {
@@ -7551,12 +7565,16 @@
       const isDone    = done.includes(d);
       const isAnomaly = anomaly.includes(d);
 
-      // ステータスアイコン決定（スケジュール日のみ○×、それ以外は—）
+      // ステータスアイコン決定
+      // ・スケジュール対象日、または実際に点検済み(done/anomaly)の日は○×を表示
+      // ・スケジュール外かつ未点検の日は—（no-sched）
       let statusSym = '—', statusClass = 'pending';
-      if (isHoliday || !isSchedDay) { statusSym = '—'; statusClass = 'pending'; }
-      else if (isAnomaly) { statusSym = '×'; statusClass = 'anomaly'; }
-      else if (isDone)    { statusSym = '○'; statusClass = 'done'; }
-      else                { statusSym = '—'; statusClass = 'pending'; }
+      const hasRecord = isDone || isAnomaly;
+      if (isHoliday) { statusSym = '—'; statusClass = 'pending'; }
+      else if (isAnomaly)                  { statusSym = '×'; statusClass = 'anomaly'; }
+      else if (isDone)                     { statusSym = '○'; statusClass = 'done'; }
+      else if (isSchedDay)                 { statusSym = '—'; statusClass = 'pending'; }
+      else                                 { statusSym = '—'; statusClass = 'no-sched'; }
 
       el.innerHTML = `<div class="cal-day-num">${d}</div><div class="cal-day-status">${statusSym}</div>`;
 
@@ -7565,25 +7583,23 @@
         if (dayDow === 0) el.classList.add('sun');
         if (dayDow === 6) el.classList.add('sat');
         if (isHoliday) el.classList.add('holiday');
-        else if (isSchedDay) { el.classList.add(statusClass); el.onclick = () => selectCalDay(el, d); }
-        else { el.classList.add('no-sched'); el.onclick = () => selectCalDay(el, d); }
+        else { el.classList.add(statusClass); el.onclick = () => selectCalDay(el, d); }
       } else {
         el.className = 'cal-day';
         if (dayDow === 0) el.classList.add('sun');
         if (dayDow === 6) el.classList.add('sat');
         if (isHoliday) el.classList.add('holiday');
-        else if (isSchedDay) { el.classList.add(statusClass); el.onclick = () => selectCalDay(el, d); }
-        else { el.classList.add('no-sched'); el.onclick = () => selectCalDay(el, d); }
+        else { el.classList.add(statusClass); el.onclick = () => selectCalDay(el, d); }
       }
 
       // ステータスアイコン色
       const statusEl = el.querySelector('.cal-day-status');
       if (statusEl) {
-        if (isHoliday)                      statusEl.style.color = '#DDDDDD';
-        else if (!isSchedDay)               statusEl.style.color = '#DDDDDD';  // スケジュール外
-        else if (statusClass === 'done')    statusEl.style.color = 'var(--blue)';
-        else if (statusClass === 'anomaly') statusEl.style.color = 'var(--red)';
-        else                                statusEl.style.color = '#BBBBBB';  // 未点検スケジュール日
+        if (isHoliday)                          statusEl.style.color = '#DDDDDD';
+        else if (statusClass === 'done')        statusEl.style.color = 'var(--blue)';
+        else if (statusClass === 'anomaly')     statusEl.style.color = 'var(--red)';
+        else if (statusClass === 'no-sched')    statusEl.style.color = '#DDDDDD';  // スケジュール外平日
+        else                                    statusEl.style.color = '#BBBBBB';  // 未点検スケジュール日
       }
 
       if (d === selectedCalDay) el.classList.add('selected-day');
@@ -7612,6 +7628,11 @@
     var sumPending = document.getElementById('sum-pending'); if (sumPending) sumPending.textContent = pendingCount;
     var sumDone    = document.getElementById('sum-done');    if (sumDone)    sumDone.textContent    = doneCount;
     var sumAnomaly = document.getElementById('sum-anomaly'); if (sumAnomaly) sumAnomaly.textContent = anomalyCount;
+
+    // 凡例バッジを更新
+    var lgDone    = document.getElementById('legend-done-count');    if (lgDone)    lgDone.textContent    = doneCount;
+    var lgAnomaly = document.getElementById('legend-anomaly-count'); if (lgAnomaly) lgAnomaly.textContent = anomalyCount;
+    var lgPending = document.getElementById('legend-pending-count'); if (lgPending) lgPending.textContent = pendingCount;
     if (typeof updateTodayNotice === 'function') updateTodayNotice();
     var summaryTitle = document.querySelector('.summary-title');
     if (summaryTitle) summaryTitle.textContent = `点検サマリー（${calYear}年${MONTHS_JP[calMonth]}）`;
@@ -10901,6 +10922,15 @@ function renderUninspPanel() {
   var lines      = (ADM && ADM.lines)  ? ADM.lines  : [];
   var allEquips  = (ADM && ADM.equips) ? ADM.equips : [];
   var inspections = (typeof loadInspections === 'function') ? loadInspections() : [];
+  // ALL_INSPECTION_RECORDSにあってlocalStorageにないものをマージ（renderInspLineListと統一）
+  if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
+    ALL_INSPECTION_RECORDS.forEach(function(r) {
+      var dup = inspections.some(function(m) {
+        return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
+      });
+      if (!dup) inspections.push(r);
+    });
+  }
   var favIds     = (typeof loadFavLines === 'function') ? loadFavLines() : [];
   var searchVal  = (document.getElementById('uinsp-search') || {}).value || '';
   searchVal = searchVal.trim().toLowerCase();
@@ -12732,7 +12762,7 @@ function renderMonthlySheet() {
         var st = getStateForDay(d);
         var vals = st['daily'] || [];
         var val = vals[idx] || '';
-        html += '<td class="ms-cell' + (hol?' holiday':'') + (isToday(d)?' today':'') + '">' + sym(val) + '</td>';
+        html += '<td class="ms-cell' + (hol?' holiday':'') + (isToday(d)?' today':'') + '">' + (hol ? '' : sym(val)) + '</td>';
       }
       html += '</tr>';
     });
@@ -12743,7 +12773,7 @@ function renderMonthlySheet() {
     for (var d = 1; d <= daysInMonth; d++) {
       var hol = isDayHoliday(d);
       var insp = getInspectorForDay(d);
-      html += '<td class="ms-inspector-cell' + (hol?' holiday':'') + '">' + esc(insp.slice(0,3)) + '</td>';
+      html += '<td class="ms-inspector-cell' + (hol?' holiday':'') + '">' + (hol ? '' : esc(insp.slice(0,3))) + '</td>';
     }
     html += '</tr>';
 
@@ -13016,7 +13046,7 @@ function renderMonthlySheet() {
   syncAnomalyListHeight();
 }
 
-/* ─── PDF出力：月次点検表を直接PDFダウンロード（印刷ダイアログなし） ─── */
+/* ─── PDF出力：月次点検表を直接PDFダウンロード ─── */
 function printMonthlySheet() {
   var equipSel = document.getElementById('ms-equip-sel');
   if (!equipSel || !equipSel.value) { alert('設備を選択してください'); return; }
@@ -13032,123 +13062,120 @@ function printMonthlySheet() {
 
   var docEl = tableWrap.querySelector('.ms-doc') || tableWrap;
 
-  // ── クローンをオフスクリーンに配置してキャプチャ（元DOMを一切変更しない）──
+  // ── クローンを画面外（left:-99999px）に白背景で配置 ──
+  // opacity:0 や visibility:hidden はフォントレンダリングを壊すため使わない
   var clone = docEl.cloneNode(true);
+
+  // クローン内の全要素を正規化（ズレの原因を事前に排除）
+  clone.querySelectorAll('*').forEach(function(el) {
+    el.style.position   = el.tagName === 'TD' || el.tagName === 'TH' ? '' : 'static';
+    el.style.overflow   = 'visible';
+    el.style.maxHeight  = 'none';
+    el.style.transform  = 'none';
+    el.style.boxShadow  = 'none';
+    el.style.zIndex     = '';
+    el.style.top        = '';
+    el.style.left       = '';
+  });
+
+  // sticky ヘッダーを static に（二重描画防止）
+  clone.querySelectorAll('[style*="sticky"], .ms-sticky-col').forEach(function(el) {
+    el.style.position = 'static';
+  });
+
+  clone.querySelectorAll('table').forEach(function(t) {
+    t.style.borderCollapse = 'collapse';
+    t.style.borderSpacing  = '0';
+    t.style.tableLayout    = 'fixed';
+  });
+
+  // クローン自体のスタイルをクリア
+  clone.style.cssText = [
+    'overflow:visible',
+    'max-height:none',
+    'box-shadow:none',
+    'border-radius:0',
+    'background:#fff',
+    'width:' + docEl.scrollWidth + 'px'
+  ].join(';');
+
+  // 画面外コンテナに配置（left:-99999px で完全に画面外、白背景で正確なキャプチャ）
   var wrapper = document.createElement('div');
   wrapper.style.cssText = [
-    'position:fixed',
-    'top:0', 'left:0',
+    'position:absolute',
+    'top:0',
+    'left:-99999px',
     'width:' + docEl.scrollWidth + 'px',
-    'height:' + docEl.scrollHeight + 'px',
-    'overflow:visible',
     'background:#fff',
-    'z-index:-9999',
-    'pointer-events:none',
-    'opacity:0'           // 画面に見えないが html2canvas はキャプチャできる
+    'overflow:visible',
+    'pointer-events:none'
   ].join(';');
   wrapper.appendChild(clone);
   document.body.appendChild(wrapper);
 
-  // クローン内の問題スタイルをすべてリセット
-  // 1) sticky → static（二重描画防止）
-  Array.from(clone.querySelectorAll('*')).forEach(function(el) {
-    var cs = window.getComputedStyle(el);
-    if (cs.position === 'sticky') {
-      el.style.position = 'static';
-      el.style.left = '';
-      el.style.top  = '';
-      el.style.zIndex = '';
-    }
-    // 2) overflow:hidden → visible（テキスト切れ防止）
-    if (cs.overflow === 'hidden' || cs.overflowX === 'hidden' || cs.overflowY === 'hidden') {
-      el.style.overflow = 'visible';
-    }
-    // 3) transform をリセット（ズレ防止）
-    if (cs.transform && cs.transform !== 'none') {
-      el.style.transform = 'none';
-    }
-    // 4) maxHeight 解除
-    if (cs.maxHeight && cs.maxHeight !== 'none') {
-      el.style.maxHeight = 'none';
-    }
-  });
+  // レイアウト確定まで待機してからキャプチャ
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      var captureW = clone.scrollWidth  || docEl.scrollWidth;
+      var captureH = clone.scrollHeight || docEl.scrollHeight;
 
-  // 5) テーブルの border-collapse 強制（二重線防止）
-  clone.querySelectorAll('table').forEach(function(t) {
-    t.style.borderCollapse = 'collapse';
-    t.style.borderSpacing  = '0';
-  });
+      html2canvas(clone, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        scrollX: 0,
+        scrollY: 0,
+        x: 0,
+        y: 0,
+        width:        captureW,
+        height:       captureH,
+        windowWidth:  captureW,
+        windowHeight: captureH,
+        imageTimeout: 0,
+        logging: false,
+        onclone: function(clonedDoc, el) {
+          // html2canvas が作るクローン内でもスタイルを強制正規化
+          el.querySelectorAll('*').forEach(function(n) {
+            var cs = window.getComputedStyle(n);
+            if (cs.position === 'sticky' || cs.position === 'fixed') {
+              n.style.position = 'static';
+            }
+          });
+        }
+      }).then(function(canvas) {
+        document.body.removeChild(wrapper);
 
-  // 6) クローン自身のスタイル整頓
-  clone.style.overflow     = 'visible';
-  clone.style.maxHeight    = 'none';
-  clone.style.boxShadow    = 'none';
-  clone.style.borderRadius = '0';
-  clone.style.width        = docEl.scrollWidth + 'px';
+        var jsPDF    = window.jspdf.jsPDF;
+        var imgData  = canvas.toDataURL('image/jpeg', 0.95);
+        var SCALE    = 2;
+        var DPI      = 96;
+        var MM       = 25.4;
+        var pageW_mm = (canvas.width  / SCALE) / DPI * MM;
+        var pageH_mm = (canvas.height / SCALE) / DPI * MM;
+        var MARGIN   = 8;
+        var totalW   = pageW_mm + MARGIN * 2;
+        var totalH   = pageH_mm + MARGIN * 2;
+        var orient   = totalW >= totalH ? 'landscape' : 'portrait';
 
-  var captureW = docEl.scrollWidth;
-  var captureH = docEl.scrollHeight;
+        var pdf = new jsPDF({ orientation: orient, unit: 'mm', format: [totalW, totalH] });
+        pdf.addImage(imgData, 'JPEG', MARGIN, MARGIN, pageW_mm, pageH_mm, '', 'FAST');
 
-  html2canvas(clone, {
-    scale: 3,
-    useCORS: true,
-    backgroundColor: '#ffffff',
-    scrollX: 0,
-    scrollY: 0,
-    x: 0,
-    y: 0,
-    width:  captureW,
-    height: captureH,
-    windowWidth:  captureW,
-    windowHeight: captureH,
-    imageTimeout: 0,
-    logging: false
-  }).then(function(canvas) {
-    document.body.removeChild(wrapper);  // クローン除去
+        var equipName = (equipSel.options[equipSel.selectedIndex]
+          ? equipSel.options[equipSel.selectedIndex].text.trim()
+          : 'inspection').replace(/\s+/g, '_');
+        var monthSel  = document.getElementById('ms-month-sel');
+        var monthStr  = monthSel ? monthSel.value.replace('-', '') : '';
+        pdf.save(equipName + '_' + monthStr + '.pdf');
 
-    var jsPDF   = window.jspdf.jsPDF;
-    var imgData = canvas.toDataURL('image/png');
-    var imgW    = canvas.width;   // px（scale:3 適用済み）
-    var imgH    = canvas.height;
+        if (btn) { btn.innerHTML = origHtml; btn.disabled = false; }
 
-    // ── 画面表示と完全一致させる ──
-    // scale:3 でキャプチャしているので実ピクセルに戻す
-    var SCALE    = 3;
-    var SCREEN_DPI = 96;           // ブラウザ標準
-    var MM_PER_INCH = 25.4;
-    // キャンバスピクセル → 実際の画面ピクセル → mm
-    var pageW_mm = (imgW / SCALE) / SCREEN_DPI * MM_PER_INCH;
-    var pageH_mm = (imgH / SCALE) / SCREEN_DPI * MM_PER_INCH;
-
-    // 表のサイズぴったりのカスタムページを作成（縮小なし）
-    var orient = pageW_mm >= pageH_mm ? 'landscape' : 'portrait';
-    var pdf = new jsPDF({
-      orientation: orient,
-      unit: 'mm',
-      format: [pageW_mm, pageH_mm]
+      }).catch(function(e) {
+        if (wrapper.parentNode) document.body.removeChild(wrapper);
+        if (btn) { btn.innerHTML = origHtml; btn.disabled = false; }
+        alert('PDF生成に失敗しました: ' + e.message);
+      });
     });
-    // マージン付きで中央寄せ（表サイズ＋余白をページサイズに）
-    var MARGIN   = 8;  // mm
-    var totalW   = pageW_mm + MARGIN * 2;
-    var totalH   = pageH_mm + MARGIN * 2;
-    var orient2  = totalW >= totalH ? 'landscape' : 'portrait';
-    // ページサイズを表＋余白に拡張して再作成
-    pdf = new jsPDF({ orientation: orient2, unit: 'mm', format: [totalW, totalH] });
-    pdf.addImage(imgData, 'PNG', MARGIN, MARGIN, pageW_mm, pageH_mm, '', 'FAST');
-
-    var equipName = (equipSel.options[equipSel.selectedIndex]
-      ? equipSel.options[equipSel.selectedIndex].text.trim()
-      : 'inspection').replace(/\s+/g, '_');
-    var monthSel = document.getElementById('ms-month-sel');
-    var monthStr = monthSel ? monthSel.value.replace('-', '') : '';
-    pdf.save(equipName + '_' + monthStr + '.pdf');
-
-    if (btn) { btn.innerHTML = origHtml; btn.disabled = false; }
-
-  }).catch(function(e) {
-    if (wrapper.parentNode) document.body.removeChild(wrapper);
-    if (btn) { btn.innerHTML = origHtml; btn.disabled = false; }
-    alert('PDF生成に失敗しました: ' + e.message);
   });
 }
 
@@ -13371,19 +13398,26 @@ function computeUnInspectedLines(targetYear, targetMonth) {
     : new Date(todayY, todayM + 1, 0).getDate();
 
   var inspections = (typeof loadInspections === 'function') ? loadInspections() : [];
+  // ALL_INSPECTION_RECORDSにあってlocalStorageにないものをマージ（renderInspLineListと統一）
+  if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
+    ALL_INSPECTION_RECORDS.forEach(function(r) {
+      var dup = inspections.some(function(m) {
+        return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
+      });
+      if (!dup) inspections.push(r);
+    });
+  }
   var allEquips   = (typeof ADM !== 'undefined' && ADM.equips) ? ADM.equips : [];
   var lines       = (typeof ADM !== 'undefined' && ADM.lines)  ? ADM.lines  : [];
   var DOW         = ['日','月','火','水','木','金','土'];
 
   var uninspected = [];
 
-  // ★ SCHED_DAY_PATTERNS に含まれる日のみ対象（管理者パネルと統一）
-  var _schedPat = (typeof SCHED_DAY_PATTERNS !== 'undefined')
-    ? SCHED_DAY_PATTERNS : [7,8,11,12,13,14,15,20,21,24,25];
+  // ★ 全平日が対象（土日・祝日除外）
   var _maxDay = new Date(todayY, todayM + 1, 0).getDate();
+  var _allDays = Array.from({length: _maxDay}, function(_, i){ return i + 1; });
 
-  _schedPat.forEach(function(d) {
-    if (d > _maxDay) return;       // 月をまたがない
+  _allDays.forEach(function(d) {
     if (d > lastDay) return;       // 今日より先はスキップ
     var dateObj = new Date(todayY, todayM, d);
     if (isHoliday(dateObj)) return; // 休日・土日はスキップ
@@ -14299,9 +14333,7 @@ document.addEventListener('DOMContentLoaded', function() { updateFavLabel(); ini
 /* ── 点検ライン タブ初期化 ── */
 var _inspLineFilter = 'all';
 
-/* ═══ スケジュール点検日パターン（全画面共通） ═══
- * この配列に含まれる日のみ点検対象。カレンダー・未点検リスト・管理者パネルすべてここを参照。 */
-var SCHED_DAY_PATTERNS = [7, 8, 11, 12, 13, 14, 15, 20, 21, 24, 25];
+/* ═══ スケジュール：全平日が点検対象（土日・祝日のみ除外） ═══ */
 
 function initInspLineTabs() {
   var _rawLines = (typeof ADM !== 'undefined' && ADM && ADM.lines) ? ADM.lines : [];
@@ -14374,9 +14406,9 @@ function renderInspLineList() {
   var _yr = window._calYear  || new Date().getFullYear();
   var _mo = (window._calMonth !== undefined) ? window._calMonth : new Date().getMonth();
 
-  // ★ グローバル定数 SCHED_DAY_PATTERNS を使用（全画面共通）
-  var _dayPatterns = (typeof SCHED_DAY_PATTERNS !== 'undefined')
-    ? SCHED_DAY_PATTERNS : [7, 8, 11, 12, 13, 14, 15, 20, 21, 24, 25];
+  // ★ 全平日を対象（土日・祝日除外）
+  var _totalDaysInMonth = new Date(_yr, _mo + 1, 0).getDate();
+  var _dayPatterns = Array.from({length: _totalDaysInMonth}, function(_, i){ return i + 1; });
   var _mm = String(_mo + 1).padStart(2, '0');
   var _maxDay = new Date(_yr, _mo + 1, 0).getDate();
   var schedules = [];
@@ -14403,16 +14435,27 @@ function renderInspLineList() {
   // フィルター適用
   var _todayStart = new Date(); _todayStart.setHours(23,59,59,999);
 
-  // 点検済みチェック用データ（localStorageから直接取得）
-  var _inspections = [];
-  try { _inspections = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
-  // ALL_INSPECTION_RECORDSにあってlocalStorageにないものをマージ（削除しない）
+  // 【修正】buildCalendarと同じ方法でlocalStorageをALL_INSPECTION_RECORDSにマージする
+  // 旧実装: localStorageを独立して読み込みALL_INSPECTION_RECORDSと別々に管理していたため
+  // カレンダーと未点検リストの判定が不一致になるケースがあった（例: 5/20が未点検表示されない）
   if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
-    ALL_INSPECTION_RECORDS.forEach(function(r) {
-      var dup = _inspections.some(function(m) {
+    var _lsRecs = [];
+    try { _lsRecs = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
+    _lsRecs.forEach(function(r) {
+      var dup = ALL_INSPECTION_RECORDS.some(function(m) {
         return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
       });
-      if (!dup) _inspections.push(r);
+      if (!dup) {
+        var hasNg = !!r.anomaly;
+        if (!hasNg && r.state) {
+          hasNg = Object.values(r.state).some(function(s) {
+            return ['daily','10days','monthly'].some(function(t) {
+              return s[t] && s[t].some(function(v) { return v === 'ng'; });
+            });
+          });
+        }
+        ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
+      }
     });
   }
   var _allEquips = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
@@ -14427,7 +14470,9 @@ function renderInspLineList() {
       .filter(function(e) { return e.lineId === s.lineId; })
       .map(function(e) { return e.id; });
     if (!lineEquipIds.length) return false;
-    var dayRecs = _inspections.filter(function(r) {
+    // 【修正】ALL_INSPECTION_RECORDSを直接参照してbuildCalendarと判定を完全統一
+    if (typeof ALL_INSPECTION_RECORDS === 'undefined') return false;
+    var dayRecs = ALL_INSPECTION_RECORDS.filter(function(r) {
       return r.year === yr && r.month === mo0 && r.day === dy;
     });
     return dayRecs.some(function(r) {
