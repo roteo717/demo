@@ -10921,16 +10921,29 @@ function renderUninspPanel() {
 
   var lines      = (ADM && ADM.lines)  ? ADM.lines  : [];
   var allEquips  = (ADM && ADM.equips) ? ADM.equips : [];
-  var inspections = (typeof loadInspections === 'function') ? loadInspections() : [];
-  // ALL_INSPECTION_RECORDSにあってlocalStorageにないものをマージ（renderInspLineListと統一）
+  // 【修正】buildCalendarと同じ方法でlocalStorageをALL_INSPECTION_RECORDSにマージしてからそれを使用
+  // 旧実装: localStorageを独立取得→ALL_INSPECTION_RECORDSを後付けマージ（逆方向のため不整合が発生）
   if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
-    ALL_INSPECTION_RECORDS.forEach(function(r) {
-      var dup = inspections.some(function(m) {
+    var _lsRecs2 = [];
+    try { _lsRecs2 = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
+    _lsRecs2.forEach(function(r) {
+      var dup = ALL_INSPECTION_RECORDS.some(function(m) {
         return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
       });
-      if (!dup) inspections.push(r);
+      if (!dup) {
+        var hasNg = !!r.anomaly;
+        if (!hasNg && r.state) {
+          hasNg = Object.values(r.state).some(function(s) {
+            return ['daily','10days','monthly'].some(function(t) {
+              return s[t] && s[t].some(function(v) { return v === 'ng'; });
+            });
+          });
+        }
+        ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
+      }
     });
   }
+  var inspections = (typeof ALL_INSPECTION_RECORDS !== 'undefined') ? ALL_INSPECTION_RECORDS : [];
   var favIds     = (typeof loadFavLines === 'function') ? loadFavLines() : [];
   var searchVal  = (document.getElementById('uinsp-search') || {}).value || '';
   searchVal = searchVal.trim().toLowerCase();
@@ -13397,16 +13410,28 @@ function computeUnInspectedLines(targetYear, targetMonth) {
     ? realD
     : new Date(todayY, todayM + 1, 0).getDate();
 
-  var inspections = (typeof loadInspections === 'function') ? loadInspections() : [];
-  // ALL_INSPECTION_RECORDSにあってlocalStorageにないものをマージ（renderInspLineListと統一）
+  // 【修正】buildCalendarと同じ方法でlocalStorageをALL_INSPECTION_RECORDSにマージしてからそれを使用
   if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
-    ALL_INSPECTION_RECORDS.forEach(function(r) {
-      var dup = inspections.some(function(m) {
+    var _lsRecs3 = [];
+    try { _lsRecs3 = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
+    _lsRecs3.forEach(function(r) {
+      var dup = ALL_INSPECTION_RECORDS.some(function(m) {
         return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
       });
-      if (!dup) inspections.push(r);
+      if (!dup) {
+        var hasNg = !!r.anomaly;
+        if (!hasNg && r.state) {
+          hasNg = Object.values(r.state).some(function(s) {
+            return ['daily','10days','monthly'].some(function(t) {
+              return s[t] && s[t].some(function(v) { return v === 'ng'; });
+            });
+          });
+        }
+        ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
+      }
     });
   }
+  var inspections = (typeof ALL_INSPECTION_RECORDS !== 'undefined') ? ALL_INSPECTION_RECORDS : [];
   var allEquips   = (typeof ADM !== 'undefined' && ADM.equips) ? ADM.equips : [];
   var lines       = (typeof ADM !== 'undefined' && ADM.lines)  ? ADM.lines  : [];
   var DOW         = ['日','月','火','水','木','金','土'];
