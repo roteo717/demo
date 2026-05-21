@@ -7621,10 +7621,18 @@
     var panelDateEl = document.getElementById('today-panel-date');
     if (panelDateEl) panelDateEl.textContent = `${calYear}年${MONTHS_JP[calMonth]}`;
 
-    const doneCount    = done.filter(d => !anomaly.includes(d) && !holidays.includes(d)).length;
-    const anomalyCount = anomaly.filter(d => !holidays.includes(d)).length;
+    // 【修正】同一日に複数担当者が点検した場合の重複カウントを除去
+    // done / anomaly 配列は担当者ごとにレコードが入るため、Set で日付を一意にしてからカウントする
+    const doneCount    = new Set(done.filter(d => !anomaly.includes(d) && !holidays.includes(d))).size;
+    const anomalyCount = new Set(anomaly.filter(d => !holidays.includes(d))).size;
     const workDays     = totalDays - holidays.length;
-    const pendingCount = Math.max(0, workDays - doneCount - anomalyCount);
+    // 【修正】未点検は「今日まで」の稼働日のみカウント（未来の予定日は含めない）
+    // 過去月の場合は月末まで全稼働日を対象にする
+    const _pendingLastDay = isCurrentMonth ? now.getDate() : totalDays;
+    const workDaysUpToToday = Array.from({length: _pendingLastDay}, (_, i) => i + 1)
+      .filter(d => !holidays.includes(d)).length;
+    const inspectedDaysSet = new Set([...done, ...anomaly].filter(d => !holidays.includes(d) && d <= _pendingLastDay));
+    const pendingCount = Math.max(0, workDaysUpToToday - inspectedDaysSet.size);
     var sumPending = document.getElementById('sum-pending'); if (sumPending) sumPending.textContent = pendingCount;
     var sumDone    = document.getElementById('sum-done');    if (sumDone)    sumDone.textContent    = doneCount;
     var sumAnomaly = document.getElementById('sum-anomaly'); if (sumAnomaly) sumAnomaly.textContent = anomalyCount;
