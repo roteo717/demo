@@ -3204,25 +3204,49 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(140deg, #EEF4FF 0%, #F4F6F9 65%);
+    background: #ffffff;
     padding: 60px 40px;
     min-height: calc(100vh - 40px);
   }
   .role-hero { padding: 0 0 32px; }
   .role-hero h1 { font-size: 28px; }
   .role-cards {
-    max-width: 640px; width: 100%;
+    max-width: 680px; width: 100%;
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 20px; padding: 0;
+    gap: 24px; padding: 0;
   }
   .role-card {
     flex-direction: column; align-items: center;
-    text-align: center; padding: 32px 24px; gap: 14px;
+    text-align: center; padding: 48px 32px 44px; gap: 0;
     width: 100%; height: 100%;
+    border: 1px solid #E8E8E8 !important;
+    border-radius: 20px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+  .role-card.blue { border-color: #E8E8E8 !important; }
+  .role-card.red  { border-color: #E8E8E8 !important; }
+  .role-icon-wrap {
+    background: transparent !important;
+    width: 80px; height: 80px;
+    margin-bottom: 20px;
+  }
+  .role-card-title {
+    font-size: 22px; font-weight: 700;
+    margin-bottom: 0; letter-spacing: -0.3px;
+  }
+  .role-card-title-underline {
+    display: block;
+    height: 2.5px; border-radius: 2px;
+    width: 40px; margin: 8px auto 16px;
+  }
+  .role-card-title-underline.blue { background: var(--blue); }
+  .role-card-title-underline.red  { background: var(--red);  }
+  .role-card-desc {
+    font-size: 14px; color: #888; line-height: 1.6;
   }
   .role-card-arrow { display: none; }
-  .role-footer { max-width: 640px; width: 100%; padding: 24px 0 12px; }
-  .role-section-label { max-width: 640px; width: 100%; padding: 0; align-self: center; }
+  .role-footer { max-width: 680px; width: 100%; padding: 24px 0 12px; }
+  .role-section-label { max-width: 680px; width: 100%; padding: 0; align-self: center; }
 
   /* ─── Firebaseログイン画面 ─── */
   #screen-login {
@@ -3390,7 +3414,7 @@
   .line-section-label { grid-column: 1 / -1; }
 
   /* ─── 点検入力 / 確認 ─── */
-  #screen-inspect, #screen-confirm { background: #F4F6F9; min-height: calc(100vh - 40px); padding-bottom: 0; }
+  #screen-inspect, #screen-confirm { background: #FFFFFF; min-height: calc(100vh - 40px); padding-bottom: 0; }
   #screen-inspect > .bottom-action {
     margin-top: auto;
     position: static !important;
@@ -3400,28 +3424,40 @@
   /* PC header */
   .pc-inspect-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 24px 32px 0;
+    padding: 20px 40px 18px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #EBEBEB;
   }
-  .pc-inspect-header-left { display: flex; align-items: center; gap: 12px; }
+  .pc-inspect-header-left { display: flex; flex-direction: row; align-items: center; gap: 12px; }
   .pc-inspect-back {
     width: 34px; height: 34px; border-radius: 8px; border: 1px solid #E0E0E0;
-    background: #fff; display: flex; align-items: center; justify-content: center;
+    background: #F8F8F8; display: flex; align-items: center; justify-content: center;
     cursor: pointer; color: var(--text); transition: background 0.15s;
   }
-  .pc-inspect-back:hover { background: var(--bg); }
+  .pc-inspect-back:hover { background: #EBEBEB; }
+  .pc-inspect-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
+  .pc-inspect-subtitle { font-size: 13px; color: var(--text-sub); font-weight: 400; margin: 0; }
+  .pc-inspect-header-left { display: flex; flex-direction: row; align-items: center; gap: 12px; }
+  .pc-inspect-back {
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text); transition: background 0.15s;
+  }
+  .pc-inspect-back:hover { background: rgba(255,255,255,0.8); }
   .pc-inspect-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: var(--text); }
+  .pc-inspect-subtitle { font-size: 13px; color: var(--text-sub); font-weight: 400; margin: 0; }
   .pc-result-nav { padding: 24px 32px 0; gap: 12px; }
   .pc-result-nav-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
   .pc-result-nav-back { width: 34px; height: 34px; }
   .pc-inspect-bulk-btn {
     display: flex; align-items: center; gap: 6px;
-    background: #fff; border: 1.5px solid var(--blue); color: var(--blue);
-    border-radius: 10px; padding: 9px 16px;
-    font-size: 13px; font-weight: 600; cursor: pointer;
-    transition: background 0.15s;
+    background: var(--green); border: none; color: #fff;
+    border-radius: 8px; padding: 11px 20px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: opacity 0.15s;
   }
-  .pc-inspect-bulk-btn:hover { background: var(--blue-light); }
-  .pc-inspect-bulk-btn svg { stroke: var(--blue); }
+  .pc-inspect-bulk-btn:hover { opacity: 0.88; }
+  .pc-inspect-bulk-btn svg { stroke: #fff; }
 
   /* Mobile elements hidden on PC */
   #inspect-mobile-nav { display: none; }
@@ -3432,63 +3468,164 @@
   #pc-result-header    { display: flex; }
 
   /* Tabs */
-  .selected-equip-chips {
-    padding: 0 32px;
-    border-bottom: 1px solid #E0E0E0;
-    display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 0;
-    margin-top: 16px;
-  }
+  .selected-equip-chips { display: none !important; }
   .chip { display: none; }
   .inspect-tab {
-    flex-shrink: 0;
-    padding: 10px 18px;
+    flex-shrink: 0; padding: 10px 18px;
     font-size: 13px; font-weight: 500; color: var(--text-sub);
     cursor: pointer; border-bottom: 2.5px solid transparent;
-    transition: color 0.15s, border-color 0.15s;
-    white-space: nowrap;
-    background: none; border-top: none; border-left: none; border-right: none;
-    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s; white-space: nowrap;
+    background: none; border-top: none; border-left: none; border-right: none; margin-bottom: -1px;
   }
   .inspect-tab:hover { color: var(--blue); }
   .inspect-tab.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
 
-  /* Date banner */
-  .inspect-date-banner { margin: 16px 32px 0; border-radius: 12px; padding: 12px 18px; }
-  .inspect-date-change-btn {
-    display: flex; align-items: center; gap: 5px;
-    background: #fff; border: 1px solid var(--blue-mid); color: var(--blue);
-    border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600;
-    cursor: pointer; transition: background 0.15s; white-space: nowrap;
-  }
-  .inspect-date-change-btn:hover { background: var(--blue-light); }
-  .inspect-date-change-btn svg { stroke: var(--blue); }
+  /* Date banner - hidden on PC */
+  .inspect-date-banner { display: none !important; }
 
-  /* Sections grid */
+  /* Sections: single centered column */
   #inspect-sections {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 16px; padding: 16px 32px 16px;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 48px;
+    row-gap: 0;
+    padding: 0 40px 8px;
+    max-width: 1100px; width: 100%; margin: 0 auto; box-sizing: border-box;
+    align-items: start;
   }
-  .equip-section { margin: 0; height: 100%; }
 
-  /* Card header: remove icon, restyle */
+  /* Flat minimal card — no shadow, no border-radius */
+  .equip-section {
+    margin: 0; height: auto;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-bottom: 1px solid #EBEBEB !important;
+    overflow: visible;
+    background: transparent;
+    padding: 32px 0 28px;
+  }
+  .equip-section.has-anomaly { border-bottom-color: #EBEBEB !important; box-shadow: none !important; }
+
+  /* Equipment header */
   #screen-inspect .equip-icon-lg { display: none; }
-  #screen-inspect .equip-section-header { padding: 20px 20px 16px; }
-  #screen-inspect .equip-bulk-na-btn { width: 54px; height: 54px; border-radius: 12px; font-size: 18px; }
-  #screen-inspect .equip-id-label { font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 2px; }
-  #screen-inspect .equip-name-only { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
-  #screen-inspect .equip-header-main { gap: 0; flex-direction: column; align-items: flex-start; }
-
-  /* Type badge styling */
-  #screen-inspect .insp-type-divider { padding: 8px 20px 4px; }
-
-  /* Larger ○/×/－ buttons */
-  #screen-inspect .tri-btn {
-    width: 46px; height: 42px; border-radius: 10px;
-    font-size: 20px; border: 1.5px solid #E0E0E0;
+  #screen-inspect .equip-section-header {
+    padding: 0 0 16px;
+    background: transparent;
+    border-bottom: 1.5px solid #111;
+    margin-bottom: 0;
+    display: flex; flex-direction: column; gap: 4px;
   }
-  #screen-inspect .check-row { padding: 0 20px; min-height: 54px; }
-  #screen-inspect .check-row-name { font-size: 14px; }
+  #screen-inspect .equip-header-top { display: none; }
+  #screen-inspect .equip-header-badges { display: none; }
+  #screen-inspect .equip-monitor-badge { display: none; }
+  #screen-inspect .equip-id-chip {
+    font-size: 11px; color: #AAAAAA; font-weight: 400; letter-spacing: 0.5px;
+    display: block; margin-bottom: 2px;
+  }
+  #screen-inspect .equip-id-label { display: none; }
+
+  /* Name + button on same row */
+  .equip-header-name-row {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+    width: 100%;
+  }
+
+  /* Large bold equipment name */
+  #screen-inspect .equip-name-only {
+    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    color: #111; line-height: 1.1; flex: 1;
+  }
+
+  /* Bulk NA button — aligned to tri-btns column width */
+  #screen-inspect .equip-bulk-na-btn {
+    background: #fff; border: 1.5px solid #DDDDDD; font-size: 12px; color: #555; font-weight: 500;
+    cursor: pointer; padding: 6px 0; height: auto;
+    width: 120px; min-width: 120px;
+    border-radius: 6px; white-space: nowrap;
+    display: flex; align-items: center; justify-content: center; gap: 0;
+    transition: border-color 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+  #screen-inspect .equip-bulk-na-btn:hover { border-color: #111; color: #111; background: #F8F8F8; }
+  #screen-inspect .equip-header-main { display: none; }
+
+  /* Type divider: hidden */
+  #screen-inspect .insp-type-divider { display: none; }
+
+  /* Status badge hidden in flat design */
+  #screen-inspect .equip-status-badge { display: none !important; }
+
+  /* 2-column grid for check rows — single column within each equipment card */
+  #screen-inspect .check-rows-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 0;
+  }
+
+  /* Check rows — flat, spacious */
+  #screen-inspect .check-row {
+    padding: 20px 0; min-height: auto;
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 1px solid #F0F0F0;
+    background: transparent;
+  }
+  #screen-inspect .check-row:last-child { border-bottom: none; }
+  /* In 2-col grid: last 2 items have no bottom border */
+  #screen-inspect .check-rows-grid .check-row:nth-last-child(-n+2) { border-bottom: none; }
+  .check-row-num { display: none; }
+
+  /* Item text block (name + description) */
+  .check-row-text {
+    flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0;
+  }
+  #screen-inspect .check-row-name {
+    font-size: 14px; font-weight: 700; color: #111; flex: none;
+  }
+  .check-row-desc {
+    font-size: 12px; color: #AAAAAA; line-height: 1.4;
+  }
+
+  /* Tri-buttons — individual outlined squares, selected = solid black */
+  #screen-inspect .tri-btns {
+    display: flex; background: none !important; border-radius: 0 !important;
+    padding: 0 !important; gap: 6px; flex-shrink: 0;
+  }
+  #screen-inspect .tri-btn {
+    width: 36px !important; height: 36px !important;
+    border-radius: 5px !important;
+    border: 1.5px solid #DDDDDD !important;
+    background: #fff !important;
+    color: #CCCCCC !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    transition: all 0.12s;
+  }
+  #screen-inspect .tri-btn:hover { border-color: #AAAAAA !important; color: #888 !important; background: #F8F8F8 !important; }
+  #screen-inspect .tri-btn.ok-selected  { background: #111 !important; border-color: #111 !important; color: #fff !important; font-weight: 600 !important; }
+  #screen-inspect .tri-btn.ng-selected  { background: #111 !important; border-color: #111 !important; color: #fff !important; font-weight: 600 !important; }
+  #screen-inspect .tri-btn.na-selected  { background: #111 !important; border-color: #111 !important; color: #fff !important; font-weight: 600 !important; }
+
+  /* Bottom action — spans both columns */
+  .inspect-bottom-action {
+    max-width: 1100px; width: 100%; margin: 0 auto;
+    padding: 12px 40px 28px !important;
+    display: flex !important; align-items: center; gap: 16px;
+    background: transparent !important;
+    grid-column: 1 / -1;
+  }
+  .inspect-progress-wrap { display: none !important; }
+  .inspect-progress-ring { display: none; }
+  .inspect-progress-label {
+    font-size: 12px; color: #AAAAAA; font-weight: 400; white-space: nowrap;
+  }
+  .inspect-progress-pct { display: none; }
+  .inspect-complete-btn {
+    background: #111 !important; border-radius: 8px !important;
+    font-size: 14px !important; padding: 14px 0 !important;
+    letter-spacing: 0.2px; flex: 1;
+  }
+  .inspect-complete-btn:hover { opacity: 0.85; }
   /* 確認画面：PCでモバイル要素を非表示にしてPCラッパーを表示 */
   #screen-confirm > #confirm-content,
   #screen-confirm > #confirm-sections,
@@ -4116,8 +4253,13 @@
     max-width: none !important;
     flex: 1;
     overflow-y: auto;
+    overflow-x: visible;
     padding: 24px 32px 48px !important;
     background: #F4F6F9 !important;
+  }
+  /* 承認パネルのタイトル行はポップアップのためにoverfollowを許可 */
+  #adm-panel-approval .apr2-title-row {
+    overflow: visible;
   }
 
   /* ══════════════════════════════════════════
@@ -5025,7 +5167,8 @@
     display: none;
     position: absolute;
     top: calc(100% + 6px);
-    left: 0;
+    right: 0;
+    left: auto;
     z-index: 300;
     background: #fff;
     border-radius: 14px;
@@ -5318,53 +5461,246 @@
    ※ 承認画面のみデザイン変更。他画面・機能・ロジックは一切変更なし
    ============================================================ */
 
-  /* ── タブ（iOS セグメント風） ── */
+  /* ── 新デザイン：ブレッドクラム + 日付ヘッダー ── */
+  .new-apr-header {
+    margin-bottom: 20px;
+  }
+  .new-apr-breadcrumb {
+    font-size: 12px;
+    color: #94A3B8;
+    margin-bottom: 4px;
+    font-weight: 400;
+  }
+  .new-apr-breadcrumb-sep {
+    margin: 0 5px;
+    color: #CBD5E1;
+  }
+  .new-apr-date {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0F172A;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  /* ── 新デザイン：設備カード（フラット） ── */
+  .new-apr-equip-card {
+    background: #FFFFFF;
+    border: 1px solid #E8ECF0;
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .new-apr-equip-card.is-approved {
+    opacity: 0.7;
+  }
+  .new-apr-card-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .new-apr-card-id {
+    font-size: 11px;
+    color: #94A3B8;
+    font-weight: 500;
+    margin-bottom: 2px;
+    letter-spacing: 0.3px;
+  }
+  .new-apr-card-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 7px;
+    letter-spacing: -0.2px;
+  }
+  .new-apr-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: #64748B;
+    flex-wrap: wrap;
+  }
+  .new-apr-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .new-apr-meta-label {
+    color: #94A3B8;
+    font-weight: 400;
+  }
+  .new-apr-meta-value {
+    color: #374151;
+    font-weight: 500;
+  }
+  .new-apr-meta-pending {
+    color: #EA580C;
+    font-weight: 600;
+  }
+  .new-apr-meta-approved {
+    color: #16A34A;
+    font-weight: 600;
+  }
+  .new-apr-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .new-apr-detail-btn {
+    background: #FFFFFF;
+    border: 1.5px solid #D1D5DB;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: background 0.12s, border-color 0.12s;
+    -webkit-user-select: none;
+    min-width: 64px;
+  }
+  .new-apr-detail-btn:hover { background: #F9FAFB; }
+  .new-apr-detail-btn:active { background: #F3F4F6; transform: scale(0.97); }
+  .new-apr-approve-btn {
+    background: #111827;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: background 0.12s, transform 0.1s;
+    -webkit-user-select: none;
+    min-width: 80px;
+  }
+  .new-apr-approve-btn:hover { background: #1F2937; }
+  .new-apr-approve-btn:active { background: #374151; transform: scale(0.97); }
+  .new-apr-approved-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #16A34A;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    background: #F0FDF4;
+    border-radius: 8px;
+    border: 1px solid #BBF7D0;
+    white-space: nowrap;
+  }
+  .new-apr-approved-badge svg {
+    width: 14px; height: 14px;
+    stroke: #16A34A; fill: none;
+    flex-shrink: 0;
+  }
+
+  /* ── 新デザイン：ラインセクション ── */
+  .new-apr-section {
+    margin-bottom: 20px;
+  }
+  .new-apr-section-hdr {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 0 2px;
+  }
+  .new-apr-section-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+  .new-apr-section-badge {
+    font-size: 11px;
+    font-weight: 600;
+    background: #FEF3C7;
+    color: #C2410C;
+    border: 1px solid #FDE68A;
+    border-radius: 20px;
+    padding: 2px 9px;
+  }
+  .new-apr-section-viewall {
+    margin-left: auto;
+    font-size: 12px;
+    color: #94A3B8;
+    cursor: pointer;
+    font-weight: 400;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    transition: color 0.12s;
+    text-decoration: none;
+  }
+  .new-apr-section-viewall:hover { color: #64748B; }
+
+  /* ── タブ（フラットテキスト型） ── */
   #adm-panel-approval .apr2-filter-tabs {
     display: flex;
-    gap: 4px;
-    background: #F1F3F5;
-    border-radius: 14px;
-    padding: 4px;
+    gap: 0;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    border-bottom: 1px solid #E5E7EB;
   }
   #adm-panel-approval .apr2-tab {
-    flex: 1;
+    flex: none;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 8px 6px;
-    border-radius: 10px;
+    padding: 10px 20px;
+    border-radius: 0;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     border: none;
     background: transparent;
     color: #64748B;
-    transition: background 0.18s, color 0.18s;
+    transition: color 0.15s;
     font-family: inherit;
     white-space: nowrap;
+    position: relative;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
   }
   #adm-panel-approval .apr2-tab-icon { display: none; }
   #adm-panel-approval .apr2-tab-label { flex: unset; text-align: center; font-size: 13px; }
   #adm-panel-approval .apr2-tab.active {
-    background: #FFFFFF;
-    color: #0F172A;
+    background: transparent;
+    color: #111827;
     font-weight: 600;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    box-shadow: none;
+    border-bottom-color: #111827;
   }
+  #adm-panel-approval .apr2-tab:hover:not(.active) { color: #374151; }
   #adm-panel-approval .apr2-tab-badge {
-    min-width: 20px;
-    height: 20px;
+    min-width: 18px;
+    height: 18px;
     padding: 0 5px;
-    background: #E2E8F0;
+    background: #F1F5F9;
     color: #64748B;
     font-size: 11px;
     font-weight: 700;
     border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   #adm-panel-approval .apr2-tab.active .apr2-tab-badge {
-    background: #DBEAFE;
-    color: #1E40AF;
+    background: #F1F5F9;
+    color: #374151;
   }
   #adm-panel-approval .apr2-tab-badge.pending-badge {
     background: #FED7AA;
@@ -5380,13 +5716,14 @@
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
     border-radius: 8px;
-    padding: 6px 10px;
+    padding: 6px 12px;
     font-size: 12px;
     font-weight: 500;
     color: #64748B;
     gap: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    box-shadow: none;
     transition: background 0.15s;
+    margin-bottom: 8px;
   }
   #adm-panel-approval .apr2-line-filter-btn:active { background: #F8FAFC; }
   #adm-panel-approval .apr2-line-filter-btn.has-filter {
@@ -5397,8 +5734,18 @@
 
   /* ── title row 余白 ── */
   #adm-panel-approval .apr2-title-row {
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 0;
+    margin-bottom: 20px;
+    align-items: flex-end;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  #adm-panel-approval .apr2-filter-tabs {
+    border-bottom: none;
+    flex: 1;
+  }
+  /* 承認パネル内上部余白 */
+  #adm-panel-approval {
+    padding-top: 0;
   }
 
   /* ── ラインカード（白カード） ── */
@@ -5813,7 +6160,7 @@
           </svg>
           <span class="pc-sidebar-badge" id="pcsb-badge-approval" style="display:none;">0</span>
         </div>
-        <span>承認</span>
+        <span>承認待ち</span>
       </button>
       <button class="pc-sidebar-btn" id="pcsb-uninspected" onclick="showAdmTab('uninspected')">
         <div class="pc-sidebar-btn-icon" style="position:relative;">
@@ -5822,7 +6169,7 @@
           </svg>
           <span class="pc-sidebar-badge" id="pcsb-badge-uninspected" style="display:none;">0</span>
         </div>
-        <span>未点検</span>
+        <span>未点検リスト</span>
       </button>
       <button class="pc-sidebar-btn" id="pcsb-settings" onclick="showAdmTab('settings')">
         <div class="pc-sidebar-btn-icon">
@@ -5831,7 +6178,7 @@
             <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
           </svg>
         </div>
-        <span>設定</span>
+        <span>システム設定</span>
       </button>
     </nav>
 
@@ -5842,8 +6189,10 @@
           <div class="pc-sidebar-avatar">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           </div>
-          <span class="pc-sidebar-username" id="pc-sidebar-username">管理者</span>
-          <svg style="width:14px;height:14px;flex-shrink:0;margin-left:auto;" viewBox="0 0 24 24" fill="none" stroke="var(--text-sub)" stroke-width="1.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          <div style="flex:1;min-width:0;overflow:hidden;">
+            <div class="pc-sidebar-username" id="pc-sidebar-username" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">管理者</div>
+            <div id="pc-sidebar-role" style="font-size:11px;color:var(--text-sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;">管理者</div>
+          </div>
         </div>
       </div>
     </div>
@@ -5941,39 +6290,39 @@
     <div class="role-cards">
       <div class="role-card blue" onclick="gotoInspector()">
         <div class="role-icon-wrap blue">
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#2F6BFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5.5 19 C5.5 12 9.8 7 15 7 C20.2 7 24.5 12 24.5 19"/>
-            <line x1="3" y1="19" x2="27" y2="19"/>
-            <line x1="15" y1="7" x2="15" y2="19"/>
-            <line x1="7.5" y1="19" x2="7.5" y2="22"/>
-            <line x1="22.5" y1="19" x2="22.5" y2="22"/>
-            <line x1="7.5" y1="22" x2="22.5" y2="22"/>
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none" stroke="#2F6BFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- clipboard body -->
+            <rect x="18" y="18" width="36" height="44" rx="5"/>
+            <!-- clipboard top clip -->
+            <path d="M27 18v-3a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/>
+            <!-- check mark -->
+            <polyline points="26,38 32,44 46,30"/>
           </svg>
         </div>
         <div class="role-card-body">
           <div class="role-card-title blue">点検者</div>
-          <div class="role-card-desc">設備の点検・記録を<br>行います</div>
-        </div>
-        <div class="role-card-arrow blue">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+          <span class="role-card-title-underline blue"></span>
+          <div class="role-card-desc">設備の点検・記録を行います</div>
         </div>
       </div>
       <div class="role-card red" onclick="gotoManager()">
         <div class="role-icon-wrap red">
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#E53935" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="15" cy="10" r="5"/>
-            <path d="M6 27 C6 21.5 9.8 19 15 19 C20.2 19 24 21.5 24 27"/>
-            <line x1="13" y1="19" x2="15" y2="22"/>
-            <line x1="17" y1="19" x2="15" y2="22"/>
-            <polyline points="14,22 13.5,26 15,24.5 16.5,26 16,22"/>
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none" stroke="#E53935" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <!-- center person -->
+            <circle cx="36" cy="27" r="8"/>
+            <path d="M20 60c0-8.8 7.2-14 16-14s16 5.2 16 14"/>
+            <!-- left person -->
+            <circle cx="18" cy="30" r="6"/>
+            <path d="M6 58c0-7 5-11 12-11"/>
+            <!-- right person -->
+            <circle cx="54" cy="30" r="6"/>
+            <path d="M66 58c0-7-5-11-12-11"/>
           </svg>
         </div>
         <div class="role-card-body">
           <div class="role-card-title red">管理者</div>
-          <div class="role-card-desc">点検の確認・承認や<br>各種設定を行います</div>
-        </div>
-        <div class="role-card-arrow red">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+          <span class="role-card-title-underline red"></span>
+          <div class="role-card-desc">点検の確認・承認や各種設定を行います</div>
         </div>
       </div>
     </div>
@@ -6344,12 +6693,12 @@
         <div class="pc-inspect-back" onclick="showScreen('screen-home')">
           <svg viewBox="0 0 24 24" width="18" height="18" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </div>
-        <h1 class="pc-inspect-title">点検入力</h1>
+        <div>
+          <h1 class="pc-inspect-title">点検入力</h1>
+          <p class="pc-inspect-subtitle" id="pc-inspect-subtitle"></p>
+        </div>
       </div>
-      <button class="pc-inspect-bulk-btn" onclick="bulkSetUnenteredOk()">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20,6 9,17 4,12"/></svg>
-        未入力をすべて正常にする
-      </button>
+      <button class="pc-inspect-bulk-btn" onclick="bulkSetUnenteredOk()">未入力をすべて「〇」にする</button>
     </div>
 
     <!-- Selected chips (mobile) / tabs (PC) -->
@@ -6375,8 +6724,20 @@
     <!-- Equipment sections -->
     <div id="inspect-sections"></div>
 
-    <div class="bottom-action">
-      <button class="btn-bottom-main" onclick="goToConfirm()">点検の確認・完了へ</button>
+    <div class="bottom-action inspect-bottom-action">
+      <div class="inspect-progress-wrap">
+        <div class="inspect-progress-ring">
+          <svg viewBox="0 0 36 36" width="36" height="36">
+            <circle cx="18" cy="18" r="15" fill="none" stroke="#E0E4EF" stroke-width="3"/>
+            <circle cx="18" cy="18" r="15" fill="none" stroke="var(--blue)" stroke-width="3"
+              stroke-linecap="round" stroke-dasharray="94.2" stroke-dashoffset="94.2"
+              id="inspect-progress-circle" transform="rotate(-90 18 18)"/>
+          </svg>
+          <span class="inspect-progress-pct" id="inspect-progress-pct">0%</span>
+        </div>
+        <span class="inspect-progress-label" id="inspect-progress-label">進捗率 0%</span>
+      </div>
+      <button class="btn-bottom-main inspect-complete-btn" onclick="goToConfirm()">点検を完了する</button>
     </div>
   </div>
 
@@ -6989,21 +7350,16 @@
     <!-- 承認 パネル (v2: 3階層) -->
     <div id="adm-panel-approval" class="adm-panel" style="display:none;">
 
+
+
       <!-- フィルター -->
       <div class="apr2-title-row">
         <div class="apr2-filter-tabs">
-          <button class="apr2-tab active" id="apr2-tab-all" onclick="setApr2Filter('all')">
-            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            <span class="apr2-tab-label">すべて</span>
-            <span class="apr2-tab-badge" id="apr2-count-all">0</span>
-          </button>
-          <button class="apr2-tab" id="apr2-tab-pending" onclick="setApr2Filter('pending')">
-            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <button class="apr2-tab active" id="apr2-tab-pending" onclick="setApr2Filter('pending')">
             <span class="apr2-tab-label">未承認</span>
             <span class="apr2-tab-badge pending-badge" id="apr2-count-pending">0</span>
           </button>
           <button class="apr2-tab" id="apr2-tab-approved" onclick="setApr2Filter('approved')">
-            <svg class="apr2-tab-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span class="apr2-tab-label">承認済み</span>
             <span class="apr2-tab-badge" id="apr2-count-approved">0</span>
           </button>
@@ -7011,7 +7367,6 @@
         <!-- ライン絞り込み -->
         <div class="apr2-line-filter-wrap" id="apr2-line-filter-wrap">
           <button class="apr2-line-filter-btn" id="apr2-line-filter-btn" onclick="apr2ToggleLinePopup(event)">
-            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
             絞り込み
             <svg class="apr2-line-filter-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
@@ -7098,37 +7453,51 @@
     {
       id:'A-101', name:'空調機',
       items10:['異音・振動の有無','油漏れの有無','フィルターの状態','圧力の確認'],
-      itemsMonthly:['フィルター清掃・交換','冷媒圧力の測定','ベルト張力の確認','電気系統の点検','ドレンパンの清掃']
+      items10Desc:['回転部の異常音および振動の目視・聴覚チェック','各接続部からの油漏れ有無の目視確認','フィルターの目詰まり・破損状態の確認','運転圧力が規定値内に収まっているかの確認'],
+      itemsMonthly:['フィルター清掃・交換','冷媒圧力の測定','ベルト張力の確認','電気系統の点検','ドレンパンの清掃'],
+      itemsMonthlyDesc:['フィルターを取り外し清掃または新品と交換','冷媒ガスの圧力を計測し規定値との照合','ベルトのたるみ・摩耗を確認し張力を調整','電気配線・端子の緩み・焦げ付きの点検','ドレンパン内の汚泥・スライムを除去']
     },
     {
       id:'A-102', name:'ポンプ',
       items10:['水漏れの有無','異音・振動の有無','運転状態の確認'],
-      itemsMonthly:['グランドパッキンの確認','軸受温度の測定','インペラ摩耗確認','配管接続部の点検']
+      items10Desc:['グランドパッキン・配管継手からの漏水確認','軸受や回転部の異常音・振動の聴覚チェック','吐出圧力・流量が正常範囲内かの確認'],
+      itemsMonthly:['グランドパッキンの確認','軸受温度の測定','インペラ摩耗確認','配管接続部の点検'],
+      itemsMonthlyDesc:['パッキンの締め付け量・摩耗状態の点検','温度計または接触式計器で軸受温度を計測','インペラの腐食・摩耗・異物噛み込みの確認','全フランジ・継手の増締めおよび漏れ確認']
     },
     {
       id:'A-103', name:'送風機',
       items10:['異音・振動の有無','ベルトの状態','回転方向の確認'],
-      itemsMonthly:['ベルト交換・調整確認','軸受給油','羽根車の点検','電動機の絶縁測定']
+      items10Desc:['軸受・羽根車周辺の異常音および振動のチェック','ベルトのたるみ・亀裂・摩耗状態の目視確認','起動時の回転方向が仕様と合致しているか確認'],
+      itemsMonthly:['ベルト交換・調整確認','軸受給油','羽根車の点検','電動機の絶縁測定'],
+      itemsMonthlyDesc:['ベルトの張力調整または劣化品の新品交換作業','指定グリースを所定量注入し軸受を保護','羽根車の変形・腐食・粉塵付着状態の点検','メガテスターにて電動機の絶縁抵抗を測定']
     },
     {
       id:'A-104', name:'冷却塔',
       items10:['水漏れの有無','ファンの状態','水位の確認'],
-      itemsMonthly:['充填材の清掃','散水ノズルの確認','電動機の点検','水質管理の確認']
+      items10Desc:['散水配管・パン部からの漏水有無の目視確認','ファンの回転音・振動・羽根損傷の目視チェック','補給水バルブの開閉状態と水位計の確認'],
+      itemsMonthly:['充填材の清掃','散水ノズルの確認','電動機の点検','水質管理の確認'],
+      itemsMonthlyDesc:['充填材の詰まり・藻の付着を除去し通水性を確保','ノズルの目詰まりや方向ずれを確認・修正','電動機の絶縁・端子締め付け・異音の点検','水質試験（pH・導電率・塩素濃度）の実施']
     },
     {
       id:'A-105', name:'コンプレッサー',
       items10:['異音・振動の有無','油漏れの有無','圧力の確認'],
-      itemsMonthly:['油量・油質の確認','エアフィルターの清掃','安全弁の動作確認','ドライヤーの点検']
+      items10Desc:['回転部・バルブ周辺の異常音および振動のチェック','各接続部からの漏洩有無のチェック','吐出圧力が設定値内に収まっているかの確認'],
+      itemsMonthly:['油量・油質の確認','エアフィルターの清掃','安全弁の動作確認','ドライヤーの点検'],
+      itemsMonthlyDesc:['オイルレベルゲージで油量確認・劣化時は交換','エアフィルターを取り外し清掃または交換','安全弁のリフト動作確認と設定圧の照合','ドライヤーの露点温度・ドレン排出状態の確認']
     },
     {
       id:'A-106', name:'ボイラー',
       items10:['水漏れの有無','圧力の確認','安全弁の確認'],
-      itemsMonthly:['水処理薬品の補充','燃焼状態の詳細確認','給水装置の点検','排気系統の確認']
+      items10Desc:['缶体・配管接続部の水漏れを目視点検','蒸気圧力計の指示値が規定範囲内かを確認','安全弁周辺の漏れ・固着の有無を目視確認'],
+      itemsMonthly:['水処理薬品の補充','燃焼状態の詳細確認','給水装置の点検','排気系統の確認'],
+      itemsMonthlyDesc:['薬品タンクの残量確認と必要量の補充作業','火炎の色・形状・燃焼音の異常を詳細確認','給水ポンプ・水面計・自動給水弁の点検','排気ダクト・煙突の詰まり・腐食の確認']
     },
     {
       id:'A-107', name:'受電設備',
       items10:['異音・振動の有無','外観の異常','警報の確認'],
-      itemsMonthly:['絶縁抵抗測定','各部締め付け確認','保護継電器の確認','清掃・除塵']
+      items10Desc:['変圧器・遮断器周辺の放電音・振動を聴覚確認','盤内の焦げ・変色・端子の緩みを目視点検','警報パネルの点灯状態とアラーム履歴の確認'],
+      itemsMonthly:['絶縁抵抗測定','各部締め付け確認','保護継電器の確認','清掃・除塵'],
+      itemsMonthlyDesc:['メガテスターで各回路の絶縁抵抗値を計測・記録','全端子・ブスバーの増締めと接触抵抗の確認','動作試験により保護継電器の設定値を照合','盤内・機器表面の粉塵・異物を清掃・除去']
     },
   ];
 
@@ -7491,24 +7860,38 @@
     // 【修正】localStorage を正として ALL_INSPECTION_RECORDS に欠けているレコードを補完
     // Firestore onSnapshot が ALL_INSPECTION_RECORDS をクリアするタイミングと
     // buildCalendar の呼び出しタイミングがずれても確実にデータを反映する
+    // 【修正2】重複チェック時、completedAt が新しい方を優先する（古いFirestoreデータより新しいlocalStorageを優先）
     (function() {
       var _lsAll = [];
       try { _lsAll = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
       _lsAll.forEach(function(r) {
-        var dup = ALL_INSPECTION_RECORDS.some(function(m) {
-          return m.year === r.year && m.month === r.month &&
-                 m.day  === r.day  && m.inspector === r.inspector;
-        });
-        if (!dup) {
-          var hasNg = !!r.anomaly;
-          if (!hasNg && r.state) {
-            hasNg = Object.values(r.state).some(function(s) {
-              return ["daily","10days","monthly"].some(function(t) {
-                return s[t] && s[t].some(function(v) { return v === "ng"; });
-              });
+        var hasNg = !!r.anomaly;
+        if (!hasNg && r.state) {
+          hasNg = Object.values(r.state).some(function(s) {
+            return ["daily","10days","monthly"].some(function(t) {
+              return s[t] && s[t].some(function(v) { return v === "ng"; });
             });
+          });
+        }
+        var existingIdx = -1;
+        for (var _i = 0; _i < ALL_INSPECTION_RECORDS.length; _i++) {
+          var m = ALL_INSPECTION_RECORDS[_i];
+          if (m.year === r.year && m.month === r.month &&
+              m.day  === r.day  && m.inspector === r.inspector) {
+            existingIdx = _i; break;
           }
+        }
+        if (existingIdx === -1) {
+          // 新規レコード: 追加
           ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
+        } else {
+          // 重複: completedAt が新しい方を優先（Firestoreの古いデータよりlocalStorageの新しいデータを使う）
+          var existingTime = ALL_INSPECTION_RECORDS[existingIdx].completedAt
+            ? new Date(ALL_INSPECTION_RECORDS[existingIdx].completedAt).getTime() : 0;
+          var lsTime = r.completedAt ? new Date(r.completedAt).getTime() : 0;
+          if (lsTime > existingTime) {
+            ALL_INSPECTION_RECORDS[existingIdx] = Object.assign({}, r, { anomaly: hasNg });
+          }
         }
       });
     })();
@@ -8786,7 +9169,10 @@
     const types = ['毎日点検'];
     if (inspectionTypes.is10Day)   types.push('10日毎点検');
     if (inspectionTypes.isMonthly) types.push('1ヶ月点検');
-    banner.textContent = `${calYear}年${MONTHS_JP[calMonth]}${day}日　${types.join(' / ')}`;
+    const labelText = `${calYear}年${MONTHS_JP[calMonth]}${day}日　${types.join(' / ')}`;
+    banner.textContent = labelText;
+    const sub = document.getElementById('pc-inspect-subtitle');
+    if (sub) sub.textContent = labelText;
   }
 
   function buildInspectChips() {
@@ -8828,15 +9214,14 @@
     // Header (no tabs)
     section.innerHTML = `
       <div class="equip-section-header">
-        <div class="equip-header-main">
-
-          <div class="equip-header-info">
-            <div class="equip-id-label">${eq.id}</div>
-            <div class="equip-name-only">${eq.name}</div>
-            <span class="equip-status-badge badge-pending" id="badge-${eq.id}" style="display:none">未入力</span>
-          </div>
+        <span class="equip-id-chip">設備点検 ${eq.id}</span>
+        <div class="equip-header-name-row">
+          <div class="equip-name-only">${eq.name}</div>
+          <button class="equip-bulk-na-btn" onclick="setBulkNa('${eq.id}')" title="全項目をーに設定">
+            一括「ー」入力
+          </button>
         </div>
-        <button class="equip-bulk-na-btn" onclick="setBulkNa('${eq.id}')" title="全項目をーに設定">ー<span>一括</span></button>
+        <span class="equip-status-badge badge-pending" id="badge-${eq.id}" style="display:none">未入力</span>
       </div>
     `;
 
@@ -8847,11 +9232,11 @@
       ? (eq.itemsDaily || [])
       : (inspectionTypes.is10Day ? [] : eq.items10);
     if (inspectionTypes.isDaily && effectiveDailyItems.length)
-      groups.push({ key:'daily',   label:'毎日点検',  badgeClass:'daily',   items: effectiveDailyItems });
+      groups.push({ key:'daily',   label:'毎日点検',  badgeClass:'daily',   items: effectiveDailyItems, descs: eq.itemsDailyDesc || eq.items10Desc || [] });
     if (inspectionTypes.is10Day)
-      groups.push({ key:'10days',  label:'10日毎点検', badgeClass:'days10',  items: eq.items10 });
+      groups.push({ key:'10days',  label:'10日毎点検', badgeClass:'days10',  items: eq.items10, descs: eq.items10Desc || [] });
     if (inspectionTypes.isMonthly)
-      groups.push({ key:'monthly', label:'1ヶ月点検',  badgeClass:'monthly', items: eq.itemsMonthly });
+      groups.push({ key:'monthly', label:'1ヶ月点検',  badgeClass:'monthly', items: eq.itemsMonthly, descs: eq.itemsMonthlyDesc || [] });
 
     if (!groups.length) return null;
 
@@ -8862,21 +9247,32 @@
       divider.innerHTML = `<span class="insp-type-badge ${group.badgeClass}">${group.label}</span><div class="insp-type-rule"></div>`;
       section.appendChild(divider);
 
+      // 2-column grid wrapper
+      const grid = document.createElement('div');
+      grid.className = 'check-rows-grid';
+
       const vals = state[eq.id][group.key];
       group.items.forEach((item, i) => {
         const v = vals[i];
+        const desc = group.descs ? (group.descs[i] || '') : '';
         const row = document.createElement('div');
         row.className = 'check-row';
         row.innerHTML = `
-          <span class="check-row-name">${item}</span>
+          <span class="check-row-num">${String(i+1).padStart(2,'0')}</span>
+          <span class="check-row-text">
+            <span class="check-row-name">${item}</span>
+            ${desc ? `<span class="check-row-desc">${desc}</span>` : ''}
+          </span>
           <div class="tri-btns">
             <button class="tri-btn${v==='ok'?' ok-selected':''}" onclick="setVal('${eq.id}',${i},'ok',this,'${group.key}')">○</button>
             <button class="tri-btn${v==='ng'?' ng-selected':''}" onclick="setVal('${eq.id}',${i},'ng',this,'${group.key}')">✕</button>
             <button class="tri-btn${v==='na'?' na-selected':''}" onclick="setVal('${eq.id}',${i},'na',this,'${group.key}')">ー</button>
           </div>
         `;
-        section.appendChild(row);
+        grid.appendChild(row);
       });
+
+      section.appendChild(grid);
     });
 
     return section;
@@ -8894,6 +9290,30 @@
     const tab = tabType || activeTab[equipId] || '10days';
     state[equipId][tab][itemIdx] = val;
     updateSectionStatus(equipId);
+    updateInspectProgress();
+  }
+
+  function updateInspectProgress() {
+    let total = 0, done = 0;
+    selectedEquips.forEach(id => {
+      const eq = EQUIP_DATA.find(e => e.id === id);
+      if (!eq) return;
+      ['daily','10days','monthly'].forEach(k => {
+        const items = state[id][k];
+        if (!items) return;
+        items.forEach(v => { total++; if (v && v !== '') done++; });
+      });
+    });
+    const pct = total > 0 ? Math.round(done / total * 100) : 0;
+    const pctEl = document.getElementById('inspect-progress-pct');
+    const circleEl = document.getElementById('inspect-progress-circle');
+    const labelEl = document.getElementById('inspect-progress-label');
+    if (pctEl) pctEl.textContent = pct + '%';
+    if (labelEl) labelEl.textContent = '進捗率 ' + pct + '%';
+    if (circleEl) {
+      const circumference = 94.2;
+      circleEl.style.strokeDashoffset = circumference - (circumference * pct / 100);
+    }
   }
 
   function setBulkNa(equipId) {
@@ -9387,8 +9807,16 @@
   // Firebase Integration Start
   // Firestoreのスナップショットをカレンダーに反映（モジュールスクリプトから呼び出す）
   window._applyFirestoreSnapshots = function(records) {
-    ALL_INSPECTION_RECORDS = []; // Firestoreから全件再構築
-    records.forEach(applyInspectionRecord);
+    // 【修正】渡された records（マージ済み）をそのまま再構築
+    // records はすでに onSnapshot 側で localStorage とマージ・completedAt 新しい方優先済み
+    ALL_INSPECTION_RECORDS = [];
+    // completedAt 昇順にソートしてから処理（古い→新しい順で applyInspectionRecord を呼ぶと最新が勝つ）
+    var _sorted = records.slice().sort(function(a, b) {
+      var ta = a.completedAt ? new Date(a.completedAt).getTime() : 0;
+      var tb = b.completedAt ? new Date(b.completedAt).getTime() : 0;
+      return ta - tb;
+    });
+    _sorted.forEach(applyInspectionRecord);
     if (typeof buildCalendar === 'function') buildCalendar();
     // Firestore同期後に未点検リストも再描画
     if (typeof renderInspLineList === 'function') renderInspLineList();
@@ -10004,6 +10432,8 @@ window.toggleAdmUserMenu  = toggleAdmUserMenu;
   if (popoverNameEl && adminName) popoverNameEl.textContent = adminName + ' さん';
   var pcNameEl = document.getElementById('pc-sidebar-username');
   if (pcNameEl && adminName) pcNameEl.textContent = adminName + ' さん';
+  var pcRoleEl = document.getElementById('pc-sidebar-role');
+  if (pcRoleEl) pcRoleEl.textContent = '管理者';
   updateAdmDateDisplay();
   var pw = document.querySelector('.phone-wrapper');
   if (pw) pw.style.setProperty('display', 'none', 'important');
@@ -10676,31 +11106,57 @@ function btnModal(btn) {
 var _pendingDelete = null;
 
 function admConfirm(type, id) {
-  // Show inline confirm bar; actual deletion triggered by user tapping confirm
-  var labels = {line:'ライン（関連設備も削除）', equip:'設備', item:'点検項目'};
-  var bar = document.createElement('div');
-  bar.id = 'adm-del-bar';
-  bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;color:#fff;' +
-    'display:flex;align-items:center;justify-content:space-between;padding:14px 16px;z-index:9999;' +
-    'font-size:13px;gap:12px;';
-  bar.innerHTML =
-    '<span>「' + labels[type] + '」を削除しますか？</span>' +
-    '<div style="display:flex;gap:8px;flex-shrink:0;">' +
-      '<button onclick="admCancelDel()" style="background:rgba(255,255,255,0.15);border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;">キャンセル</button>' +
-      '<button onclick="admExecDel()" style="background:#E53935;border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">削除する</button>' +
+  var labels = {
+    line:  'ライン（設備・点検記録・承認データも全て削除）',
+    equip: '設備',
+    item:  '点検項目'
+  };
+  var subLabels = {
+    line:  'この操作は取り消せません。関連する全ての点検記録・承認データも削除されます。',
+    equip: 'この設備を削除します。この操作は取り消せません。',
+    item:  'この点検項目を削除します。この操作は取り消せません。'
+  };
+  // オーバーレイ
+  var overlay = document.createElement('div');
+  overlay.id = 'adm-del-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9998;' +
+    'display:flex;align-items:center;justify-content:center;padding:20px;';
+  // モーダル本体
+  var modal = document.createElement('div');
+  modal.id = 'adm-del-bar';
+  modal.style.cssText = 'background:#fff;border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,0.18);' +
+    'padding:28px 24px 20px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:16px;';
+  modal.innerHTML =
+    '<div style="display:flex;flex-direction:column;gap:8px;">' +
+      '<div style="display:flex;align-items:center;gap:10px;">' +
+        '<div style="width:36px;height:36px;border-radius:50%;background:#FDECEC;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+          '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#E53935" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>' +
+        '</div>' +
+        '<span style="font-size:15px;font-weight:700;color:#222;">「' + labels[type] + '」を削除しますか？</span>' +
+      '</div>' +
+      '<p style="font-size:13px;color:#666;line-height:1.6;margin:0 0 0 46px;">' + subLabels[type] + '</p>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+      '<button onclick="admCancelDel()" style="background:#F5F6F8;border:none;color:#555;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;">キャンセル</button>' +
+      '<button onclick="admExecDel()" style="background:#E53935;border:none;color:#fff;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:700;">削除する</button>' +
     '</div>';
-  document.body.appendChild(bar);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
   _pendingDelete = {type: type, id: id};
-  return false; // always return false; deletion handled by admExecDel
+  return false;
 }
 
 function admCancelDel() {
   _pendingDelete = null;
+  var overlay = document.getElementById('adm-del-overlay');
+  if (overlay) overlay.remove();
   var bar = document.getElementById('adm-del-bar');
   if (bar) bar.remove();
 }
 
 function admExecDel() {
+  var overlay = document.getElementById('adm-del-overlay');
+  if (overlay) overlay.remove();
   var bar = document.getElementById('adm-del-bar');
   if (bar) bar.remove();
   if (!_pendingDelete) return;
@@ -10737,9 +11193,78 @@ function btnCommon(btn) {
 
 /* ─ delete handlers ─ */
 function admDeleteLine(id) {
-  ADM.equips = ADM.equips.filter(function(e){ return e.lineId!==id; });
-  ADM.lines  = ADM.lines.filter(function(l){ return l.id!==id; });
-  admSave(); renderLines(); admToast('ラインを削除しました');
+  // ── 削除対象ラインの設備IDを先に収集 ──
+  var targetEquipIds = ADM.equips
+    .filter(function(e){ return e.lineId === id; })
+    .map(function(e){ return e.id; });
+
+  // ── ADMデータから除去（ライン・設備・アサイン） ──
+  ADM.equips = ADM.equips.filter(function(e){ return e.lineId !== id; });
+  ADM.lines  = ADM.lines.filter(function(l){ return l.id !== id; });
+  targetEquipIds.forEach(function(eid){ delete ADM.assigns[eid]; });
+  admSave();
+
+  // ── localStorage: inspections から対象ラインの記録を削除 ──
+  (function() {
+    var all = [];
+    try { all = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
+    var filtered = all.filter(function(r) {
+      // line[] フィールドにラインIDが含まれるか
+      var lineArr = r.line || r.lines || [];
+      if (lineArr.indexOf(id) >= 0) return false;
+      // equips[] フィールドに対象設備IDが含まれるか
+      var equipArr = r.equips || [];
+      if (targetEquipIds.length > 0 && equipArr.some(function(e){ return targetEquipIds.indexOf(e) >= 0; })) return false;
+      return true;
+    });
+    localStorage.setItem('inspections', JSON.stringify(filtered));
+    // インメモリのALL_INSPECTION_RECORDSも同期
+    if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
+      for (var _i = ALL_INSPECTION_RECORDS.length - 1; _i >= 0; _i--) {
+        var _r = ALL_INSPECTION_RECORDS[_i];
+        var _la = _r.line || _r.lines || [];
+        var _ea = _r.equips || [];
+        var _hit = _la.indexOf(id) >= 0 ||
+          (targetEquipIds.length > 0 && _ea.some(function(e){ return targetEquipIds.indexOf(e) >= 0; }));
+        if (_hit) ALL_INSPECTION_RECORDS.splice(_i, 1);
+      }
+    }
+  })();
+
+  // ── localStorage: approvalStatuses / approvalDetails から対象設備分を削除 ──
+  (function() {
+    var statuses = {};
+    var details  = {};
+    try { statuses = JSON.parse(localStorage.getItem('approvalStatuses') || '{}'); } catch(e) {}
+    try { details  = JSON.parse(localStorage.getItem('approvalDetails')  || '{}'); } catch(e) {}
+    // 承認IDは "apr10-year-month-day-equipId" / "aprM-year-month-day-equipId" 形式
+    Object.keys(statuses).forEach(function(aprId) {
+      var isTarget = targetEquipIds.some(function(eid){ return aprId.indexOf('-' + eid) >= 0; });
+      if (isTarget) { delete statuses[aprId]; delete details[aprId]; }
+    });
+    localStorage.setItem('approvalStatuses', JSON.stringify(statuses));
+    localStorage.setItem('approvalDetails',  JSON.stringify(details));
+    // Firestoreにも反映
+    if (typeof window._firestoreSave === 'function') {
+      window._firestoreSave('approvalStatuses', statuses);
+      window._firestoreSave('approvalDetails',  details);
+    }
+  })();
+
+  // ── Firestore: inspections コレクションから対象ライン記録を削除 ──
+  if (typeof window._deleteInspectionsByLine === 'function') {
+    window._deleteInspectionsByLine(id, targetEquipIds);
+  }
+
+  // ── 画面を再描画 ──
+  renderLines();
+  if (typeof buildCalendar       === 'function') buildCalendar();
+  if (typeof renderDashboard     === 'function') renderDashboard();
+  if (typeof renderApproval      === 'function') renderApproval();
+  if (typeof renderMonthlySheet  === 'function') renderMonthlySheet();
+  if (typeof renderInspLineList  === 'function') renderInspLineList();
+
+  admToast('ラインと全関連データを削除しました');
 }
 function admDeleteEquip(id) {
   ADM.equips = ADM.equips.filter(function(e){ return e.id!==id; });
@@ -12125,7 +12650,7 @@ function renderAnomalyListPanel(filterEquipId) {
    ══════════════════════════════════════════ */
 
 /* ── 状態変数 ── */
-var apr2Filter      = 'all';   // 'all' | 'pending' | 'approved'
+var apr2Filter      = 'pending';   // 'pending' | 'approved'
 var apr2DateFilter  = 'all'; // 'today' | 'all'
 var apr2Page        = 1;
 var apr2PerPage     = 9999;
@@ -12409,6 +12934,13 @@ function renderAdmApproval() {
   injectAdmProgressCss();
   apr2LoadLineFilter();  // ユーザーごとのフィルター設定を読み込む
 
+  // 日付表示を更新
+  var dateEl = document.getElementById('new-apr-date-display');
+  if (dateEl) {
+    var now = new Date();
+    dateEl.textContent = now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日';
+  }
+
   var allItems    = apr2GetData();
   var filtered    = apr2ApplyFilters(allItems);
   var allGrouped  = apr2GroupByLine(allItems);  // フィルター前（未承認バッジに使用）
@@ -12446,7 +12978,7 @@ function renderAdmApproval() {
   }
 
   // フィルタータブ active 更新
-  ['all','pending','approved'].forEach(function(f) {
+  ['pending','approved'].forEach(function(f) {
     var tab = document.getElementById('apr2-tab-' + f);
     if (tab) tab.classList.toggle('active', f === apr2Filter);
   });
@@ -12469,143 +13001,80 @@ function renderAdmApproval() {
   var paged     = apr2GetPagedLines(grouped);
   var pageLines = paged.lines;
 
-  // ラインの初期展開状態を決定（未承認があるライン→展開）
-  allGrouped.forEach(function(line) {
-    if (apr2LineState[line.lineId] === undefined) {
-      var hasPending = Object.keys(line.equips).some(function(eid) {
-        return line.equips[eid].items.some(function(i){ return i.status === 'pending'; });
-      });
-      apr2LineState[line.lineId] = hasPending; // true = 展開
-    }
-  });
-
+  // ─── 新デザイン：フラットカードレイアウト（点検記録1件 = 1カード）───
   var html = '';
   pageLines.forEach(function(line) {
     var lineEquips  = Object.keys(line.equips).map(function(k){ return line.equips[k]; });
-    var lineTotal   = lineEquips.reduce(function(s, e){ return s + e.items.length; }, 0);
     var linePending = lineEquips.reduce(function(s, e){
       return s + e.items.filter(function(i){ return i.status === 'pending'; }).length;
     }, 0);
-    var isExpanded  = apr2LineState[line.lineId] !== false; // undefined → true
-    var hdrCls      = isExpanded ? '' : ' collapsed';
-    var bodyCls     = isExpanded ? '' : ' collapsed';
 
-    html += '<div class="apr2-line" id="apr2-line-' + line.lineId + '">' +
-      '<div class="apr2-line-hdr' + hdrCls + '" onclick="apr2ToggleLine(\'' + line.lineId + '\')">' +
-        '<span class="apr2-line-name">' + esc(line.lineName) + '</span>' +
-        (linePending > 0
-          ? '<span class="apr2-line-pending">未承認 ' + linePending + '件</span>'
-          : '') +
-        '<span class="apr2-line-total">' + lineTotal + '件</span>' +
-        '<svg class="apr2-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
-      '</div>' +
-      '<div class="apr2-line-body' + bodyCls + '">';
+    html += '<div class="new-apr-section">';
+    // ラインセクションヘッダー
+    html += '<div class="new-apr-section-hdr">' +
+      '<span class="new-apr-section-name">' + esc(line.lineName) + '</span>' +
+      (linePending > 0
+        ? '<span class="new-apr-section-badge">未承認 ' + linePending + '件</span>'
+        : '') +
+    '</div>';
 
+    // 点検記録1件ずつカード表示
     lineEquips.forEach(function(equip) {
-      var ePending  = equip.items.filter(function(i){ return i.status === 'pending'; }).length;
       var eTotal    = equip.items.length;
-      var isExpEq   = apr2EquipState[equip.equipId] !== false;
-      var eHdrCls   = isExpEq ? '' : ' collapsed';
-      var eBodCls   = isExpEq ? '' : ' collapsed';
-      var hasPend   = ePending > 0;
-
-      html += '<div class="apr2-equip-card' + (hasPend ? ' has-pending' : '') + '">' +
-        '<div class="apr2-equip-hdr' + eHdrCls + '" onclick="apr2ToggleEquip(\'' + equip.equipId + '\')">' +
-          '<div class="apr2-equip-id-name">' +
-            '<div class="apr2-equip-id">' + esc(equip.equipId) + '</div>' +
-            '<div class="apr2-equip-name">' + esc(equip.equipName) + '</div>' +
-          '</div>' +
-          '<span class="apr2-equip-count">' + eTotal + '件</span>' +
-          (hasPend
-            ? '<div class="apr2-equip-status"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>未承認 ' + ePending + '/' + eTotal + '件</div>'
-            : '<div class="apr2-equip-status all-done"><svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>承認済み</div>') +
-          '<svg class="apr2-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
-        '</div>' +
-        '<div class="apr2-equip-body' + eBodCls + '">';
+      var eApproved = equip.items.filter(function(i){ return i.status === 'approved'; }).length;
 
       equip.items.forEach(function(insp) {
-        var isApproved = insp.status === 'approved';
         var isPending  = insp.status === 'pending';
-        var rowCls     = isPending ? ' is-pending-row' : (isApproved ? ' is-approved' : '');
-        var relTime    = apr2RelTime(insp.datetime);
+        var isApproved = insp.status === 'approved';
 
-        var tag = insp.typeKey === 'tenday'
-          ? '<span class="apr2-type-tag tenday">10日点検</span>'
-          : '<span class="apr2-type-tag monthly">月次点検</span>';
+        // 日時フォーマット（MM/DD HH:mm）
+        var dtStr = '';
+        if (insp.datetime) {
+          var dtMatch = String(insp.datetime).match(/(\d{1,2})[\/-](\d{1,2})[^\d](\d{2}:\d{2})/);
+          if (dtMatch) {
+            dtStr = dtMatch[1] + '/' + dtMatch[2] + ' ' + dtMatch[3];
+          } else {
+            dtStr = insp.datetime;
+          }
+        }
 
-        // 右側アクション
+        var progressHtml;
+        if (isApproved) {
+          progressHtml = '<span class="new-apr-meta-label">進捗：</span>' +
+            '<span class="new-apr-meta-approved">承認済み (' + eApproved + '/' + eTotal + ')</span>';
+        } else {
+          progressHtml = '<span class="new-apr-meta-label">進捗：</span>' +
+            '<span class="new-apr-meta-pending">承認待ち (' + eApproved + '/' + eTotal + ')</span>';
+        }
+
         var actionHtml;
         if (isPending) {
           actionHtml =
-            '<button class="apr2-approve-btn" onclick="event.stopPropagation();apr2Approve(\'' + insp.id + '\')">承認する</button>' +
-            '<svg class="apr2-row-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+            '<button class="new-apr-approve-btn" onclick="event.stopPropagation();apr2Approve(\'' + insp.id + '\')">承認する</button>';
         } else {
           actionHtml =
-            '<div class="apr2-check-done">' +
-              '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
-              '<span>承認済み</span>' +
-            '</div>' +
-            '<svg class="apr2-row-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+            '<div class="new-apr-approved-badge">' +
+              '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+              '承認済み' +
+            '</div>';
         }
 
-        // 詳細パネル（アコーディオン展開時）
-        var detailHtml =
-          '<div class="apr2-detail-panel" id="apr2-detail-' + insp.id + '">' +
-            '<div class="apr2-detail-inner">' +
-              '<div class="apr2-detail-item">' +
-                '<span class="apr2-detail-label">' +
-                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
-                  '検査日時' +
-                '</span>' +
-                '<span class="apr2-detail-val">' + (insp.datetime || '–') + '</span>' +
-              '</div>' +
-              '<div class="apr2-detail-item">' +
-                '<span class="apr2-detail-label">' +
-                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
-                  '検査者' +
-                '</span>' +
-                '<span class="apr2-detail-val">' + esc(insp.inspector || '–') + '</span>' +
-              '</div>' +
-              '<div class="apr2-detail-item">' +
-                '<span class="apr2-detail-label">' +
-                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
-                  '承認日時' +
-                '</span>' +
-                '<span class="apr2-detail-val' + (isApproved && insp.approvedAt ? '' : ' empty') + '">' + (isApproved ? (insp.approvedAt || '–') : '–') + '</span>' +
-              '</div>' +
-              '<div class="apr2-detail-item">' +
-                '<span class="apr2-detail-label">' +
-                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
-                  '承認者' +
-                '</span>' +
-                '<span class="apr2-detail-val' + (isApproved ? '' : ' empty') + '">' + (isApproved ? (esc(insp.approver) || '–') : '–') + '</span>' +
-              '</div>' +
-              '<div class="apr2-detail-close">' +
-                '<button class="apr2-detail-close-btn" onclick="event.stopPropagation();apr2ToggleRow(\'' + insp.id + '\')">' +
-                  '閉じる' +
-                  '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
-                '</button>' +
-              '</div>' +
-            '</div>' +
-          '</div>';
-
-        html += '<div class="apr2-insp-row' + rowCls + '" id="apr2-row-' + insp.id + '" onclick="apr2ToggleRow(\'' + insp.id + '\')">' +
-          '<div class="apr2-insp-left">' +
-            '<div class="apr2-insp-left-top">' + tag + '<span class="apr2-insp-name-text">' + esc(insp.inspector) + '</span></div>' +
-            '<div class="apr2-rel-time">' +
-              '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
-              relTime +
+        html += '<div class="new-apr-equip-card' + (isApproved ? ' is-approved' : '') + '" id="new-apr-card-' + insp.id + '">' +
+          '<div class="new-apr-card-info">' +
+            '<div class="new-apr-card-id">' + esc(equip.equipId) + '</div>' +
+            '<div class="new-apr-card-name">' + esc(equip.equipName) + '</div>' +
+            '<div class="new-apr-card-meta">' +
+              '<div class="new-apr-meta-item"><span class="new-apr-meta-label">点検担当：</span><span class="new-apr-meta-value">' + esc(insp.inspector || '') + '</span></div>' +
+              '<div class="new-apr-meta-item"><span class="new-apr-meta-label">点検日時：</span><span class="new-apr-meta-value">' + dtStr + '</span></div>' +
+              '<div class="new-apr-meta-item">' + progressHtml + '</div>' +
             '</div>' +
           '</div>' +
-          '<div class="apr2-action">' + actionHtml + '</div>' +
-        '</div>' +
-        detailHtml;
+          '<div class="new-apr-card-actions">' + actionHtml + '</div>' +
+        '</div>';
       });
-
-      html += '</div></div>'; // equip-body + equip-card
     });
 
-    html += '</div></div>'; // line-body + line
+    html += '</div>'; // new-apr-section
   });
 
   listEl.innerHTML = html;
@@ -12647,11 +13116,21 @@ function apr2GetAllLines() {
 function apr2ToggleLinePopup(e) {
   e.stopPropagation();
   var popup = document.getElementById('apr2-line-popup');
+  var btn   = document.getElementById('apr2-line-filter-btn');
   var isOpen = popup.classList.contains('open');
   if (!isOpen) {
     // ポップアップを開く前に一時選択を現在の絞り込みで初期化
     apr2TempLineFilter = apr2LineFilter.slice();
     apr2RenderLinePopupRows();
+    // fixed 位置に配置してoverflow clippingを回避
+    if (btn) {
+      var rect = btn.getBoundingClientRect();
+      popup.style.position = 'fixed';
+      popup.style.top  = (rect.bottom + 6) + 'px';
+      popup.style.left = 'auto';
+      popup.style.right = (window.innerWidth - rect.right) + 'px';
+      popup.style.zIndex = '9999';
+    }
     popup.classList.add('open');
     // 外側クリックで閉じる
     setTimeout(function() {
@@ -13883,7 +14362,8 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
   import {
     getFirestore, collection, doc,
     addDoc, setDoc, onSnapshot,
-    getDoc, query, orderBy, serverTimestamp
+    getDoc, getDocs, deleteDoc, writeBatch,
+    query, orderBy, where, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import {
     getAuth,
@@ -14140,8 +14620,12 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
   // ── 点検結果の保存 ──
   async function saveInspectionToFirestore(data) {
     try {
-      await addDoc(collection(db, "inspections"), { ...data, createdAt: serverTimestamp() });
-      console.log("Firestore保存成功: inspections");
+      // 【修正】addDoc→setDocに変更: 同一担当者・同一日の点検は常に上書き（重複ドキュメント蓄積を防止）
+      // ドキュメントIDを決定論的に生成: YYYY-MM-DD-<inspector>
+      var _safeInspector = (data.inspector || 'unknown').replace(/[\s\/.#$\[\]]/g, '_');
+      var _docId = data.year + '-' + String(data.month).padStart(2,'0') + '-' + String(data.day).padStart(2,'0') + '-' + _safeInspector;
+      await setDoc(doc(db, "inspections", _docId), { ...data, createdAt: serverTimestamp() });
+      console.log("Firestore保存成功: inspections", _docId);
     } catch (e) {
       console.error("Firestore保存エラー: inspections", e);
     }
@@ -14241,12 +14725,35 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
         };
       }).filter(r => r.year !== undefined && r.day !== undefined);
 
-      // localStorage に同期（管理者ダッシュボード・承認・月次点検表が参照）
-      localStorage.setItem('inspections', JSON.stringify(records));
+      // 【修正】localStorageを上書きせず、completedAt が新しい方を残してマージする
+      // 問題: onSnapshot がFirestoreデータでlocalStorageを丸ごと上書きすると、
+      //       Firestoreへの書き込みがまだ伝播していない場合に点検直後の新規レコードが消える
+      var _lsExisting = [];
+      try { _lsExisting = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(_e2) {}
+      var _mergedMap = {};
+      // まず既存localStorage（新しい点検データが含まれる可能性あり）を登録
+      _lsExisting.forEach(function(r) {
+        var _k = r.year + '-' + r.month + '-' + r.day + '-' + (r.inspector || '');
+        var _cur = _mergedMap[_k];
+        if (!_cur || (r.completedAt && (!_cur.completedAt || r.completedAt > _cur.completedAt))) {
+          _mergedMap[_k] = r;
+        }
+      });
+      // 次にFirestoreレコードを登録（より新しい場合のみ上書き）
+      records.forEach(function(r) {
+        var _k = r.year + '-' + r.month + '-' + r.day + '-' + (r.inspector || '');
+        var _cur = _mergedMap[_k];
+        if (!_cur || (r.completedAt && (!_cur.completedAt || r.completedAt > _cur.completedAt))) {
+          _mergedMap[_k] = r;
+        }
+      });
+      var _mergedRecords = Object.values(_mergedMap);
+      // マージ結果をlocalStorageに保存（管理者ダッシュボード・承認・月次点検表が参照）
+      localStorage.setItem('inspections', JSON.stringify(_mergedRecords));
 
-      // カレンダーへの反映（点検者ホーム画面）
+      // カレンダーへの反映（マージ済みレコードを渡す）
       if (typeof window._applyFirestoreSnapshots === 'function') {
-        window._applyFirestoreSnapshots(records);
+        window._applyFirestoreSnapshots(_mergedRecords);
       }
       // 管理者画面が開いていれば即時再描画
       if (typeof renderDashboard    === 'function') renderDashboard();
@@ -14259,6 +14766,31 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       console.log("Firestore同期: inspections", records.length + "件");
     } catch(e) { console.error("inspections同期エラー", e); }
   }, (e) => console.error("inspectionsリスナーエラー", e));
+
+  // ── ラインに紐付く inspections ドキュメントを一括削除 ──
+  window._deleteInspectionsByLine = async function(lineId, equipIds) {
+    try {
+      const snap = await getDocs(collection(db, "inspections"));
+      const batch = writeBatch(db);
+      let cnt = 0;
+      snap.forEach(function(d) {
+        var data = d.data();
+        // line[] / equipment[] どちらかにラインまたは設備IDが含まれているか判定
+        var lineArr  = data.line      || [];
+        var equipArr = data.equipment || data.equips || [];
+        var hitLine  = lineArr.some(function(l){ return l === lineId; });
+        var hitEquip = equipIds && equipIds.length > 0 && equipArr.some(function(e){ return equipIds.indexOf(e) >= 0; });
+        if (hitLine || hitEquip) {
+          batch.delete(d.ref);
+          cnt++;
+        }
+      });
+      if (cnt > 0) await batch.commit();
+      console.log('Firestore: inspections削除', cnt + '件 (lineId=' + lineId + ')');
+    } catch(e) {
+      console.error('Firestore inspections削除エラー', e);
+    }
+  };
 
   // グローバル公開
   window._firestoreSave             = firestoreSave;
@@ -14729,23 +15261,35 @@ function renderInspLineList() {
   // 【修正】buildCalendarと同じ方法でlocalStorageをALL_INSPECTION_RECORDSにマージする
   // 旧実装: localStorageを独立して読み込みALL_INSPECTION_RECORDSと別々に管理していたため
   // カレンダーと未点検リストの判定が不一致になるケースがあった（例: 5/20が未点検表示されない）
+  // 【修正2】重複時はcompletedAtが新しい方を優先（古いFirestoreデータよりlocalStorageの新しいデータを使う）
   if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
     var _lsRecs = [];
     try { _lsRecs = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
     _lsRecs.forEach(function(r) {
-      var dup = ALL_INSPECTION_RECORDS.some(function(m) {
-        return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
-      });
-      if (!dup) {
-        var hasNg = !!r.anomaly;
-        if (!hasNg && r.state) {
-          hasNg = Object.values(r.state).some(function(s) {
-            return ['daily','10days','monthly'].some(function(t) {
-              return s[t] && s[t].some(function(v) { return v === 'ng'; });
-            });
+      var hasNg = !!r.anomaly;
+      if (!hasNg && r.state) {
+        hasNg = Object.values(r.state).some(function(s) {
+          return ['daily','10days','monthly'].some(function(t) {
+            return s[t] && s[t].some(function(v) { return v === 'ng'; });
           });
+        });
+      }
+      var _existIdx = -1;
+      for (var _ei = 0; _ei < ALL_INSPECTION_RECORDS.length; _ei++) {
+        var _m = ALL_INSPECTION_RECORDS[_ei];
+        if (_m.year === r.year && _m.month === r.month && _m.day === r.day && _m.inspector === r.inspector) {
+          _existIdx = _ei; break;
         }
+      }
+      if (_existIdx === -1) {
         ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
+      } else {
+        var _existTime = ALL_INSPECTION_RECORDS[_existIdx].completedAt
+          ? new Date(ALL_INSPECTION_RECORDS[_existIdx].completedAt).getTime() : 0;
+        var _lsTime = r.completedAt ? new Date(r.completedAt).getTime() : 0;
+        if (_lsTime > _existTime) {
+          ALL_INSPECTION_RECORDS[_existIdx] = Object.assign({}, r, { anomaly: hasNg });
+        }
       }
     });
   }
