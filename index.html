@@ -838,6 +838,10 @@
   .cal-day.other-month .cal-day-status { color: #DDDDDD; }
   .cal-day.holiday { background: #F5F5F5; cursor: default; }
   .cal-day.holiday .cal-day-num { color: #BBBBBB; }
+  .cal-day.holiday.sun .cal-day-num { color: #BBBBBB; }    /* 【修正】sun セレクタによる上書きを防ぐ */
+  .cal-day.holiday.sat .cal-day-num { color: #BBBBBB; }    /* 【修正】sat セレクタによる上書きを防ぐ */
+  .cal-day.holiday.no-sched .cal-day-num { color: #BBBBBB; }  /* 【修正】管理者設定休日（元平日）が no-sched と共存する場合 */
+  .cal-day.holiday.pending .cal-day-num { color: #BBBBBB; }   /* 【修正】管理者設定休日が pending と共存する場合 */
   .cal-day.holiday .cal-day-status { color: #DDDDDD; }
   .cal-day.pending .cal-day-num { color: #000000; font-weight: 700; }  /* 未点検スケジュール日は目立たせる */
   .cal-day.done .cal-day-num { color: #000000; font-weight: 700; }
@@ -3339,6 +3343,10 @@
   #screen-home .cal-day.today.sat { color: inherit; }
   #screen-home .cal-day.other-month.sun { color: #f5b0ae; }
   #screen-home .cal-day.other-month.sat { color: #aabfef; }
+  /* 【修正】管理者設定で休日にした元平日の日付番号を薄グレーに（sun/sat/no-sched より優先） */
+  #screen-home .cal-day.holiday .cal-day-num,
+  #screen-home .cal-day.holiday.sun .cal-day-num,
+  #screen-home .cal-day.holiday.sat .cal-day-num { color: #BBBBBB !important; }
   .summary-card {
     grid-area: summary;
     margin: 24px 32px 24px 12px;
@@ -7495,11 +7503,18 @@
     const userRecs = ALL_INSPECTION_RECORDS.filter(function(r) {
       if (r.year !== calYear || r.month !== calMonth) return false;
       if (_calLineFilter !== 'all') {
-        var admEquips = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
-        var lineEquipIds = admEquips.filter(function(e){ return e.lineId === _calLineFilter; }).map(function(e){ return e.id; });
-        if (lineEquipIds.length > 0) {
-          var hasLineEquip = (r.equips || []).some(function(eid){ return lineEquipIds.indexOf(eid) >= 0; });
-          if (!hasLineEquip) return false;
+        // 新形式: lines / line フィールドがあればラインIDで直接判定（Firestore は 'line'）
+        var _rLineArrCal = (r.lines && r.lines.length > 0) ? r.lines : ((r.line && r.line.length > 0) ? r.line : null);
+        if (_rLineArrCal) {
+          if (_rLineArrCal.indexOf(_calLineFilter) < 0) return false;
+        } else {
+          // 旧形式フォールバック: 設備IDからライン所属を判定
+          var admEquips = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
+          var lineEquipIds = admEquips.filter(function(e){ return e.lineId === _calLineFilter; }).map(function(e){ return e.id; });
+          if (lineEquipIds.length > 0) {
+            var hasLineEquip = (r.equips || []).some(function(eid){ return lineEquipIds.indexOf(eid) >= 0; });
+            if (!hasLineEquip) return false;
+          }
         }
       }
       return true;
@@ -7570,7 +7585,7 @@
       // ・スケジュール外かつ未点検の日は—（no-sched）
       let statusSym = '—', statusClass = 'pending';
       const hasRecord = isDone || isAnomaly;
-      if (isHoliday) { statusSym = '—'; statusClass = 'pending'; }
+      if (isHoliday) { statusSym = ''; statusClass = 'pending'; }  // 【修正】休日は横棒なし（点検不要日のため）
       else if (isAnomaly)                  { statusSym = '×'; statusClass = 'anomaly'; }
       else if (isDone)                     { statusSym = '○'; statusClass = 'done'; }
       else if (isSchedDay)                 { statusSym = '—'; statusClass = 'pending'; }
@@ -7681,9 +7696,16 @@
       });
     })();
 
-    const existingRecord = ALL_INSPECTION_RECORDS.find(function(r) {
+    // 【修正】同日の全レコードを取得（複数インスペクター・複数回点検に対応）
+    var dayRecords = ALL_INSPECTION_RECORDS.filter(function(r) {
       if (r.year !== calYear || r.month !== calMonth || r.day !== d) return false;
       if (_calLineFilter2 !== 'all') {
+        // 新形式: lines / line フィールドがあればラインIDで直接判定（Firestore は 'line'）
+        var rLineArr = (r.lines && r.lines.length > 0) ? r.lines : ((r.line && r.line.length > 0) ? r.line : null);
+        if (rLineArr) {
+          return rLineArr.indexOf(_calLineFilter2) >= 0;
+        }
+        // 旧形式フォールバック: 設備IDからライン所属を判定
         var admEquips2 = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
         var lineEquipIds2 = admEquips2.filter(function(e){ return e.lineId === _calLineFilter2; }).map(function(e){ return e.id; });
         if (lineEquipIds2.length > 0) {
@@ -7692,6 +7714,117 @@
       }
       return true;
     });
+
+    // 複数レコードを1つにマージしてカレンダーの○×と完全一致させる
+    var existingRecord = null;
+    if (dayRecords.length === 1) {
+      existingRecord = dayRecords[0];
+    } else if (dayRecords.length > 1) {
+      var mergedEquips = [];
+      var mergedState  = {};
+      var mergedTypes  = { isDaily: false, is10Day: false, isMonthly: false };
+      var mergedAnomaly = false;
+      var latestAt = null;
+      var allInspectors = [];
+      var mergedLineInspectors = {}; // lineId -> [inspector名]
+      var _mergeAdmEquips = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
+      dayRecords.forEach(function(r) {
+        // equips を結合（重複排除）
+        (r.equips || []).forEach(function(eid) {
+          if (mergedEquips.indexOf(eid) < 0) mergedEquips.push(eid);
+        });
+        // state をマージ（各設備ごとに初出のデータを採用）
+        if (r.state) {
+          Object.keys(r.state).forEach(function(eid) {
+            if (!mergedState[eid]) {
+              mergedState[eid] = JSON.parse(JSON.stringify(r.state[eid]));
+            } else {
+              // 既存値が未入力のスロットを後続レコードの値で補完
+              ['daily','10days','monthly'].forEach(function(t) {
+                if (!r.state[eid][t]) return;
+                if (!mergedState[eid][t]) { mergedState[eid][t] = r.state[eid][t].slice(); return; }
+                r.state[eid][t].forEach(function(v, i) {
+                  if ((mergedState[eid][t][i] === null || mergedState[eid][t][i] === undefined) && v != null) {
+                    mergedState[eid][t][i] = v;
+                  }
+                });
+              });
+            }
+          });
+        }
+        // inspectionTypes は OR 合算
+        if (r.inspectionTypes) {
+          if (r.inspectionTypes.isDaily)   mergedTypes.isDaily   = true;
+          if (r.inspectionTypes.is10Day)   mergedTypes.is10Day   = true;
+          if (r.inspectionTypes.isMonthly) mergedTypes.isMonthly = true;
+        }
+        // anomaly はいずれか1件でもあれば true
+        if (r.anomaly) mergedAnomaly = true;
+        // 最新の completedAt
+        if (r.completedAt && (!latestAt || r.completedAt > latestAt)) latestAt = r.completedAt;
+        // 全体点検者リスト
+        if (r.inspector && allInspectors.indexOf(r.inspector) < 0) allInspectors.push(r.inspector);
+        // ライン別点検者マップを構築（completedAt が新しいレコードの点検者を優先）
+        if (r.inspector) {
+          // このレコードが対象とするラインを特定（r.lines / r.line 両方対応）
+          var rLineIds = [];
+          if (r.lines && r.lines.length > 0) {
+            rLineIds = r.lines;
+          } else if (r.line && r.line.length > 0) {
+            rLineIds = r.line;
+          } else {
+            // 旧形式: equips から lineId を引く
+            (r.equips || []).forEach(function(eid) {
+              var admEq = _mergeAdmEquips.find(function(e){ return e.id === eid; });
+              if (admEq && admEq.lineId && rLineIds.indexOf(admEq.lineId) < 0) rLineIds.push(admEq.lineId);
+            });
+          }
+          var rCompletedAt = r.completedAt || 0;
+          rLineIds.forEach(function(lid) {
+            // そのラインの最新レコードの点検者のみ保持
+            if (!mergedLineInspectors[lid] || rCompletedAt >= mergedLineInspectors[lid]._at) {
+              mergedLineInspectors[lid] = { name: r.inspector, _at: rCompletedAt };
+            }
+          });
+        }
+      });
+      // lineInspectors を { lineId: inspector名 } 形式に変換
+      var lineInspectorNames = {};
+      Object.keys(mergedLineInspectors).forEach(function(lid) {
+        lineInspectorNames[lid] = mergedLineInspectors[lid].name;
+      });
+      existingRecord = {
+        year: calYear, month: calMonth, day: d,
+        anomaly: mergedAnomaly,
+        equips: mergedEquips,
+        state: mergedState,
+        inspectionTypes: mergedTypes,
+        completedAt: latestAt,
+        inspector: allInspectors.join(' / '),
+        lineInspectors: lineInspectorNames
+      };
+    }
+
+    // 【追加】未点検ラインの絞り込みフィルターが特定ラインの場合、そのラインの設備のみに絞る
+    if (existingRecord && _calLineFilter2 !== 'all') {
+      var _admEquipsAll = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
+      var _filterLineEquipIds = _admEquipsAll
+        .filter(function(e) { return e.lineId === _calLineFilter2; })
+        .map(function(e) { return e.id; });
+      if (_filterLineEquipIds.length > 0) {
+        var _filteredEquips = (existingRecord.equips || []).filter(function(eid) {
+          return _filterLineEquipIds.indexOf(eid) >= 0;
+        });
+        // lines フィールドも絞る
+        var _filteredLines = (existingRecord.lines || []).filter(function(lid) {
+          return lid === _calLineFilter2;
+        });
+        existingRecord = Object.assign({}, existingRecord, {
+          equips: _filteredEquips,
+          lines: _filteredLines.length > 0 ? _filteredLines : [_calLineFilter2]
+        });
+      }
+    }
 
     if (existingRecord) {
       // 点検済み → 結果を表示
@@ -7717,10 +7850,15 @@
     if (record.inspectionTypes && record.inspectionTypes.isMonthly) typeNames.push('1ヶ月点検');
 
     var totalOk = 0, totalNg = 0, totalItems = 0;
+    // 【修正】inspectionTypes に応じたスロットのみカウント（ライン別詳細と整合させる）
+    var _recTypes = record.inspectionTypes || {};
+    var _activeSlots = ['daily'];
+    if (_recTypes.is10Day)   _activeSlots.push('10days');
+    if (_recTypes.isMonthly) _activeSlots.push('monthly');
     (record.equips || []).forEach(function(eqId) {
       var s = (record.state || {})[eqId];
       if (!s) return;
-      ['daily','10days','monthly'].forEach(function(t) {
+      _activeSlots.forEach(function(t) {
         (s[t] || []).forEach(function(v) {
           totalItems++;
           if (v === 'ok' || v === 'na') totalOk++;
@@ -8001,7 +8139,7 @@
                 '<span>点検項目数：' + lItems + '項目</span>' +
                 '<span>正常：<b class="ok">' + lOk + '</b> 件</span>' +
                 '<span>異常：<b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> 件</span>' +
-                '<span>担当者：<b style="color:var(--text)">' + (record.inspector || '—') + '</b></span>' +
+                '<span>点検者：<b style="color:var(--text)">' + ((record.lineInspectors && record.lineInspectors[lineId]) || record.inspector || '—') + '</b></span>' +
               '</div>' +
               '<div class="pc-res-detail-chevron"><svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></div>' +
             '</div>' +
@@ -9134,6 +9272,7 @@
       day: selectedCalDay || now.getDate(),
       anomaly: hasAnomaly,
       equips: selectedEquips,
+      lines: (typeof selectedLineIds !== 'undefined' && selectedLineIds.length > 0) ? selectedLineIds.slice() : null,
       inspectionTypes: { ...inspectionTypes },
       state: JSON.parse(JSON.stringify(state)),
       completedAt: now.toISOString(),
@@ -14386,27 +14525,31 @@ function initInspLineTabs() {
   var tabsEl = document.getElementById('insp-line-tabs');
   if (!tabsEl || !allLines.length) return;
 
-  // フィルターを「すべて」にリセット
-  _inspLineFilter = 'all';
+  // 現在のフィルターが表示ライン一覧に含まれるか確認。含まれなければ 'all' にリセット
+  var _prevFilter = _inspLineFilter;
+  var _filterStillValid = _prevFilter === 'all' || lines.some(function(l){ return l.id === _prevFilter; });
+  if (!_filterStillValid) _inspLineFilter = 'all';
 
   // タブを作り直す（「すべて」ボタンを先頭に追加）
   tabsEl.innerHTML = '';
   var allBtn = document.createElement('button');
   allBtn.id = 'insp-tab-all';
-  allBtn.className = 'insp-line-tab active';
+  allBtn.className = 'insp-line-tab' + (_inspLineFilter === 'all' ? ' active' : '');
   allBtn.textContent = 'すべて';
   allBtn.setAttribute('data-lineid', 'all');
   allBtn.onclick = function() { setInspLineFilter('all'); };
   tabsEl.appendChild(allBtn);
   lines.forEach(function(ln) {
     var btn = document.createElement('button');
-    btn.className = 'insp-line-tab';
+    btn.className = 'insp-line-tab' + (ln.id === _inspLineFilter ? ' active' : '');
     btn.textContent = ln.name || ln.id;
     btn.setAttribute('data-lineid', ln.id);
     btn.onclick = function() { setInspLineFilter(ln.id); };
     tabsEl.appendChild(btn);
   });
   renderInspLineList();
+  // フィルターが変わった場合のみカレンダーを再描画
+  if (_inspLineFilter !== _prevFilter && typeof buildCalendar === 'function') buildCalendar();
 }
 
 function setInspLineFilter(filterId) {
@@ -14509,6 +14652,12 @@ function renderInspLineList() {
       return r.year === yr && r.month === mo0 && r.day === dy;
     });
     return dayRecs.some(function(r) {
+      // 新形式: lines / line フィールドがあればラインIDで直接判定（Firestore は 'line'）
+      var _rLineArrSched = (r.lines && r.lines.length > 0) ? r.lines : ((r.line && r.line.length > 0) ? r.line : null);
+      if (_rLineArrSched) {
+        return _rLineArrSched.indexOf(s.lineId) >= 0;
+      }
+      // 旧形式フォールバック: 設備IDからライン所属を判定
       return (r.equips || []).some(function(eid) {
         return lineEquipIds.indexOf(eid) >= 0;
       });
