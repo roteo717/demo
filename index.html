@@ -7718,7 +7718,22 @@
     // 複数レコードを1つにマージしてカレンダーの○×と完全一致させる
     var existingRecord = null;
     if (dayRecords.length === 1) {
-      existingRecord = dayRecords[0];
+      var _sr = dayRecords[0];
+      // 単一レコードでも lineInspectors を構築（モバイル含む表示に使用）
+      var _srLineIds = (_sr.lines && _sr.lines.length > 0) ? _sr.lines
+                     : (_sr.line  && _sr.line.length  > 0) ? _sr.line
+                     : (function() {
+                         var _a = (typeof ADM !== 'undefined' && ADM && ADM.equips) ? ADM.equips : [];
+                         var _ids = [];
+                         (_sr.equips || []).forEach(function(eid) {
+                           var eq = _a.find(function(e){ return e.id === eid; });
+                           if (eq && eq.lineId && _ids.indexOf(eq.lineId) < 0) _ids.push(eq.lineId);
+                         });
+                         return _ids;
+                       })();
+      var _srLineInspectors = {};
+      _srLineIds.forEach(function(lid) { _srLineInspectors[lid] = _sr.inspector || ''; });
+      existingRecord = Object.assign({}, _sr, { lineInspectors: _srLineInspectors });
     } else if (dayRecords.length > 1) {
       var mergedEquips = [];
       var mergedState  = {};
@@ -7951,7 +7966,7 @@
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + mobTotalItems + '</div><div class="mob-res-stat-lbl">点検項目数</div></div>' +
       '</div>' +
       '<div class="mob-res-info-grid">' +
-        '<div class="mob-res-info-label">検査者</div><div class="mob-res-info-val">' + (record.inspector || '—') + '</div>' +
+        '<div class="mob-res-info-label">点検者</div><div class="mob-res-info-val">' + (record.inspector || '—') + '</div>' +
         '<div class="mob-res-info-label">完了日時</div><div class="mob-res-info-val">' + (completedStr || '—') + '</div>' +
         '<div class="mob-res-info-label">点検方法</div><div class="mob-res-info-val">' + typeNames.join(' / ') + '</div>' +
         (elapsedStr ? '<div class="mob-res-info-label">所要時間</div><div class="mob-res-info-val">' + elapsedStr + '</div>' : '') +
@@ -7986,7 +8001,8 @@
         '<div class="mob-res-line-stats">' +
           '<span>正常 <b class="ok">' + lOk + '</b> 件</span>' +
           '<span>異常 <b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> 件</span>' +
-        '</div>';
+        '</div>' +
+        '<div class="mob-res-line-inspector" style="font-size:12px;color:var(--text-sub);margin-top:6px;">点検者：<b style="color:var(--text)">' + ((record.lineInspectors && record.lineInspectors[lineId]) || record.inspector || '—') + '</b></div>';
       sections.appendChild(card);
     });
 
