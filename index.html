@@ -4949,7 +4949,7 @@
 <style>
   /* ── 承認一覧 タイトル行 ── */
   .apr2-title-row {
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; flex-direction: row; align-items: center; gap: 8px;
     margin-bottom: 14px;
   }
   .apr2-title {
@@ -4989,19 +4989,22 @@
   .apr2-tab-badge.pending-badge { background: #FF6B35; color: #fff; }
   .apr2-tab.active .apr2-tab-badge.pending-badge { background: #FF6B35; color: #fff; }
 
-  /* ── ライン絞り込みボタン（全幅1行） ── */
+  /* ── ライン絞り込みボタン（右寄せコンパクト） ── */
   .apr2-line-filter-wrap {
     position: relative;
     display: flex;
-    width: 100%;
+    width: auto;
+    margin-left: auto;
+    flex-shrink: 0;
   }
+  .apr2-filter-tabs { flex: 1; min-width: 0; }
   .apr2-line-filter-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600;
-    cursor: pointer; border: 1.5px solid var(--border);
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border);
     background: #fff; color: var(--text-sub);
     transition: all 0.15s; white-space: nowrap;
-    font-family: inherit; width: 100%;
+    font-family: inherit; width: auto;
   }
   .apr2-line-filter-btn:active { opacity: 0.75; }
   .apr2-line-filter-btn.has-filter {
@@ -5376,12 +5379,12 @@
   #adm-panel-approval .apr2-line-filter-btn {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
-    border-radius: 12px;
-    padding: 11px 16px;
-    font-size: 13px;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
     font-weight: 500;
     color: #64748B;
-    gap: 8px;
+    gap: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     transition: background 0.15s;
   }
@@ -6939,7 +6942,7 @@
           <span class="uinsp-total-badge" id="uinsp-total-badge">0件</span>
         </div>
         <!-- 月ナビゲーター -->
-        <div class="uinsp-month-nav">
+        <div class="uinsp-month-nav" style="margin-left:auto;">
           <button class="uinsp-month-btn" onclick="uinspChangeMonth(-1)">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
@@ -6949,20 +6952,35 @@
           </button>
         </div>
       </div>
-      <!-- 検索 -->
-      <div class="uinsp-search-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="uinsp-search" class="uinsp-search-input" placeholder="ライン名で検索" oninput="renderUninspPanel()">
-      </div>
-      <!-- フィルタータブ -->
-      <div class="uinsp-filter-tabs">
-        <button class="uinsp-ftab active" id="uinsp-ftab-all"      onclick="setUinspFilter('all')">すべて</button>
-        <button class="uinsp-ftab"        id="uinsp-ftab-overdue"  onclick="setUinspFilter('overdue')">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          期限超過
-        </button>
-        <button class="uinsp-ftab"        id="uinsp-ftab-today"    onclick="setUinspFilter('today')">今日まで</button>
-
+      <!-- フィルタータブ + 絞り込みボタン（承認パネルと同じ行構成） -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+        <div class="uinsp-filter-tabs" style="flex:1;min-width:0;margin-bottom:0;">
+          <button class="uinsp-ftab active" id="uinsp-ftab-all"      onclick="setUinspFilter('all')">すべて</button>
+          <button class="uinsp-ftab"        id="uinsp-ftab-overdue"  onclick="setUinspFilter('overdue')">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            期限超過
+          </button>
+          <button class="uinsp-ftab"        id="uinsp-ftab-today"    onclick="setUinspFilter('today')">今日まで</button>
+        </div>
+        <!-- ライン絞り込み（タブ行右端） -->
+        <div class="uinsp-line-filter-wrap" id="uinsp-line-filter-wrap" style="flex-shrink:0;">
+          <button class="apr2-line-filter-btn" id="uinsp-line-filter-btn" onclick="uinspToggleLinePopup(event)">
+            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            絞り込み
+            <span class="apr2-line-filter-badge" id="uinsp-line-filter-badge" style="display:none"></span>
+            <svg class="apr2-line-filter-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="apr2-line-popup" id="uinsp-line-popup" style="right:0;left:auto;">
+            <div class="apr2-line-popup-title">
+              <span>ライン絞り込み</span>
+              <span class="apr2-line-popup-selall" onclick="uinspSelectAllLines(event)">すべて選択</span>
+            </div>
+            <div id="uinsp-line-popup-rows"></div>
+            <div class="apr2-line-popup-footer">
+              <button class="apr2-line-popup-apply" onclick="uinspApplyLineFilter()">適用する</button>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- ラインカードリスト -->
       <div id="uinsp-line-list"></div>
@@ -7964,12 +7982,6 @@
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + mobLineOrder.length + '</div><div class="mob-res-stat-lbl">ライン</div></div>' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + (record.equips || []).length + '</div><div class="mob-res-stat-lbl">設備数</div></div>' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + mobTotalItems + '</div><div class="mob-res-stat-lbl">点検項目数</div></div>' +
-      '</div>' +
-      '<div class="mob-res-info-grid">' +
-        '<div class="mob-res-info-label">点検者</div><div class="mob-res-info-val">' + (record.inspector || '—') + '</div>' +
-        '<div class="mob-res-info-label">完了日時</div><div class="mob-res-info-val">' + (completedStr || '—') + '</div>' +
-        '<div class="mob-res-info-label">点検方法</div><div class="mob-res-info-val">' + typeNames.join(' / ') + '</div>' +
-        (elapsedStr ? '<div class="mob-res-info-label">所要時間</div><div class="mob-res-info-val">' + elapsedStr + '</div>' : '') +
       '</div>';
     sections.appendChild(summaryEl);
 
@@ -11108,8 +11120,7 @@ function renderUninspPanel() {
   }
   var inspections = (typeof ALL_INSPECTION_RECORDS !== 'undefined') ? ALL_INSPECTION_RECORDS : [];
   var favIds     = (typeof loadFavLines === 'function') ? loadFavLines() : [];
-  var searchVal  = (document.getElementById('uinsp-search') || {}).value || '';
-  searchVal = searchVal.trim().toLowerCase();
+  var _uinspSelectedLines = window._uinspSelectedLines || [];
 
   // 対象月の最終日（過去月は月末まで、当月は昨日まで）
   var monthEndDay = new Date(selY, selM + 1, 0).getDate();
@@ -11165,7 +11176,7 @@ function renderUninspPanel() {
 
   // フィルター適用
   var filtered = lineData.filter(function(ld) {
-    if (searchVal && ld.name.toLowerCase().indexOf(searchVal) < 0) return false;
+    if (_uinspSelectedLines.length > 0 && _uinspSelectedLines.indexOf(ld.id) < 0) return false;
     if (_uinspFilter === 'overdue') return ld.maxOverdueDays > 0;
     if (_uinspFilter === 'today')   return ld.hasTodayDue;
     if (_uinspFilter === 'fav')     return ld.isFav;
@@ -11323,6 +11334,94 @@ function renderUninspPanel() {
 }
 window.renderUninspPanel = renderUninspPanel;
 window.setUinspFilter    = setUinspFilter;
+
+/* ─── 未点検ライン絞り込みポップアップ ─── */
+window._uinspSelectedLines = [];
+window._uinspTempLines     = [];
+
+window.uinspToggleLinePopup = function(e) {
+  e.stopPropagation();
+  var popup = document.getElementById('uinsp-line-popup');
+  if (!popup) return;
+  var isOpen = popup.classList.contains('open');
+  if (!isOpen) {
+    // ポップアップ行を構築
+    var lines = (ADM && ADM.lines) ? ADM.lines : [];
+    window._uinspTempLines = window._uinspSelectedLines.slice();
+    var rowsEl = document.getElementById('uinsp-line-popup-rows');
+    if (rowsEl) {
+      rowsEl.innerHTML = lines.map(function(ln) {
+        var checked = window._uinspTempLines.indexOf(ln.id) >= 0;
+        return '<div class="apr2-line-popup-row" onclick="uinspToggleLineChk(event,\'' + ln.id + '\')">' +
+          '<div class="apr2-line-chk' + (checked ? ' checked' : '') + '" id="uinsp-chk-' + ln.id + '">' +
+            '<svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+          '</div>' +
+          '<span class="apr2-line-popup-name">' + ln.name + '</span>' +
+        '</div>';
+      }).join('');
+    }
+    popup.classList.add('open');
+    setTimeout(function() { document.addEventListener('click', uinspClosePopupOutside); }, 0);
+  } else {
+    popup.classList.remove('open');
+  }
+};
+
+function uinspClosePopupOutside(e) {
+  var wrap = document.getElementById('uinsp-line-filter-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    var popup = document.getElementById('uinsp-line-popup');
+    if (popup) popup.classList.remove('open');
+    document.removeEventListener('click', uinspClosePopupOutside);
+  }
+}
+
+window.uinspToggleLineChk = function(e, lineId) {
+  e.stopPropagation();
+  var idx = window._uinspTempLines.indexOf(lineId);
+  if (idx >= 0) window._uinspTempLines.splice(idx, 1);
+  else window._uinspTempLines.push(lineId);
+  var chkEl = document.getElementById('uinsp-chk-' + lineId);
+  if (chkEl) chkEl.className = 'apr2-line-chk' + (idx < 0 ? ' checked' : '');
+};
+
+window.uinspSelectAllLines = function(e) {
+  e.stopPropagation();
+  var lines = (ADM && ADM.lines) ? ADM.lines : [];
+  var allSelected = lines.every(function(ln) { return window._uinspTempLines.indexOf(ln.id) >= 0; });
+  if (allSelected) {
+    window._uinspTempLines = [];
+  } else {
+    window._uinspTempLines = lines.map(function(ln) { return ln.id; });
+  }
+  var rowsEl = document.getElementById('uinsp-line-popup-rows');
+  if (rowsEl) rowsEl.querySelectorAll('.apr2-line-chk').forEach(function(el) {
+    var lid = el.id.replace('uinsp-chk-', '');
+    var checked = window._uinspTempLines.indexOf(lid) >= 0;
+    el.className = 'apr2-line-chk' + (checked ? ' checked' : '');
+  });
+};
+
+window.uinspApplyLineFilter = function() {
+  window._uinspSelectedLines = window._uinspTempLines.slice();
+  var popup = document.getElementById('uinsp-line-popup');
+  if (popup) popup.classList.remove('open');
+  document.removeEventListener('click', uinspClosePopupOutside);
+  // バッジ更新
+  var badge = document.getElementById('uinsp-line-filter-badge');
+  var btn   = document.getElementById('uinsp-line-filter-btn');
+  if (badge) {
+    if (window._uinspSelectedLines.length > 0) {
+      badge.textContent = window._uinspSelectedLines.length;
+      badge.style.display = 'inline-flex';
+      if (btn) btn.classList.add('has-filter');
+    } else {
+      badge.style.display = 'none';
+      if (btn) btn.classList.remove('has-filter');
+    }
+  }
+  renderUninspPanel();
+};
 
 /* ─ init ─ */
 (function(){ admLoad(); })();
@@ -14271,9 +14370,9 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
 .uinsp-month-btn:disabled { opacity:0.35; cursor:default; }
 .uinsp-month-label { font-size:14px; font-weight:700; color:var(--text); min-width:84px; text-align:center; }
 .uinsp-total-badge { background:#FF6D00; color:#fff; border-radius:20px; padding:2px 10px; font-size:12px; font-weight:700; }
-.uinsp-search-wrap { display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0 12px; height:40px; margin-bottom:12px; }
-.uinsp-search-wrap svg { width:16px; height:16px; stroke:var(--text-sub); flex-shrink:0; }
-.uinsp-search-input { flex:1; border:none; outline:none; font-size:14px; color:var(--text); background:transparent; font-family:inherit; }
+.uinsp-search-wrap { display:flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:0 10px; height:32px; margin-bottom:10px; }
+.uinsp-search-wrap svg { width:14px; height:14px; stroke:var(--text-sub); flex-shrink:0; }
+.uinsp-search-input { flex:1; border:none; outline:none; font-size:12px; color:var(--text); background:transparent; font-family:inherit; }
 .uinsp-filter-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
 .uinsp-ftab { display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); font-size:12px; font-weight:600; color:var(--text-sub); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
 .uinsp-ftab svg { stroke:var(--text-sub); }
