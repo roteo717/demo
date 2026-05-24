@@ -1288,8 +1288,64 @@
   .pc-inspect-sidebar { display: none; }
   .pc-inspect-main { display: contents; }
   .pc-inspect-header { display: none; } /* モバイルでは非表示、1024px+で上書き */
-  .equip-section-left-col { display: none; } /* モバイルでは非表示 */
+  .equip-section-left-col { display: flex; } /* モバイルでも表示 */
   .pc-inspect-unified-header { display: none; } /* モバイルでは非表示 */
+  .pc-col-bulk-btn { display: none; } /* モバイルでは非表示 */
+  .inspect-progress-wrap { display: none; } /* モバイルでは非表示 */
+
+  /* ── モバイル：2カラムレイアウト適用 ── */
+  #screen-inspect .equip-section {
+    display: flex !important;
+    flex-direction: row !important;
+    border-bottom: 2px solid #D6E4FF !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+  #screen-inspect .equip-section-left-col {
+    width: 130px !important; min-width: 130px !important;
+    border-right: 1px solid #D6E4FF;
+    display: flex !important; flex-direction: column;
+    justify-content: flex-start; align-items: stretch;
+    padding: 0; background: #EEF4FF;
+  }
+  #screen-inspect .equip-section-left-inner {
+    padding: 14px 12px 8px;
+  }
+  #screen-inspect .equip-left-id {
+    font-size: 10px; color: #999;
+  }
+  #screen-inspect .equip-left-name {
+    font-size: 13px; font-weight: 700; color: var(--blue); word-break: break-all;
+  }
+  #screen-inspect .equip-left-progress {
+    font-size: 11px; color: #888; margin-top: 4px;
+  }
+  #screen-inspect .equip-section-right-col {
+    flex: 1; min-width: 0;
+  }
+  #screen-inspect .equip-left-bulk-btn {
+    margin: 8px 10px 12px;
+    font-size: 11px;
+    padding: 4px 8px;
+    height: auto;
+    white-space: nowrap;
+  }
+  #screen-inspect .equip-section-header { display: none !important; }
+  #screen-inspect .pc-col-hdr { display: flex !important; justify-content: flex-end; padding: 6px 10px; border-bottom: 1px solid #EEF0F4; }
+  .mob-right-bulk-btn {
+    height: 28px; padding: 0 10px;
+    border-radius: 6px; border: 1.5px solid #D0D5DD;
+    background: #F8F9FA; font-size: 12px; font-weight: 600; color: #555;
+    white-space: nowrap; cursor: pointer;
+  }
+  .mob-right-bulk-btn:active { background: #DDE2EA; transform: scale(0.95); }
+  #screen-inspect .check-row {
+    padding: 0 10px !important;
+    justify-content: space-between !important;
+  }
+  #screen-inspect .check-row .tri-btns {
+    margin-left: auto !important;
+  }
   #pc-result-header { display: flex; }
 
   .inspect-top-actions {
@@ -1694,10 +1750,10 @@
   .pc-res-summary-title-block { flex-shrink: 1; min-width: 0; }
   .pc-res-summary-status { white-space: normal; font-size: 14px; }
   .pc-res-summary-sub { white-space: normal; font-size: 11px; }
-  .pc-res-stats-row { gap: 0; flex: unset; width: 100%; justify-content: space-around; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 8px 0; }
+  .pc-res-stats-row { gap: 0; flex: unset; width: 100%; justify-content: space-around; padding: 8px 0; }
   .pc-res-stat-num { font-size: 18px; }
   .pc-res-stat-lbl { font-size: 10px; }
-  .pc-res-stat-divider { display: none; }
+  .pc-res-stat-divider { display: block; }
   .pc-res-stat-item { flex: 1; }
   .pc-res-summary-right { min-width: unset; width: 100%; box-sizing: border-box; }
   /* モバイル: アコーディオンのメタ情報は非表示 */
@@ -1736,7 +1792,7 @@
   .pc-result-body {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 32px 100px;
+    padding: 24px 16px 24px;
     max-width: 1280px;
     width: 100%;
     margin: 0 auto;
@@ -2010,6 +2066,248 @@
     color: var(--text-sub);
     border-top: 1px solid #F0F0F0;
   }
+
+  /* ══ ライン一覧 行スタイル (Image 2) ══ */
+  .res-line-list-card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .res-line-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #E0E0E0;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .res-line-row:last-child { border-bottom: none; }
+  .res-line-row:hover { background: #FAFAFA; }
+  .res-line-inline-detail + .res-line-row,
+  .res-line-row + .res-line-row {
+    border-top: 3px solid #E8EAED;
+  }
+  .res-line-row-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 800; flex-shrink: 0;
+  }
+  .res-line-row-name {
+    font-size: 15px; font-weight: 700; color: var(--text);
+    flex-shrink: 0; min-width: 100px;
+  }
+  .res-line-row-metas {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 6px 48px;
+    flex: 1;
+    align-items: center;
+    justify-content: start;
+  }
+  .res-line-row-meta {
+    display: flex; flex-direction: row; align-items: center; gap: 5px;
+  }
+  .res-line-row-meta-label {
+    font-size: 12px; color: var(--text-sub); font-weight: 400;
+    white-space: nowrap;
+  }
+  .res-line-row-meta-label::after { content: ':'; }
+  .res-line-row-meta-val {
+    font-size: 13px; color: var(--text); font-weight: 600;
+    display: flex; align-items: center; gap: 4px;
+    white-space: nowrap;
+  }
+  .res-line-row-meta-avatar {
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 800; flex-shrink: 0;
+  }
+  .res-line-row-counts {
+    display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+  }
+  .res-line-row-count {
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+  }
+  .res-line-row-count-num {
+    font-size: 20px; font-weight: 800; line-height: 1;
+  }
+  .res-line-row-count-num.ok    { color: #2E7D32; }
+  .res-line-row-count-num.ng-v  { color: var(--red); }
+  .res-line-row-count-num.zero  { color: var(--text); }
+  .res-line-row-count-lbl { font-size: 10px; color: var(--text-sub); font-weight: 500; }
+  .res-line-row-badge {
+    font-size: 12px; font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+  }
+  .res-line-row-badge.ok { background: var(--green-light); color: var(--green); }
+  .res-line-row-badge.ng { background: var(--red-light);   color: var(--red);   }
+  .res-line-row-chevron {
+    width: 18px; height: 18px; flex-shrink: 0; color: var(--text-sub);
+    transition: transform 0.22s cubic-bezier(.4,0,.2,1);
+  }
+  .res-line-row.open .res-line-row-chevron { transform: rotate(90deg); }
+  /* Inline expandable detail */
+  .res-line-inline-detail {
+    display: none;
+    border-top: 1px solid #F0F2F5;
+    background: #FAFBFC;
+    animation: resDetailFadeIn 0.2s ease;
+  }
+  @keyframes resDetailFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .res-line-inline-detail.open { display: block; }
+  .res-line-inline-detail table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  .res-line-inline-detail thead tr { background: #F4F6F8; border-bottom: 1px solid #E8EAED; }
+  .res-line-inline-detail th {
+    padding: 9px 16px; text-align: left;
+    font-size: 11px; font-weight: 600; color: var(--text-sub);
+  }
+  .res-line-inline-detail td {
+    padding: 11px 16px; border-bottom: 1px solid #F0F2F5; color: var(--text);
+  }
+  .res-line-inline-detail tr:last-child td { border-bottom: none; }
+  .res-line-inline-detail td.eq-num { color: var(--text-sub); font-size: 11px; }
+
+  /* Mobile expandable */
+  .mob-res-line-row { cursor: pointer; user-select: none; }
+  .mob-res-line-row-chevron {
+    width: 18px; height: 18px; color: var(--text-sub); flex-shrink: 0;
+    transition: transform 0.22s cubic-bezier(.4,0,.2,1);
+    margin-left: auto;
+  }
+  .mob-res-line-row.open .mob-res-line-row-chevron { transform: rotate(90deg); }
+  .mob-res-line-inline-detail {
+    display: none;
+    border-top: 1px solid #F0F2F5;
+    background: #FAFBFC;
+  }
+  .mob-res-line-inline-detail.open { display: block; }
+  /* Detail accordion icon */
+  .pc-res-detail-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; flex-shrink: 0;
+  }
+  /* Table row arrow */
+  .pc-res-tbl-arrow { color: var(--text-sub); font-size: 14px; }
+
+  /* Mobile line list rows */
+  .mob-res-line-list-card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    margin: 0 16px 10px;
+  }
+  .mob-res-line-row {
+    display: flex; flex-direction: column;
+    padding: 14px 16px;
+    border-bottom: 1px solid #F0F2F5;
+    gap: 10px;
+  }
+  .mob-res-line-row:last-child { border-bottom: none; }
+  .mob-res-line-row-top {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mob-res-line-row-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; flex-shrink: 0;
+  }
+  .mob-res-line-row-name { font-size: 15px; font-weight: 700; color: var(--text); flex: 1; }
+  .mob-res-line-row-badge {
+    font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px;
+    display: flex; align-items: center; gap: 4px;
+    flex-shrink: 0;
+  }
+  .mob-res-line-row-badge.ok { background: var(--green-light); color: var(--green); }
+  .mob-res-line-row-badge.ng { background: var(--red-light);   color: var(--red);   }
+  .mob-res-line-row-bottom {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .mob-res-line-row-meta { display: flex; flex-direction: column; gap: 2px; min-width: 80px; }
+  .mob-res-line-row-meta-lbl { font-size: 10px; color: var(--text-sub); font-weight: 500; }
+  .mob-res-line-row-meta-val {
+    font-size: 12px; color: var(--text); font-weight: 600;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .mob-res-line-row-meta-avatar {
+    width: 16px; height: 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 800;
+  }
+  .mob-res-line-row-counts {
+    display: flex; align-items: center; gap: 16px; margin-left: auto; align-self: flex-end;
+  }
+  .mob-res-line-row-count { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .mob-res-line-row-count-num { font-size: 18px; font-weight: 800; line-height: 1; }
+  .mob-res-line-row-count-num.ok   { color: #2E7D32; }
+  .mob-res-line-row-count-num.ng-v { color: var(--red); }
+  .mob-res-line-row-count-num.zero { color: var(--text); }
+  .mob-res-line-row-count-lbl { font-size: 10px; color: var(--text-sub); font-weight: 500; }
+  /* Mobile detail accordion updated style */
+  .mob-res-detail-section {
+    margin: 0 16px 10px;
+    background: var(--card);
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  .mob-res-detail-section.has-ng { border-color: var(--red-mid); }
+  .mob-res-detail-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid #F0F2F5;
+  }
+  .mob-res-detail-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; flex-shrink: 0;
+  }
+  .mob-res-detail-header-name { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
+  .mob-res-detail-header-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; flex-wrap: wrap;
+  }
+  .mob-res-detail-header-meta .ok { color: #2E7D32; font-weight: 700; }
+  .mob-res-detail-header-meta .ng { color: var(--red); font-weight: 700; }
+  .mob-res-detail-tbl-row {
+    display: flex; align-items: center;
+    padding: 11px 16px;
+    border-bottom: 1px solid #F5F5F5;
+    gap: 10px;
+  }
+  .mob-res-detail-tbl-row:last-child { border-bottom: none; }
+  .mob-res-detail-tbl-id { font-size: 11px; color: var(--text-sub); width: 44px; flex-shrink: 0; }
+  .mob-res-detail-tbl-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+  .mob-res-detail-tbl-items { font-size: 12px; color: var(--text-sub); flex-shrink: 0; }
+  .mob-res-detail-tbl-stat { font-size: 13px; font-weight: 700; flex-shrink: 0; width: 28px; text-align: center; }
+  .mob-res-detail-tbl-stat.ok { color: #2E7D32; }
+  .mob-res-detail-tbl-stat.ng { color: var(--red); }
+  .mob-res-detail-tbl-chip {
+    font-size: 11px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .mob-res-detail-tbl-chip.ok { background: var(--green-light); color: var(--green); }
+  .mob-res-detail-tbl-chip.ng { background: var(--red-light);   color: var(--red);   }
+  .mob-res-detail-tbl-arrow { color: #C0C8D4; font-size: 14px; flex-shrink: 0; }
 
 
   @media (min-width: 1024px) {
@@ -3715,7 +4013,7 @@
     display: flex; flex-direction: column;
     background: #fff;
     overflow-y: unset;
-    padding-bottom: 80px;
+    padding-bottom: 72px;
   }
 
   /* メインヘッダー行（統合ヘッダーに置き換え済み） */
@@ -8640,10 +8938,10 @@
       '</div>';
     sections.appendChild(summaryEl);
 
-    // ── ライン別サマリー ──
+    // ── ライン一覧（横行リストスタイル）──
     var lineSumTitle = document.createElement('div');
     lineSumTitle.className = 'mob-res-section-title';
-    lineSumTitle.textContent = 'ライン別サマリー';
+    lineSumTitle.textContent = 'ライン一覧';
     sections.appendChild(lineSumTitle);
 
     function getMobLineName(lineId) {
@@ -8651,88 +8949,81 @@
       return ln ? (ln.name || lineId) : lineId;
     }
 
-    mobLineOrder.forEach(function(lineId) {
+    var _mobListColors = {
+      'L1':['#2F6BFF','#EEF4FF'],'L2':['#2E7D32','#E8F5E9'],
+      'L3':['#E65100','#FFF3E0'],'L4':['#7B1FA2','#F3E5F5'],
+      'L5':['#00838F','#E0F7FA'],'__none__':['#607D8B','#ECEFF1']
+    };
+
+    var listCard = document.createElement('div');
+    listCard.className = 'mob-res-line-list-card';
+
+    mobLineOrder.forEach(function(lineId, _rowIdx) {
       var equips = mobLineGroups[lineId];
       var lOk = 0, lNg = 0, lItems = 0;
       equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
       var lHasNg = lNg > 0;
       var lineName = lineId === '__none__' ? '未分類' : getMobLineName(lineId);
-      var _mobColors = {
-        'L1':['#2F6BFF','#EEF4FF'],'L2':['#2E7D32','#E8F5E9'],
-        'L3':['#E65100','#FFF3E0'],'L4':['#7B1FA2','#F3E5F5'],
-        'L5':['#00838F','#E0F7FA'],'__none__':['#607D8B','#ECEFF1']
-      };
-      var cP = _mobColors[lineId] || ['#607D8B','#ECEFF1'];
+      var cP = _mobListColors[lineId] || ['#607D8B','#ECEFF1'];
       var initM = lineName.replace(/ライン/,'').slice(0,1) || 'L';
       var inspN = (record.lineInspectors && record.lineInspectors[lineId]) || record.inspector || '—';
       var compT = completedAt
         ? (String(completedAt.getHours()).padStart(2,'0') + ':' + String(completedAt.getMinutes()).padStart(2,'0'))
         : '—';
-      var card = document.createElement('div');
-      card.className = 'nrl-card' + (lHasNg ? ' nrl-ng' : '');
-      card.style.margin = '0 16px 10px';
-      card.innerHTML =
-        '<div class="nrl-card-header">' +
-          '<div class="nrl-card-icon" style="background:' + cP[1] + ';color:' + cP[0] + '">' + initM + '</div>' +
-          '<div class="nrl-card-title">' + lineName + '</div>' +
-          '<div class="nrl-card-id">#' + lineId.toUpperCase() + '</div>' +
+      var compDateStr = completedAt
+        ? ((completedAt.getMonth()+1) + '/' + completedAt.getDate() + ' ' + compT)
+        : '—';
+      var detailId = 'mob-line-detail-' + lineId.replace(/[^a-z0-9]/gi,'_') + '_' + _rowIdx;
+      var row = document.createElement('div');
+      row.className = 'mob-res-line-row';
+      var badgeIconOk = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      var badgeIconNg = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+      var chevronSvg = '<svg class="mob-res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+      row.innerHTML =
+        '<div class="mob-res-line-row-top">' +
+
+          '<div class="mob-res-line-row-name">' + lineName + '</div>' +
+          '<div class="mob-res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
+          chevronSvg +
         '</div>' +
-        '<div class="nrl-card-rows">' +
-          '<div class="nrl-card-row"><svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 3H8v4h8V3z"/></svg><span class="nrl-row-label">設備数</span><span class="nrl-row-val">' + equips.length + '台</span></div>' +
-          '<div class="nrl-card-row"><svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span class="nrl-row-label">点検項目数</span><span class="nrl-row-val">' + lItems + '項目</span></div>' +
-          '<div class="nrl-card-row"><svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span class="nrl-row-label">点検者</span><div class="nrl-contact"><span class="nrl-contact-avatar" style="background:' + cP[1] + ';color:' + cP[0] + '">' + inspN.charAt(0) + '</span><span class="nrl-row-val">' + inspN + '</span></div></div>' +
-        '</div>' +
-        '<div class="nrl-card-tags">' +
-          '<span class="nrl-tag ' + (lHasNg ? 'nrl-tag-ng' : 'nrl-tag-ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span>' +
-          '<span class="nrl-tag nrl-tag-type">毎日点検</span>' +
-        '</div>' +
-        '<div class="nrl-card-footer">' +
-          '<div class="nrl-footer-counts">' +
-            '<span class="nrl-count-ok">✓ ' + lOk + '件</span>' +
-            '<span class="' + (lNg > 0 ? 'nrl-count-ng' : 'nrl-count-neutral') + '">' + (lNg > 0 ? '⚠ ' : '— ') + lNg + '件</span>' +
+        '<div class="mob-res-line-row-bottom">' +
+          '<div class="mob-res-line-row-meta"><div class="mob-res-line-row-meta-lbl">設備数</div><div class="mob-res-line-row-meta-val">' + equips.length + '台</div></div>' +
+          '<div class="mob-res-line-row-meta"><div class="mob-res-line-row-meta-lbl">点検項目数</div><div class="mob-res-line-row-meta-val">' + lItems + '項目</div></div>' +
+          '<div class="mob-res-line-row-meta"><div class="mob-res-line-row-meta-lbl">点検者</div><div class="mob-res-line-row-meta-val">' + inspN + '</div></div>' +
+          '<div class="mob-res-line-row-meta"><div class="mob-res-line-row-meta-lbl">完了日時</div><div class="mob-res-line-row-meta-val">' + compDateStr + '</div></div>' +
+          '<div class="mob-res-line-row-counts">' +
+            '<div class="mob-res-line-row-count"><div class="mob-res-line-row-count-num ok">' + lOk + '</div><div class="mob-res-line-row-count-lbl">正常</div></div>' +
+            '<div class="mob-res-line-row-count"><div class="mob-res-line-row-count-num ' + (lNg > 0 ? 'ng-v' : 'zero') + '">' + lNg + '</div><div class="mob-res-line-row-count-lbl">異常</div></div>' +
           '</div>' +
-          '<span class="nrl-footer-time">' + compT + '</span>' +
         '</div>';
-      sections.appendChild(card);
-    });
-
-    // ── 異常内容のみ表示 ──
-    if (hasNg) {
-      var ngTitle = document.createElement('div');
-      ngTitle.className = 'mob-res-section-title';
-      ngTitle.textContent = '異常内容';
-      sections.appendChild(ngTitle);
-
-      mobLineOrder.forEach(function(lineId) {
-        var equips = mobLineGroups[lineId];
-        equips.forEach(function(eq) {
-          if (!eq.ng) return;
-          var acc = document.createElement('div');
-          acc.className = 'mob-res-ng-accordion';
-          var equipIconSvg = '<svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
-          var hdr = document.createElement('div');
-          hdr.className = 'mob-res-ng-header';
-          hdr.innerHTML =
-            '<div class="mob-res-ng-icon">' + equipIconSvg + '</div>' +
-            '<div class="mob-res-ng-info">' +
-              '<div class="mob-res-ng-id">' + eq.eqId + '</div>' +
-              '<div class="mob-res-ng-name">' + eq.eqName + '</div>' +
-            '</div>' +
-            '<span class="mob-res-ng-chip">⚠ 異常 ' + eq.ng + '件</span>';
-          var body = document.createElement('div');
-          body.className = 'mob-res-ng-body';
-          eq.ngItems.forEach(function(itemName) {
-            var row = document.createElement('div');
-            row.className = 'mob-res-ng-item-row';
-            row.innerHTML = '<span class="mob-res-ng-item-name">' + itemName + '</span><span class="mob-res-ng-badge">✕ 異常</span>';
-            body.appendChild(row);
-          });
-          acc.appendChild(hdr);
-          acc.appendChild(body);
-          sections.appendChild(acc);
-        });
+      row.setAttribute('data-detail', detailId);
+      row.addEventListener('click', function() {
+        var r = this;
+        var d = document.getElementById(r.getAttribute('data-detail'));
+        r.classList.toggle('open');
+        if (d) d.classList.toggle('open');
       });
-    }
+      listCard.appendChild(row);
+
+      // Inline detail panel
+      var detDiv = document.createElement('div');
+      detDiv.className = 'mob-res-line-inline-detail';
+      detDiv.id = detailId;
+      detDiv.innerHTML = equips.map(function(e) {
+        return '<div class="mob-res-detail-tbl-row">' +
+          '<div class="mob-res-detail-tbl-id">' + e.eqId + '</div>' +
+          '<div class="mob-res-detail-tbl-name">' + e.eqName + '</div>' +
+          '<div class="mob-res-detail-tbl-items">' + e.items + '項目</div>' +
+          '<div class="mob-res-detail-tbl-stat ok">' + e.ok + '</div>' +
+          '<div class="mob-res-detail-tbl-stat ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + e.ng + '</div>' +
+          '<div class="mob-res-detail-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '⚠ 異常あり' : '✓ 正常') + '</div>' +
+          '<div class="mob-res-detail-tbl-arrow">›</div>' +
+        '</div>';
+      }).join('');
+      listCard.appendChild(detDiv);
+    });
+    sections.appendChild(listCard);
+
 
     var endSpacer = document.createElement('div');
     endSpacer.style.height = '32px';
@@ -8801,7 +9092,7 @@
           '</div>' +
         '</div>';
 
-      // ─ ライン別サマリーカード（CRM スタイル）─
+      // ─ ライン一覧（横行リストスタイル + インライン詳細）─
       var _nrlColors = {
         'L1': ['#2F6BFF','#EEF4FF'], 'L2': ['#2E7D32','#E8F5E9'],
         'L3': ['#E65100','#FFF3E0'], 'L4': ['#7B1FA2','#F3E5F5'],
@@ -8809,8 +9100,8 @@
         '__none__': ['#607D8B','#ECEFF1']
       };
       var _dnJp = ['日','月','火','水','木','金','土'];
-      var lineSummaryHtml = '<div class="pc-res-section-title">ライン別サマリー</div><div class="nrl-grid">';
-      lineOrder.forEach(function(lineId) {
+      var lineSummaryHtml = '<div class="pc-res-section-title">ライン一覧</div><div class="res-line-list-card">';
+      lineOrder.forEach(function(lineId, _li) {
         var equips = lineGroups[lineId];
         var lOk = 0, lNg = 0, lItems = 0;
         equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
@@ -8819,114 +9110,54 @@
         var cPair = _nrlColors[lineId] || ['#607D8B','#ECEFF1'];
         var initials = lineName.replace(/ライン/,'').slice(0,1) || 'L';
         var inspName = (record.lineInspectors && record.lineInspectors[lineId]) || record.inspector || '—';
-        var typeTagsHtml = '<span class="nrl-tag nrl-tag-type">毎日点検</span>';
-        if (recTypes.is10Day)   typeTagsHtml += '<span class="nrl-tag nrl-tag-type">10日毎</span>';
-        if (recTypes.isMonthly) typeTagsHtml += '<span class="nrl-tag nrl-tag-type">1ヶ月</span>';
         var compTime = completedAt
           ? (String(completedAt.getHours()).padStart(2,'0') + ':' + String(completedAt.getMinutes()).padStart(2,'0'))
           : '—';
         var compDateStr = completedAt
           ? ((completedAt.getMonth()+1) + '/' + completedAt.getDate() + '（' + _dnJp[completedAt.getDay()] + '）' + compTime)
           : '—';
+        var badgeIconOk = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        var badgeIconNg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+        var pcDetailId = 'pc-line-inline-' + lineId.replace(/[^a-z0-9]/gi,'_') + '_' + _li;
+        var eqTableRows = equips.map(function(e) {
+          return '<tr>' +
+            '<td class="eq-num">' + e.eqId + '</td>' +
+            '<td><strong>' + e.eqName + '</strong></td>' +
+            '<td style="text-align:center">' + e.items + '項目</td>' +
+            '<td class="pc-res-tbl-ok" style="text-align:center">' + e.ok + '</td>' +
+            '<td class="' + (e.ng > 0 ? 'pc-res-tbl-ng' : '') + '" style="text-align:center">' + e.ng + '</td>' +
+            '<td style="text-align:center"><span class="pc-res-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '⚠ 異常あり' : '✓ 正常') + '</span></td>' +
+            '<td class="pc-res-tbl-arrow" style="text-align:center">›</td>' +
+          '</tr>';
+        }).join('');
         lineSummaryHtml +=
-          '<div class="nrl-card' + (lHasNg ? ' nrl-ng' : '') + '">' +
-            '<div class="nrl-card-header">' +
-              '<div class="nrl-card-icon" style="background:' + cPair[1] + ';color:' + cPair[0] + '">' + initials + '</div>' +
-              '<div class="nrl-card-title">' + lineName + '</div>' +
-              '<div class="nrl-card-id">#' + lineId.toUpperCase() + '</div>' +
+          '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
+
+            '<div class="res-line-row-name">' + lineName + '</div>' +
+            '<div class="res-line-row-metas">' +
+              '<div class="res-line-row-meta"><div class="res-line-row-meta-label">設備数</div><div class="res-line-row-meta-val">' + equips.length + '台</div></div>' +
+              '<div class="res-line-row-meta"><div class="res-line-row-meta-label">点検項目数</div><div class="res-line-row-meta-val">' + lItems + '項目</div></div>' +
+              '<div class="res-line-row-meta"><div class="res-line-row-meta-label">点検者</div><div class="res-line-row-meta-val">' + inspName + '</div></div>' +
+              '<div class="res-line-row-meta"><div class="res-line-row-meta-label">完了日時</div><div class="res-line-row-meta-val">' + compDateStr + '</div></div>' +
             '</div>' +
-            '<div class="nrl-card-rows">' +
-              '<div class="nrl-card-row">' +
-                '<svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 3H8v4h8V3z"/></svg>' +
-                '<span class="nrl-row-label">設備数</span>' +
-                '<span class="nrl-row-val">' + equips.length + '台</span>' +
-              '</div>' +
-              '<div class="nrl-card-row">' +
-                '<svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>' +
-                '<span class="nrl-row-label">点検項目数</span>' +
-                '<span class="nrl-row-val">' + lItems + '項目</span>' +
-              '</div>' +
-              '<div class="nrl-card-row">' +
-                '<svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>' +
-                '<span class="nrl-row-label">点検者</span>' +
-                '<div class="nrl-contact">' +
-                  '<span class="nrl-contact-avatar" style="background:' + cPair[1] + ';color:' + cPair[0] + '">' + inspName.charAt(0) + '</span>' +
-                  '<span class="nrl-row-val">' + inspName + '</span>' +
-                '</div>' +
-              '</div>' +
-              '<div class="nrl-card-row">' +
-                '<svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
-                '<span class="nrl-row-label">完了日時</span>' +
-                '<span class="nrl-row-val">' + compDateStr + '</span>' +
-              '</div>' +
+            '<div class="res-line-row-counts">' +
+              '<div class="res-line-row-count"><div class="res-line-row-count-num ok">' + lOk + '</div><div class="res-line-row-count-lbl">正常</div></div>' +
+              '<div class="res-line-row-count"><div class="res-line-row-count-num ' + (lNg > 0 ? 'ng-v' : 'zero') + '">' + lNg + '</div><div class="res-line-row-count-lbl">異常</div></div>' +
             '</div>' +
-            '<div class="nrl-card-tags">' +
-              '<span class="nrl-tag ' + (lHasNg ? 'nrl-tag-ng' : 'nrl-tag-ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span>' +
-              typeTagsHtml +
-            '</div>' +
-            '<div class="nrl-card-footer">' +
-              '<div class="nrl-footer-counts">' +
-                '<span class="nrl-count-ok">' +
-                  '<svg style="width:13px;height:13px;stroke:#2E7D32;fill:none;stroke-width:2;vertical-align:middle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>' +
-                  ' ' + lOk + '件' +
-                '</span>' +
-                '<span class="' + (lNg > 0 ? 'nrl-count-ng' : 'nrl-count-neutral') + '">' +
-                  '<svg style="width:13px;height:13px;stroke:' + (lNg > 0 ? '#E53935' : '#94A3B8') + ';fill:none;stroke-width:2;vertical-align:middle" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
-                  ' ' + lNg + '件' +
-                '</span>' +
-              '</div>' +
-              '<span class="nrl-footer-time">' + compTime + '</span>' +
-            '</div>' +
+            '<div class="res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
+            '<svg class="res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+          '</div>' +
+          '<div class="res-line-inline-detail open" id="' + pcDetailId + '">' +
+            '<table>' +
+              '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:72px"><col style="width:72px"><col style="width:120px"><col style="width:36px"></colgroup>' +
+              '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th><th></th></tr></thead>' +
+              '<tbody>' + eqTableRows + '</tbody>' +
+            '</table>' +
           '</div>';
       });
       lineSummaryHtml += '</div>';
 
-      // ─ ライン別詳細アコーディオン ─
-      var lineDetailHtml = '<div class="pc-res-section-title">ライン別の詳細</div>';
-      lineOrder.forEach(function(lineId, idx) {
-        var equips = lineGroups[lineId];
-        var lOk = 0, lNg = 0, lItems = 0;
-        equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
-        var lHasNg = lNg > 0;
-        var lineName = lineId === '__none__' ? '未分類' : getLineName(lineId);
-        var accId = 'pc-res-acc-' + idx;
-        // 常に展開
-        var isOpen = ' open';
-        lineDetailHtml +=
-          '<div class="pc-res-detail-accordion' + (lHasNg ? ' has-ng' : '') + isOpen + '" id="' + accId + '">' +
-            '<div class="pc-res-detail-header" onclick="togglePcResAcc(\'' + accId + '\')">' +
-              '<div class="pc-res-detail-acc-name">' + lineName + '&nbsp;&nbsp;<span class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '" style="font-size:11px;">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span></div>' +
-              '<div class="pc-res-detail-acc-meta">' +
-                '<span>設備数：' + equips.length + '台</span>' +
-                '<span>点検項目数：' + lItems + '項目</span>' +
-                '<span>正常：<b class="ok">' + lOk + '</b> 件</span>' +
-                '<span>異常：<b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> 件</span>' +
-                '<span>点検者：<b style="color:var(--text)">' + ((record.lineInspectors && record.lineInspectors[lineId]) || record.inspector || '—') + '</b></span>' +
-              '</div>' +
-              '<div class="pc-res-detail-chevron"><svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></div>' +
-            '</div>' +
-            '<div class="pc-res-detail-body">' +
-              '<table class="pc-res-detail-table">' +
-                '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:80px"><col style="width:80px"><col style="width:100px"></colgroup>' +
-                '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th></tr></thead>' +
-                '<tbody>' +
-                  equips.map(function(e) {
-                    return '<tr>' +
-                      '<td class="eq-num">' + e.eqId + '</td>' +
-                      '<td><strong>' + e.eqName + '</strong></td>' +
-                      '<td class="eq-count" style="text-align:center">' + e.items + '項目</td>' +
-                      '<td class="pc-res-tbl-ok" style="text-align:center">' + e.ok + '</td>' +
-                      '<td class="' + (e.ng > 0 ? 'pc-res-tbl-ng' : '') + '" style="text-align:center">' + e.ng + '</td>' +
-                      '<td style="text-align:center"><span class="pc-res-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '⚠ 異常' : '✓ 正常') + '</span></td>' +
-                    '</tr>';
-                  }).join('') +
-                '</tbody>' +
-              '</table>' +
-            '</div>' +
-          '</div>';
-      });
-
-      pcBody.innerHTML = summaryHtml + lineSummaryHtml + lineDetailHtml;
+      pcBody.innerHTML = summaryHtml + lineSummaryHtml;
     }
 
     showScreen('screen-result');
@@ -8935,6 +9166,12 @@
   function togglePcResAcc(id) {
     var el = document.getElementById(id);
     if (el) el.classList.toggle('open');
+  }
+
+  function toggleResLineDetail(detailId, rowEl) {
+    var detEl = document.getElementById(detailId);
+    if (detEl) detEl.classList.toggle('open');
+    if (rowEl) rowEl.classList.toggle('open');
   }
 
   /* 再点検：同じ日付で通常フローを開始 */
@@ -9704,13 +9941,14 @@
         <div class="equip-header-name-row">
           <div class="equip-name-only">${eq.name}</div>
           <button class="equip-bulk-na-btn" onclick="setBulkNa('${eq.id}')" title="全項目をーに設定">
-            一括「ー」入力
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            <span>一括ー</span>
           </button>
         </div>
         <div class="pc-col-hdr">
           <div class="pc-col-spacer"></div>
           <div class="pc-col-ng-wrap">
-            <button class="pc-col-bulk-btn" onclick="setBulkNa('${eq.id}')">一括「ー」入力</button>
+            <button class="mob-right-bulk-btn" onclick="setBulkNa('${eq.id}')">一括「ー」入力</button>
           </div>
           <div class="pc-col-spacer"></div>
         </div>
@@ -9818,6 +10056,8 @@
     // メインカウント更新
     const mainCount = document.getElementById('pc-inspect-main-count');
     if (mainCount) mainCount.textContent = `${done}/${total}項目完了`;
+    const mainCountMob = document.getElementById('pc-inspect-main-count-mobile');
+    if (mainCountMob) mainCountMob.textContent = `${done}/${total}項目完了`;
   }
 
   function setBulkNa(equipId) {
@@ -9845,6 +10085,7 @@
       if (newSection) oldSection.replaceWith(newSection);
     }
     updateSectionStatus(equipId);
+    updateInspectProgress();
   }
 
   function updateSectionStatus(equipId) {
@@ -9884,6 +10125,7 @@
       if (inspectionTypes.isMonthly) state[id]['monthly'] = state[id]['monthly'].map(v => v === null ? 'ok' : v);
     });
     buildInspectSections(); // re-render to show changes
+    updateInspectProgress();
   }
 
   function saveTemp() {
