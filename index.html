@@ -1284,7 +1284,12 @@
 
   /* ─── INSPECTION INPUT ─── */
   #screen-inspect { background: var(--bg); }
+  .pc-inspect-body { display: block; }
+  .pc-inspect-sidebar { display: none; }
+  .pc-inspect-main { display: contents; }
   .pc-inspect-header { display: none; } /* モバイルでは非表示、1024px+で上書き */
+  .equip-section-left-col { display: none; } /* モバイルでは非表示 */
+  .pc-inspect-unified-header { display: none; } /* モバイルでは非表示 */
   #pc-result-header { display: flex; }
 
   .inspect-top-actions {
@@ -1741,28 +1746,29 @@
   .pc-res-summary-card {
     background: var(--card);
     border-radius: 14px;
-    border: 1.5px solid #A5D6A7;
+    border: 1.5px solid #D6E4FF;
     padding: 18px 24px;
     display: flex;
     align-items: center;
     gap: 16px;
     margin-bottom: 24px;
     flex-wrap: nowrap;
+    box-shadow: 0 2px 8px rgba(47,107,255,0.06);
   }
   .pc-res-summary-card.has-ng {
     border-color: var(--red-mid);
     background: #FFF9F9;
+    box-shadow: none;
   }
   .pc-res-summary-icon {
     width: 44px; height: 44px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    background: #C8F0CB;
+    background: var(--blue);
   }
-  .pc-res-summary-card.has-ng .pc-res-summary-icon { background: #FFCDD2; }
-  .pc-res-summary-icon svg { width: 26px; height: 26px; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke: #2E7D32; }
-  .pc-res-summary-card.has-ng .pc-res-summary-icon svg { stroke: var(--red); }
+  .pc-res-summary-card.has-ng .pc-res-summary-icon { background: var(--red); }
+  .pc-res-summary-icon svg { width: 24px; height: 24px; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke: #fff; }
   .pc-res-summary-title-block {
     display: flex;
     flex-direction: column;
@@ -1775,7 +1781,7 @@
   .pc-res-summary-status {
     font-size: 15px;
     font-weight: 800;
-    color: #2E7D32;
+    color: var(--text);
     white-space: nowrap;
   }
   .pc-res-summary-card.has-ng .pc-res-summary-status { color: var(--red); }
@@ -2090,6 +2096,70 @@
   .mob-res-ng-item-row:last-child { border-bottom: none; }
   .mob-res-ng-item-name { flex: 1; font-size: 13px; color: var(--text); }
   .mob-res-ng-badge { font-size: 11px; font-weight: 700; color: var(--red); background: #FFCDD2; border-radius: 6px; padding: 2px 8px; }
+
+  /* ══════════════════════════════════════════
+     点検結果：CRM スタイル ラインカード
+     ══════════════════════════════════════════ */
+  .nrl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .nrl-card {
+    background: #FFFFFF;
+    border-radius: 14px;
+    border: 1px solid #E5E9EF;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.025);
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 0;
+    transition: box-shadow 0.15s;
+  }
+  .nrl-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
+  .nrl-card.nrl-ng { border-color: #FBBCBC; }
+  /* ─ header ─ */
+  .nrl-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .nrl-card-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 800; flex-shrink: 0;
+  }
+  .nrl-card-title { flex: 1; font-size: 15px; font-weight: 700; color: #1A202C; letter-spacing: -0.2px; }
+  .nrl-card-id { font-size: 12px; color: #94A3B8; font-weight: 500; white-space: nowrap; }
+  /* ─ rows ─ */
+  .nrl-card-rows {
+    display: flex; flex-direction: column; gap: 7px;
+    border-top: 1px solid #F0F2F5; padding-top: 11px; margin-bottom: 11px;
+  }
+  .nrl-card-row { display: flex; align-items: center; gap: 8px; min-height: 20px; }
+  .nrl-row-icon { width: 14px; height: 14px; stroke: #A0AEC0; fill: none; flex-shrink: 0; }
+  .nrl-row-label { font-size: 12px; color: #94A3B8; font-weight: 500; width: 68px; flex-shrink: 0; }
+  .nrl-row-val { font-size: 13px; color: #2D3748; font-weight: 500; }
+  .nrl-contact { display: flex; align-items: center; gap: 7px; }
+  .nrl-contact-avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 800; flex-shrink: 0;
+  }
+  /* ─ tags ─ */
+  .nrl-card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 11px; }
+  .nrl-tag { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .nrl-tag-ok   { background: #E8F5E9; color: #2E7D32; }
+  .nrl-tag-ng   { background: #FFEBEE; color: #E53935; }
+  .nrl-tag-type { background: #EEF4FF; color: #2F6BFF; }
+  /* ─ footer ─ */
+  .nrl-card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid #F0F2F5; padding-top: 10px;
+  }
+  .nrl-footer-counts { display: flex; align-items: center; gap: 12px; }
+  .nrl-count-ok { font-size: 12px; color: #2E7D32; font-weight: 600; display: flex; align-items: center; gap: 3px; }
+  .nrl-count-ng { font-size: 12px; color: #E53935; font-weight: 600; display: flex; align-items: center; gap: 3px; }
+  .nrl-count-neutral { font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 3px; }
+  .nrl-footer-time { font-size: 12px; color: #94A3B8; }
+
+  /* モバイル：nrl-grid は1カラム */
+  .nrl-grid { grid-template-columns: 1fr; }
 
   .result-banner {
     margin: 12px 16px 0;
@@ -2805,7 +2875,7 @@
     font-size: 11px; font-weight: 700; color: var(--blue);
     margin-bottom: 1px; letter-spacing: 0.04em;
   }
-  #screen-inspect .equip-name-only { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  #screen-inspect .equip-name-only { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; display: none !important; }
   #screen-inspect .insp-type-divider { padding: 8px 16px 4px; }
 
   /* ⑦ チェックボタン・行を PC サイズに */
@@ -3414,38 +3484,31 @@
   .line-section-label { grid-column: 1 / -1; }
 
   /* ─── 点検入力 / 確認 ─── */
-  #screen-inspect, #screen-confirm { background: #FFFFFF; min-height: calc(100vh - 40px); padding-bottom: 0; }
+  #screen-inspect, #screen-confirm { background: #E8EEF7; min-height: calc(100vh - 40px); padding-bottom: 0; }
   #screen-inspect > .bottom-action {
     margin-top: auto;
     position: static !important;
     box-shadow: none !important;
   }
 
-  /* PC header */
+  /* PC header — both screens identical */
   .pc-inspect-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 40px 18px;
+    padding: 0 40px;
+    height: 64px;
     background: #FFFFFF;
     border-bottom: 1px solid #EBEBEB;
+    flex-shrink: 0;
   }
   .pc-inspect-header-left { display: flex; flex-direction: row; align-items: center; gap: 12px; }
   .pc-inspect-back {
     width: 34px; height: 34px; border-radius: 8px; border: 1px solid #E0E0E0;
     background: #F8F8F8; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: var(--text); transition: background 0.15s;
+    cursor: pointer; color: var(--text); transition: background 0.15s; flex-shrink: 0;
   }
   .pc-inspect-back:hover { background: #EBEBEB; }
-  .pc-inspect-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); }
-  .pc-inspect-subtitle { font-size: 13px; color: var(--text-sub); font-weight: 400; margin: 0; }
-  .pc-inspect-header-left { display: flex; flex-direction: row; align-items: center; gap: 12px; }
-  .pc-inspect-back {
-    width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.7);
-    background: rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: var(--text); transition: background 0.15s;
-  }
-  .pc-inspect-back:hover { background: rgba(255,255,255,0.8); }
-  .pc-inspect-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; color: var(--text); }
-  .pc-inspect-subtitle { font-size: 13px; color: var(--text-sub); font-weight: 400; margin: 0; }
+  .pc-inspect-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); line-height: 1.2; }
+  .pc-inspect-subtitle { font-size: 12px; color: var(--text-sub); font-weight: 400; margin: 2px 0 0; line-height: 1; }
   .pc-result-nav { padding: 24px 32px 0; gap: 12px; }
   .pc-result-nav-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
   .pc-result-nav-back { width: 34px; height: 34px; }
@@ -3483,149 +3546,344 @@
   /* Date banner - hidden on PC */
   .inspect-date-banner { display: none !important; }
 
-  /* Sections: single centered column */
-  #inspect-sections {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 48px;
-    row-gap: 0;
-    padding: 0 40px 8px;
-    max-width: 1100px; width: 100%; margin: 0 auto; box-sizing: border-box;
-    align-items: start;
-  }
+  /* Page background */
+  #screen-inspect { background: #fff !important; }
 
-  /* Flat minimal card — no shadow, no border-radius */
-  .equip-section {
-    margin: 0; height: auto;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    border: none !important;
-    border-bottom: 1px solid #EBEBEB !important;
-    overflow: visible;
-    background: transparent;
-    padding: 32px 0 28px;
-  }
-  .equip-section.has-anomaly { border-bottom-color: #EBEBEB !important; box-shadow: none !important; }
-
-  /* Equipment header */
-  #screen-inspect .equip-icon-lg { display: none; }
-  #screen-inspect .equip-section-header {
-    padding: 0 0 16px;
-    background: transparent;
-    border-bottom: 1.5px solid #111;
-    margin-bottom: 0;
-    display: flex; flex-direction: column; gap: 4px;
-  }
-  #screen-inspect .equip-header-top { display: none; }
-  #screen-inspect .equip-header-badges { display: none; }
-  #screen-inspect .equip-monitor-badge { display: none; }
-  #screen-inspect .equip-id-chip {
-    font-size: 11px; color: #AAAAAA; font-weight: 400; letter-spacing: 0.5px;
-    display: block; margin-bottom: 2px;
-  }
-  #screen-inspect .equip-id-label { display: none; }
-
-  /* Name + button on same row */
-  .equip-header-name-row {
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
-    width: 100%;
-  }
-
-  /* Large bold equipment name */
-  #screen-inspect .equip-name-only {
-    font-size: 36px; font-weight: 800; letter-spacing: -1px;
-    color: #111; line-height: 1.1; flex: 1;
-  }
-
-  /* Bulk NA button — aligned to tri-btns column width */
-  #screen-inspect .equip-bulk-na-btn {
-    background: #fff; border: 1.5px solid #DDDDDD; font-size: 12px; color: #555; font-weight: 500;
-    cursor: pointer; padding: 6px 0; height: auto;
-    width: 120px; min-width: 120px;
-    border-radius: 6px; white-space: nowrap;
-    display: flex; align-items: center; justify-content: center; gap: 0;
-    transition: border-color 0.15s, background 0.15s;
-    flex-shrink: 0;
-  }
-  #screen-inspect .equip-bulk-na-btn:hover { border-color: #111; color: #111; background: #F8F8F8; }
-  #screen-inspect .equip-header-main { display: none; }
-
-  /* Type divider: hidden */
-  #screen-inspect .insp-type-divider { display: none; }
-
-  /* Status badge hidden in flat design */
-  #screen-inspect .equip-status-badge { display: none !important; }
-
-  /* 2-column grid for check rows — single column within each equipment card */
-  #screen-inspect .check-rows-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    column-gap: 0;
-  }
-
-  /* Check rows — flat, spacious */
-  #screen-inspect .check-row {
-    padding: 20px 0; min-height: auto;
-    display: flex; align-items: center; gap: 16px;
-    border-bottom: 1px solid #F0F0F0;
-    background: transparent;
-  }
-  #screen-inspect .check-row:last-child { border-bottom: none; }
-  /* In 2-col grid: last 2 items have no bottom border */
-  #screen-inspect .check-rows-grid .check-row:nth-last-child(-n+2) { border-bottom: none; }
-  .check-row-num { display: none; }
-
-  /* Item text block (name + description) */
-  .check-row-text {
-    flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0;
-  }
-  #screen-inspect .check-row-name {
-    font-size: 14px; font-weight: 700; color: #111; flex: none;
-  }
-  .check-row-desc {
-    font-size: 12px; color: #AAAAAA; line-height: 1.4;
-  }
-
-  /* Tri-buttons — individual outlined squares, selected = solid black */
-  #screen-inspect .tri-btns {
-    display: flex; background: none !important; border-radius: 0 !important;
-    padding: 0 !important; gap: 6px; flex-shrink: 0;
-  }
-  #screen-inspect .tri-btn {
-    width: 36px !important; height: 36px !important;
-    border-radius: 5px !important;
-    border: 1.5px solid #DDDDDD !important;
+  /* ── ヘッダー ── */
+  .pc-inspect-header {
     background: #fff !important;
-    color: #CCCCCC !important;
-    font-size: 14px !important;
-    font-weight: 400 !important;
-    transition: all 0.12s;
+    border-bottom: 1px solid #E8ECF2 !important;
+    padding: 0 28px !important;
+    height: 68px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
   }
-  #screen-inspect .tri-btn:hover { border-color: #AAAAAA !important; color: #888 !important; background: #F8F8F8 !important; }
-  #screen-inspect .tri-btn.ok-selected  { background: #111 !important; border-color: #111 !important; color: #fff !important; font-weight: 600 !important; }
-  #screen-inspect .tri-btn.ng-selected  { background: #111 !important; border-color: #111 !important; color: #fff !important; font-weight: 600 !important; }
-  #screen-inspect .tri-btn.na-selected  { background: #111 !important; border-color: #111 !important; color: #fff !important; font-weight: 600 !important; }
+  .pc-inspect-header-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+  .pc-inspect-back {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: #F5F5F5; border: none; cursor: pointer; flex-shrink: 0;
+    transition: background 0.12s;
+  }
+  .pc-inspect-back:hover { background: #EBEBEB; }
+  .pc-inspect-back svg { stroke: #333; }
+  .pc-inspect-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; color: #111; }
+  .pc-inspect-subtitle { font-size: 13px; color: #888; font-weight: 400; margin: 2px 0 0; }
 
-  /* Bottom action — spans both columns */
+  /* 右側の一括ボタン */
+  .pc-inspect-bulk-btn {
+    background: var(--blue) !important; color: #fff !important;
+    border: none !important; border-radius: 10px !important;
+    padding: 11px 20px !important; font-size: 14px !important;
+    font-weight: 600 !important; cursor: pointer !important;
+    display: flex !important; align-items: center !important; gap: 8px !important;
+    white-space: nowrap; flex-shrink: 0;
+    transition: opacity 0.15s !important;
+    box-shadow: none !important;
+  }
+  .pc-inspect-bulk-btn::before { content: ''; }
+  .pc-inspect-bulk-btn:hover { opacity: 0.88 !important; }
+
+  /* ── ボディ: 統合テーブルレイアウト ── */
+  .pc-inspect-body {
+    display: block;
+    height: calc(100vh - 68px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #fff;
+  }
+
+  /* ── 左サイドバー（統合レイアウトでは非表示） ── */
+  .pc-inspect-sidebar {
+    display: none !important;
+  }
+
+  /* ── 統合ヘッダー行 ── */
+  .pc-inspect-unified-header {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 2px solid #E8ECF2;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .pc-unified-left-head {
+    width: 220px; min-width: 220px; flex-shrink: 0;
+    border-right: 1px solid #E8ECF2;
+    padding: 16px 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .pc-unified-right-head {
+    flex: 1;
+    padding: 16px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  /* ── 各設備セクション：左名前列 + 右項目列 ── */
+  #screen-inspect .equip-section {
+    display: flex !important;
+    flex-direction: row !important;
+    border-bottom: 2px solid #D6E4FF !important;
+  }
+  .equip-section-left-col {
+    width: 220px; min-width: 220px; flex-shrink: 0;
+    border-right: 1px solid #D6E4FF;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: stretch;
+    padding: 0;
+    background: #EEF4FF;
+  }
+  .equip-section-left-inner {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 18px 20px 8px;
+    background: transparent;
+  }
+  .equip-left-id {
+    font-size: 11px; font-weight: 500; color: #999; letter-spacing: 0.3px;
+  }
+  .equip-left-name {
+    font-size: 15px; font-weight: 700; color: var(--blue); line-height: 1.3;
+  }
+  .equip-left-progress {
+    font-size: 12px; color: #888; font-weight: 400;
+  }
+  .equip-left-bulk-btn {
+    margin: 10px 12px 10px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1.5px solid #D0D5DD;
+    background: #F8F9FA;
+    font-size: 12px; font-weight: 600; color: #555;
+    white-space: nowrap; cursor: pointer;
+    align-self: flex-start;
+  }
+  .equip-left-bulk-btn:hover { background: #EAECF0; border-color: #B0B8C5; }
+  .equip-left-bulk-btn:active { background: #DDE2EA; transform: scale(0.95); }
+  .equip-section-right-col {
+    flex: 1; min-width: 0;
+  }
+  /* セクションヘッダー（右カラム内では非表示） */
+  #screen-inspect .equip-section-header { display: none !important; }
+  .pc-sidebar-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid #F0F2F6;
+  }
+  .pc-sidebar-title {
+    font-size: 15px; font-weight: 700; color: #444;
+  }
+  .pc-sidebar-count {
+    font-size: 14px; color: var(--blue); font-weight: 600;
+    background: none; padding: 0;
+  }
+  .pc-sidebar-list { padding: 0; }
+
+  /* サイドバー項目 */
+  .pc-sidebar-item {
+    display: flex; flex-direction: column; gap: 3px;
+    padding: 14px 20px 14px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #F5F6F8;
+    border-left: 3px solid transparent;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .pc-sidebar-item:last-child { border-bottom: none; }
+  .pc-sidebar-item:hover { background: #F8FAFF; }
+  .pc-sidebar-item.active {
+    background: #F0F5FF;
+    border-left-color: var(--blue);
+  }
+  .pc-sidebar-item-text { display: flex; flex-direction: column; gap: 4px; }
+  .pc-sidebar-item-name {
+    font-size: 15px; font-weight: 700; color: #111; line-height: 1.2;
+  }
+  .pc-sidebar-item.active .pc-sidebar-item-name { color: var(--blue); }
+  .pc-sidebar-item-progress {
+    font-size: 12px; color: #999; font-weight: 400;
+  }
+  .pc-sidebar-item-id { display: none; }
+  .pc-sidebar-item-arrow { display: none; }
+
+  /* ── メインエリア ── */
+  .pc-inspect-main {
+    flex: unset;
+    min-width: 0; width: 100%;
+    display: flex; flex-direction: column;
+    background: #fff;
+    overflow-y: unset;
+    padding-bottom: 80px;
+  }
+
+  /* メインヘッダー行（統合ヘッダーに置き換え済み） */
+  .pc-inspect-main-header {
+    display: none;
+  }
+  .pc-inspect-main-title {
+    font-size: 15px; font-weight: 700; color: #111;
+  }
+  .pc-inspect-main-count {
+    font-size: 14px; font-weight: 700; color: var(--blue);
+  }
+
+  /* セクション: フラットリスト（カードなし） */
+  #inspect-sections {
+    display: block !important;
+    padding: 0 !important;
+    width: 100%; box-sizing: border-box;
+  }
+  .equip-section {
+    margin: 0 !important; border-radius: 0 !important;
+    box-shadow: none !important; border: none !important;
+    background: #fff !important; padding: 0 !important;
+  }
+  .equip-section.has-anomaly { background: #fff !important; }
+
+  /* セクションヘッダー：青行 */
+  #screen-inspect .equip-section-header {
+    display: flex !important; flex-direction: row !important;
+    align-items: center !important;
+    padding: 12px 28px !important;
+    background: #EEF4FF !important;
+    border-bottom: 1px solid #D6E4FF !important;
+    border-top: none !important; margin: 0 !important; gap: 0 !important;
+  }
+  #screen-inspect .equip-id-chip { display: none !important; }
+  #screen-inspect .equip-header-top { display: none !important; }
+  #screen-inspect .equip-header-badges { display: none !important; }
+  #screen-inspect .equip-monitor-badge { display: none !important; }
+  #screen-inspect .equip-id-label { display: none !important; }
+  #screen-inspect .equip-header-main { display: none !important; }
+  #screen-inspect .equip-status-badge { display: none !important; }
+  #screen-inspect .equip-icon-lg { display: none !important; }
+
+  .equip-header-name-row {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; gap: 12px;
+  }
+  #screen-inspect .equip-name-only {
+    font-size: 14px !important; font-weight: 700 !important;
+    color: var(--blue) !important; letter-spacing: -0.1px !important;
+    display: none !important;
+  }
+  #screen-inspect .equip-bulk-na-btn { display: none !important; }
+  #screen-inspect .equip-header-name-row { width: 100% !important; }
+
+  /* PC用カラムヘッダー（○列の左に一括ー、✕列の上に点検） */
+  .pc-col-hdr { display: none; }
+  #screen-inspect .pc-col-hdr {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+  #screen-inspect .pc-col-bulk-btn {
+    height: 28px !important;
+    padding: 0 10px !important;
+    border-radius: 6px !important;
+    border: 1.5px solid #D0D5DD !important;
+    background: #F8F9FA !important;
+    font-size: 12px !important; font-weight: 600 !important;
+    color: #555 !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+  }
+  #screen-inspect .pc-col-bulk-btn:hover { background: #EAECF0 !important; border-color: #B0B8C5 !important; }
+  #screen-inspect .pc-col-bulk-btn:active { background: #DDE2EA !important; transform: scale(0.95) !important; }
+  #screen-inspect .pc-col-spacer {
+    width: 40px !important; flex-shrink: 0 !important;
+  }
+  #screen-inspect .pc-col-ng-wrap {
+    width: 40px !important; flex-shrink: 0 !important;
+    position: relative !important;
+    display: flex !important; justify-content: center !important;
+    overflow: visible !important;
+  }
+
+  /* 「点検」ラベルは pc-col-hdr に移したので ::after は削除 */
+  .equip-section-header::after { content: none !important; }
+
+  /* 種別ラベル非表示 */
+  #screen-inspect .insp-type-divider { display: none !important; }
+
+  /* チェック行グリッド */
+  #screen-inspect .check-rows-grid {
+    display: block !important;
+  }
+
+  /* チェック行 */
+  #screen-inspect .check-row {
+    display: flex !important; align-items: center !important;
+    padding: 0 28px !important; min-height: 56px !important;
+    border-bottom: 1px solid #F0F2F6 !important;
+    background: #fff !important; gap: 12px !important;
+  }
+  #screen-inspect .check-row:last-child { border-bottom: 1px solid #E8ECF2 !important; }
+  .check-row-num { display: none !important; }
+  .check-row-text { flex: 1; }
+  #screen-inspect .check-row-name {
+    font-size: 14px !important; font-weight: 400 !important; color: #222 !important;
+  }
+  .check-row-desc { display: none !important; }
+
+  /* ○ × ボタン（ー非表示） */
+  #screen-inspect .tri-btns {
+    display: flex !important; gap: 6px !important;
+    background: none !important; border-radius: 0 !important;
+    padding: 0 !important; flex-shrink: 0 !important;
+  }
+  /* ーボタン表示 */
+  #screen-inspect .tri-btn:nth-child(3) { display: flex !important; }
+  #screen-inspect .tri-btn {
+    width: 40px !important; height: 40px !important;
+    border-radius: 8px !important;
+    border: 1.5px solid #D0D9ED !important;
+    background: #fff !important;
+    font-size: 16px !important; font-weight: 400 !important; color: #B0BCCF !important;
+    transition: all 0.12s !important; cursor: pointer !important;
+  }
+  #screen-inspect .tri-btn:nth-child(1) { font-size: 17px !important; }
+  #screen-inspect .tri-btn:hover {
+    border-color: var(--blue) !important; color: var(--blue) !important;
+    background: #F0F5FF !important;
+  }
+  #screen-inspect .tri-btn.ok-selected {
+    background: var(--blue) !important; border-color: var(--blue) !important;
+    color: #fff !important; font-weight: 700 !important;
+  }
+  #screen-inspect .tri-btn.ng-selected {
+    background: var(--red) !important; border-color: var(--red) !important;
+    color: #fff !important; font-weight: 700 !important;
+  }
+  #screen-inspect .tri-btn.na-selected {
+    background: #888 !important; border-color: #888 !important;
+    color: #fff !important; font-weight: 600 !important;
+  }
+
+  /* 下部ボタン */
   .inspect-bottom-action {
-    max-width: 1100px; width: 100%; margin: 0 auto;
-    padding: 12px 40px 28px !important;
-    display: flex !important; align-items: center; gap: 16px;
-    background: transparent !important;
-    grid-column: 1 / -1;
+    position: fixed !important;
+    bottom: 0; left: 0; right: 0;
+    padding: 14px 28px 18px !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    background: #fff !important;
+    border-top: 1px solid #E8ECF2 !important;
+    backdrop-filter: none !important;
+    z-index: 100 !important;
   }
   .inspect-progress-wrap { display: none !important; }
-  .inspect-progress-ring { display: none; }
-  .inspect-progress-label {
-    font-size: 12px; color: #AAAAAA; font-weight: 400; white-space: nowrap;
-  }
-  .inspect-progress-pct { display: none; }
   .inspect-complete-btn {
-    background: #111 !important; border-radius: 8px !important;
-    font-size: 14px !important; padding: 14px 0 !important;
-    letter-spacing: 0.2px; flex: 1;
+    background: var(--blue) !important; border-radius: 10px !important;
+    font-size: 13px !important; font-weight: 700 !important;
+    padding: 10px 0 !important; letter-spacing: 0.2px !important;
+    width: 540px !important; max-width: 100% !important; flex: none !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
   }
-  .inspect-complete-btn:hover { opacity: 0.85; }
+  .inspect-complete-btn:hover { background: #2563EB !important; opacity: 1 !important; }
   /* 確認画面：PCでモバイル要素を非表示にしてPCラッパーを表示 */
   #screen-confirm > #confirm-content,
   #screen-confirm > #confirm-sections,
@@ -3641,6 +3899,7 @@
   .pc-res-stat-num { font-size: 22px; }
   .pc-res-detail-acc-meta { display: flex; }
   .pc-res-line-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  .nrl-grid { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
   .pc-confirm-body { padding: 16px 32px 24px; }
   #screen-confirm > #pc-confirm-header { border-bottom: 1px solid var(--border); padding-bottom: 16px; }
   #screen-confirm > .bottom-action {
@@ -5744,9 +6003,8 @@
     flex: 1;
   }
   /* 承認パネル内上部余白 */
-  #adm-panel-approval {
-    padding-top: 0;
-  }
+  #adm-panel-approval { padding-top: 0; }
+  #adm-panel-uninspected { padding-top: 0; }
 
   /* ── ラインカード（白カード） ── */
   #adm-panel-approval .apr2-line {
@@ -6722,22 +6980,35 @@
     </div>
 
     <!-- Equipment sections -->
-    <div id="inspect-sections"></div>
-
-    <div class="bottom-action inspect-bottom-action">
-      <div class="inspect-progress-wrap">
-        <div class="inspect-progress-ring">
-          <svg viewBox="0 0 36 36" width="36" height="36">
-            <circle cx="18" cy="18" r="15" fill="none" stroke="#E0E4EF" stroke-width="3"/>
-            <circle cx="18" cy="18" r="15" fill="none" stroke="var(--blue)" stroke-width="3"
-              stroke-linecap="round" stroke-dasharray="94.2" stroke-dashoffset="94.2"
-              id="inspect-progress-circle" transform="rotate(-90 18 18)"/>
-          </svg>
-          <span class="inspect-progress-pct" id="inspect-progress-pct">0%</span>
+    <div class="pc-inspect-body">
+      <!-- Left sidebar: equipment list -->
+      <div class="pc-inspect-sidebar" id="pc-inspect-sidebar">
+        <div class="pc-sidebar-header">
+          <span class="pc-sidebar-title">点検対象設備</span>
+          <span class="pc-sidebar-count" id="pc-sidebar-count"></span>
         </div>
-        <span class="inspect-progress-label" id="inspect-progress-label">進捗率 0%</span>
+        <div class="pc-sidebar-list" id="pc-sidebar-list"></div>
       </div>
-      <button class="btn-bottom-main inspect-complete-btn" onclick="goToConfirm()">点検を完了する</button>
+
+      <!-- Main content -->
+      <div class="pc-inspect-main">
+        <div id="inspect-sections"></div>
+        <div class="bottom-action inspect-bottom-action">
+          <div class="inspect-progress-wrap">
+            <div class="inspect-progress-ring">
+              <svg viewBox="0 0 36 36" width="36" height="36">
+                <circle cx="18" cy="18" r="15" fill="none" stroke="#E0E4EF" stroke-width="3"/>
+                <circle cx="18" cy="18" r="15" fill="none" stroke="var(--blue)" stroke-width="3"
+                  stroke-linecap="round" stroke-dasharray="94.2" stroke-dashoffset="94.2"
+                  id="inspect-progress-circle" transform="rotate(-90 18 18)"/>
+              </svg>
+              <span class="inspect-progress-pct" id="inspect-progress-pct">0%</span>
+            </div>
+            <span class="inspect-progress-label" id="inspect-progress-label">進捗率 0%</span>
+          </div>
+          <button class="btn-bottom-main inspect-complete-btn" onclick="goToConfirm()">点検を完了する</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -7297,48 +7568,49 @@
 
     <!-- 未点検ライン パネル -->
     <div id="adm-panel-uninspected" class="adm-panel" style="display:none;">
-      <div class="uinsp-header">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="adm-section-title" style="margin:0;">未点検ライン</span>
-          <span class="uinsp-total-badge" id="uinsp-total-badge">0件</span>
+      <!-- フィルタータブ + 絞り込みボタン -->
+      <div class="uinsp-title-row">
+        <div class="uinsp-filter-tabs">
+          <button class="uinsp-ftab active" id="uinsp-ftab-all" onclick="setUinspFilter('all')">
+            <span class="uinsp-ftab-label">すべて</span>
+            <span class="uinsp-ftab-badge" id="uinsp-badge-all">0</span>
+          </button>
+          <button class="uinsp-ftab" id="uinsp-ftab-overdue" onclick="setUinspFilter('overdue')">
+            <span class="uinsp-ftab-label">期限超過</span>
+            <span class="uinsp-ftab-badge overdue-badge" id="uinsp-badge-overdue">0</span>
+          </button>
+          <button class="uinsp-ftab" id="uinsp-ftab-today" onclick="setUinspFilter('today')">
+            <span class="uinsp-ftab-label">今日まで</span>
+            <span class="uinsp-ftab-badge" id="uinsp-badge-today">0</span>
+          </button>
         </div>
-        <!-- 月ナビゲーター -->
-        <div class="uinsp-month-nav" style="margin-left:auto;">
-          <button class="uinsp-month-btn" onclick="uinspChangeMonth(-1)">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <span class="uinsp-month-label" id="uinsp-month-label">2025年5月</span>
-          <button class="uinsp-month-btn" id="uinsp-month-next" onclick="uinspChangeMonth(1)">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
-        </div>
-      </div>
-      <!-- フィルタータブ + 絞り込みボタン（承認パネルと同じ行構成） -->
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-        <div class="uinsp-filter-tabs" style="flex:1;min-width:0;margin-bottom:0;">
-          <button class="uinsp-ftab active" id="uinsp-ftab-all"      onclick="setUinspFilter('all')">すべて</button>
-          <button class="uinsp-ftab"        id="uinsp-ftab-overdue"  onclick="setUinspFilter('overdue')">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            期限超過
-          </button>
-          <button class="uinsp-ftab"        id="uinsp-ftab-today"    onclick="setUinspFilter('today')">今日まで</button>
-        </div>
-        <!-- ライン絞り込み（タブ行右端） -->
-        <div class="uinsp-line-filter-wrap" id="uinsp-line-filter-wrap" style="flex-shrink:0;">
-          <button class="apr2-line-filter-btn" id="uinsp-line-filter-btn" onclick="uinspToggleLinePopup(event)">
-            <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-            絞り込み
-            <span class="apr2-line-filter-badge" id="uinsp-line-filter-badge" style="display:none"></span>
-            <svg class="apr2-line-filter-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="apr2-line-popup" id="uinsp-line-popup" style="right:0;left:auto;">
-            <div class="apr2-line-popup-title">
-              <span>ライン絞り込み</span>
-              <span class="apr2-line-popup-selall" onclick="uinspSelectAllLines(event)">すべて選択</span>
-            </div>
-            <div id="uinsp-line-popup-rows"></div>
-            <div class="apr2-line-popup-footer">
-              <button class="apr2-line-popup-apply" onclick="uinspApplyLineFilter()">適用する</button>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <!-- 月ナビゲーター -->
+          <div class="uinsp-month-nav">
+            <button class="uinsp-month-btn" onclick="uinspChangeMonth(-1)">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <span class="uinsp-month-label" id="uinsp-month-label">2025年5月</span>
+            <button class="uinsp-month-btn" id="uinsp-month-next" onclick="uinspChangeMonth(1)">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+          <!-- ライン絞り込み -->
+          <div class="uinsp-line-filter-wrap" id="uinsp-line-filter-wrap">
+            <button class="apr2-line-filter-btn" id="uinsp-line-filter-btn" onclick="uinspToggleLinePopup(event)">
+              絞り込み
+              <span class="apr2-line-filter-badge" id="uinsp-line-filter-badge" style="display:none"></span>
+              <svg class="apr2-line-filter-chevron" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="apr2-line-popup" id="uinsp-line-popup" style="right:0;left:auto;">
+              <div class="apr2-line-popup-title">
+                <span>ライン絞り込み</span>
+                <span class="apr2-line-popup-selall" onclick="uinspSelectAllLines(event)">すべて選択</span>
+              </div>
+              <div id="uinsp-line-popup-rows"></div>
+              <div class="apr2-line-popup-footer">
+                <button class="apr2-line-popup-apply" onclick="uinspApplyLineFilter()">適用する</button>
+              </div>
             </div>
           </div>
         </div>
@@ -8385,19 +8657,42 @@
       equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
       var lHasNg = lNg > 0;
       var lineName = lineId === '__none__' ? '未分類' : getMobLineName(lineId);
+      var _mobColors = {
+        'L1':['#2F6BFF','#EEF4FF'],'L2':['#2E7D32','#E8F5E9'],
+        'L3':['#E65100','#FFF3E0'],'L4':['#7B1FA2','#F3E5F5'],
+        'L5':['#00838F','#E0F7FA'],'__none__':['#607D8B','#ECEFF1']
+      };
+      var cP = _mobColors[lineId] || ['#607D8B','#ECEFF1'];
+      var initM = lineName.replace(/ライン/,'').slice(0,1) || 'L';
+      var inspN = (record.lineInspectors && record.lineInspectors[lineId]) || record.inspector || '—';
+      var compT = completedAt
+        ? (String(completedAt.getHours()).padStart(2,'0') + ':' + String(completedAt.getMinutes()).padStart(2,'0'))
+        : '—';
       var card = document.createElement('div');
-      card.className = 'mob-res-line-card' + (lHasNg ? ' has-ng' : '');
+      card.className = 'nrl-card' + (lHasNg ? ' nrl-ng' : '');
+      card.style.margin = '0 16px 10px';
       card.innerHTML =
-        '<div class="mob-res-line-card-top">' +
-          '<div class="mob-res-line-name">' + lineName + '</div>' +
-          '<span class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span>' +
+        '<div class="nrl-card-header">' +
+          '<div class="nrl-card-icon" style="background:' + cP[1] + ';color:' + cP[0] + '">' + initM + '</div>' +
+          '<div class="nrl-card-title">' + lineName + '</div>' +
+          '<div class="nrl-card-id">#' + lineId.toUpperCase() + '</div>' +
         '</div>' +
-        '<div class="mob-res-line-meta">設備数：' + equips.length + '台　|　点検項目数：' + lItems + '項目</div>' +
-        '<div class="mob-res-line-stats">' +
-          '<span>正常 <b class="ok">' + lOk + '</b> 件</span>' +
-          '<span>異常 <b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> 件</span>' +
+        '<div class="nrl-card-rows">' +
+          '<div class="nrl-card-row"><svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 3H8v4h8V3z"/></svg><span class="nrl-row-label">設備数</span><span class="nrl-row-val">' + equips.length + '台</span></div>' +
+          '<div class="nrl-card-row"><svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span class="nrl-row-label">点検項目数</span><span class="nrl-row-val">' + lItems + '項目</span></div>' +
+          '<div class="nrl-card-row"><svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span class="nrl-row-label">点検者</span><div class="nrl-contact"><span class="nrl-contact-avatar" style="background:' + cP[1] + ';color:' + cP[0] + '">' + inspN.charAt(0) + '</span><span class="nrl-row-val">' + inspN + '</span></div></div>' +
         '</div>' +
-        '<div class="mob-res-line-inspector" style="font-size:12px;color:var(--text-sub);margin-top:6px;">点検者：<b style="color:var(--text)">' + ((record.lineInspectors && record.lineInspectors[lineId]) || record.inspector || '—') + '</b></div>';
+        '<div class="nrl-card-tags">' +
+          '<span class="nrl-tag ' + (lHasNg ? 'nrl-tag-ng' : 'nrl-tag-ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span>' +
+          '<span class="nrl-tag nrl-tag-type">毎日点検</span>' +
+        '</div>' +
+        '<div class="nrl-card-footer">' +
+          '<div class="nrl-footer-counts">' +
+            '<span class="nrl-count-ok">✓ ' + lOk + '件</span>' +
+            '<span class="' + (lNg > 0 ? 'nrl-count-ng' : 'nrl-count-neutral') + '">' + (lNg > 0 ? '⚠ ' : '— ') + lNg + '件</span>' +
+          '</div>' +
+          '<span class="nrl-footer-time">' + compT + '</span>' +
+        '</div>';
       sections.appendChild(card);
     });
 
@@ -8506,25 +8801,81 @@
           '</div>' +
         '</div>';
 
-      // ─ ライン別サマリーカード ─
-      var lineSummaryHtml = '<div class="pc-res-section-title">ライン別サマリー</div><div class="pc-res-line-grid">';
+      // ─ ライン別サマリーカード（CRM スタイル）─
+      var _nrlColors = {
+        'L1': ['#2F6BFF','#EEF4FF'], 'L2': ['#2E7D32','#E8F5E9'],
+        'L3': ['#E65100','#FFF3E0'], 'L4': ['#7B1FA2','#F3E5F5'],
+        'L5': ['#00838F','#E0F7FA'], 'L6': ['#C62828','#FFEBEE'],
+        '__none__': ['#607D8B','#ECEFF1']
+      };
+      var _dnJp = ['日','月','火','水','木','金','土'];
+      var lineSummaryHtml = '<div class="pc-res-section-title">ライン別サマリー</div><div class="nrl-grid">';
       lineOrder.forEach(function(lineId) {
         var equips = lineGroups[lineId];
         var lOk = 0, lNg = 0, lItems = 0;
         equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
         var lHasNg = lNg > 0;
-        var pct = lItems > 0 ? Math.round((lOk / lItems) * 100) : 100;
         var lineName = lineId === '__none__' ? '未分類' : getLineName(lineId);
+        var cPair = _nrlColors[lineId] || ['#607D8B','#ECEFF1'];
+        var initials = lineName.replace(/ライン/,'').slice(0,1) || 'L';
+        var inspName = (record.lineInspectors && record.lineInspectors[lineId]) || record.inspector || '—';
+        var typeTagsHtml = '<span class="nrl-tag nrl-tag-type">毎日点検</span>';
+        if (recTypes.is10Day)   typeTagsHtml += '<span class="nrl-tag nrl-tag-type">10日毎</span>';
+        if (recTypes.isMonthly) typeTagsHtml += '<span class="nrl-tag nrl-tag-type">1ヶ月</span>';
+        var compTime = completedAt
+          ? (String(completedAt.getHours()).padStart(2,'0') + ':' + String(completedAt.getMinutes()).padStart(2,'0'))
+          : '—';
+        var compDateStr = completedAt
+          ? ((completedAt.getMonth()+1) + '/' + completedAt.getDate() + '（' + _dnJp[completedAt.getDay()] + '）' + compTime)
+          : '—';
         lineSummaryHtml +=
-          '<div class="pc-res-line-card' + (lHasNg ? ' has-ng' : '') + '">' +
-            '<div class="pc-res-line-card-top">' +
-              '<div class="pc-res-line-name">' + lineName + '</div>' +
-              '<div class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</div>' +
+          '<div class="nrl-card' + (lHasNg ? ' nrl-ng' : '') + '">' +
+            '<div class="nrl-card-header">' +
+              '<div class="nrl-card-icon" style="background:' + cPair[1] + ';color:' + cPair[0] + '">' + initials + '</div>' +
+              '<div class="nrl-card-title">' + lineName + '</div>' +
+              '<div class="nrl-card-id">#' + lineId.toUpperCase() + '</div>' +
             '</div>' +
-            '<div class="pc-res-line-meta">設備数：' + equips.length + '台　|　点検項目数：' + lItems + '項目</div>' +
-            '<div class="pc-res-line-stats">' +
-              '<span class="pc-res-line-stat">正常 <b class="ok">' + lOk + '</b> 件</span>' +
-              '<span class="pc-res-line-stat">異常 <b class="' + (lNg > 0 ? 'ng' : 'neutral') + '">' + lNg + '</b> 件</span>' +
+            '<div class="nrl-card-rows">' +
+              '<div class="nrl-card-row">' +
+                '<svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M16 3H8v4h8V3z"/></svg>' +
+                '<span class="nrl-row-label">設備数</span>' +
+                '<span class="nrl-row-val">' + equips.length + '台</span>' +
+              '</div>' +
+              '<div class="nrl-card-row">' +
+                '<svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>' +
+                '<span class="nrl-row-label">点検項目数</span>' +
+                '<span class="nrl-row-val">' + lItems + '項目</span>' +
+              '</div>' +
+              '<div class="nrl-card-row">' +
+                '<svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>' +
+                '<span class="nrl-row-label">点検者</span>' +
+                '<div class="nrl-contact">' +
+                  '<span class="nrl-contact-avatar" style="background:' + cPair[1] + ';color:' + cPair[0] + '">' + inspName.charAt(0) + '</span>' +
+                  '<span class="nrl-row-val">' + inspName + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="nrl-card-row">' +
+                '<svg class="nrl-row-icon" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+                '<span class="nrl-row-label">完了日時</span>' +
+                '<span class="nrl-row-val">' + compDateStr + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="nrl-card-tags">' +
+              '<span class="nrl-tag ' + (lHasNg ? 'nrl-tag-ng' : 'nrl-tag-ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span>' +
+              typeTagsHtml +
+            '</div>' +
+            '<div class="nrl-card-footer">' +
+              '<div class="nrl-footer-counts">' +
+                '<span class="nrl-count-ok">' +
+                  '<svg style="width:13px;height:13px;stroke:#2E7D32;fill:none;stroke-width:2;vertical-align:middle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>' +
+                  ' ' + lOk + '件' +
+                '</span>' +
+                '<span class="' + (lNg > 0 ? 'nrl-count-ng' : 'nrl-count-neutral') + '">' +
+                  '<svg style="width:13px;height:13px;stroke:' + (lNg > 0 ? '#E53935' : '#94A3B8') + ';fill:none;stroke-width:2;vertical-align:middle" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+                  ' ' + lNg + '件' +
+                '</span>' +
+              '</div>' +
+              '<span class="nrl-footer-time">' + compTime + '</span>' +
             '</div>' +
           '</div>';
       });
@@ -9159,7 +9510,93 @@
     buildInspectChips();
     buildInspectDateBanner();
     buildInspectSections();
+    buildInspectSidebar();
     showScreen('screen-inspect');
+    setTimeout(syncInspectSidebarHeights, 80);
+  }
+
+  function syncInspectSidebarHeights() {
+    const sidebarEl = document.getElementById('pc-inspect-sidebar');
+    const sidebarList = document.getElementById('pc-sidebar-list');
+    const mainEl = document.querySelector('#screen-inspect .pc-inspect-main');
+    if (!sidebarEl || !sidebarList || !mainEl) return;
+    selectedEquips.forEach(id => {
+      const section = document.querySelector(`.equip-section[data-equip-id="${id}"]`);
+      const sidebarItem = sidebarList.querySelector(`.pc-sidebar-item[data-equip-id="${id}"]`);
+      if (!section || !sidebarItem) return;
+      sidebarItem.style.height = section.offsetHeight + 'px';
+      sidebarItem.style.boxSizing = 'border-box';
+      sidebarItem.style.display = 'flex';
+      sidebarItem.style.flexDirection = 'column';
+      sidebarItem.style.justifyContent = 'center';
+    });
+    // スクロール同期
+    if (!mainEl._scrollSynced) {
+      mainEl._scrollSynced = true;
+      let syncing = false;
+      mainEl.addEventListener('scroll', () => {
+        if (syncing) return;
+        syncing = true;
+        sidebarEl.scrollTop = mainEl.scrollTop;
+        syncing = false;
+      });
+      sidebarEl.addEventListener('scroll', () => {
+        if (syncing) return;
+        syncing = true;
+        mainEl.scrollTop = sidebarEl.scrollTop;
+        syncing = false;
+      });
+    }
+  }
+
+  function buildInspectSidebar() {
+    const list = document.getElementById('pc-sidebar-list');
+    const countEl = document.getElementById('pc-sidebar-count');
+    if (!list) return;
+    const equips = EQUIP_DATA.filter(eq => selectedEquips.includes(eq.id));
+    if (countEl) countEl.textContent = `全${equips.length}設備`;
+    list.innerHTML = '';
+    equips.forEach((eq, idx) => {
+      const item = document.createElement('div');
+      item.className = 'pc-sidebar-item' + (idx === 0 ? ' active' : '');
+      item.dataset.equipId = eq.id;
+      // 進捗を計算
+      const totalItems = _getSidebarItemCount(eq.id);
+      item.innerHTML = `
+        <div class="pc-sidebar-item-text">
+          <span class="pc-sidebar-item-name">${eq.name}</span>
+          <span class="pc-sidebar-item-progress" id="sidebar-progress-${eq.id}">0/${totalItems}項目完了</span>
+        </div>
+      `;
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.pc-sidebar-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+      });
+      list.appendChild(item);
+    });
+  }
+
+  function _getSidebarItemCount(equipId) {
+    // 対象の点検種別の合計項目数
+    let total = 0;
+    const s = state[equipId];
+    if (!s) return 0;
+    if (s['daily'])   total += s['daily'].length;
+    if (inspectionTypes.is10Day && s['10days'])   total += s['10days'].length;
+    if (inspectionTypes.isMonthly && s['monthly']) total += s['monthly'].length;
+    return total;
+  }
+
+  function updateSidebarItemProgress(equipId) {
+    const el = document.getElementById('sidebar-progress-' + equipId);
+    if (!el) return;
+    const s = state[equipId];
+    if (!s) return;
+    let total = 0, done = 0;
+    if (s['daily'])   { total += s['daily'].length;   done += s['daily'].filter(v => v !== null).length; }
+    if (inspectionTypes.is10Day && s['10days'])   { total += s['10days'].length;   done += s['10days'].filter(v => v !== null).length; }
+    if (inspectionTypes.isMonthly && s['monthly']) { total += s['monthly'].length; done += s['monthly'].filter(v => v !== null).length; }
+    el.textContent = `${done}/${total}項目完了`;
   }
 
   function buildInspectDateBanner() {
@@ -9199,6 +9636,38 @@
     const container = document.getElementById('inspect-sections');
     if (!container) return;
     container.innerHTML = '';
+
+    // 全項目数
+    let totalAll = 0;
+    selectedEquips.forEach(id => {
+      totalAll += _getSidebarItemCount(id);
+    });
+
+    // 統合ヘッダー（PC用）
+    const unifiedHeader = document.createElement('div');
+    unifiedHeader.className = 'pc-inspect-unified-header';
+    unifiedHeader.innerHTML = `
+      <div class="pc-unified-left-head">
+        <span class="pc-sidebar-title">点検対象設備</span>
+        <span class="pc-sidebar-count" id="pc-sidebar-count">全${selectedEquips.length}設備</span>
+      </div>
+      <div class="pc-unified-right-head">
+        <span class="pc-inspect-main-title">全設備の点検項目</span>
+        <span class="pc-inspect-main-count" id="pc-inspect-main-count">0/${totalAll}項目完了</span>
+      </div>
+    `;
+    container.appendChild(unifiedHeader);
+
+    // 旧ヘッダー（モバイル用 / 非表示だが ID保持）
+    const mainHeader = document.createElement('div');
+    mainHeader.className = 'pc-inspect-main-header';
+    mainHeader.id = 'pc-inspect-main-header';
+    mainHeader.innerHTML = `
+      <span class="pc-inspect-main-title">全設備の点検項目</span>
+      <span class="pc-inspect-main-count" id="pc-inspect-main-count-mobile">0/${totalAll}項目完了</span>
+    `;
+    container.appendChild(mainHeader);
+
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
       const section = buildSection(eq);
@@ -9210,16 +9679,40 @@
     const section = document.createElement('div');
     section.className = 'equip-section';
     section.id = `section-${eq.id}`;
+    section.dataset.equipId = eq.id;
 
-    // Header (no tabs)
-    section.innerHTML = `
+    // ── 左カラム: 設備名 + 進捗（PC用） ──
+    const totalItems = _getSidebarItemCount(eq.id);
+    const leftCol = document.createElement('div');
+    leftCol.className = 'equip-section-left-col';
+    leftCol.innerHTML = `
+      <div class="equip-section-left-inner">
+        <span class="equip-left-id">${eq.id}</span>
+        <span class="equip-left-name">${eq.name}</span>
+        <span class="equip-left-progress" id="sidebar-progress-${eq.id}">0/${totalItems}項目完了</span>
+      </div>
+    `;
+
+    // ── 右カラム: 点検項目 ──
+    const rightCol = document.createElement('div');
+    rightCol.className = 'equip-section-right-col';
+
+    // Header（モバイル用・PCでは非表示）
+    rightCol.innerHTML = `
       <div class="equip-section-header">
-        <span class="equip-id-chip">設備点検 ${eq.id}</span>
+        <span class="equip-id-chip">設備ID: ${eq.id}</span>
         <div class="equip-header-name-row">
           <div class="equip-name-only">${eq.name}</div>
           <button class="equip-bulk-na-btn" onclick="setBulkNa('${eq.id}')" title="全項目をーに設定">
             一括「ー」入力
           </button>
+        </div>
+        <div class="pc-col-hdr">
+          <div class="pc-col-spacer"></div>
+          <div class="pc-col-ng-wrap">
+            <button class="pc-col-bulk-btn" onclick="setBulkNa('${eq.id}')">一括「ー」入力</button>
+          </div>
+          <div class="pc-col-spacer"></div>
         </div>
         <span class="equip-status-badge badge-pending" id="badge-${eq.id}" style="display:none">未入力</span>
       </div>
@@ -9238,14 +9731,18 @@
     if (inspectionTypes.isMonthly)
       groups.push({ key:'monthly', label:'1ヶ月点検',  badgeClass:'monthly', items: eq.itemsMonthly, descs: eq.itemsMonthlyDesc || [] });
 
-    if (!groups.length) return null;
+    if (!groups.length) {
+      section.appendChild(leftCol);
+      section.appendChild(rightCol);
+      return section;
+    }
 
     groups.forEach(group => {
       // Type divider label
       const divider = document.createElement('div');
       divider.className = 'insp-type-divider';
       divider.innerHTML = `<span class="insp-type-badge ${group.badgeClass}">${group.label}</span><div class="insp-type-rule"></div>`;
-      section.appendChild(divider);
+      rightCol.appendChild(divider);
 
       // 2-column grid wrapper
       const grid = document.createElement('div');
@@ -9272,9 +9769,11 @@
         grid.appendChild(row);
       });
 
-      section.appendChild(grid);
+      rightCol.appendChild(grid);
     });
 
+    section.appendChild(leftCol);
+    section.appendChild(rightCol);
     return section;
   }
 
@@ -9298,11 +9797,13 @@
     selectedEquips.forEach(id => {
       const eq = EQUIP_DATA.find(e => e.id === id);
       if (!eq) return;
-      ['daily','10days','monthly'].forEach(k => {
-        const items = state[id][k];
-        if (!items) return;
-        items.forEach(v => { total++; if (v && v !== '') done++; });
-      });
+      const s = state[id];
+      if (!s) return;
+      if (s['daily'])   { total += s['daily'].length;   done += s['daily'].filter(v => v !== null).length; }
+      if (inspectionTypes.is10Day   && s['10days'])  { total += s['10days'].length;  done += s['10days'].filter(v => v !== null).length; }
+      if (inspectionTypes.isMonthly && s['monthly']) { total += s['monthly'].length; done += s['monthly'].filter(v => v !== null).length; }
+      // サイドバー個別進捗も更新
+      updateSidebarItemProgress(id);
     });
     const pct = total > 0 ? Math.round(done / total * 100) : 0;
     const pctEl = document.getElementById('inspect-progress-pct');
@@ -9314,6 +9815,9 @@
       const circumference = 94.2;
       circleEl.style.strokeDashoffset = circumference - (circumference * pct / 100);
     }
+    // メインカウント更新
+    const mainCount = document.getElementById('pc-inspect-main-count');
+    if (mainCount) mainCount.textContent = `${done}/${total}項目完了`;
   }
 
   function setBulkNa(equipId) {
@@ -11600,6 +12104,25 @@ function setUinspFilter(f) {
   renderUninspPanel();
 }
 
+function updateUinspBadges(items) {
+  var now = new Date();
+  var realY = now.getFullYear(), realM = now.getMonth(), realD = now.getDate();
+  var allCount = items.length;
+  var overdueCount = items.filter(function(ld) { return ld.maxOverdueDays > 0; }).length;
+  var todayCount = items.filter(function(ld) {
+    return ld.uninspDates.some(function(d) {
+      var dt = new Date(d);
+      return dt.getFullYear() === realY && dt.getMonth() === realM && dt.getDate() === realD;
+    });
+  }).length;
+  var bAll = document.getElementById('uinsp-badge-all');
+  var bOv  = document.getElementById('uinsp-badge-overdue');
+  var bTd  = document.getElementById('uinsp-badge-today');
+  if (bAll) bAll.textContent = allCount;
+  if (bOv)  bOv.textContent  = overdueCount;
+  if (bTd)  bTd.textContent  = todayCount;
+}
+
 function renderUninspPanel() {
   var now   = new Date();
   var realY = now.getFullYear(), realM = now.getMonth(), realD = now.getDate();
@@ -11715,6 +12238,7 @@ function renderUninspPanel() {
   var mobBadge = document.getElementById('abtab-badge-uninspected');
   if (pcBadge)  { pcBadge.textContent = lineData.length; pcBadge.style.display = lineData.length ? '' : 'none'; }
   if (mobBadge) { mobBadge.textContent = lineData.length; mobBadge.style.display = lineData.length ? '' : 'none'; }
+  updateUinspBadges(lineData);
 
   var listEl = document.getElementById('uinsp-line-list');
   if (!listEl) return;
@@ -14891,7 +15415,7 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
 .fav-sheet-apply:active { opacity: 0.85; }
 
 /* ─── 未点検ライン パネル ─── */
-.uinsp-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+.uinsp-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0; flex-wrap:wrap; gap:8px; }
 .uinsp-month-nav { display:flex; align-items:center; gap:4px; }
 .uinsp-month-btn {
   width:32px; height:32px; border-radius:8px; border:1.5px solid var(--border);
@@ -14905,13 +15429,34 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
 .uinsp-search-wrap { display:flex; align-items:center; gap:6px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:0 10px; height:32px; margin-bottom:10px; }
 .uinsp-search-wrap svg { width:14px; height:14px; stroke:var(--text-sub); flex-shrink:0; }
 .uinsp-search-input { flex:1; border:none; outline:none; font-size:12px; color:var(--text); background:transparent; font-family:inherit; }
-.uinsp-filter-tabs { display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap; }
-.uinsp-ftab { display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:20px; border:1.5px solid var(--border); background:var(--card); font-size:12px; font-weight:600; color:var(--text-sub); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
-.uinsp-ftab svg { stroke:var(--text-sub); }
-.uinsp-ftab:active { opacity:0.75; }
-.uinsp-ftab.active { border-color:var(--blue); background:var(--blue-light); color:var(--blue); }
-.uinsp-ftab#uinsp-ftab-overdue.active { border-color:#E53935; background:#FDECEC; color:#E53935; }
-.uinsp-ftab#uinsp-ftab-overdue.active svg { stroke:#E53935; }
+.uinsp-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:0; flex-wrap:wrap; gap:8px; }
+.uinsp-title-row {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  border-bottom: 1px solid #E5E7EB; margin-bottom: 20px; gap: 0;
+}
+.uinsp-filter-tabs { display:flex; gap:0; border-bottom: none; flex: 1; }
+.uinsp-ftab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 20px; border-radius: 0; border: none;
+  background: transparent; font-size: 13px; font-weight: 500;
+  color: #64748B; cursor: pointer; transition: color 0.15s;
+  font-family: inherit; white-space: nowrap;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.uinsp-ftab svg { display: none; }
+.uinsp-ftab:active { opacity: 0.75; }
+.uinsp-ftab.active { color: #111827; font-weight: 600; border-bottom-color: #111827; background: transparent; }
+.uinsp-ftab#uinsp-ftab-overdue.active { color: #C2410C; border-bottom-color: #C2410C; }
+.uinsp-ftab-label { font-size: 13px; }
+.uinsp-ftab-badge {
+  min-width: 18px; height: 18px; padding: 0 5px;
+  background: #F1F5F9; color: #64748B;
+  font-size: 11px; font-weight: 700; border-radius: 20px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.uinsp-ftab.active .uinsp-ftab-badge { background: #F1F5F9; color: #374151; }
+.uinsp-ftab-badge.overdue-badge { background: #FED7AA; color: #C2410C; }
+.uinsp-line-filter-wrap { position: relative; flex-shrink: 0; margin-bottom: 8px; }
 
 .uinsp-line-card { background:var(--card); border-radius:14px; border:1.5px solid var(--border); box-shadow:var(--shadow-card); margin-bottom:10px; overflow:hidden; }
 .uinsp-line-card.overdue { border-color:var(--red-mid); }
@@ -14980,6 +15525,7 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
   min-width:20px; height:20px; padding:0 6px;
   border-radius:10px; margin-left:6px;
 }
+/* ── 未点検スケジュール：テーブル（元のデザイン） ── */
 .insp-sched-table {
   width:100%; border-collapse:collapse; font-size:13px;
 }
