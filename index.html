@@ -1179,7 +1179,7 @@
       background: var(--card); border: 1px solid var(--border);
       cursor: default;
       border-radius: 12px; padding: 14px 16px;
-      display: flex; align-items: center; gap: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
       cursor: pointer; transition: border-color 0.15s, background 0.15s;
       user-select: none; -webkit-user-select: none;
       height: 100%;
@@ -1194,9 +1194,9 @@
     .pc-equip-card.selected .pc-equip-card-icon { background: rgba(47,107,255,0.12); }
     .pc-equip-card-icon svg { stroke: var(--text-sub); fill: none; width: 20px; height: 20px; }
     .pc-equip-card.selected .pc-equip-card-icon svg { stroke: var(--blue); }
-    .pc-equip-card-info { flex: 1; min-width: 0; }
-    .pc-equip-card-id { font-size: 12px; font-weight: 600; color: var(--text-sub); }
-    .pc-equip-card-name { font-size: 15px; font-weight: 600; color: var(--text); }
+    .pc-equip-card-info { flex: 1; min-width: 0; text-align: center; }
+    .pc-equip-card-id { font-size: 12px; font-weight: 600; color: var(--text-sub); text-align: center; }
+    .pc-equip-card-name { font-size: 15px; font-weight: 600; color: var(--text); text-align: center; }
     .pc-equip-card.selected .pc-equip-card-name { color: var(--blue); }
     .pc-equip-card-line { font-size: 12px; color: var(--text-sub); }
     .pc-equip-checkbox { display: none !important; }
@@ -1288,50 +1288,24 @@
   .pc-inspect-sidebar { display: none; }
   .pc-inspect-main { display: contents; }
   .pc-inspect-header { display: none; } /* モバイルでは非表示、1024px+で上書き */
-  .equip-section-left-col { display: flex; } /* モバイルでも表示 */
-  .pc-inspect-unified-header { display: none; } /* モバイルでは非表示 */
-  .pc-col-bulk-btn { display: none; } /* モバイルでは非表示 */
-  .inspect-progress-wrap { display: none; } /* モバイルでは非表示 */
+  .equip-section-left-col { display: none; } /* モバイルでは非表示 */
+  .pc-inspect-unified-header { display: none; }
+  .pc-col-bulk-btn { display: none; }
+  .inspect-progress-wrap { display: none; }
 
-  /* ── モバイル：2カラムレイアウト適用 ── */
+  /* ── モバイル：縦並びレイアウト ── */
   #screen-inspect .equip-section {
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: column !important;
     border-bottom: 2px solid #D6E4FF !important;
     margin: 0 !important;
     border-radius: 0 !important;
   }
-  #screen-inspect .equip-section-left-col {
-    width: 130px !important; min-width: 130px !important;
-    border-right: 1px solid #D6E4FF;
-    display: flex !important; flex-direction: column;
-    justify-content: flex-start; align-items: stretch;
-    padding: 0; background: #EEF4FF;
-  }
-  #screen-inspect .equip-section-left-inner {
-    padding: 14px 12px 8px;
-  }
-  #screen-inspect .equip-left-id {
-    font-size: 10px; color: #999;
-  }
-  #screen-inspect .equip-left-name {
-    font-size: 13px; font-weight: 700; color: var(--blue); word-break: break-all;
-  }
-  #screen-inspect .equip-left-progress {
-    font-size: 11px; color: #888; margin-top: 4px;
-  }
   #screen-inspect .equip-section-right-col {
-    flex: 1; min-width: 0;
-  }
-  #screen-inspect .equip-left-bulk-btn {
-    margin: 8px 10px 12px;
-    font-size: 11px;
-    padding: 4px 8px;
-    height: auto;
-    white-space: nowrap;
+    flex: 1; min-width: 0; width: 100%;
   }
   #screen-inspect .equip-section-header { display: none !important; }
-  #screen-inspect .pc-col-hdr { display: flex !important; justify-content: flex-end; padding: 6px 10px; border-bottom: 1px solid #EEF0F4; }
+  #screen-inspect .insp-type-divider { display: none !important; }
   .mob-right-bulk-btn {
     height: 28px; padding: 0 10px;
     border-radius: 6px; border: 1.5px solid #D0D5DD;
@@ -1339,14 +1313,68 @@
     white-space: nowrap; cursor: pointer;
   }
   .mob-right-bulk-btn:active { background: #DDE2EA; transform: scale(0.95); }
+  .mob-equip-header {
+    display: flex; align-items: center; justify-content: center;
+    background: #EEF4FF; padding: 10px 14px;
+    border-bottom: 1px solid #D6E4FF;
+  }
+  .mob-equip-header-info { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: center; text-align: center; }
+  .mob-equip-header-id { font-size: 11px; color: #999; font-weight: 500; }
+  .mob-equip-header-name { font-size: 14px; font-weight: 700; color: var(--blue); }
+  .mob-equip-header-progress { display: none !important; }
+  .mob-bulk-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 14px;
+    background: #EEF4FF;
+    border-bottom: 1px solid #D6E4FF;
+  }
+
+  /* PC版と同じチェック行スタイル */
   #screen-inspect .check-row {
-    padding: 0 10px !important;
+    display: flex !important; align-items: center !important;
+    padding: 0 14px !important; min-height: 52px !important;
+    border-bottom: 1px solid #F0F2F6 !important;
+    background: #fff !important; gap: 10px !important;
     justify-content: space-between !important;
   }
-  #screen-inspect .check-row .tri-btns {
-    margin-left: auto !important;
+  .check-row-num { display: none !important; }
+  .check-row-text { flex: 1; min-width: 0; }
+  #screen-inspect .check-row-name {
+    font-size: 13px !important; font-weight: 400 !important; color: #222 !important;
   }
-  #pc-result-header { display: flex; }
+  .check-row-desc { display: none !important; }
+  #screen-inspect .tri-btns {
+    display: flex !important; gap: 6px !important;
+    background: none !important; border-radius: 0 !important;
+    padding: 0 !important; flex-shrink: 0 !important;
+  }
+  #screen-inspect .tri-btn {
+    width: 36px !important; height: 36px !important;
+    border-radius: 8px !important;
+    border: 1.5px solid #D0D9ED !important;
+    background: #fff !important;
+    font-size: 15px !important; font-weight: 400 !important; color: #B0BCCF !important;
+    transition: all 0.12s !important; cursor: pointer !important;
+  }
+  #screen-inspect .tri-btn.ok-selected {
+    background: #43A047 !important; border-color: #43A047 !important;
+    color: #fff !important; font-weight: 700 !important;
+  }
+  #screen-inspect .tri-btn.ng-selected {
+    background: var(--red) !important; border-color: var(--red) !important;
+    color: #fff !important; font-weight: 700 !important;
+  }
+  #screen-inspect .tri-btn.na-selected {
+    background: #888 !important; border-color: #888 !important;
+    color: #fff !important; font-weight: 600 !important;
+  }
+  #pc-result-header {
+    display: none; /* モバイルではnav-barを使用 */
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #EBEBEB !important;
+    height: 52px !important;
+    padding: 0 16px !important;
+  }
 
   .inspect-top-actions {
     padding: 12px 16px 8px;
@@ -1455,7 +1483,7 @@
     flex-shrink: 0;
   }
   .tri-btn:active { transform: scale(0.93); }
-  .tri-btn.ok-selected  { background: var(--blue-light); border-color: var(--blue); color: var(--blue); font-weight: 700; }
+  .tri-btn.ok-selected  { background: #43A047; border-color: #43A047; color: #fff; font-weight: 700; }
   .tri-btn.ng-selected  { background: var(--red-light);  border-color: var(--red);  color: var(--red);  font-weight: 700; }
   .tri-btn.na-selected  { background: #F0F0F0; border-color: #BBBBBB; color: #777; font-weight: 600; }
   .tri-btn.note-btn { font-size: 13px; color: var(--text-sub); }
@@ -1763,23 +1791,26 @@
   .pc-result-nav {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 14px 16px 0;
+    gap: 12px;
+    padding: 0 40px;
+    height: 64px;
     flex-shrink: 0;
-    background: transparent;
+    background: #FFFFFF;
+    border-bottom: 1px solid #EBEBEB;
   }
   .pc-result-nav-title {
     font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.3px;
     color: var(--text);
+    line-height: 1.2;
   }
   .pc-result-nav-back {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 8px;
     border: 1px solid #E0E0E0;
-    background: #fff;
+    background: #F8F8F8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1865,6 +1896,7 @@
     color: #2E7D32;
   }
   .pc-res-stat-num.ng { color: var(--red); }
+  .pc-res-stat-num.ng-zero { color: var(--text); }
   .pc-res-stat-num.neutral { color: var(--text); }
   .pc-res-stat-lbl {
     font-size: 11px;
@@ -2356,6 +2388,7 @@
   .mob-res-stat-item + .mob-res-stat-item { border-left: 1px solid var(--border); }
   .mob-res-stat-num { font-size: 20px; font-weight: 800; line-height: 1; color: #2E7D32; }
   .mob-res-stat-num.ng { color: var(--red); }
+  .mob-res-stat-num.ng-zero { color: var(--text); }
   .mob-res-stat-num.neutral { color: var(--text); }
   .mob-res-stat-lbl { font-size: 10px; color: var(--text-sub); font-weight: 500; }
   .mob-res-info-grid { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 12px; background: #F8F9FA; border-radius: 8px; padding: 10px 12px; }
@@ -3106,6 +3139,7 @@
   #inspect-mobile-nav  { display: none !important; }
   #inspect-mobile-bulk { display: none !important; }
   #confirm-mobile-nav  { display: none !important; }
+  #result-mobile-nav   { display: none !important; }
 
   /* ② PC ヘッダーをモバイルでも表示 */
   .pc-inspect-header {
@@ -3807,8 +3841,8 @@
   .pc-inspect-back:hover { background: #EBEBEB; }
   .pc-inspect-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: var(--text); line-height: 1.2; }
   .pc-inspect-subtitle { font-size: 12px; color: var(--text-sub); font-weight: 400; margin: 2px 0 0; line-height: 1; }
-  .pc-result-nav { padding: 24px 32px 0; gap: 12px; }
-  .pc-result-nav-title { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+  .pc-result-nav { padding: 0 40px; }
+  .pc-result-nav-title { font-size: 18px; font-weight: 700; }
   .pc-result-nav-back { width: 34px; height: 34px; }
   .pc-inspect-bulk-btn {
     display: flex; align-items: center; gap: 6px;
@@ -3818,7 +3852,7 @@
     transition: opacity 0.15s;
   }
   .pc-inspect-bulk-btn:hover { opacity: 0.88; }
-  .pc-inspect-bulk-btn svg { stroke: #fff; }
+  .pc-inspect-bulk-btn svg { stroke: #fff !important; }
 
   /* Mobile elements hidden on PC */
   #inspect-mobile-nav { display: none; }
@@ -3871,7 +3905,7 @@
 
   /* 右側の一括ボタン */
   .pc-inspect-bulk-btn {
-    background: var(--blue) !important; color: #fff !important;
+    background: #43A047 !important; color: #fff !important;
     border: none !important; border-radius: 10px !important;
     padding: 11px 20px !important; font-size: 14px !important;
     font-weight: 600 !important; cursor: pointer !important;
@@ -3936,8 +3970,9 @@
   }
   .equip-section-left-inner {
     display: flex; flex-direction: column; gap: 6px;
-    padding: 18px 20px 8px;
+    padding: 12px 20px;
     background: transparent;
+    justify-content: center;
   }
   .equip-left-id {
     font-size: 11px; font-weight: 500; color: #999; letter-spacing: 0.3px;
@@ -3948,16 +3983,16 @@
   .equip-left-progress {
     font-size: 12px; color: #888; font-weight: 400;
   }
-  .equip-left-bulk-btn {
-    margin: 10px 12px 10px;
-    height: 28px;
+  .equip-left-progress { display: none !important; }
     padding: 0 10px;
+  .equip-left-bulk-btn {
+    height: 28px;
     border-radius: 6px;
     border: 1.5px solid #D0D5DD;
     background: #F8F9FA;
     font-size: 12px; font-weight: 600; color: #555;
     white-space: nowrap; cursor: pointer;
-    align-self: flex-start;
+    width: 100%;
   }
   .equip-left-bulk-btn:hover { background: #EAECF0; border-color: #B0B8C5; }
   .equip-left-bulk-btn:active { background: #DDE2EA; transform: scale(0.95); }
@@ -4042,12 +4077,7 @@
 
   /* セクションヘッダー：青行 */
   #screen-inspect .equip-section-header {
-    display: flex !important; flex-direction: row !important;
-    align-items: center !important;
-    padding: 12px 28px !important;
-    background: #EEF4FF !important;
-    border-bottom: 1px solid #D6E4FF !important;
-    border-top: none !important; margin: 0 !important; gap: 0 !important;
+    display: none !important;
   }
   #screen-inspect .equip-id-chip { display: none !important; }
   #screen-inspect .equip-header-top { display: none !important; }
@@ -4106,6 +4136,8 @@
 
   /* 種別ラベル非表示 */
   #screen-inspect .insp-type-divider { display: none !important; }
+  .mob-equip-header-info { display: none !important; }
+  .mob-bulk-bar { justify-content: flex-end !important; }
 
   /* チェック行グリッド */
   #screen-inspect .check-rows-grid {
@@ -4149,7 +4181,7 @@
     background: #F0F5FF !important;
   }
   #screen-inspect .tri-btn.ok-selected {
-    background: var(--blue) !important; border-color: var(--blue) !important;
+    background: #43A047 !important; border-color: #43A047 !important;
     color: #fff !important; font-weight: 700 !important;
   }
   #screen-inspect .tri-btn.ng-selected {
@@ -6090,6 +6122,7 @@
   .new-apr-meta-label {
     color: #94A3B8;
     font-weight: 400;
+    white-space: nowrap;
   }
   .new-apr-meta-value {
     color: #374151;
@@ -6103,6 +6136,46 @@
     color: #16A34A;
     font-weight: 600;
   }
+  /* ── グリッドレイアウト：コロン位置揃え ── */
+  .new-apr-meta-grid {
+    display: grid;
+    grid-template-columns: max-content max-content auto max-content max-content auto max-content max-content auto;
+    align-items: center;
+    row-gap: 0;
+    font-size: 12px;
+  }
+  .naml {
+    color: #94A3B8;
+    font-weight: 400;
+    white-space: nowrap;
+    padding-top: 4px;
+  }
+  .namc {
+    color: #94A3B8;
+    padding-right: 2px;
+    padding-top: 4px;
+  }
+  .namv {
+    color: #374151;
+    font-weight: 500;
+    white-space: nowrap;
+    padding-right: 14px;
+    padding-top: 4px;
+  }
+  /* 承認行：上に区切り線（全幅span1本で引く） */
+  .apr2-divider {
+    grid-column: 1 / -1;
+    border-top: 1px dashed #E2E8F0;
+    margin-top: 4px;
+    margin-bottom: 0;
+    height: 0;
+    display: block;
+  }
+  .naml-apr2, .namc-apr2, .namv-apr2 {
+    padding-top: 6px;
+  }
+  .naml-apr2 { color: #94A3B8; }
+  .namv-apr2 { color: #374151; font-weight: 500; padding-right: 14px; }
   .new-apr-card-actions {
     display: flex;
     align-items: center;
@@ -7019,8 +7092,8 @@
       </div>
       <div style="display:flex;align-items:center;gap:16px;padding:6px 16px 2px;font-size:12px;color:var(--text-sub);">
         <span style="display:flex;align-items:center;gap:4px;">
-          <span style="color:var(--blue);font-size:14px;font-weight:700;">○</span>正常
-          <span id="legend-done-count" style="background:var(--blue);color:#fff;border-radius:10px;padding:0 6px;font-size:11px;font-weight:700;min-width:18px;text-align:center;">0</span>
+          <span style="color:#43A047;font-size:14px;font-weight:700;">○</span>正常
+          <span id="legend-done-count" style="background:#43A047;color:#fff;border-radius:10px;padding:0 6px;font-size:11px;font-weight:700;min-width:18px;text-align:center;">0</span>
         </span>
         <span style="display:flex;align-items:center;gap:4px;">
           <span style="color:var(--red);font-size:14px;font-weight:700;">×</span>異常あり
@@ -7379,6 +7452,12 @@
 
   <!-- ===== SCREEN 10: RESULT (点検結果閲覧) ===== -->
   <div class="screen hidden screen-flex" id="screen-result">
+    <div class="nav-bar blue-accent" id="result-mobile-nav">
+      <div class="nav-back" onclick="showScreen('screen-home')">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span class="nav-title">点検結果</span>
+    </div>
     <div class="status-bar">
       <span class="time">9:41</span>
       <div class="status-icons">
@@ -7398,19 +7477,15 @@
     <div id="result-banner"></div>
     <div id="result-content"></div>
     <div id="result-sections"></div>
-    <div class="bottom-action">
-      <div class="btn-row">
-        <button class="btn-bottom-sub" onclick="showScreen('screen-home')">ホームに戻る</button>
-        <button class="btn-bottom-main" style="flex:2;" id="result-reinspect-btn" onclick="startReinspection()">再点検する</button>
-      </div>
-    </div>
     <!-- PC専用ダッシュボード結果 -->
     <div class="pc-result-wrapper" id="pc-result-wrapper">
-      <div class="pc-result-nav">
-        <div class="pc-result-nav-back" onclick="showScreen('screen-home')">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      <div class="pc-result-nav pc-inspect-header">
+        <div class="pc-inspect-header-left">
+          <div class="pc-inspect-back" onclick="showScreen('screen-home')">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </div>
+          <h1 class="pc-inspect-title">点検結果</h1>
         </div>
-        <div class="pc-result-nav-title">点検結果</div>
       </div>
       <div class="pc-result-body" id="pc-result-body">
         <!-- JSで描画 -->
@@ -8582,7 +8657,7 @@
       const statusEl = el.querySelector('.cal-day-status');
       if (statusEl) {
         if (isHoliday)                          statusEl.style.color = '#DDDDDD';
-        else if (statusClass === 'done')        statusEl.style.color = 'var(--blue)';
+        else if (statusClass === 'done')        statusEl.style.color = '#43A047';
         else if (statusClass === 'anomaly')     statusEl.style.color = 'var(--red)';
         else if (statusClass === 'no-sched')    statusEl.style.color = '#DDDDDD';  // スケジュール外平日
         else                                    statusEl.style.color = '#BBBBBB';  // 未点検スケジュール日
@@ -8885,11 +8960,14 @@
     var mobLineGroups = {}, mobLineOrder = [];
     var mobRecTypes = record.inspectionTypes || {};
     var mobTotalItems = 0;
+    var _mobValidLineIds = (ADM.lines || []).map(function(l){ return l.id; });
     (record.equips || []).forEach(function(eqId) {
       var admEq  = (ADM.equips || []).find(function(e){ return e.id === eqId; });
       var eqData = EQUIP_DATA.find(function(e){ return e.id === eqId; });
       var eqName = (eqData && eqData.name) || (admEq && admEq.name) || eqId;
       var lineId = (admEq && admEq.lineId) || '__none__';
+      // 削除済みライン（ADM.linesに存在しない）はスキップ
+      if (lineId === '__none__' || _mobValidLineIds.indexOf(lineId) === -1) return;
       if (!mobLineGroups[lineId]) { mobLineGroups[lineId] = []; mobLineOrder.push(lineId); }
       var s = (record.state || {})[eqId] || {};
       var eqOk = 0, eqNg = 0, eqItems = 0;
@@ -8931,7 +9009,7 @@
       '</div>' +
       '<div class="mob-res-stats-row">' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num">' + totalOk + '</div><div class="mob-res-stat-lbl">正常 件</div></div>' +
-        '<div class="mob-res-stat-item"><div class="mob-res-stat-num' + (totalNg > 0 ? ' ng' : '') + '">' + totalNg + '</div><div class="mob-res-stat-lbl">異常 件</div></div>' +
+        '<div class="mob-res-stat-item"><div class="mob-res-stat-num' + (totalNg > 0 ? ' ng' : ' ng-zero') + '">' + totalNg + '</div><div class="mob-res-stat-lbl">異常 件</div></div>' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + mobLineOrder.length + '</div><div class="mob-res-stat-lbl">ライン</div></div>' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + (record.equips || []).length + '</div><div class="mob-res-stat-lbl">設備数</div></div>' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + mobTotalItems + '</div><div class="mob-res-stat-lbl">点検項目数</div></div>' +
@@ -9036,11 +9114,14 @@
       var lineGroups = {};   // lineId -> [{eqId, eqName, ok, ng, itemCount}]
       var lineOrder  = [];
       var recTypes = record.inspectionTypes || {};
+      var _validLineIds = (ADM.lines || []).map(function(l){ return l.id; });
       (record.equips || []).forEach(function(eqId) {
         var admEq  = (ADM.equips || []).find(function(e){ return e.id === eqId; });
         var eqData = EQUIP_DATA.find(function(e){ return e.id === eqId; });
         var eqName = (eqData && eqData.name) || (admEq && admEq.name) || eqId;
         var lineId = (admEq && admEq.lineId) || '__none__';
+        // 削除済みライン（ADM.linesに存在しない）はスキップ
+        if (lineId === '__none__' || _validLineIds.indexOf(lineId) === -1) return;
         if (!lineGroups[lineId]) { lineGroups[lineId] = []; lineOrder.push(lineId); }
         var s = (record.state || {})[eqId] || {};
         var eqOk = 0, eqNg = 0, eqItems = 0;
@@ -9082,7 +9163,7 @@
           '<div class="pc-res-stats-row">' +
             '<div class="pc-res-stat-item"><div class="pc-res-stat-num">' + totalOk + '</div><div class="pc-res-stat-lbl">正常 件</div></div>' +
             '<div class="pc-res-stat-divider"></div>' +
-            '<div class="pc-res-stat-item"><div class="pc-res-stat-num' + (totalNg > 0 ? ' ng' : '') + '">' + totalNg + '</div><div class="pc-res-stat-lbl">異常 件</div></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num' + (totalNg > 0 ? ' ng' : ' ng-zero') + '">' + totalNg + '</div><div class="pc-res-stat-lbl">異常 件</div></div>' +
             '<div class="pc-res-stat-divider"></div>' +
             '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + lineCount + '</div><div class="pc-res-stat-lbl">ライン</div></div>' +
             '<div class="pc-res-stat-divider"></div>' +
@@ -9826,14 +9907,15 @@
 
   function updateSidebarItemProgress(equipId) {
     const el = document.getElementById('sidebar-progress-' + equipId);
-    if (!el) return;
+    const mobEl = document.getElementById('mob-progress-' + equipId);
     const s = state[equipId];
     if (!s) return;
     let total = 0, done = 0;
     if (s['daily'])   { total += s['daily'].length;   done += s['daily'].filter(v => v !== null).length; }
     if (inspectionTypes.is10Day && s['10days'])   { total += s['10days'].length;   done += s['10days'].filter(v => v !== null).length; }
     if (inspectionTypes.isMonthly && s['monthly']) { total += s['monthly'].length; done += s['monthly'].filter(v => v !== null).length; }
-    el.textContent = `${done}/${total}項目完了`;
+    if (el) el.textContent = `${done}/${total}項目完了`;
+    if (mobEl) mobEl.textContent = `${done}/${total}項目完了`;
   }
 
   function buildInspectDateBanner() {
@@ -9936,6 +10018,14 @@
 
     // Header（モバイル用・PCでは非表示）
     rightCol.innerHTML = `
+      <div class="mob-bulk-bar">
+        <div class="mob-equip-header-info">
+          <span class="mob-equip-header-id">${eq.id}</span>
+          <span class="mob-equip-header-name">${eq.name}</span>
+          <span class="mob-equip-header-progress" id="mob-progress-${eq.id}">0/${totalItems}項目完了</span>
+        </div>
+        <button class="mob-right-bulk-btn" onclick="setBulkNa('${eq.id}')">一括「ー」入力</button>
+      </div>
       <div class="equip-section-header">
         <span class="equip-id-chip">設備ID: ${eq.id}</span>
         <div class="equip-header-name-row">
@@ -9948,7 +10038,7 @@
         <div class="pc-col-hdr">
           <div class="pc-col-spacer"></div>
           <div class="pc-col-ng-wrap">
-            <button class="mob-right-bulk-btn" onclick="setBulkNa('${eq.id}')">一括「ー」入力</button>
+            <button class="pc-col-bulk-btn" onclick="setBulkNa('${eq.id}')">一括「ー」入力</button>
           </div>
           <div class="pc-col-spacer"></div>
         </div>
@@ -10265,7 +10355,7 @@
       '</div>' +
       '<div class="mob-res-stats-row">' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num">' + totalOk + '</div><div class="mob-res-stat-lbl">正常 件</div></div>' +
-        '<div class="mob-res-stat-item"><div class="mob-res-stat-num' + (totalNg > 0 ? ' ng' : '') + '">' + totalNg + '</div><div class="mob-res-stat-lbl">異常 件</div></div>' +
+        '<div class="mob-res-stat-item"><div class="mob-res-stat-num' + (totalNg > 0 ? ' ng' : ' ng-zero') + '">' + totalNg + '</div><div class="mob-res-stat-lbl">異常 件</div></div>' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + cfLineOrder.length + '</div><div class="mob-res-stat-lbl">ライン</div></div>' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + selectedEquips.length + '</div><div class="mob-res-stat-lbl">設備数</div></div>' +
         '<div class="mob-res-stat-item"><div class="mob-res-stat-num neutral">' + totalItems + '</div><div class="mob-res-stat-lbl">点検項目数</div></div>' +
@@ -10313,12 +10403,15 @@
       var lineGroups = {};
       var lineOrder = [];
       var pcTotalItems = 0;
+      var _cfValidLineIds = (ADM.lines || []).map(function(l){ return l.id; });
 
       selectedEquips.forEach(function(id) {
         var admEq  = (ADM.equips || []).find(function(e){ return e.id === id; });
         var eqData = EQUIP_DATA.find(function(e){ return e.id === id; });
         var eqName = (eqData && eqData.name) || (admEq && admEq.name) || id;
         var lineId = (admEq && admEq.lineId) || '__none__';
+        // 削除済みライン（ADM.linesに存在しない）はスキップ
+        if (lineId === '__none__' || _cfValidLineIds.indexOf(lineId) === -1) return;
         if (!lineGroups[lineId]) { lineGroups[lineId] = []; lineOrder.push(lineId); }
         var s = state[id] || {};
         var eqOk = 0, eqNg = 0, eqItems = 0;
@@ -10342,15 +10435,11 @@
 
       var pcHasNg = totalNg > 0;
       var pcLineCount = lineOrder.length;
-      var pcInspector = localStorage.getItem('loggedInUser') || '\u2014';
-      var pcTypeNames = [];
-      if (inspectionTypes.isDaily)   pcTypeNames.push('\u6bce\u65e5\u70b9\u691c');
-      if (inspectionTypes.is10Day)   pcTypeNames.push('10\u65e5\u6bce\u70b9\u691c');
-      if (inspectionTypes.isMonthly) pcTypeNames.push('1\u30f6\u6708\u70b9\u691c');
+      var pcInspector = localStorage.getItem('loggedInUser') || '—';
       var pcEquipCount = selectedEquips.length;
       var pcNow = new Date();
       var pcM0 = calMonth != null ? calMonth : pcNow.getMonth();
-      var pcDateStr = (calYear || pcNow.getFullYear()) + '\u5e74' + (pcM0 + 1) + '\u6708' + (selectedCalDay || pcNow.getDate()) + '\u65e5';
+      var pcDateStr = (calYear || pcNow.getFullYear()) + '年' + (pcM0 + 1) + '月' + (selectedCalDay || pcNow.getDate()) + '日';
 
       var summaryHtml =
         '<div class="pc-res-summary-card' + (pcHasNg ? ' has-ng' : '') + '">' +
@@ -10361,87 +10450,71 @@
             ) +
           '</div>' +
           '<div class="pc-res-summary-title-block">' +
-            '<div class="pc-res-summary-status">' + (pcHasNg ? '\u7570\u5e38\u304c\u3042\u308a\u307e\u3059' : '\u3059\u3079\u3066\u306e\u70b9\u691c\u304c\u5b8c\u4e86\u3057\u307e\u3057\u305f') + '</div>' +
-            '<div class="pc-res-summary-sub">' + (pcHasNg ? '\u7570\u5e38\u304c ' + totalNg + ' \u4ef6\u3042\u308a\u307e\u3059' : '\u7570\u5e38\u306f\u3042\u308a\u307e\u305b\u3093\u3067\u3057\u305f') + '</div>' +
+            '<div class="pc-res-summary-status">' + (pcHasNg ? '異常があります' : 'すべての点検が完了しました') + '</div>' +
+            '<div class="pc-res-summary-sub">' + (pcHasNg ? '異常が ' + totalNg + ' 件あります' : '異常はありませんでした') + '</div>' +
           '</div>' +
           '<div class="pc-res-stats-row">' +
-            '<div class="pc-res-stat-item"><div class="pc-res-stat-num">' + totalOk + '</div><div class="pc-res-stat-lbl">\u6b63\u5e38 \u4ef6</div></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num">' + totalOk + '</div><div class="pc-res-stat-lbl">正常 件</div></div>' +
             '<div class="pc-res-stat-divider"></div>' +
-            '<div class="pc-res-stat-item"><div class="pc-res-stat-num' + (totalNg > 0 ? ' ng' : '') + '">' + totalNg + '</div><div class="pc-res-stat-lbl">\u7570\u5e38 \u4ef6</div></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num' + (totalNg > 0 ? ' ng' : ' ng-zero') + '">' + totalNg + '</div><div class="pc-res-stat-lbl">異常 件</div></div>' +
             '<div class="pc-res-stat-divider"></div>' +
-            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcLineCount + '</div><div class="pc-res-stat-lbl">\u30e9\u30a4\u30f3</div></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcLineCount + '</div><div class="pc-res-stat-lbl">ライン</div></div>' +
             '<div class="pc-res-stat-divider"></div>' +
-            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcEquipCount + '</div><div class="pc-res-stat-lbl">\u8a2d\u5099\u6570</div></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcEquipCount + '</div><div class="pc-res-stat-lbl">設備数</div></div>' +
             '<div class="pc-res-stat-divider"></div>' +
-            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcTotalItems + '</div><div class="pc-res-stat-lbl">\u70b9\u691c\u9805\u76ee\u6570</div></div>' +
+            '<div class="pc-res-stat-item"><div class="pc-res-stat-num neutral">' + pcTotalItems + '</div><div class="pc-res-stat-lbl">点検項目数</div></div>' +
           '</div>' +
         '</div>';
 
-      var lineSummaryHtml = '<div class="pc-res-section-title">\u30e9\u30a4\u30f3\u5225\u30b5\u30de\u30ea\u30fc</div><div class="pc-res-line-grid">';
-      lineOrder.forEach(function(lineId) {
+      var badgeIconOk = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      var badgeIconNg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+
+      var lineListHtml = '<div class="pc-res-section-title">ライン一覧</div><div class="res-line-list-card">';
+      lineOrder.forEach(function(lineId, _li) {
         var equips = lineGroups[lineId];
         var lOk = 0, lNg = 0, lItems = 0;
         equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
         var lHasNg = lNg > 0;
-        var lineName = lineId === '__none__' ? '\u672a\u5206\u985e' : getConfLineName(lineId);
-        lineSummaryHtml +=
-          '<div class="pc-res-line-card' + (lHasNg ? ' has-ng' : '') + '">' +
-            '<div class="pc-res-line-card-top">' +
-              '<div class="pc-res-line-name">' + lineName + '</div>' +
-              '<div class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? '\u26a0 \u7570\u5e38' : '\u2713 \u6b63\u5e38') + '</div>' +
+        var lineName = lineId === '__none__' ? '未分類' : getConfLineName(lineId);
+        var pcDetailId = 'pc-conf-inline-' + lineId.replace(/[^a-z0-9]/gi,'_') + '_' + _li;
+        var eqTableRows = equips.map(function(e) {
+          return '<tr>' +
+            '<td class="eq-num">' + e.eqId + '</td>' +
+            '<td><strong>' + e.eqName + '</strong></td>' +
+            '<td style="text-align:center">' + e.items + '項目</td>' +
+            '<td class="pc-res-tbl-ok" style="text-align:center">' + e.ok + '</td>' +
+            '<td class="' + (e.ng > 0 ? 'pc-res-tbl-ng' : '') + '" style="text-align:center">' + e.ng + '</td>' +
+            '<td style="text-align:center"><span class="pc-res-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '⚠ 異常あり' : '✓ 正常') + '</span></td>' +
+            '<td class="pc-res-tbl-arrow" style="text-align:center">›</td>' +
+          '</tr>';
+        }).join('');
+        lineListHtml +=
+          '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
+            '<div class="res-line-row-name">' + lineName + '</div>' +
+            '<div class="res-line-row-metas">' +
+              '<div class="res-line-row-meta"><div class="res-line-row-meta-label">設備数</div><div class="res-line-row-meta-val">' + equips.length + '台</div></div>' +
+              '<div class="res-line-row-meta"><div class="res-line-row-meta-label">点検項目数</div><div class="res-line-row-meta-val">' + lItems + '項目</div></div>' +
+              '<div class="res-line-row-meta"><div class="res-line-row-meta-label">点検者</div><div class="res-line-row-meta-val">' + pcInspector + '</div></div>' +
+              '<div class="res-line-row-meta"><div class="res-line-row-meta-label">日付</div><div class="res-line-row-meta-val">' + pcDateStr + '</div></div>' +
             '</div>' +
-            '<div class="pc-res-line-meta">\u8a2d\u5099\u6570\uff1a' + equips.length + '\u53f0\u3000|\u3000\u70b9\u691c\u9805\u76ee\u6570\uff1a' + lItems + '\u9805\u76ee</div>' +
-            '<div class="pc-res-line-stats">' +
-              '<span class="pc-res-line-stat">\u6b63\u5e38 <b class="ok">' + lOk + '</b> \u4ef6</span>' +
-              '<span class="pc-res-line-stat">\u7570\u5e38 <b class="' + (lNg > 0 ? 'ng' : 'neutral') + '">' + lNg + '</b> \u4ef6</span>' +
+            '<div class="res-line-row-counts">' +
+              '<div class="res-line-row-count"><div class="res-line-row-count-num ok">' + lOk + '</div><div class="res-line-row-count-lbl">正常</div></div>' +
+              '<div class="res-line-row-count"><div class="res-line-row-count-num ' + (lNg > 0 ? 'ng-v' : 'zero') + '">' + lNg + '</div><div class="res-line-row-count-lbl">異常</div></div>' +
             '</div>' +
+            '<div class="res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
+            '<svg class="res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+          '</div>' +
+          '<div class="res-line-inline-detail open" id="' + pcDetailId + '">' +
+            '<table>' +
+              '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:72px"><col style="width:72px"><col style="width:120px"><col style="width:36px"></colgroup>' +
+              '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th><th></th></tr></thead>' +
+              '<tbody>' + eqTableRows + '</tbody>' +
+            '</table>' +
           '</div>';
       });
-      lineSummaryHtml += '</div>';
+      lineListHtml += '</div>';
 
-      var lineDetailHtml = '<div class="pc-res-section-title">\u30e9\u30a4\u30f3\u5225\u306e\u8a73\u7d30</div>';
-      lineOrder.forEach(function(lineId, idx) {
-        var equips = lineGroups[lineId];
-        var lOk = 0, lNg = 0, lItems = 0;
-        equips.forEach(function(e){ lOk += e.ok; lNg += e.ng; lItems += e.items; });
-        var lHasNg = lNg > 0;
-        var lineName = lineId === '__none__' ? '\u672a\u5206\u985e' : getConfLineName(lineId);
-        var accId = 'pc-conf-acc-' + idx;
-        lineDetailHtml +=
-          '<div class="pc-res-detail-accordion' + (lHasNg ? ' has-ng' : '') + ' open" id="' + accId + '">' +
-            '<div class="pc-res-detail-header" onclick="togglePcConfAcc(\'' + accId + '\')">' +
-              '<div class="pc-res-detail-acc-name">' + lineName + '&nbsp;&nbsp;<span class="pc-res-line-chip ' + (lHasNg ? 'ng' : 'ok') + '" style="font-size:11px;">' + (lHasNg ? '\u26a0 \u7570\u5e38' : '\u2713 \u6b63\u5e38') + '</span></div>' +
-              '<div class="pc-res-detail-acc-meta">' +
-                '<span>\u8a2d\u5099\u6570\uff1a' + equips.length + '\u53f0</span>' +
-                '<span>\u70b9\u691c\u9805\u76ee\u6570\uff1a' + lItems + '\u9805\u76ee</span>' +
-                '<span>\u6b63\u5e38\uff1a<b class="ok">' + lOk + '</b> \u4ef6</span>' +
-                '<span>\u7570\u5e38\uff1a<b class="' + (lNg > 0 ? 'ng' : '') + '">' + lNg + '</b> \u4ef6</span>' +
-                '<span>\u62c5\u5f53\u8005\uff1a<b style="color:var(--text)">' + (pcInspector || '\u2014') + '</b></span>' +
-              '</div>' +
-              '<div class="pc-res-detail-chevron"><svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></div>' +
-            '</div>' +
-            '<div class="pc-res-detail-body">' +
-              '<table class="pc-res-detail-table">' +
-                '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:80px"><col style="width:80px"><col style="width:100px"></colgroup>' +
-                '<thead><tr><th>\u8a2d\u5099\u756a\u53f7</th><th>\u8a2d\u5099\u540d</th><th style="text-align:center">\u70b9\u691c\u9805\u76ee\u6570</th><th style="text-align:center">\u6b63\u5e38</th><th style="text-align:center">\u7570\u5e38</th><th style="text-align:center">\u30b9\u30c6\u30fc\u30bf\u30b9</th></tr></thead>' +
-                '<tbody>' +
-                  equips.map(function(e) {
-                    return '<tr>' +
-                      '<td class="eq-num">' + e.eqId + '</td>' +
-                      '<td><strong>' + e.eqName + '</strong></td>' +
-                      '<td class="eq-count" style="text-align:center">' + e.items + '\u9805\u76ee</td>' +
-                      '<td class="pc-res-tbl-ok" style="text-align:center">' + e.ok + '</td>' +
-                      '<td class="' + (e.ng > 0 ? 'pc-res-tbl-ng' : '') + '" style="text-align:center">' + e.ng + '</td>' +
-                      '<td style="text-align:center"><span class="pc-res-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '\u26a0 \u7570\u5e38' : '\u2713 \u6b63\u5e38') + '</span></td>' +
-                    '</tr>';
-                  }).join('') +
-                '</tbody>' +
-              '</table>' +
-            '</div>' +
-          '</div>';
-      });
-
-      pcConfBody.innerHTML = summaryHtml + lineSummaryHtml + lineDetailHtml;
+      pcConfBody.innerHTML = summaryHtml + lineListHtml;
     }
   }
 
@@ -13806,11 +13879,9 @@ function renderAdmApproval() {
 
         var progressHtml;
         if (isApproved) {
-          progressHtml = '<span class="new-apr-meta-label">進捗：</span>' +
-            '<span class="new-apr-meta-approved">承認済み (' + eApproved + '/' + eTotal + ')</span>';
+          progressHtml = '<span class="new-apr-meta-approved">承認済み (' + eApproved + '/' + eTotal + ')</span>';
         } else {
-          progressHtml = '<span class="new-apr-meta-label">進捗：</span>' +
-            '<span class="new-apr-meta-pending">承認待ち (' + eApproved + '/' + eTotal + ')</span>';
+          progressHtml = '<span class="new-apr-meta-pending">承認待ち (' + eApproved + '/' + eTotal + ')</span>';
         }
 
         var actionHtml;
@@ -13829,10 +13900,16 @@ function renderAdmApproval() {
           '<div class="new-apr-card-info">' +
             '<div class="new-apr-card-id">' + esc(equip.equipId) + '</div>' +
             '<div class="new-apr-card-name">' + esc(equip.equipName) + '</div>' +
-            '<div class="new-apr-card-meta">' +
-              '<div class="new-apr-meta-item"><span class="new-apr-meta-label">点検担当：</span><span class="new-apr-meta-value">' + esc(insp.inspector || '') + '</span></div>' +
-              '<div class="new-apr-meta-item"><span class="new-apr-meta-label">点検日時：</span><span class="new-apr-meta-value">' + dtStr + '</span></div>' +
-              '<div class="new-apr-meta-item">' + progressHtml + '</div>' +
+            '<div class="new-apr-meta-grid">' +
+              '<span class="naml">点検担当</span><span class="namc">：</span><span class="namv">' + esc(insp.inspector || '') + '</span>' +
+              '<span class="naml">点検日時</span><span class="namc">：</span><span class="namv">' + dtStr + '</span>' +
+              '<span class="naml naml-progress">進　捗</span><span class="namc">：</span><span class="namv">' + progressHtml + '</span>' +
+              (isApproved && (insp.approver || insp.approvedAt) ?
+                '<span class="apr2-divider"></span>' +
+                '<span class="naml naml-apr2">承認者</span><span class="namc namc-apr2">：</span><span class="namv namv-apr2">' + esc(insp.approver || '') + '</span>' +
+                '<span class="naml naml-apr2">承認日時</span><span class="namc namc-apr2">：</span><span class="namv namv-apr2">' + esc(insp.approvedAt || '') + '</span>' +
+                '<span class="naml naml-apr2"></span><span class="namc namc-apr2"></span><span class="namv namv-apr2"></span>'
+              : '') +
             '</div>' +
           '</div>' +
           '<div class="new-apr-card-actions">' + actionHtml + '</div>' +
