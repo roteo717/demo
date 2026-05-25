@@ -1768,11 +1768,11 @@
     box-sizing: border-box;
     overflow-x: hidden;
   }
-  /* モバイル: 確認コンテンツをモバイル用に表示（mob-res-summaryスタイル使用） */
-  #confirm-content { display: block; }
-  #confirm-sections { display: block; }
+  /* モバイル: pc-confirm-wrapperを使用してPCと同じデザインに統一 */
+  #confirm-content { display: none !important; }
+  #confirm-sections { display: none !important; }
   #confirm-chips { display: none !important; }
-  #screen-confirm > .pc-confirm-wrapper { display: none !important; }
+  #screen-confirm > .pc-confirm-wrapper { display: flex !important; }
   /* モバイル: サマリーカードを折り返し対応 */
   .pc-res-summary-card { flex-wrap: wrap; gap: 10px; padding: 14px 16px; }
   .pc-res-summary-title-block { flex-shrink: 1; min-width: 0; }
@@ -1788,6 +1788,16 @@
   .pc-res-detail-acc-meta { display: none; }
   /* モバイル: ラインカードは1列 */
   .pc-res-line-grid { grid-template-columns: 1fr; }
+  /* モバイル: ライン行を縦並びに */
+  .res-line-row { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
+  .res-line-row-metas { grid-template-columns: 1fr 1fr; gap: 4px 16px; width: 100%; }
+  .res-line-row-counts { width: 100%; justify-content: flex-start; gap: 14px; }
+  .res-line-row-name { min-width: unset; font-size: 14px; }
+  /* モバイル: テーブルを横スクロール対応 */
+  .res-line-inline-detail { overflow-x: auto; }
+  .res-line-inline-detail table { min-width: 400px; }
+  /* モバイル: pc-confirm-bodyの余白調整 */
+  .pc-confirm-body { padding: 12px 12px 20px; }
   .pc-result-nav {
     display: flex;
     align-items: center;
@@ -3119,7 +3129,7 @@
     background: var(--blue-light);
     border: 1px solid var(--blue-mid);
     border-radius: 10px;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
