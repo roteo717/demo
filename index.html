@@ -2438,6 +2438,79 @@
   .mob-res-ng-item-name { flex: 1; font-size: 13px; color: var(--text); }
   .mob-res-ng-badge { font-size: 11px; font-weight: 700; color: var(--red); background: #FFCDD2; border-radius: 6px; padding: 2px 8px; }
 
+  /* ── 点検結果・確認画面：異常項目表示 ── */
+  /* モバイル確認画面：ライン内の異常設備・項目セクション */
+  .mob-cf-ng-section {
+    margin-top: 10px;
+    border-top: 1px solid var(--red-mid);
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mob-cf-eq-ng-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .mob-cf-eq-ng-equip {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--red);
+  }
+  .mob-cf-eq-ng-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  /* ── 点検結果：異常項目表示 ── */
+  /* PC: 異常項目サブ行 */
+  .pc-res-eq-ng-detail td {
+    padding: 0 !important;
+    background: #FFF8F8;
+    border-bottom: 1px solid #FBBCBC !important;
+  }
+  .pc-res-eq-ng-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 16px 10px 24px;
+  }
+  .pc-res-ng-item-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--red);
+    background: #FFEBEE;
+    border: 1px solid #FFCDD2;
+    border-radius: 6px;
+    padding: 3px 9px;
+  }
+  .pc-res-eq-row.has-ng td { background: #FFFAFA; }
+  /* モバイル: 異常項目タグ */
+  .mob-res-eq-ng-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 6px 12px 10px 12px;
+    background: #FFF8F8;
+    border-top: 1px solid #FBBCBC;
+  }
+  .mob-res-eq-ng-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--red);
+    background: #FFEBEE;
+    border: 1px solid #FFCDD2;
+    border-radius: 5px;
+    padding: 2px 8px;
+  }
+
   /* ══════════════════════════════════════════
      点検結果：CRM スタイル ラインカード
      ══════════════════════════════════════════ */
@@ -9146,8 +9219,12 @@
           '<div class="mob-res-detail-tbl-stat ok">' + e.ok + '</div>' +
           '<div class="mob-res-detail-tbl-stat ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + e.ng + '</div>' +
           '<div class="mob-res-detail-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '⚠ 異常あり' : '✓ 正常') + '</div>' +
-          '<div class="mob-res-detail-tbl-arrow">›</div>' +
-        '</div>';
+        '</div>' +
+        (e.ng > 0 && e.ngItems && e.ngItems.length > 0
+          ? '<div class="mob-res-eq-ng-items">' +
+              e.ngItems.map(function(item){ return '<span class="mob-res-eq-ng-tag">✕ ' + item + '</span>'; }).join('') +
+            '</div>'
+          : '');
       }).join('');
       listCard.appendChild(detDiv);
     });
@@ -9179,14 +9256,21 @@
         var activeSlots = ['daily'];
         if (recTypes.is10Day)   activeSlots.push('10days');
         if (recTypes.isMonthly) activeSlots.push('monthly');
+        var pcNgItems = [];
         activeSlots.forEach(function(t) {
-          (s[t] || []).forEach(function(v) {
+          var itemDefs = [];
+          if (eqData) {
+            if (t === 'daily') { itemDefs = eqData.itemsDaily && eqData.itemsDaily.length > 0 ? eqData.itemsDaily : (recTypes.is10Day ? [] : (eqData.items10 || [])); }
+            else if (t === '10days') { itemDefs = eqData.items10 || []; }
+            else if (t === 'monthly')  { itemDefs = eqData.itemsMonthly || []; }
+          }
+          (s[t] || []).forEach(function(v, i) {
             eqItems++;
             if (v === 'ok' || v === 'na') eqOk++;
-            else if (v === 'ng') eqNg++;
+            else if (v === 'ng') { eqNg++; pcNgItems.push(itemDefs[i] || ('項目' + (i+1))); }
           });
         });
-        lineGroups[lineId].push({ eqId: eqId, eqName: eqName, ok: eqOk, ng: eqNg, items: eqItems });
+        lineGroups[lineId].push({ eqId: eqId, eqName: eqName, ok: eqOk, ng: eqNg, items: eqItems, ngItems: pcNgItems });
       });
 
       // ライン名マップ
@@ -9252,15 +9336,21 @@
         var badgeIconNg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
         var pcDetailId = 'pc-line-inline-' + lineId.replace(/[^a-z0-9]/gi,'_') + '_' + _li;
         var eqTableRows = equips.map(function(e) {
-          return '<tr>' +
+          var ngDetailHtml = '';
+          if (e.ng > 0 && e.ngItems && e.ngItems.length > 0) {
+            ngDetailHtml = '<tr class="pc-res-eq-ng-detail"><td colspan="7"><div class="pc-res-eq-ng-list">' +
+              e.ngItems.map(function(item){ return '<span class="pc-res-ng-item-tag">✕ ' + item + '</span>'; }).join('') +
+              '</div></td></tr>';
+          }
+          return '<tr class="pc-res-eq-row' + (e.ng > 0 ? ' has-ng' : '') + '">' +
             '<td class="eq-num">' + e.eqId + '</td>' +
             '<td><strong>' + e.eqName + '</strong></td>' +
             '<td style="text-align:center">' + e.items + '項目</td>' +
             '<td class="pc-res-tbl-ok" style="text-align:center">' + e.ok + '</td>' +
             '<td class="' + (e.ng > 0 ? 'pc-res-tbl-ng' : '') + '" style="text-align:center">' + e.ng + '</td>' +
             '<td style="text-align:center"><span class="pc-res-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '⚠ 異常あり' : '✓ 正常') + '</span></td>' +
-            '<td class="pc-res-tbl-arrow" style="text-align:center">›</td>' +
-          '</tr>';
+            '<td class="pc-res-tbl-arrow" style="text-align:center">' + (e.ng > 0 ? '' : '') + '</td>' +
+          '</tr>' + ngDetailHtml;
         }).join('');
         lineSummaryHtml +=
           '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
@@ -10432,6 +10522,23 @@
       var lHasNg = lNg > 0;
       var lineName = getCfLineName(lineId);
 
+      // 設備ごとの異常項目リストを組み立て
+      var eqNgRows = '';
+      eqIds.forEach(function(id) {
+        var eq = EQUIP_DATA.find(function(e){ return e.id === id; });
+        if (!eq || !eq.__confirmNg) return;
+        var ngList = (eq.__confirmNgItems || []);
+        if (ngList.length === 0) return;
+        var admEq = (ADM.equips || []).find(function(e){ return e.id === id; });
+        var eqName = (eq && eq.name) || (admEq && admEq.name) || id;
+        eqNgRows += '<div class="mob-cf-eq-ng-row">' +
+          '<div class="mob-cf-eq-ng-equip">⚠ ' + eqName + '</div>' +
+          '<div class="mob-cf-eq-ng-tags">' +
+            ngList.map(function(n){ return '<span class="mob-res-eq-ng-tag">✕ ' + (n.item || n) + '</span>'; }).join('') +
+          '</div>' +
+        '</div>';
+      });
+
       var card = document.createElement('div');
       card.className = 'mob-res-line-card' + (lHasNg ? ' has-ng' : '');
       card.innerHTML =
@@ -10440,7 +10547,8 @@
           '<span class="result-status-chip ' + (lHasNg ? 'rs-chip-ng' : 'rs-chip-ok') + '">' + (lHasNg ? '⚠ 異常' : '✓ 正常') + '</span>' +
         '</div>' +
         '<div class="mob-res-line-meta">設備数：' + eqIds.length + '台　|　点検項目数：' + lItems + '項目</div>' +
-        '<div class="mob-res-line-stats">正常 <b class="ok">' + lOk + '</b> 件　異常 <b class="' + (lHasNg ? 'ng' : '') + '">' + lNg + '</b> 件</div>';
+        '<div class="mob-res-line-stats">正常 <b class="ok">' + lOk + '</b> 件　異常 <b class="' + (lHasNg ? 'ng' : '') + '">' + lNg + '</b> 件</div>' +
+        (eqNgRows ? '<div class="mob-cf-ng-section">' + eqNgRows + '</div>' : '');
       sections.appendChild(card);
     });
 
@@ -10466,6 +10574,7 @@
         if (!lineGroups[lineId]) { lineGroups[lineId] = []; lineOrder.push(lineId); }
         var s = state[id] || {};
         var eqOk = 0, eqNg = 0, eqItems = 0;
+        var cfNgItems = [];
         var groups = eqData ? (eqData.__confirmGroups || []) : [];
         groups.forEach(function(group) {
           var vals = s[group.key] || [];
@@ -10473,10 +10582,10 @@
             var v = vals[i];
             eqItems++; pcTotalItems++;
             if (v === 'ok' || v === 'na') eqOk++;
-            else if (v === 'ng') eqNg++;
+            else if (v === 'ng') { eqNg++; cfNgItems.push(item || ('項目' + (i+1))); }
           });
         });
-        lineGroups[lineId].push({ eqId: id, eqName: eqName, ok: eqOk, ng: eqNg, items: eqItems });
+        lineGroups[lineId].push({ eqId: id, eqName: eqName, ok: eqOk, ng: eqNg, items: eqItems, ngItems: cfNgItems });
       });
 
       function getConfLineName(lineId) {
@@ -10529,15 +10638,21 @@
         var lineName = lineId === '__none__' ? '未分類' : getConfLineName(lineId);
         var pcDetailId = 'pc-conf-inline-' + lineId.replace(/[^a-z0-9]/gi,'_') + '_' + _li;
         var eqTableRows = equips.map(function(e) {
-          return '<tr>' +
+          var ngDetailHtml = '';
+          if (e.ng > 0 && e.ngItems && e.ngItems.length > 0) {
+            ngDetailHtml = '<tr class="pc-res-eq-ng-detail"><td colspan="7"><div class="pc-res-eq-ng-list">' +
+              e.ngItems.map(function(item){ return '<span class="pc-res-ng-item-tag">✕ ' + item + '</span>'; }).join('') +
+              '</div></td></tr>';
+          }
+          return '<tr class="pc-res-eq-row' + (e.ng > 0 ? ' has-ng' : '') + '">' +
             '<td class="eq-num">' + e.eqId + '</td>' +
             '<td><strong>' + e.eqName + '</strong></td>' +
             '<td style="text-align:center">' + e.items + '項目</td>' +
             '<td class="pc-res-tbl-ok" style="text-align:center">' + e.ok + '</td>' +
             '<td class="' + (e.ng > 0 ? 'pc-res-tbl-ng' : '') + '" style="text-align:center">' + e.ng + '</td>' +
             '<td style="text-align:center"><span class="pc-res-tbl-chip ' + (e.ng > 0 ? 'ng' : 'ok') + '">' + (e.ng > 0 ? '⚠ 異常あり' : '✓ 正常') + '</span></td>' +
-            '<td class="pc-res-tbl-arrow" style="text-align:center">›</td>' +
-          '</tr>';
+            '<td class="pc-res-tbl-arrow" style="text-align:center"></td>' +
+          '</tr>' + ngDetailHtml;
         }).join('');
         lineListHtml +=
           '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
