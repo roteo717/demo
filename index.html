@@ -3563,6 +3563,42 @@
   .apr-card-grid {
     grid-template-columns: 1fr !important;
   }
+
+  /* ─── 確認画面：モバイルでサマリーカードのテキストはみ出し修正 ─── */
+  .pc-res-summary-card {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    padding: 14px 16px !important;
+  }
+  .pc-res-summary-title-block {
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+  }
+  .pc-res-summary-status {
+    white-space: normal !important;
+    font-size: 14px !important;
+    word-break: break-word !important;
+  }
+  .pc-res-summary-sub {
+    white-space: normal !important;
+    font-size: 11px !important;
+  }
+  .pc-res-stats-row {
+    gap: 0 !important;
+    flex: unset !important;
+    width: 100% !important;
+    justify-content: space-around !important;
+    padding: 8px 0 !important;
+  }
+  .pc-res-stat-num  { font-size: 18px !important; }
+  .pc-res-stat-lbl  { font-size: 10px !important; }
+  .pc-res-stat-divider { display: block !important; }
+  .pc-res-stat-item { flex: 1 !important; }
+  .pc-res-summary-right {
+    min-width: unset !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
 }
 
 /* ============================================================
@@ -4234,9 +4270,14 @@
   #screen-confirm > #pc-confirm-header { display: flex !important; }
   #screen-confirm > .pc-confirm-wrapper { display: flex !important; }
   /* PC: サマリーカードを1行レイアウトに戻す */
-  .pc-res-summary-card { flex-wrap: nowrap; gap: 16px; }
-  .pc-res-summary-right { min-width: 200px; width: auto; }
-  .pc-res-stat-num { font-size: 22px; }
+  .pc-res-summary-card { flex-wrap: nowrap !important; gap: 16px !important; padding: 18px 24px !important; }
+  .pc-res-summary-title-block { flex-shrink: 0 !important; }
+  .pc-res-summary-status { white-space: nowrap !important; font-size: 15px !important; }
+  .pc-res-summary-sub { white-space: nowrap !important; font-size: 12px !important; }
+  .pc-res-stats-row { gap: 16px !important; flex: 1 !important; width: auto !important; justify-content: unset !important; padding: 0 !important; }
+  .pc-res-stat-num { font-size: 22px !important; }
+  .pc-res-stat-item { flex: unset !important; }
+  .pc-res-summary-right { min-width: 200px !important; width: auto !important; }
   .pc-res-detail-acc-meta { display: flex; }
   .pc-res-line-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
   .nrl-grid { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
