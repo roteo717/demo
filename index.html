@@ -5741,11 +5741,11 @@
   .apr2-filter-tabs { flex: 1; min-width: 0; }
   .apr2-line-filter-btn {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 500;
+    padding: 0 10px; border-radius: 8px; font-size: 12px; font-weight: 500;
     cursor: pointer; border: 1px solid var(--border);
     background: #fff; color: var(--text-sub);
     transition: all 0.15s; white-space: nowrap;
-    font-family: inherit; width: auto;
+    font-family: inherit; width: auto; height: 32px;
   }
   .apr2-line-filter-btn:active { opacity: 0.75; }
   .apr2-line-filter-btn.has-filter {
@@ -15785,7 +15785,7 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
 }
 .uinsp-ftab.active .uinsp-ftab-badge { background: #F1F5F9; color: #374151; }
 .uinsp-ftab-badge.overdue-badge { background: #FED7AA; color: #C2410C; }
-.uinsp-line-filter-wrap { position: relative; flex-shrink: 0; margin-bottom: 8px; }
+.uinsp-line-filter-wrap { position: relative; flex-shrink: 0; }
 
 .uinsp-line-card { background:var(--card); border-radius:14px; border:1.5px solid var(--border); box-shadow:var(--shadow-card); margin-bottom:10px; overflow:hidden; }
 .uinsp-line-card.overdue { border-color:var(--red-mid); }
