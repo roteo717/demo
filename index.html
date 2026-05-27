@@ -8807,10 +8807,14 @@
           });
         }
         var existingIdx = -1;
+        // 【修正】ラインIDをキーに含めて同日別ライン点検の誤マージを防ぐ
+        var _bcLinesKey = (r.lines || r.line || []).slice().sort().join('|');
         for (var _i = 0; _i < ALL_INSPECTION_RECORDS.length; _i++) {
           var m = ALL_INSPECTION_RECORDS[_i];
+          var _mLinesKey = (m.lines || m.line || []).slice().sort().join('|');
           if (m.year === r.year && m.month === r.month &&
-              m.day  === r.day  && m.inspector === r.inspector) {
+              m.day  === r.day  && m.inspector === r.inspector &&
+              _mLinesKey === _bcLinesKey) {
             existingIdx = _i; break;
           }
         }
@@ -9012,9 +9016,13 @@
       var _lsAll2 = [];
       try { _lsAll2 = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e2) {}
       _lsAll2.forEach(function(r) {
+        // 【修正】ラインIDをキーに含めて同日別ライン点検の誤重複判定を防ぐ
+        var _scdLinesKey = (r.lines || r.line || []).slice().sort().join('|');
         var dup = ALL_INSPECTION_RECORDS.some(function(m) {
+          var _mLK = (m.lines || m.line || []).slice().sort().join('|');
           return m.year === r.year && m.month === r.month &&
-                 m.day  === r.day  && m.inspector === r.inspector;
+                 m.day  === r.day  && m.inspector === r.inspector &&
+                 _mLK === _scdLinesKey;
         });
         if (!dup) {
           var hasNg2 = !!r.anomaly;
@@ -10884,15 +10892,24 @@
     const key = 'inspections';
     let all = [];
     try { all = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
-    // Remove existing record for same day AND same inspector only
-    all = all.filter(r => !(r.year === record.year && r.month === record.month && r.day === record.day && r.inspector === record.inspector));
+    // Remove existing record for same day AND same inspector AND same lines only
+    // 【修正】ラインIDをキーに含め、同日に複数ラインを別々に点検した場合に互いを上書きしないようにする
+    const _recLinesKey = (record.lines || []).slice().sort().join('|');
+    all = all.filter(r => {
+      const _rLinesKey = (r.lines || r.line || []).slice().sort().join('|');
+      return !(r.year === record.year && r.month === record.month && r.day === record.day &&
+               r.inspector === record.inspector && _rLinesKey === _recLinesKey);
+    });
     all.push(record);
     localStorage.setItem(key, JSON.stringify(all));
 
     // Update in-memory calendar data（担当者ごとに記録）
     ALL_INSPECTION_RECORDS = ALL_INSPECTION_RECORDS.filter(function(r) {
+      // 【修正】ラインIDもキーに含めて同日別ライン点検の上書きを防ぐ
+      var _rLK = (r.lines || r.line || []).slice().sort().join('|');
       return !(r.year === record.year && r.month === record.month &&
-               r.day === record.day && r.inspector === record.inspector);
+               r.day === record.day && r.inspector === record.inspector &&
+               _rLK === _recLinesKey);
     });
     ALL_INSPECTION_RECORDS.push(record);
 
@@ -10958,10 +10975,13 @@
     // ADMがまだロードされていない場合は元のフラグをそのまま使用
     if (!hasNg && _validEquipIds === null) hasNg = !!r.anomaly;
 
-    // 同一担当者・同一日のレコードは上書き
+    // 同一担当者・同一日・同一ラインのレコードは上書き（【修正】ライン追加）
+    var _applyLinesKey = (r.lines || r.line || []).slice().sort().join('|');
     ALL_INSPECTION_RECORDS = ALL_INSPECTION_RECORDS.filter(function(rec) {
+      var _recLK = (rec.lines || rec.line || []).slice().sort().join('|');
       return !(rec.year === r.year && rec.month === r.month &&
-               rec.day === r.day && rec.inspector === r.inspector);
+               rec.day === r.day && rec.inspector === r.inspector &&
+               _recLK === _applyLinesKey);
     });
     ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
   }
@@ -12819,11 +12839,15 @@ function renderUninspPanel() {
           });
         });
       }
+      // 【修正】ラインIDをキーに含めて同日別ライン点検の誤マージを防ぐ
+      var _msLinesKey = (r.lines || r.line || []).slice().sort().join('|');
       var existingIdx = -1;
       for (var _ui = 0; _ui < ALL_INSPECTION_RECORDS.length; _ui++) {
         var _um = ALL_INSPECTION_RECORDS[_ui];
+        var _umLK = (_um.lines || _um.line || []).slice().sort().join('|');
         if (_um.year === r.year && _um.month === r.month &&
-            _um.day  === r.day  && _um.inspector === r.inspector) {
+            _um.day  === r.day  && _um.inspector === r.inspector &&
+            _umLK === _msLinesKey) {
           existingIdx = _ui; break;
         }
       }
@@ -15406,8 +15430,12 @@ function computeUnInspectedLines(targetYear, targetMonth) {
     var _lsRecs3 = [];
     try { _lsRecs3 = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
     _lsRecs3.forEach(function(r) {
+      // 【修正】ラインIDをキーに含めて同日別ライン点検の誤重複判定を防ぐ
+      var _uipLinesKey = (r.lines || r.line || []).slice().sort().join('|');
       var dup = ALL_INSPECTION_RECORDS.some(function(m) {
-        return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
+        var _mLK = (m.lines || m.line || []).slice().sort().join('|');
+        return m.year === r.year && m.month === r.month && m.day === r.day &&
+               m.inspector === r.inspector && _mLK === _uipLinesKey;
       });
       if (!dup) {
         var hasNg = !!r.anomaly;
@@ -15981,9 +16009,14 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       var _lsExisting = [];
       try { _lsExisting = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(_e2) {}
       var _mergedMap = {};
+      // 【修正】ラインIDをキーに含めることで、同日に複数ラインを別々に点検したレコードが消えないようにする
+      var _mkFn = function(r) {
+        var _lk = (r.lines || r.line || []).slice().sort().join('|');
+        return r.year + '-' + r.month + '-' + r.day + '-' + (r.inspector || '') + '-' + _lk;
+      };
       // まず既存localStorage（新しい点検データが含まれる可能性あり）を登録
       _lsExisting.forEach(function(r) {
-        var _k = r.year + '-' + r.month + '-' + r.day + '-' + (r.inspector || '');
+        var _k = _mkFn(r);
         var _cur = _mergedMap[_k];
         if (!_cur || (r.completedAt && (!_cur.completedAt || r.completedAt > _cur.completedAt))) {
           _mergedMap[_k] = r;
@@ -15991,7 +16024,7 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       });
       // 次にFirestoreレコードを登録（より新しい場合のみ上書き）
       records.forEach(function(r) {
-        var _k = r.year + '-' + r.month + '-' + r.day + '-' + (r.inspector || '');
+        var _k = _mkFn(r);
         var _cur = _mergedMap[_k];
         if (!_cur || (r.completedAt && (!_cur.completedAt || r.completedAt > _cur.completedAt))) {
           _mergedMap[_k] = r;
