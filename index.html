@@ -3616,6 +3616,31 @@
     min-width: unset !important;
     flex-shrink: unset !important;
   }
+
+  /* ── 承認行：モバイルでテキストとボタンが重ならないよう縦積みに ── */
+  .apr-insp-row {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    gap: 6px 12px !important;
+  }
+  .apr-insp-row-info {
+    width: 100% !important;
+    flex: unset !important;
+  }
+  .apr-insp-row-meta {
+    grid-template-columns: max-content max-content max-content max-content !important;
+    flex-wrap: wrap !important;
+    font-size: 12px !important;
+  }
+  .apr-insp-meta-val {
+    max-width: 90px !important;
+  }
+  .apr-insp-row-action {
+    width: 100% !important;
+    min-width: unset !important;
+    justify-content: flex-end !important;
+    padding-bottom: 4px !important;
+  }
   /* ライン・設備選択カードを1列 */
   .list-body {
     display: flex !important;
