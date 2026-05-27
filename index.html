@@ -9354,7 +9354,7 @@
         : '—';
       var detailId = 'mob-line-detail-' + lineId.replace(/[^a-z0-9]/gi,'_') + '_' + _rowIdx;
       var row = document.createElement('div');
-      row.className = 'mob-res-line-row';
+      row.className = 'mob-res-line-row open'; // 【修正】デフォルトで開いた状態にする
       var badgeIconOk = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
       var badgeIconNg = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
       var chevronSvg = '<svg class="mob-res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
@@ -9386,7 +9386,7 @@
 
       // Inline detail panel
       var detDiv = document.createElement('div');
-      detDiv.className = 'mob-res-line-inline-detail';
+      detDiv.className = 'mob-res-line-inline-detail open'; // 【修正】デフォルトで開いた状態にする
       detDiv.id = detailId;
       detDiv.innerHTML = equips.map(function(e) {
         return '<div class="mob-res-detail-tbl-row">' +
@@ -9530,7 +9530,7 @@
           '</tr>' + ngDetailHtml;
         }).join('');
         lineSummaryHtml +=
-          '<div class="res-line-row" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
+          '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
             '<div class="res-line-row-name">' + lineName + '</div>' +
             '<div class="res-line-row-metas">' +
               '<div class="res-line-row-meta"><div class="res-line-row-meta-label">設備数</div><div class="res-line-row-meta-val">' + equips.length + '台</div></div>' +
@@ -9545,7 +9545,7 @@
             '<div class="res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
             '<svg class="res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
           '</div>' +
-          '<div class="res-line-inline-detail" id="' + pcDetailId + '">' +
+          '<div class="res-line-inline-detail open" id="' + pcDetailId + '">' +
             '<table>' +
               '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:72px"><col style="width:72px"><col style="width:120px"><col style="width:36px"></colgroup>' +
               '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th><th></th></tr></thead>' +
@@ -10831,7 +10831,7 @@
           '</tr>' + ngDetailHtml;
         }).join('');
         lineListHtml +=
-          '<div class="res-line-row" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
+          '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
             '<div class="res-line-row-name">' + lineName + '</div>' +
             '<div class="res-line-row-metas">' +
               '<div class="res-line-row-meta"><div class="res-line-row-meta-label">設備数</div><div class="res-line-row-meta-val">' + equips.length + '台</div></div>' +
@@ -10846,7 +10846,7 @@
             '<div class="res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
             '<svg class="res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
           '</div>' +
-          '<div class="res-line-inline-detail" id="' + pcDetailId + '">' +
+          '<div class="res-line-inline-detail open" id="' + pcDetailId + '">' +
             '<table>' +
               '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:72px"><col style="width:72px"><col style="width:120px"><col style="width:36px"></colgroup>' +
               '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th><th></th></tr></thead>' +
