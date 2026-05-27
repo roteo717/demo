@@ -6399,6 +6399,153 @@
   }
   .new-apr-section-viewall:hover { color: #64748B; }
 
+  /* ── アコーディオン：設備まとめカード ── */
+  .apr-equip-group {
+    background: #FFFFFF;
+    border: 1px solid #E8ECF0;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    transition: box-shadow 0.15s;
+  }
+  .apr-equip-group.has-pending {
+    border-color: #FCD34D;
+    box-shadow: 0 1px 6px rgba(245,158,11,0.12);
+  }
+  .apr-equip-group-hdr {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: background 0.12s;
+  }
+  .apr-equip-group-hdr:active { background: #F8FAFC; }
+  .apr-equip-group-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: #EEF4FF;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .apr-equip-group-icon svg { width: 18px; height: 18px; stroke: #2F6BFF; fill: none; }
+  .apr-equip-group-info { flex: 1; min-width: 0; }
+  .apr-equip-group-id {
+    font-size: 11px; color: #94A3B8; font-weight: 500;
+    letter-spacing: 0.3px; margin-bottom: 1px;
+  }
+  .apr-equip-group-name {
+    font-size: 15px; font-weight: 700; color: #111827;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .apr-equip-group-meta {
+    display: flex; align-items: center; gap: 8px; margin-top: 3px;
+  }
+  .apr-equip-pending-badge {
+    font-size: 11px; font-weight: 600;
+    background: #FEF3C7; color: #C2410C;
+    border: 1px solid #FDE68A;
+    border-radius: 20px; padding: 1px 8px;
+    white-space: nowrap;
+  }
+  .apr-equip-total-label {
+    font-size: 11px; color: #94A3B8;
+  }
+  .apr-equip-group-right {
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    min-width: 72px; justify-content: flex-end;
+  }
+  .apr-equip-chevron {
+    width: 20px; height: 20px;
+    stroke: #94A3B8; fill: none;
+    transition: transform 0.22s cubic-bezier(.4,0,.2,1);
+    flex-shrink: 0;
+  }
+  .apr-equip-group.open .apr-equip-chevron { transform: rotate(180deg); }
+
+  /* ── アコーディオン：中身（点検記録リスト） ── */
+  .apr-equip-group-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.28s cubic-bezier(.4,0,.2,1);
+  }
+  .apr-equip-group.open .apr-equip-group-body {
+    max-height: 2000px;
+  }
+  .apr-equip-body-inner {
+    border-top: 1px solid #F1F5F9;
+    padding: 0 0 6px;
+  }
+
+  /* ── 個別点検記録行 ── */
+  .apr-insp-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-bottom: 1px solid #F1F5F9;
+  }
+  .apr-insp-row:last-child { border-bottom: none; }
+  .apr-insp-row.is-approved { opacity: 0.6; }
+  .apr-insp-row-info { flex: 1; min-width: 0; }
+  .apr-insp-row-meta {
+    display: grid;
+    grid-template-columns: max-content minmax(80px, 120px) max-content max-content;
+    align-items: center;
+    gap: 0 4px;
+    font-size: 12px; color: #64748B;
+  }
+  .apr-insp-meta-item {
+    display: contents;
+  }
+  .apr-insp-meta-label { color: #94A3B8; white-space: nowrap; }
+  .apr-insp-meta-val   { color: #374151; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .apr-insp-status {
+    font-size: 11px; font-weight: 600;
+    padding: 2px 7px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .apr-insp-status.pending  { background: #FEF3C7; color: #C2410C; border: 1px solid #FDE68A; }
+  .apr-insp-status.approved { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+  .apr-insp-row-action { flex-shrink: 0; min-width: 72px; display: flex; justify-content: flex-end; }
+  .apr-insp-approve-btn {
+    background: #111827; color: #FFFFFF;
+    border: none; border-radius: 8px;
+    padding: 7px 14px; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    white-space: nowrap; min-width: 72px;
+    transition: background 0.12s, transform 0.1s;
+    -webkit-user-select: none;
+  }
+  .apr-insp-approve-btn:active { background: #374151; transform: scale(0.96); }
+  .apr-insp-approved-mark {
+    display: flex; align-items: center; gap: 3px;
+    color: #16A34A; font-size: 11px; font-weight: 500;
+  }
+  .apr-insp-approved-mark svg {
+    width: 13px; height: 13px; stroke: #16A34A; fill: none;
+  }
+  /* 承認者情報（承認済み時） */
+  .apr-insp-approver-info {
+    font-size: 11px; color: #94A3B8; margin-top: 2px;
+  }
+
+  /* ── 一括承認ボタン ── */
+  .apr-equip-bulk-btn {
+    background: #2F6BFF; color: #fff;
+    border: none; border-radius: 8px;
+    padding: 6px 12px; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    white-space: nowrap; min-width: 72px;
+    transition: background 0.12s, transform 0.1s;
+    -webkit-user-select: none;
+    flex-shrink: 0;
+  }
+  .apr-equip-bulk-btn:active { background: #1a55e8; transform: scale(0.96); }
+
   /* ── タブ（フラットテキスト型） ── */
   #adm-panel-approval .apr2-filter-tabs {
     display: flex;
@@ -8068,17 +8215,9 @@
       <!-- フィルタータブ + 絞り込みボタン -->
       <div class="uinsp-title-row">
         <div class="uinsp-filter-tabs">
-          <button class="uinsp-ftab active" id="uinsp-ftab-all" onclick="setUinspFilter('all')">
-            <span class="uinsp-ftab-label">すべて</span>
-            <span class="uinsp-ftab-badge" id="uinsp-badge-all">0</span>
-          </button>
-          <button class="uinsp-ftab" id="uinsp-ftab-overdue" onclick="setUinspFilter('overdue')">
+          <button class="uinsp-ftab active" id="uinsp-ftab-overdue" onclick="setUinspFilter('overdue')">
             <span class="uinsp-ftab-label">期限超過</span>
             <span class="uinsp-ftab-badge overdue-badge" id="uinsp-badge-overdue">0</span>
-          </button>
-          <button class="uinsp-ftab" id="uinsp-ftab-today" onclick="setUinspFilter('today')">
-            <span class="uinsp-ftab-label">今日まで</span>
-            <span class="uinsp-ftab-badge" id="uinsp-badge-today">0</span>
           </button>
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
@@ -9035,12 +9174,17 @@
     if (record.inspectionTypes && record.inspectionTypes.isMonthly) typeNames.push('1ヶ月点検');
 
     var totalOk = 0, totalNg = 0, totalItems = 0;
-    // 【修正】inspectionTypes に応じたスロットのみカウント（ライン別詳細と整合させる）
+    // 【修正】有効ライン（ADM.lines に存在するライン）の設備のみカウントしてサマリーと詳細を整合させる
     var _recTypes = record.inspectionTypes || {};
     var _activeSlots = ['daily'];
     if (_recTypes.is10Day)   _activeSlots.push('10days');
     if (_recTypes.isMonthly) _activeSlots.push('monthly');
+    var _mobValidLineIds = (ADM.lines || []).map(function(l){ return l.id; });
     (record.equips || []).forEach(function(eqId) {
+      var admEq = (ADM.equips || []).find(function(e){ return e.id === eqId; });
+      var lineId = (admEq && admEq.lineId) || '__none__';
+      // 削除済みライン・未分類はサマリーカウントからも除外
+      if (lineId === '__none__' || _mobValidLineIds.indexOf(lineId) === -1) return;
       var s = (record.state || {})[eqId];
       if (!s) return;
       _activeSlots.forEach(function(t) {
@@ -9353,8 +9497,7 @@
           '</tr>' + ngDetailHtml;
         }).join('');
         lineSummaryHtml +=
-          '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
-
+          '<div class="res-line-row" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
             '<div class="res-line-row-name">' + lineName + '</div>' +
             '<div class="res-line-row-metas">' +
               '<div class="res-line-row-meta"><div class="res-line-row-meta-label">設備数</div><div class="res-line-row-meta-val">' + equips.length + '台</div></div>' +
@@ -9369,7 +9512,7 @@
             '<div class="res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
             '<svg class="res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
           '</div>' +
-          '<div class="res-line-inline-detail open" id="' + pcDetailId + '">' +
+          '<div class="res-line-inline-detail" id="' + pcDetailId + '">' +
             '<table>' +
               '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:72px"><col style="width:72px"><col style="width:120px"><col style="width:36px"></colgroup>' +
               '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th><th></th></tr></thead>' +
@@ -10655,7 +10798,7 @@
           '</tr>' + ngDetailHtml;
         }).join('');
         lineListHtml +=
-          '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
+          '<div class="res-line-row" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
             '<div class="res-line-row-name">' + lineName + '</div>' +
             '<div class="res-line-row-metas">' +
               '<div class="res-line-row-meta"><div class="res-line-row-meta-label">設備数</div><div class="res-line-row-meta-val">' + equips.length + '台</div></div>' +
@@ -10670,7 +10813,7 @@
             '<div class="res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
             '<svg class="res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
           '</div>' +
-          '<div class="res-line-inline-detail open" id="' + pcDetailId + '">' +
+          '<div class="res-line-inline-detail" id="' + pcDetailId + '">' +
             '<table>' +
               '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:72px"><col style="width:72px"><col style="width:120px"><col style="width:36px"></colgroup>' +
               '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th><th></th></tr></thead>' +
@@ -10764,17 +10907,32 @@
 
   /* ─── LOAD SAVED INSPECTIONS INTO CALENDAR DATA ─── */
   function applyInspectionRecord(r) {
-    let hasNg = !!r.anomaly;
-    if (!hasNg && r.state) {
-      hasNg = Object.values(r.state).some(s =>
-        ['daily','10days','monthly'].some(t => s[t] && s[t].some(v => v === 'ng'))
-      );
+    // 有効ライン（ADM.linesに存在する）の設備IDのみを取得してフィルタリング
+    var _validEquipIds = null;
+    if (typeof ADM !== 'undefined' && ADM && ADM.lines && ADM.equips) {
+      var _validLineIds = ADM.lines.map(function(l){ return l.id; });
+      _validEquipIds = ADM.equips
+        .filter(function(e){ return _validLineIds.indexOf(e.lineId) >= 0; })
+        .map(function(e){ return e.id; });
     }
-    if (!hasNg && r.results) {
-      hasNg = Object.values(r.results).some(s =>
-        ['daily','10days','monthly'].some(t => s[t] && s[t].some(v => v === 'ng'))
-      );
+
+    function _checkNg(stateObj) {
+      return Object.keys(stateObj || {}).some(function(eqId) {
+        // 削除済みラインの設備はスキップ
+        if (_validEquipIds && _validEquipIds.indexOf(eqId) < 0) return false;
+        var s = stateObj[eqId];
+        return ['daily','10days','monthly'].some(function(t) {
+          return s[t] && s[t].some(function(v){ return v === 'ng'; });
+        });
+      });
     }
+
+    let hasNg = false;
+    if (!hasNg && r.state)   hasNg = _checkNg(r.state);
+    if (!hasNg && r.results) hasNg = _checkNg(r.results);
+    // ADMがまだロードされていない場合は元のフラグをそのまま使用
+    if (!hasNg && _validEquipIds === null) hasNg = !!r.anomaly;
+
     // 同一担当者・同一日のレコードは上書き
     ALL_INSPECTION_RECORDS = ALL_INSPECTION_RECORDS.filter(function(rec) {
       return !(rec.year === r.year && rec.month === r.month &&
@@ -12565,7 +12723,7 @@ function admToast(msg) {
 }
 
 /* ─── 未点検ライン パネル ─── */
-var _uinspFilter = 'all';
+var _uinspFilter = 'overdue';
 var _uinspYear  = new Date().getFullYear();
 var _uinspMonth = new Date().getMonth();
 
@@ -12591,10 +12749,7 @@ function updateUinspBadges(items) {
   var allCount = items.length;
   var overdueCount = items.filter(function(ld) { return ld.maxOverdueDays > 0; }).length;
   var todayCount = items.filter(function(ld) {
-    return ld.uninspDates.some(function(d) {
-      var dt = new Date(d);
-      return dt.getFullYear() === realY && dt.getMonth() === realM && dt.getDate() === realD;
-    });
+    return ld.uninspDates.some(function(d) { return d.isToday === true; });
   }).length;
   var bAll = document.getElementById('uinsp-badge-all');
   var bOv  = document.getElementById('uinsp-badge-overdue');
@@ -12619,9 +12774,9 @@ function renderUninspPanel() {
   // 月ラベル更新
   var monthLabel = document.getElementById('uinsp-month-label');
   if (monthLabel) monthLabel.textContent = selY + '年' + MONTHS_LABEL[selM];
-  // 未来月は「次へ」ボタン無効
+  // 未来月・当月は「次へ」ボタン無効
   var nextBtn = document.getElementById('uinsp-month-next');
-  if (nextBtn) nextBtn.disabled = isFutureMonth;
+  if (nextBtn) nextBtn.disabled = isFutureMonth || isCurrentMonth;
 
   var lines      = (ADM && ADM.lines)  ? ADM.lines  : [];
   var allEquips  = (ADM && ADM.equips) ? ADM.equips : [];
@@ -12631,19 +12786,33 @@ function renderUninspPanel() {
     var _lsRecs2 = [];
     try { _lsRecs2 = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
     _lsRecs2.forEach(function(r) {
-      var dup = ALL_INSPECTION_RECORDS.some(function(m) {
-        return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
-      });
-      if (!dup) {
-        var hasNg = !!r.anomaly;
-        if (!hasNg && r.state) {
-          hasNg = Object.values(r.state).some(function(s) {
-            return ['daily','10days','monthly'].some(function(t) {
-              return s[t] && s[t].some(function(v) { return v === 'ng'; });
-            });
+      var hasNg = !!r.anomaly;
+      if (!hasNg && r.state) {
+        hasNg = Object.values(r.state).some(function(s) {
+          return ['daily','10days','monthly'].some(function(t) {
+            return s[t] && s[t].some(function(v) { return v === 'ng'; });
           });
+        });
+      }
+      var existingIdx = -1;
+      for (var _ui = 0; _ui < ALL_INSPECTION_RECORDS.length; _ui++) {
+        var _um = ALL_INSPECTION_RECORDS[_ui];
+        if (_um.year === r.year && _um.month === r.month &&
+            _um.day  === r.day  && _um.inspector === r.inspector) {
+          existingIdx = _ui; break;
         }
+      }
+      if (existingIdx === -1) {
+        // 新規: 追加
         ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
+      } else {
+        // 重複: completedAt が新しい方を優先（localStorageの新しいデータでFirestoreの古いデータを上書き）
+        var existingTime = ALL_INSPECTION_RECORDS[existingIdx].completedAt
+          ? new Date(ALL_INSPECTION_RECORDS[existingIdx].completedAt).getTime() : 0;
+        var lsTime = r.completedAt ? new Date(r.completedAt).getTime() : 0;
+        if (lsTime > existingTime) {
+          ALL_INSPECTION_RECORDS[existingIdx] = Object.assign({}, r, { anomaly: hasNg });
+        }
       }
     });
   }
@@ -12651,9 +12820,9 @@ function renderUninspPanel() {
   var favIds     = (typeof loadFavLines === 'function') ? loadFavLines() : [];
   var _uinspSelectedLines = window._uinspSelectedLines || [];
 
-  // 対象月の最終日（過去月は月末まで、当月は昨日まで）
+  // 対象月の最終日（過去月は月末まで、当月は今日まで、未来月は0＝表示なし）
   var monthEndDay = new Date(selY, selM + 1, 0).getDate();
-  var loopEnd = isCurrentMonth ? realD : monthEndDay;
+  var loopEnd = isFutureMonth ? 0 : (isCurrentMonth ? realD : monthEndDay);
 
   // ラインごとに未点検日を収集
   var lineData = [];
@@ -13106,7 +13275,7 @@ function saveAprStatusToStorage(id, status) {
     var pad = function(n){ return String(n).padStart(2,'0'); };
     details[id] = {
       name: approverName,
-      at: now.getFullYear() + '/' + pad(now.getMonth()+1) + '/' + pad(now.getDate())
+      at: pad(now.getMonth()+1) + '/' + pad(now.getDate())
           + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes()),
       status: status
     };
@@ -13872,6 +14041,11 @@ function apr2LineIcon() {
 }
 
 /* ── 相対時間表示ヘルパー（承認画面用）── */
+function stripYear(dateStr) {
+  // "YYYY/MM/DD HH:mm" → "MM/DD HH:mm"、それ以外はそのまま
+  return (dateStr || '').replace(/^\d{4}\//, '');
+}
+
 function apr2RelTime(datetimeStr) {
   if (!datetimeStr) return '';
   // "YYYY/MM/DD HH:MM" or "YYYY/MM/DD" 形式
@@ -14006,7 +14180,7 @@ function renderAdmApproval() {
   var paged     = apr2GetPagedLines(grouped);
   var pageLines = paged.lines;
 
-  // ─── 新デザイン：フラットカードレイアウト（点検記録1件 = 1カード）───
+  // ─── 新デザイン：設備ごとアコーディオンレイアウト ───
   var html = '';
   pageLines.forEach(function(line) {
     var lineEquips  = Object.keys(line.equips).map(function(k){ return line.equips[k]; });
@@ -14023,10 +14197,38 @@ function renderAdmApproval() {
         : '') +
     '</div>';
 
-    // 点検記録1件ずつカード表示
+    // 設備ごとのアコーディオンカード
     lineEquips.forEach(function(equip) {
       var eTotal    = equip.items.length;
+      var ePending  = equip.items.filter(function(i){ return i.status === 'pending'; }).length;
       var eApproved = equip.items.filter(function(i){ return i.status === 'approved'; }).length;
+      var safeEid   = equip.equipId.replace(/[^a-zA-Z0-9_-]/g, '-');
+      var isOpen    = window._aprEquipOpen && window._aprEquipOpen[safeEid];
+      var hasPending = ePending > 0;
+
+      // 設備カードヘッダー
+      html += '<div class="apr-equip-group' + (hasPending ? ' has-pending' : '') + (isOpen ? ' open' : '') + '" id="apr-eg-' + safeEid + '">';
+      html += '<div class="apr-equip-group-hdr" onclick="aprToggleEquipGroup(\'' + safeEid + '\')">' +
+
+        '<div class="apr-equip-group-info">' +
+          '<div class="apr-equip-group-id">' + esc(equip.equipId) + '</div>' +
+          '<div class="apr-equip-group-name">' + esc(equip.equipName) + '</div>' +
+          '<div class="apr-equip-group-meta">' +
+            (hasPending ? '<span class="apr-equip-pending-badge">未承認 ' + ePending + '件</span>' : '') +
+            '<span class="apr-equip-total-label">全' + eTotal + '件</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="apr-equip-group-right">' +
+          (hasPending
+            ? '<button class="apr-equip-bulk-btn" onclick="event.stopPropagation();aprBulkApproveEquip(\'' + safeEid + '\')">一括承認</button>'
+            : '') +
+          '<svg class="apr-equip-chevron" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>' +
+        '</div>' +
+      '</div>';
+
+      // アコーディオン中身：個別点検記録
+      html += '<div class="apr-equip-group-body">';
+      html += '<div class="apr-equip-body-inner">';
 
       equip.items.forEach(function(insp) {
         var isPending  = insp.status === 'pending';
@@ -14043,44 +14245,34 @@ function renderAdmApproval() {
           }
         }
 
-        var progressHtml;
-        if (isApproved) {
-          progressHtml = '<span class="new-apr-meta-approved">承認済み (' + eApproved + '/' + eTotal + ')</span>';
-        } else {
-          progressHtml = '<span class="new-apr-meta-pending">承認待ち (' + eApproved + '/' + eTotal + ')</span>';
-        }
-
         var actionHtml;
         if (isPending) {
-          actionHtml =
-            '<button class="new-apr-approve-btn" onclick="event.stopPropagation();apr2Approve(\'' + insp.id + '\')">承認する</button>';
+          actionHtml = '<button class="apr-insp-approve-btn" onclick="event.stopPropagation();apr2Approve(\'' + insp.id + '\')">承認する</button>';
         } else {
-          actionHtml =
-            '<div class="new-apr-approved-badge">' +
-              '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
-              '承認済み' +
-            '</div>';
+          actionHtml = '<div class="apr-insp-approved-mark">' +
+            '<svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' +
+            '承認済み' +
+          '</div>';
         }
 
-        html += '<div class="new-apr-equip-card' + (isApproved ? ' is-approved' : '') + '" id="new-apr-card-' + insp.id + '">' +
-          '<div class="new-apr-card-info">' +
-            '<div class="new-apr-card-id">' + esc(equip.equipId) + '</div>' +
-            '<div class="new-apr-card-name">' + esc(equip.equipName) + '</div>' +
-            '<div class="new-apr-meta-grid">' +
-              '<span class="naml">点検担当</span><span class="namc">：</span><span class="namv">' + esc(insp.inspector || '') + '</span>' +
-              '<span class="naml">点検日時</span><span class="namc">：</span><span class="namv">' + dtStr + '</span>' +
-              '<span class="naml naml-progress">進　捗</span><span class="namc">：</span><span class="namv">' + progressHtml + '</span>' +
-              (isApproved && (insp.approver || insp.approvedAt) ?
-                '<span class="apr2-divider"></span>' +
-                '<span class="naml naml-apr2">承認者</span><span class="namc namc-apr2">：</span><span class="namv namv-apr2">' + esc(insp.approver || '') + '</span>' +
-                '<span class="naml naml-apr2">承認日時</span><span class="namc namc-apr2">：</span><span class="namv namv-apr2">' + esc(insp.approvedAt || '') + '</span>' +
-                '<span class="naml naml-apr2"></span><span class="namc namc-apr2"></span><span class="namv namv-apr2"></span>'
-              : '') +
+        html += '<div class="apr-insp-row' + (isApproved ? ' is-approved' : '') + '" id="new-apr-card-' + insp.id + '">' +
+          '<div class="apr-insp-row-info">' +
+            '<div class="apr-insp-row-meta">' +
+              '<span class="apr-insp-meta-label">担当：</span>' +
+              '<span class="apr-insp-meta-val">' + esc(insp.inspector || '') + '</span>' +
+              '<span class="apr-insp-meta-label" style="padding-left:8px">日時：</span>' +
+              '<span class="apr-insp-meta-val">' + dtStr + '</span>' +
             '</div>' +
+            (isApproved && (insp.approver || insp.approvedAt)
+              ? '<div class="apr-insp-approver-info">承認者：' + esc(insp.approver || '') + '　' + esc(stripYear(insp.approvedAt)) + '</div>'
+              : '') +
           '</div>' +
-          '<div class="new-apr-card-actions">' + actionHtml + '</div>' +
+          '<div class="apr-insp-row-action">' + actionHtml + '</div>' +
         '</div>';
       });
+
+      html += '</div></div>'; // body-inner / group-body
+      html += '</div>'; // apr-equip-group
     });
 
     html += '</div>'; // new-apr-section
@@ -14261,6 +14453,30 @@ function apr2Approve(id) {
   renderAdmApproval();
   updateApprovalBadge();
   admToast('✓ 承認しました');
+}
+
+/* ── 設備グループ アコーディオン開閉 ── */
+window._aprEquipOpen = window._aprEquipOpen || {};
+function aprToggleEquipGroup(safeEid) {
+  var el = document.getElementById('apr-eg-' + safeEid);
+  if (!el) return;
+  var isOpen = el.classList.contains('open');
+  el.classList.toggle('open', !isOpen);
+  window._aprEquipOpen[safeEid] = !isOpen;
+}
+
+/* ── 一括承認（設備内の未承認をすべて承認） ── */
+function aprBulkApproveEquip(safeEid) {
+  var el = document.getElementById('apr-eg-' + safeEid);
+  if (!el) return;
+  var btns = el.querySelectorAll('.apr-insp-approve-btn');
+  btns.forEach(function(btn) {
+    var m = btn.getAttribute('onclick').match(/apr2Approve\('([^']+)'\)/);
+    if (m) saveAprStatusToStorage(m[1], 'approved');
+  });
+  renderAdmApproval();
+  updateApprovalBadge();
+  admToast('✓ 一括承認しました');
 }
 
 /* admAprApprove は apr2Approve の別名（重複解消） */
@@ -14444,7 +14660,7 @@ function renderMonthlySheet() {
         label = _adminName ? _adminName.slice(0, 4) : '✓';
       }
       return '<td class="ms-apr-cell ms-apr-approved" ' + (style||'') +
-        ' title="承認済み（' + (det ? det.at : '') + '）">' +
+        ' title="承認済み（' + (det ? stripYear(det.at) : '') + '）">' +
         label + '</td>';
     } else if (st === 'returned') {
       return '<td class="ms-apr-cell ms-apr-returned" ' + (style||'') + '>' +
@@ -15919,7 +16135,7 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
   display: flex; align-items: flex-end; justify-content: space-between;
   border-bottom: 1px solid #E5E7EB; margin-bottom: 20px; gap: 0;
 }
-.uinsp-filter-tabs { display:flex; gap:0; border-bottom: none; flex: 1; }
+.uinsp-filter-tabs { display:none; gap:0; border-bottom: none; flex: 1; }
 .uinsp-ftab {
   display: flex; align-items: center; gap: 6px;
   padding: 10px 20px; border-radius: 0; border: none;
