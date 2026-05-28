@@ -3616,31 +3616,6 @@
     min-width: unset !important;
     flex-shrink: unset !important;
   }
-
-  /* ── 承認行：モバイルでテキストとボタンが重ならないよう縦積みに ── */
-  .apr-insp-row {
-    flex-wrap: wrap !important;
-    align-items: flex-start !important;
-    gap: 6px 12px !important;
-  }
-  .apr-insp-row-info {
-    width: 100% !important;
-    flex: unset !important;
-  }
-  .apr-insp-row-meta {
-    grid-template-columns: max-content max-content max-content max-content !important;
-    flex-wrap: wrap !important;
-    font-size: 12px !important;
-  }
-  .apr-insp-meta-val {
-    max-width: 90px !important;
-  }
-  .apr-insp-row-action {
-    width: 100% !important;
-    min-width: unset !important;
-    justify-content: flex-end !important;
-    padding-bottom: 4px !important;
-  }
   /* ライン・設備選択カードを1列 */
   .list-body {
     display: flex !important;
@@ -6508,8 +6483,8 @@
   /* ── 個別点検記録行 ── */
   .apr-insp-row {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
     padding: 11px 16px;
     border-bottom: 1px solid #F1F5F9;
   }
@@ -6517,17 +6492,15 @@
   .apr-insp-row.is-approved { opacity: 0.6; }
   .apr-insp-row-info { flex: 1; min-width: 0; }
   .apr-insp-row-meta {
-    display: grid;
-    grid-template-columns: max-content minmax(80px, 120px) max-content max-content;
+    display: flex;
     align-items: center;
-    gap: 0 4px;
+    flex-wrap: wrap;
+    gap: 0 12px;
     font-size: 12px; color: #64748B;
   }
-  .apr-insp-meta-item {
-    display: contents;
-  }
   .apr-insp-meta-label { color: #94A3B8; white-space: nowrap; }
-  .apr-insp-meta-val   { color: #374151; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .apr-insp-meta-val   { color: #374151; font-weight: 500; white-space: nowrap; }
+  .apr-insp-meta-item  { display: flex; align-items: center; gap: 2px; }
   .apr-insp-status {
     font-size: 11px; font-weight: 600;
     padding: 2px 7px; border-radius: 20px;
@@ -6535,7 +6508,7 @@
   }
   .apr-insp-status.pending  { background: #FEF3C7; color: #C2410C; border: 1px solid #FDE68A; }
   .apr-insp-status.approved { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
-  .apr-insp-row-action { flex-shrink: 0; min-width: 72px; display: flex; justify-content: flex-end; }
+  .apr-insp-row-action { display: flex; justify-content: flex-end; }
   .apr-insp-approve-btn {
     background: #111827; color: #FFFFFF;
     border: none; border-radius: 8px;
@@ -6558,7 +6531,106 @@
     font-size: 11px; color: #94A3B8; margin-top: 2px;
   }
 
-  /* ── 一括承認ボタン ── */
+  /* ── 全データリセットセクション ── */
+  .adm-reset-section {
+    padding: 16px 16px 20px;
+  }
+  .adm-reset-section-title {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; color: #DC2626;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .adm-reset-card {
+    display: flex; align-items: center; gap: 12px;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .adm-reset-card-info { flex: 1; min-width: 0; }
+  .adm-reset-card-name {
+    font-size: 14px; font-weight: 700; color: #991B1B;
+    margin-bottom: 4px;
+  }
+  .adm-reset-card-desc {
+    font-size: 11px; color: #B45309; line-height: 1.5;
+  }
+  .adm-reset-btn {
+    background: #DC2626; color: #fff;
+    border: none; border-radius: 8px;
+    padding: 8px 16px; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    white-space: nowrap; flex-shrink: 0;
+    transition: background 0.12s, transform 0.1s;
+  }
+  .adm-reset-btn:active { background: #B91C1C; transform: scale(0.96); }
+
+  /* ── リセット確認ダイアログ ── */
+  .adm-reset-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    align-items: center; justify-content: center;
+  }
+  .adm-reset-overlay.visible { display: flex; }
+  .adm-reset-dialog {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 24px 20px;
+    max-width: 360px; width: calc(100% - 32px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  }
+  .adm-reset-dialog-icon {
+    width: 48px; height: 48px;
+    background: #FEF2F2; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+  }
+  .adm-reset-dialog-icon svg { width: 24px; height: 24px; }
+  .adm-reset-dialog-title {
+    font-size: 17px; font-weight: 800; color: #111827;
+    text-align: center; margin-bottom: 10px;
+  }
+  .adm-reset-dialog-desc {
+    font-size: 12px; color: #6B7280; line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .adm-reset-dialog-input-wrap { margin-bottom: 20px; }
+  .adm-reset-dialog-input-label {
+    font-size: 11px; color: #374151; font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .adm-reset-dialog-input {
+    width: 100%; box-sizing: border-box;
+    border: 1.5px solid #E5E7EB; border-radius: 8px;
+    padding: 10px 12px; font-size: 14px; font-family: inherit;
+    outline: none; transition: border-color 0.15s;
+  }
+  .adm-reset-dialog-input:focus { border-color: #DC2626; }
+  .adm-reset-dialog-btns {
+    display: flex; gap: 10px;
+  }
+  .adm-reset-dialog-cancel {
+    flex: 1; background: #F3F4F6; color: #374151;
+    border: none; border-radius: 10px;
+    padding: 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: background 0.12s;
+  }
+  .adm-reset-dialog-cancel:active { background: #E5E7EB; }
+  .adm-reset-dialog-exec {
+    flex: 1; background: #DC2626; color: #fff;
+    border: none; border-radius: 10px;
+    padding: 12px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    transition: background 0.12s, opacity 0.15s;
+  }
+  .adm-reset-dialog-exec:disabled {
+    background: #FCA5A5; cursor: not-allowed; opacity: 0.6;
+  }
+  .adm-reset-dialog-exec:not(:disabled):active { background: #B91C1C; }
   .apr-equip-bulk-btn {
     background: #2F6BFF; color: #fff;
     border: none; border-radius: 8px;
@@ -8066,7 +8138,42 @@
         </div>
 
       </div>
+
+      <!-- ─── 全データリセット ─── -->
+      <div class="adm-reset-section">
+        <div class="adm-reset-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          危険な操作
+        </div>
+        <div class="adm-reset-card">
+          <div class="adm-reset-card-info">
+            <div class="adm-reset-card-name">全データリセット</div>
+            <div class="adm-reset-card-desc">点検記録・承認データ・設備設定をすべて削除します。正式運用への移行時に使用してください。この操作は取り消せません。</div>
+          </div>
+          <button class="adm-reset-btn" onclick="admShowResetConfirm()">リセット</button>
+        </div>
+      </div>
+
     </div>
+
+  <!-- リセット確認ダイアログ -->
+  <div class="adm-reset-overlay" id="adm-reset-overlay" onclick="admHideResetConfirm()">
+    <div class="adm-reset-dialog" onclick="event.stopPropagation()">
+      <div class="adm-reset-dialog-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="adm-reset-dialog-title">本当にリセットしますか？</div>
+      <div class="adm-reset-dialog-desc">以下のデータがすべて削除されます：<br>・点検記録・承認データ<br>・ライン・設備・点検項目の設定<br>・点検者アカウント<br><br>Firestoreのデータも同時に削除されます。<br><strong>この操作は取り消せません。</strong></div>
+      <div class="adm-reset-dialog-input-wrap">
+        <div class="adm-reset-dialog-input-label">確認のため「リセット」と入力してください</div>
+        <input type="text" class="adm-reset-dialog-input" id="adm-reset-confirm-input" placeholder="リセット" oninput="admCheckResetInput()">
+      </div>
+      <div class="adm-reset-dialog-btns">
+        <button class="adm-reset-dialog-cancel" onclick="admHideResetConfirm()">キャンセル</button>
+        <button class="adm-reset-dialog-exec" id="adm-reset-exec-btn" onclick="admExecuteReset()" disabled>すべて削除する</button>
+      </div>
+    </div>
+  </div>
 
     <!-- パネルナビ（戻るヘッダー）-->
     <div class="adm-panel-nav" id="adm-panel-nav">
@@ -8807,14 +8914,10 @@
           });
         }
         var existingIdx = -1;
-        // 【修正】ラインIDをキーに含めて同日別ライン点検の誤マージを防ぐ
-        var _bcLinesKey = (r.lines || r.line || []).slice().sort().join('|');
         for (var _i = 0; _i < ALL_INSPECTION_RECORDS.length; _i++) {
           var m = ALL_INSPECTION_RECORDS[_i];
-          var _mLinesKey = (m.lines || m.line || []).slice().sort().join('|');
           if (m.year === r.year && m.month === r.month &&
-              m.day  === r.day  && m.inspector === r.inspector &&
-              _mLinesKey === _bcLinesKey) {
+              m.day  === r.day  && m.inspector === r.inspector) {
             existingIdx = _i; break;
           }
         }
@@ -9016,13 +9119,9 @@
       var _lsAll2 = [];
       try { _lsAll2 = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e2) {}
       _lsAll2.forEach(function(r) {
-        // 【修正】ラインIDをキーに含めて同日別ライン点検の誤重複判定を防ぐ
-        var _scdLinesKey = (r.lines || r.line || []).slice().sort().join('|');
         var dup = ALL_INSPECTION_RECORDS.some(function(m) {
-          var _mLK = (m.lines || m.line || []).slice().sort().join('|');
           return m.year === r.year && m.month === r.month &&
-                 m.day  === r.day  && m.inspector === r.inspector &&
-                 _mLK === _scdLinesKey;
+                 m.day  === r.day  && m.inspector === r.inspector;
         });
         if (!dup) {
           var hasNg2 = !!r.anomaly;
@@ -9354,7 +9453,7 @@
         : '—';
       var detailId = 'mob-line-detail-' + lineId.replace(/[^a-z0-9]/gi,'_') + '_' + _rowIdx;
       var row = document.createElement('div');
-      row.className = 'mob-res-line-row open'; // 【修正】デフォルトで開いた状態にする
+      row.className = 'mob-res-line-row';
       var badgeIconOk = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
       var badgeIconNg = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
       var chevronSvg = '<svg class="mob-res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
@@ -9386,7 +9485,7 @@
 
       // Inline detail panel
       var detDiv = document.createElement('div');
-      detDiv.className = 'mob-res-line-inline-detail open'; // 【修正】デフォルトで開いた状態にする
+      detDiv.className = 'mob-res-line-inline-detail';
       detDiv.id = detailId;
       detDiv.innerHTML = equips.map(function(e) {
         return '<div class="mob-res-detail-tbl-row">' +
@@ -9530,7 +9629,7 @@
           '</tr>' + ngDetailHtml;
         }).join('');
         lineSummaryHtml +=
-          '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
+          '<div class="res-line-row" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
             '<div class="res-line-row-name">' + lineName + '</div>' +
             '<div class="res-line-row-metas">' +
               '<div class="res-line-row-meta"><div class="res-line-row-meta-label">設備数</div><div class="res-line-row-meta-val">' + equips.length + '台</div></div>' +
@@ -9545,7 +9644,7 @@
             '<div class="res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
             '<svg class="res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
           '</div>' +
-          '<div class="res-line-inline-detail open" id="' + pcDetailId + '">' +
+          '<div class="res-line-inline-detail" id="' + pcDetailId + '">' +
             '<table>' +
               '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:72px"><col style="width:72px"><col style="width:120px"><col style="width:36px"></colgroup>' +
               '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th><th></th></tr></thead>' +
@@ -10831,7 +10930,7 @@
           '</tr>' + ngDetailHtml;
         }).join('');
         lineListHtml +=
-          '<div class="res-line-row open" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
+          '<div class="res-line-row" onclick="toggleResLineDetail(\'' + pcDetailId + '\',this)">' +
             '<div class="res-line-row-name">' + lineName + '</div>' +
             '<div class="res-line-row-metas">' +
               '<div class="res-line-row-meta"><div class="res-line-row-meta-label">設備数</div><div class="res-line-row-meta-val">' + equips.length + '台</div></div>' +
@@ -10846,7 +10945,7 @@
             '<div class="res-line-row-badge ' + (lHasNg ? 'ng' : 'ok') + '">' + (lHasNg ? badgeIconNg + '異常あり' : badgeIconOk + '異常なし') + '</div>' +
             '<svg class="res-line-row-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
           '</div>' +
-          '<div class="res-line-inline-detail open" id="' + pcDetailId + '">' +
+          '<div class="res-line-inline-detail" id="' + pcDetailId + '">' +
             '<table>' +
               '<colgroup><col style="width:100px"><col style="width:auto"><col style="width:110px"><col style="width:72px"><col style="width:72px"><col style="width:120px"><col style="width:36px"></colgroup>' +
               '<thead><tr><th>設備番号</th><th>設備名</th><th style="text-align:center">点検項目数</th><th style="text-align:center">正常</th><th style="text-align:center">異常</th><th style="text-align:center">ステータス</th><th></th></tr></thead>' +
@@ -10892,24 +10991,15 @@
     const key = 'inspections';
     let all = [];
     try { all = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
-    // Remove existing record for same day AND same inspector AND same lines only
-    // 【修正】ラインIDをキーに含め、同日に複数ラインを別々に点検した場合に互いを上書きしないようにする
-    const _recLinesKey = (record.lines || []).slice().sort().join('|');
-    all = all.filter(r => {
-      const _rLinesKey = (r.lines || r.line || []).slice().sort().join('|');
-      return !(r.year === record.year && r.month === record.month && r.day === record.day &&
-               r.inspector === record.inspector && _rLinesKey === _recLinesKey);
-    });
+    // Remove existing record for same day AND same inspector only
+    all = all.filter(r => !(r.year === record.year && r.month === record.month && r.day === record.day && r.inspector === record.inspector));
     all.push(record);
     localStorage.setItem(key, JSON.stringify(all));
 
     // Update in-memory calendar data（担当者ごとに記録）
     ALL_INSPECTION_RECORDS = ALL_INSPECTION_RECORDS.filter(function(r) {
-      // 【修正】ラインIDもキーに含めて同日別ライン点検の上書きを防ぐ
-      var _rLK = (r.lines || r.line || []).slice().sort().join('|');
       return !(r.year === record.year && r.month === record.month &&
-               r.day === record.day && r.inspector === record.inspector &&
-               _rLK === _recLinesKey);
+               r.day === record.day && r.inspector === record.inspector);
     });
     ALL_INSPECTION_RECORDS.push(record);
 
@@ -10975,13 +11065,10 @@
     // ADMがまだロードされていない場合は元のフラグをそのまま使用
     if (!hasNg && _validEquipIds === null) hasNg = !!r.anomaly;
 
-    // 同一担当者・同一日・同一ラインのレコードは上書き（【修正】ライン追加）
-    var _applyLinesKey = (r.lines || r.line || []).slice().sort().join('|');
+    // 同一担当者・同一日のレコードは上書き
     ALL_INSPECTION_RECORDS = ALL_INSPECTION_RECORDS.filter(function(rec) {
-      var _recLK = (rec.lines || rec.line || []).slice().sort().join('|');
       return !(rec.year === r.year && rec.month === r.month &&
-               rec.day === r.day && rec.inspector === r.inspector &&
-               _recLK === _applyLinesKey);
+               rec.day === r.day && rec.inspector === r.inspector);
     });
     ALL_INSPECTION_RECORDS.push(Object.assign({}, r, { anomaly: hasNg }));
   }
@@ -12839,15 +12926,11 @@ function renderUninspPanel() {
           });
         });
       }
-      // 【修正】ラインIDをキーに含めて同日別ライン点検の誤マージを防ぐ
-      var _msLinesKey = (r.lines || r.line || []).slice().sort().join('|');
       var existingIdx = -1;
       for (var _ui = 0; _ui < ALL_INSPECTION_RECORDS.length; _ui++) {
         var _um = ALL_INSPECTION_RECORDS[_ui];
-        var _umLK = (_um.lines || _um.line || []).slice().sort().join('|');
         if (_um.year === r.year && _um.month === r.month &&
-            _um.day  === r.day  && _um.inspector === r.inspector &&
-            _umLK === _msLinesKey) {
+            _um.day  === r.day  && _um.inspector === r.inspector) {
           existingIdx = _ui; break;
         }
       }
@@ -14537,6 +14620,70 @@ function admAprReturn(id) {
   admToast('差し戻しました');
 }
 
+/* ─── 全データリセット ─── */
+function admShowResetConfirm() {
+  var el = document.getElementById('adm-reset-overlay');
+  var inp = document.getElementById('adm-reset-confirm-input');
+  var btn = document.getElementById('adm-reset-exec-btn');
+  if (inp) inp.value = '';
+  if (btn) btn.disabled = true;
+  if (el) el.classList.add('visible');
+}
+function admHideResetConfirm() {
+  var el = document.getElementById('adm-reset-overlay');
+  if (el) el.classList.remove('visible');
+}
+function admCheckResetInput() {
+  var inp = document.getElementById('adm-reset-confirm-input');
+  var btn = document.getElementById('adm-reset-exec-btn');
+  if (btn) btn.disabled = !(inp && inp.value === 'リセット');
+}
+async function admExecuteReset() {
+  admHideResetConfirm();
+  admToast('⏳ リセット中...');
+
+  // ── localStorage 全消去 ──
+  var keepKeys = ['loggedInUser', 'lastLoginUser', 'admData'];
+  var toDelete = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (!keepKeys.includes(k)) toDelete.push(k);
+  }
+  toDelete.forEach(function(k) { localStorage.removeItem(k); });
+
+  // ADM（設備設定）もリセット
+  var emptyAdm = { lines: [], equips: [], items: [], assigns: {}, inspectors: [], holidays: [] };
+  localStorage.setItem('admData', JSON.stringify(emptyAdm));
+  if (typeof ADM !== 'undefined') {
+    Object.assign(ADM, emptyAdm);
+  }
+
+  // ── ALL_INSPECTION_RECORDS インメモリもクリア ──
+  if (typeof ALL_INSPECTION_RECORDS !== 'undefined') {
+    ALL_INSPECTION_RECORDS.length = 0;
+  }
+
+  // ── Firestore 全削除 ──
+  try {
+    var db = window._firestoreDb || (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore());
+    if (db) {
+      // inspections コレクション削除
+      var snap = await db.collection('inspections').get();
+      var batch = db.batch();
+      snap.docs.forEach(function(doc) { batch.delete(doc.ref); });
+      await batch.commit();
+      admToast('✓ Firestoreデータを削除しました');
+    }
+  } catch(e) {
+    console.warn('Firestore削除エラー:', e);
+  }
+
+  setTimeout(function() {
+    admToast('✅ リセット完了。ページをリロードします...');
+    setTimeout(function() { location.reload(); }, 1500);
+  }, 600);
+}
+
 function daToast(msg) {
   var t = document.createElement('div');
   t.className = 'da-toast';
@@ -14664,6 +14811,36 @@ function renderMonthlySheet() {
       });
     });
     return merged;
+  }
+
+  // 10日毎・月次用：期間内（fromDay〜toDay）の任意の日の記録を拾う
+  function getStateForPeriod(fromDay, toDay, type) {
+    var merged = {};
+    for (var d = fromDay; d <= toDay; d++) {
+      var st = getStateForDay(d);
+      var vals = st[type];
+      if (!vals || !vals.length) continue;
+      if (!merged[type]) { merged[type] = vals.slice(); continue; }
+      vals.forEach(function(v, i) {
+        if ((merged[type][i] === '' || merged[type][i] == null) && v) merged[type][i] = v;
+      });
+    }
+    return merged;
+  }
+  function getInspectorForPeriod(fromDay, toDay, type) {
+    var names = [];
+    for (var d = fromDay; d <= toDay; d++) {
+      var recs = monthRecs.filter(function(r) {
+        if (r.day !== d) return false;
+        var s = r.state && r.state[equipId];
+        return s && s[type] && s[type].some(function(v){ return v; });
+      });
+      recs.forEach(function(r) {
+        var name = r.inspector || '';
+        if (name && names.indexOf(name) < 0) names.push(name);
+      });
+    }
+    return names.join('／');
   }
   function getInspectorForDay(d) {
     var recs = monthRecs.filter(function(r){ return r.day === d; });
@@ -14851,20 +15028,29 @@ function renderMonthlySheet() {
       }
       html += '<td class="ms-no-col">' + globalNo + '</td>';
       html += '<td class="ms-item-name" style="position:sticky;left:18px;z-index:2;">' + esc(item.name) + '</td>';
-      periodDates.forEach(function(pd) {
+      periodDates.forEach(function(pd, pdIdx) {
         var result = '', inspector = '';
         var aprId10 = 'apr10-' + year + '-' + month + '-' + (pd.eff || 'x') + '-' + equipId;
         if (pd.eff) {
-          var st = getStateForDay(pd.eff);
+          // 期間の範囲を算出（前の期間の翌日〜この期間の最終日）
+          var prevNom = [0, 10, 20][pdIdx] || 0;
+          var fromDay = prevNom + 1;
+          var toDay   = pd.eff; // 有効日（祝日シフト後）を期間の上限とする
+          var st = getStateForPeriod(fromDay, toDay, '10days');
           var vals = st['10days'] || [];
           result = vals[idx] || '';
-          inspector = getInspectorForDay(pd.eff);
+          inspector = getInspectorForPeriod(fromDay, toDay, '10days');
+          // 期間内で見つからなければ有効日ちょうども試す（後方互換）
+          if (!result) {
+            var st2 = getStateForDay(pd.eff);
+            var v2 = (st2['10days'] || [])[idx] || '';
+            if (v2) { result = v2; inspector = getInspectorForDay(pd.eff); }
+          }
         }
         // 結果：点検項目の○✕
         html += '<td class="ms-period-cell">' + sym(result) + '</td>';
-        // 点検者：ADM.inspectors に登録された人のみ表示（管理者名は出さない）
-        var isActualInspector = (ADM.inspectors || []).some(function(u){ return u.name === inspector; });
-        var displayInspector = isActualInspector ? inspector.slice(0, 4) : '';
+        // 点検者：実際に点検したユーザー名を表示
+        var displayInspector = inspector ? inspector.slice(0, 4) : '';
         html += '<td class="ms-period-cell" style="font-size:10px;color:#1565C0;">' + esc(displayInspector) + '</td>';
         // 日常点検確認：承認した管理者の名前
         html += aprCellHtml(aprId10, 'class="ms-period-confirm"');
@@ -14909,10 +15095,18 @@ function renderMonthlySheet() {
       var result = '', inspector = '';
       var aprIdM = 'aprM-' + year + '-' + month + '-' + (monthlyDay || 'x') + '-' + equipId;
       if (monthlyDay) {
-        var st = getStateForDay(monthlyDay);
-        var vals = st['monthly'] || [];
-        result = vals[idx] || '';
-        inspector = getInspectorForDay(monthlyDay);
+        // 月次は月全体（1日〜月末）で記録を探す
+        var lastDay = new Date(year, month + 1, 0).getDate();
+        var mst = getStateForPeriod(1, lastDay, 'monthly');
+        var mvals = mst['monthly'] || [];
+        result = mvals[idx] || '';
+        inspector = getInspectorForPeriod(1, lastDay, 'monthly');
+        // 見つからなければ月次有効日ちょうども試す（後方互換）
+        if (!result) {
+          var st2 = getStateForDay(monthlyDay);
+          var v2  = (st2['monthly'] || [])[idx] || '';
+          if (v2) { result = v2; inspector = getInspectorForDay(monthlyDay); }
+        }
       }
       var isFirst = idx === 0;
       var isLast  = idx === monthlyItems.length - 1;
@@ -15430,12 +15624,8 @@ function computeUnInspectedLines(targetYear, targetMonth) {
     var _lsRecs3 = [];
     try { _lsRecs3 = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(e) {}
     _lsRecs3.forEach(function(r) {
-      // 【修正】ラインIDをキーに含めて同日別ライン点検の誤重複判定を防ぐ
-      var _uipLinesKey = (r.lines || r.line || []).slice().sort().join('|');
       var dup = ALL_INSPECTION_RECORDS.some(function(m) {
-        var _mLK = (m.lines || m.line || []).slice().sort().join('|');
-        return m.year === r.year && m.month === r.month && m.day === r.day &&
-               m.inspector === r.inspector && _mLK === _uipLinesKey;
+        return m.year === r.year && m.month === r.month && m.day === r.day && m.inspector === r.inspector;
       });
       if (!dup) {
         var hasNg = !!r.anomaly;
@@ -16009,14 +16199,9 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       var _lsExisting = [];
       try { _lsExisting = JSON.parse(localStorage.getItem('inspections') || '[]'); } catch(_e2) {}
       var _mergedMap = {};
-      // 【修正】ラインIDをキーに含めることで、同日に複数ラインを別々に点検したレコードが消えないようにする
-      var _mkFn = function(r) {
-        var _lk = (r.lines || r.line || []).slice().sort().join('|');
-        return r.year + '-' + r.month + '-' + r.day + '-' + (r.inspector || '') + '-' + _lk;
-      };
       // まず既存localStorage（新しい点検データが含まれる可能性あり）を登録
       _lsExisting.forEach(function(r) {
-        var _k = _mkFn(r);
+        var _k = r.year + '-' + r.month + '-' + r.day + '-' + (r.inspector || '');
         var _cur = _mergedMap[_k];
         if (!_cur || (r.completedAt && (!_cur.completedAt || r.completedAt > _cur.completedAt))) {
           _mergedMap[_k] = r;
@@ -16024,7 +16209,7 @@ function startLineInspection(lineId, itemYear, itemMonth, itemDay) {
       });
       // 次にFirestoreレコードを登録（より新しい場合のみ上書き）
       records.forEach(function(r) {
-        var _k = _mkFn(r);
+        var _k = r.year + '-' + r.month + '-' + r.day + '-' + (r.inspector || '');
         var _cur = _mergedMap[_k];
         if (!_cur || (r.completedAt && (!_cur.completedAt || r.completedAt > _cur.completedAt))) {
           _mergedMap[_k] = r;
